@@ -1,0 +1,30 @@
+body,
+html {
+    margin:0;
+    padding:0;
+    color:#000;
+    background:#ffffff;
+}
+
+#header {
+}
+
+#footer {
+}
+
+#content {
+    float:left;
+    padding: 10px;
+}
+
+#flashes {
+    padding: 5px 5px;
+    background:#0000ef;
+}
+
+#login {
+    float:right;
+    width:250px;
+    background:#ffffff;
+}
+

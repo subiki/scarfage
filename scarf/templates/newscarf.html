@@ -8,9 +8,11 @@
 {% if user is undefined %}
     You must be logged in to create a scarf.
 {% else %}
-    <form action="/scarf/newscarf" method="post">
+    <form action="/scarf/newscarf" method="post" enctype="multipart/form-data">
         Name: <input type=text name=name><br />
-        Description: <input type=textbox name=name><br />
+        Front: <input type="file" name="front" accept="image/*"><br />
+        Back: <input type="file" name="back" accept="image/*"><br />
+        <textarea name=desc rows="4" cols="50">Description</textarea><br />
         <input type=submit value=Submit>
     </form>
 {% endif %}
