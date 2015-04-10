@@ -5,13 +5,9 @@ app = Flask(__name__)
 def index():
     return 'Index Page'
 
-@app.route('/hello')
-def hello():
-    return 'Hello World'
-
-@app.route('/monkey')
-def monkey():
-    return 'MONKEYS'
+@app.route('/error')
+def error():
+    return render_template('error.html')
 
 if __name__ == '__main__':
     app.debug = True
