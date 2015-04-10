@@ -9,7 +9,7 @@ def application(env, start_response):
     # The search path can be used to make finding templates by
     #   relative paths much easier.  In this case, we are using
     #   absolute paths and thus set it to the filesystem root.
-    templateLoader = jinja2.FileSystemLoader( searchpath="/" )
+    templateLoader = jinja2.FileSystemLoader( searchpath="/srv/data/web/vhosts/default" )
 
     # An environment provides the data necessary to read and
     #   parse our templates.  We pass in the loader object here.
