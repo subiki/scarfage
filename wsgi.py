@@ -2,8 +2,6 @@ import jinja2
 
 def application(env, start_response):
     start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
-    return ['<!DOCTYPE html><html><meta charset="utf-8"><title>It works',
-            "</title><b>It works!</b><br /><br />Fuck yea! "]
 
     # In this case, we will load templates off the filesystem.
     # This means we must construct a FileSystemLoader object.
@@ -30,3 +28,4 @@ def application(env, start_response):
 
     # Finally, process the template to produce our final text.
     outputText = template.render( templateVars )
+    return outputText
