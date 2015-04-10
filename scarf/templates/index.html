@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block body %}
+
+{% if error %}
+<div id="flash">
+    {{ error }}
+</div>
+{% endif %}
+
+
+
+<div id="login">
+    {% if user is undefined %}
+    <form action="/login" method="post">
+        Username: <input type=text name=username><br />
+        Password: <input type=text name=password><br />
+        <input type=submit value=Login>
+    </form>
+    {% else %}
+    <form action="/logout" method="get">
+        Logged in as: {{ user }} <input type=submit value=Logout>
+    </form>
+    {% endif %}
+</div>
+
+{% endblock %}
