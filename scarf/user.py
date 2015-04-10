@@ -2,6 +2,7 @@ from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import check_login
 
+#TODO change me
 app.secret_key = '\x8bN\xe5\xe8Q~p\xbdb\xe5\xa5\x894i\xb0\xd9\x07\x10\xe6\xa0\xe5\xbd\x1e\xf8'
 
 @app.route('/login', methods=['GET', 'POST'])
