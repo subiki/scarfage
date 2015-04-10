@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('error.html', title="Page not found", errorcode="404", errortext="File not found."), 404
+    return render_template('error.html', title="File not found", errorcode="404", errortext="File not found."), 404
 
 @app.route('/error')
 def error():
