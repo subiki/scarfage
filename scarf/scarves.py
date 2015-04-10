@@ -2,10 +2,23 @@ from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
 from scarflib import check_login
+import os
+import imghdr
 
-def get_upload(f):
+def get_upload(f, name):
     if not f.filename == '':
-        flash('Uploaded ' + f.filename)
+        try:
+            newname = '/srv/data/web/vhosts/default/static/uploads/' + secure_filename(name) + os.path.splitext(f.filename)[1]
+            f.save(newname)
+        except:
+            flash('Error uploading ' + f.filename)
+            return
+
+        if imghdr.what(newname):
+            flash('Uploaded ' + f.filename)
+        else:
+            os.remove(newname)
+            flash(f.filename + " is not an image.")
 
 @app.route('/scarf/<scarf_id>')
 def show_post(scarf_id):
@@ -21,15 +34,14 @@ def newscarf():
             flash('You must be logged in to create a scarf.')
             return redirect(url_for('/newuser'))
 
-
         if request.form['name'] == '':
             flash('This scarf has no name?')
             return redirect('/scarf/newscarf')
 
         flash('Adding scarf...')
 
-        get_upload(request.files['front'])
-        get_upload(request.files['back'])
+        get_upload(request.files['front'], escape(request.form['name']) + "_front")
+        get_upload(request.files['back'], escape(request.form['name']) + "_back")
 
         return redirect('/scarf/' + escape(request.form['name']))
 

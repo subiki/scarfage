@@ -5,6 +5,7 @@
     <form action="/login" method="post">
         Username: <input type=text name=username><br />
         Password: <input type=password name=password><br />
+        <input type=hidden value="{{ next or '' }}" name=next>
         <input type=submit value=Login>
     </form>
     <a href="/newuser">New user</a>

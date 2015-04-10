@@ -1,6 +1,5 @@
 from scarf import app
-
-from flask import render_template, session, escape
+from flask import render_template, session, escape, request
 
 @app.errorhandler(404)
 def page_not_found(error):
