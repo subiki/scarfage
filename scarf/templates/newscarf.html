@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+{% if user is undefined %}
+    You must be logged in to create a scarf.
+{% else %}
+    <form action="/scarf/newscarf" method="post">
+        Name: <input type=text name=name><br />
+        Description: <input type=textbox name=name><br />
+        <input type=submit value=Submit>
+    </form>
+{% endif %}
+</div>
+
+{% endblock %}
+{% block login %}
+
+<div id="login">
+</div>
+
+{% endblock %}
