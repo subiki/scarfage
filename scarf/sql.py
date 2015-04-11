@@ -53,7 +53,9 @@ def do_sql(query, ret):
 
         db.close()
 
-        return data
+        if ret:
+            return data
+        return
 
     except MySQLdb.MySQLError, err:
         app.logger.error("Cannot connect to database. MySQL error: " + str(err))

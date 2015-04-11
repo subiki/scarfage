@@ -12,7 +12,8 @@ def login():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        data = do_sql('')
+        sql = ''
+        data = do_sql(sql, True)
         if not data:
             return render_template('error.html', errortext="SQL error")
         else:
