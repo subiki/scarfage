@@ -1,23 +1,25 @@
-import os.path
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
 from scarflib import check_login
 import mimetypes
+import os
 
 def get_upload(f, name):
     if not f.filename == '':
-        newname = secure_filename(name) + os.path.splitext(f.filename)[1]
         try:
             f.save('/srv/data/web/vhosts/default/static/uploads/' + newname)
+            newname = secure_filename(name) + os.path.splitext(f.filename)[1]
         except:
             flash('Error uploading ' + f.filename)
             return
 
-        flash('Uploaded ' + f.filename)
-
         mime_type = mimetypes.guess_type(newname)[0]
-        flash(mime_type)
+        if mime_type.split("/")[-1] == image:
+            flash('Uploaded ' + f.filename)
+        else:
+            os.remove("newname")
+            flash(f.filename + " is not an image.")
 
 @app.route('/scarf/<scarf_id>')
 def show_post(scarf_id):
