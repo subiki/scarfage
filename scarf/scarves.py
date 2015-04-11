@@ -18,10 +18,9 @@ def get_imgupload(f, name, tag):
             return
 
         if imghdr.what(newname):
-            uuid=uuid.uuid4()
             sql = upsert("images", \
                          uid=0, \
-                         uuid=uuid, \
+                         uuid=uuid.uuid4(), \
                          filename=newname, \
                          tag=escape(tag))
             data = doupsert(sql)
