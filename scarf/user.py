@@ -55,6 +55,10 @@ def check_new_user(request):
         if pass1 != pass2:
             flash("The passwords entered don't match.")
             ret = False
+        else:
+            if len(pass1) < 6:
+                flash("Your password is too short, it must be at least 6 characters")
+                ret = False
 
         if not re.match("[^@]+@[^@]+\.[^@]+", escape(request.form['email'])):
             flash("Invalid email address")

@@ -3,13 +3,36 @@
 {% block body %}
 
 <div id="content">
-    <form action="/newuser" method="post">
-        Username: <input type=text name=username><br />
-        Password: <input type=password name=password><br />
-        Confirm password: <input type=password name=password2><br />
-        E-mail: <input type=text name=email><br />
-        <input type=submit value=Submit>
+<div id="signupform">
+    <center>
+    <h1>Sign Up</h1>
+    <form role="form" action="/newuser" method="post">
+      <div class="form-group">
+        <label class="newuser-label" for="username">Username:</label>
+        <input type=text name=username required><br />
+      <div>
+
+      <div class="form-group">
+        <label class="newuser-label" for="password">Password:</label>
+        <input type=password name=password required><br />
+      <div>
+
+      <div class="form-group">
+        <label class="newuser-label" for="password2">Confirm password:</label>
+        <input type=password name=password2 required><br />
+      <div>
+
+      <div class="form-group">
+        <label class="newuser-label" for="email">Email address:</label>
+        <input type=text name=email required><br />
+      <div>
+
+      <div class="form-group">
+        <input class="button" type=submit value=Submit>
+      <div>
     </form>
+      </center>
+</div>
 </div>
 
 {% endblock %}
