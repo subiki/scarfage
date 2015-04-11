@@ -41,8 +41,9 @@ def delete(table, **kwargs):
     sql.append(";")
     return "".join(sql)
 
+#TODO input checking
+
 def insert(query):
-    app.logger.debug(query)
     try:
         db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
 
@@ -63,7 +64,6 @@ def insert(query):
     app.logger.error("Cannot connect to database. MySQL error")
 
 def select(query):
-    app.logger.debug(query)
     try:
         db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
         db.query(query)

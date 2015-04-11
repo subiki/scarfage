@@ -27,6 +27,7 @@ def check_user(user):
 
     app.logger.debug(sql)
     app.logger.debug(data)
+    flash(data)
 
     return data
 
