@@ -1,8 +1,14 @@
 import MySQLdb
 from scarf import app
 from flask import redirect, url_for
+import socket
+import datetime
 
-dbHost = 'localhost'
+if socket.gethostname() == "grenadine":
+    dbHost = 'sql.home.mazuc.net'
+else: 
+    dbHost = 'localhost'
+
 dbName = 'scarfage'
 dbUser = 'scarfage'
 dbPass = '4AybHApWa7n6VRp6'
@@ -44,6 +50,8 @@ def delete(table, **kwargs):
 #TODO input checking
 
 def insert(query):
+    app.logger.debug("insert: " + query)
+
     try:
         db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
 
@@ -64,6 +72,8 @@ def insert(query):
     app.logger.error("Cannot connect to database. MySQL error")
 
 def select(query):
+    app.logger.debug("select: " + query)
+
     try:
         db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
 

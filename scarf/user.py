@@ -1,10 +1,12 @@
 import os
 import uuid
 import hashlib
+import datetime
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import check_login, redirect_back
 from sql import insert, upsert, select, read
+
 
 #TODO change me
 app.secret_key = '\x8bN\xe5\xe8Q~p\xbdb\xe5\xa5\x894i\xb0\xd9\x07\x10\xe6\xa0\xe5\xbd\x1e\xf8'
@@ -16,9 +18,17 @@ def check_pw(user, password):
     sql = read('users', **{"username": user})
     result = select(sql)
 
-    app.logger.debug(sql)
-    app.logger.debug(result)
-    flash(result)
+    try:
+        uid = result[0][0]
+        pwhash = result[0][2]
+        pwsalt = result[0][3]
+    except: 
+        return False
+
+    checkhash = gen_pwhash(password, pwsalt)
+
+    if checkhash == pwhash:
+        return uid
 
     return False
 
@@ -28,9 +38,11 @@ def check_user(user):
 
     app.logger.debug(sql)
     app.logger.debug(result)
-    flash(result)
 
-    return result
+    if result:
+        return True
+
+    return False
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -44,6 +56,15 @@ def login():
             flash('Login unsuccessful. Check your username and password and try again.')
             return redirect(url_for('index'))
         else:
+            sql = upsert("users", \
+                         uid=auth, \
+                         username=escape(request.form['username']), \
+                         lastseen=datetime.datetime.now())
+            data = insert(sql)
+
+            flash(data)
+
+
             session['username'] = escape(request.form['username'])
             flash('You were successfully logged in')
             return redirect_back('index')
@@ -64,14 +85,15 @@ def newuser():
 
             flash('Creating user')
             salt=str(uuid.uuid4().get_hex().upper()[0:6])
+            now = datetime.datetime(2009,5,5)
             sql = upsert("users", \
                          uid=0, \
                          username=escape(request.form['username']), \
                          pwhash=gen_pwhash(request.form['password'], salt), \
                          pwsalt=salt, \
                          email=escape(request.form['email']), \
-                         joined="2015-04-01", \
-                         lastseen="2015-04-01", \
+                         joined=datetime.datetime.now(), \
+                         lastseen=datetime.datetime.now(), \
                          numadds=0, \
                          accesslevel=0)
             data = insert(sql)
