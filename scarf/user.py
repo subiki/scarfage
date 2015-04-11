@@ -13,7 +13,7 @@ def gen_pwhash(password, salt):
     return hashlib.sha224(password + salt).hexdigest()
 
 def check_pw(user, password):
-    sql = read(users, **{"username": user})
+    sql = read('users', **{"username": user})
     data = select(sql)
 
     app.logger.debug(sql)
