@@ -68,7 +68,7 @@ def select(query):
         db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
         #db.query(query)
 
-        cursor = connection.cursor()
+        cursor = db.cursor()
         cursor.execute( query )
         cursor.close()
         data = db.store_result()
