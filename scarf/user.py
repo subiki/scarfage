@@ -1,3 +1,5 @@
+import os
+import uuid
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import check_login, redirect_back
@@ -43,7 +45,7 @@ def newuser():
                          uid=0, \
                          username=escape(request.form['username']), \
                          pwhash=escape(request.form['password']), \
-                         pwsalt=escape(request.form['username']), \
+                         pwsalt=str(uuid.uuid4().get_hex().upper()[0:6]), \
                          email=escape(request.form['email']), \
                          joined="2015-04-01", \
                          lastseen="2015-04-01", \
