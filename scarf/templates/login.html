@@ -23,9 +23,7 @@
     <a class=small href="/newuser">New user</a>
     </center>
     {% else %}
-    <form action="/logout" method="get">
-        Logged in as: {{ user }} <input type=submit value=Logout>
-    </form>
+        Logged in as: {{ user }}. <a href="/logout">Logout</a> 
     {% endif %}
 </div>
 

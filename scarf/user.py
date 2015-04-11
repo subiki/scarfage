@@ -23,7 +23,12 @@ def check_pw(user, password):
         uid = result[0][0]
         pwhash = result[0][2]
         pwsalt = result[0][3]
+        accesslevel = result[0][8]
     except: 
+        return False
+
+    if accesslevel == 0:
+        flash('Your account has been banned')
         return False
 
     checkhash = gen_pwhash(password, pwsalt)
@@ -77,12 +82,11 @@ def login():
         auth = check_pw(escape(request.form['username']), escape(request.form['password']))
 
         if not auth:
-            flash('Login unsuccessful. Check your username and password and try again.')
+            flash('Login unsuccessful.')
             return redirect(url_for('index'))
         else:
             sql = upsert("users", \
                          uid=auth, \
-                         username=escape(request.form['username']), \
                          lastseen=datetime.datetime.now())
             data = insert(sql)
 
@@ -114,7 +118,7 @@ def newuser():
                          joined=datetime.datetime.now(), \
                          lastseen=datetime.datetime.now(), \
                          numadds=0, \
-                         accesslevel=0)
+                         accesslevel=1)
             data = insert(sql)
             if not data:
                 return render_template('error.html', errortext="SQL error")
