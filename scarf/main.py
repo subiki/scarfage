@@ -1,5 +1,4 @@
 from scarf import app
-
 from flask import render_template, session, escape, request
 
 @app.errorhandler(404)
