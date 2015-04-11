@@ -2,6 +2,7 @@ import os
 import uuid
 import hashlib
 import datetime
+import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import check_login, redirect_back
@@ -36,13 +37,32 @@ def check_user(user):
     sql = read('users', **{"username": user})
     result = select(sql)
 
-    app.logger.debug(sql)
-    app.logger.debug(result)
-
     if result:
         return True
 
     return False
+
+def check_new_user(request):
+    ret = True
+    try:
+        if check_user(escape(request.form['username'])):
+            flash("User already exists")
+            ret = False
+
+        pass1 = escape(request.form['password'])
+        pass2 = escape(request.form['password2'])
+
+        if pass1 != pass2:
+            flash("The passwords entered don't match.")
+            ret = False
+
+        if not re.match("[^@]+@[^@]+\.[^@]+", escape(request.form['email'])):
+            flash("Invalid email address")
+            ret = False
+    except:
+        return False
+
+    return ret
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -62,9 +82,6 @@ def login():
                          lastseen=datetime.datetime.now())
             data = insert(sql)
 
-            flash(data)
-
-
             session['username'] = escape(request.form['username'])
             flash('You were successfully logged in')
             return redirect_back('index')
@@ -78,12 +95,10 @@ def newuser():
             return redirect(url_for('index'))
     except:
         if request.method == 'POST':
-            if check_user(escape(request.form['username'])):
-                flash("User already exists")
+            if not check_new_user(request):
                 # TODO, re-fill form
                 return render_template('newuser.html', title="New User")
 
-            flash('Creating user')
             salt=str(uuid.uuid4().get_hex().upper()[0:6])
             now = datetime.datetime(2009,5,5)
             sql = upsert("users", \
@@ -99,10 +114,9 @@ def newuser():
             data = insert(sql)
             if not data:
                 return render_template('error.html', errortext="SQL error")
-            else:
-                flash(data)
 
             session['username'] = escape(request.form['username'])
+            flash('Welcome ' + session['username'])
             return redirect(url_for('index'))
 
         return render_template('newuser.html', title="New User")
