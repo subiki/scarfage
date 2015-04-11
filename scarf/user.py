@@ -30,7 +30,7 @@ def check_user(user):
     app.logger.debug(result)
     flash(result)
 
-    return data
+    return result
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
