@@ -4,7 +4,7 @@ import hashlib
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import check_login, redirect_back
-from sql import insert, upsert, select
+from sql import insert, upsert, select, read
 
 #TODO change me
 app.secret_key = '\x8bN\xe5\xe8Q~p\xbdb\xe5\xa5\x894i\xb0\xd9\x07\x10\xe6\xa0\xe5\xbd\x1e\xf8'
@@ -13,7 +13,7 @@ def gen_pwhash(password, salt):
     return hashlib.sha224(password + salt).hexdigest()
 
 def check_pw(user, password):
-    sql = "SELECT `username`, `pwhash`, `pwsalt` FROM `users` WHERE username = '" + user + "';"
+    sql = read(users, **{"username": user})
     data = select(sql)
 
     app.logger.debug(sql)
