@@ -1,3 +1,4 @@
+import os.path
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
@@ -5,8 +6,14 @@ from scarflib import check_login
 
 def get_upload(f, name):
     if not f.filename == '':
+        name = name + os.path.splitext(f.filename)[1]
+        try:
+            f.save('/srv/data/web/vhosts/default/static/uploads/' + secure_filename(name))
+        except:
+            flash('Error uploading ' + f.filename)
+            return
+
         flash('Uploaded ' + f.filename)
-        f.save('/srv/data/web/vhosts/default/static/uploads/' + secure_filename(name))
 
 @app.route('/scarf/<scarf_id>')
 def show_post(scarf_id):
@@ -28,8 +35,8 @@ def newscarf():
 
         flash('Adding scarf...')
 
-        get_upload(request.files['front'], "front" + escape(request.form['name']))
-        get_upload(request.files['back'], "back" + escape(request.form['name']))
+        get_upload(request.files['front'], escape(request.form['name']) + "-front")
+        get_upload(request.files['back'], escape(request.form['name']) + "-back")
 
         return redirect('/scarf/' + escape(request.form['name']))
 
