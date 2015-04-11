@@ -6,9 +6,9 @@ from scarflib import check_login
 
 def get_upload(f, name):
     if not f.filename == '':
-        name = name + os.path.splitext(f.filename)[1]
+        newname = name + os.path.splitext(f.filename)[1]
         try:
-            f.save('/srv/data/web/vhosts/default/static/uploads/' + secure_filename(name))
+            f.save('/srv/data/web/vhosts/default/static/uploads/' + secure_filename(newname))
         except:
             flash('Error uploading ' + f.filename)
             return
@@ -35,8 +35,8 @@ def newscarf():
 
         flash('Adding scarf...')
 
-        get_upload(request.files['front'], escape(request.form['name']) + "-front")
-        get_upload(request.files['back'], escape(request.form['name']) + "-back")
+        get_upload(request.files['front'], escape(request.form['name']) + "_front")
+        get_upload(request.files['back'], escape(request.form['name']) + "_back")
 
         return redirect('/scarf/' + escape(request.form['name']))
 
