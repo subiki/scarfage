@@ -14,20 +14,25 @@ def gen_pwhash(password, salt):
 
 def check_pw(user, password):
     sql = read('users', **{"username": user})
-    data = select(sql)
+    result = select(sql)
 
     app.logger.debug(sql)
-    app.logger.debug(data)
+    app.logger.debug(result)
+    flash(result)
+
+    data = result.fetch_row(maxrows=0)
 
     return False
 
 def check_user(user):
     sql = read('users', **{"username": user})
-    data = select(sql)
+    result = select(sql)
 
     app.logger.debug(sql)
-    app.logger.debug(data)
-    flash(data)
+    app.logger.debug(result)
+    flash(result)
+
+    data = result.fetch_row(maxrows=0)
 
     return data
 
