@@ -6,7 +6,7 @@ import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import check_login, redirect_back
-from sql import insert, upsert, select, read
+from sql import doupsert, upsert, doselect, read
 
 
 #TODO change me
@@ -17,7 +17,7 @@ def gen_pwhash(password, salt):
 
 def check_pw(user, password):
     sql = read('users', **{"username": user})
-    result = select(sql)
+    result = doselect(sql)
 
     try:
         uid = result[0][0]
@@ -39,8 +39,8 @@ def check_pw(user, password):
     return False
 
 def check_user(user):
-    sql = read('users', **{"username": user})
-    result = select(sql)
+    sql = read('users', **{"username": escape(user)})
+    result = doselect(sql)
 
     if result:
         return True
@@ -88,7 +88,7 @@ def login():
             sql = upsert("users", \
                          uid=auth, \
                          lastseen=datetime.datetime.now())
-            data = insert(sql)
+            data = doupsert(sql)
 
             session['username'] = escape(request.form['username'])
             flash('You were successfully logged in')
@@ -108,18 +108,17 @@ def newuser():
                 return render_template('newuser.html', title="New User")
 
             salt=str(uuid.uuid4().get_hex().upper()[0:6])
-            now = datetime.datetime(2009,5,5)
             sql = upsert("users", \
                          uid=0, \
                          username=escape(request.form['username']), \
-                         pwhash=gen_pwhash(request.form['password'], salt), \
+                         pwhash=gen_pwhash(escape(request.form['password']), salt), \
                          pwsalt=salt, \
                          email=escape(request.form['email']), \
                          joined=datetime.datetime.now(), \
                          lastseen=datetime.datetime.now(), \
                          numadds=0, \
                          accesslevel=1)
-            data = insert(sql)
+            data = doupsert(sql)
             if not data:
                 return render_template('error.html', errortext="SQL error")
 

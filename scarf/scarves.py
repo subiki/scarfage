@@ -4,6 +4,9 @@ from werkzeug import secure_filename
 from scarflib import check_login
 import os
 import imghdr
+import uuid
+import datetime
+from sql import upsert, doupsert, read, doselect
 
 def get_upload(f, name):
     if not f.filename == '':
@@ -20,8 +23,39 @@ def get_upload(f, name):
             os.remove(newname)
             flash(f.filename + " is not an image.")
 
+def check_scarf(name):
+    sql = read('scarves', **{"name": escape(name)})
+    result = doselect(sql)
+
+    if result:
+        return True
+
+    return False
+
+def inc_scarfcount(user):
+    sql = read('users', **{"username": escape(user)})
+    result = doselect(sql)
+
+    try:
+        uid = result[0][0]
+        numadds = result[0][7]
+    except: 
+        return False
+
+    numadds=numadds+1
+
+    sql = upsert("users", \
+                 uid=uid, \
+                 numadds=numadds, \
+                 lastseen=datetime.datetime.now())
+    data = doupsert(sql)
+
+
 @app.route('/scarf/<scarf_id>')
 def show_post(scarf_id):
+    if not check_scarf(escape(scarf_id)):
+        return render_template('error.html', title="Scarf not found", errorcode="404", errortext="Scarf not found."), 404
+
     if check_login():
         return render_template('scarf.html', title=scarf_id, scarfname=scarf_id, user=session['username'])
     else:
@@ -38,12 +72,35 @@ def newscarf():
             flash('This scarf has no name?')
             return redirect('/scarf/newscarf')
 
-        flash('Adding scarf...')
+        if request.form['name'] == 'newscarf':
+            flash('Very funny')
+            return redirect('/scarf/newscarf')
+
+        if check_scarf(escape(request.form['name'])):
+            flash('A scarf with that name already exists')
+            return redirect('/scarf/newscarf')
 
         get_upload(request.files['front'], escape(request.form['name']) + "_front")
         get_upload(request.files['back'], escape(request.form['name']) + "_back")
 
+        #TODO image table & join
+
+        sql = upsert("scarves", \
+                     uid=0, \
+                     uuid=uuid.uuid4(), \
+                     name=escape(request.form['name']), \
+                     description=escape(request.form['desc']), \
+                     added=datetime.datetime.now(), \
+                     modified=datetime.datetime.now())
+
+        data = doupsert(sql)
+        if not data:
+            return render_template('error.html', errortext="SQL error")
+
+        flash('Added scarf!')
+        inc_scarfcount(session['username'])
         return redirect('/scarf/' + escape(request.form['name']))
+
 
     if check_login():
         return render_template('newscarf.html', title="Add New Scarf", user=session['username'])
