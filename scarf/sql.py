@@ -48,7 +48,7 @@ def insert(query, ret):
 
         cursor = db.cursor()
         cursor.execute(query)
-        cursor.commit(query)
+        db.commit(query)
         cursor.close()
         if ret:
             data = cursor.fetch_row(maxrows=0)
