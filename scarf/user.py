@@ -13,7 +13,7 @@ def login():
 
     if request.method == 'POST':
         sql = ''
-       # data = do_sql(sql, True)
+       # data = select(sql)
        # if not data:
        #     return render_template('error.html', errortext="SQL error")
        # else:
@@ -49,7 +49,7 @@ def newuser():
                          lastseen="2015-04-01", \
                          numadds=0, \
                          accesslevel=0)
-            data = insert(sql, False)
+            data = insert(sql)
             if not data:
                 return render_template('error.html', errortext="SQL error")
             else:
