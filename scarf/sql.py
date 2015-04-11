@@ -50,7 +50,6 @@ def insert(query):
         cursor.execute(query)
         db.commit()
         cursor.close()
-        data = cursor.fetch_row(maxrows=0)
         data = cursor.lastrowid
 
         db.close()
