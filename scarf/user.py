@@ -15,13 +15,17 @@ def gen_pwhash(password, salt):
 def check_pw(user, password):
     sql = "SELECT `username`, `pwhash`, `pwsalt` FROM `users` WHERE username = '" + user + "';"
     data = select(sql)
+
+    app.logger.debug(sql)
     app.logger.debug(data)
 
     return False
 
 def check_user(user):
-    sql = "SELECT `username` FROM `users` WHERE username = '" + user + "';"
+    sql = read(users, **{"username": user})
     data = select(sql)
+
+    app.logger.debug(sql)
     app.logger.debug(data)
 
     return data
