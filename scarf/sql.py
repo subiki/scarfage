@@ -13,9 +13,11 @@ def do_sql(query):
 
         cursor = db.cursor()
         cursor.execute(query)
-        data = cursor.fetch_row(maxrows=0)
+        #data = cursor.fetch_row(maxrows=0)
+        data = cursor.fetchone()
         db.close()
 
+        app.logger.error("connected to db")
         return data
     except MySQLdb.MySQLError, err:
         app.logger.error("Cannot connect to database. MySQL error: " + str(err))
