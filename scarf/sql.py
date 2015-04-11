@@ -5,7 +5,7 @@ from flask import redirect, url_for
 dbHost = '127.0.0.1'
 dbName = 'scarfage'
 dbUser = 'scarfage'
-dbPass = 'nPe7BT7KUjTaEPRx'
+dbPass = '4AybHApWa7n6VRp6'
 
 def do_sql(query):
     try:
