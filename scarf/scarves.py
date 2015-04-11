@@ -3,7 +3,7 @@ from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
 from scarflib import check_login
-from mimetypes import MimeTypes
+from mimetypes import mimetypes
 
 def get_upload(f, name):
     if not f.filename == '':
