@@ -4,13 +4,20 @@ import hashlib
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import check_login, redirect_back
-from sql import insert, upsert
+from sql import insert, upsert, select
 
 #TODO change me
 app.secret_key = '\x8bN\xe5\xe8Q~p\xbdb\xe5\xa5\x894i\xb0\xd9\x07\x10\xe6\xa0\xe5\xbd\x1e\xf8'
 
-def get_pwhash(password, salt):
+def gen_pwhash(password, salt):
     return hashlib.sha224(password + salt).hexdigest()
+
+def check_pw(user, password):
+    sql = 'SELECT `user`, `pwhash`, `pwsalt` FROM `users` WHERE username = `' + user + '`;'
+    data = select(sql)
+    app.logger.debug(data)
+
+    return False
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -18,14 +25,7 @@ def login():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        sql = ''
-       # data = select(sql)
-       # if not data:
-       #     return render_template('error.html', errortext="SQL error")
-       # else:
-       #     flash(data)
-
-        auth = False;
+        auth = check_pw(escape(request.form['username']), escape(request.form['password']))
 
         if not auth:
             flash('Login unsuccessful. Check your username and password and try again.')
@@ -49,7 +49,7 @@ def newuser():
             sql = upsert("users", \
                          uid=0, \
                          username=escape(request.form['username']), \
-                         pwhash=get_pwhash(request.form['password'], salt), \
+                         pwhash=gen_pwhash(request.form['password'], salt), \
                          pwsalt=salt, \
                          email=escape(request.form['email']), \
                          joined="2015-04-01", \
