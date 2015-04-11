@@ -2,8 +2,15 @@ from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
 from scarflib import check_login
-import mimetypes
 import os
+from PIL import Image
+
+def is_img(filename):
+    try:
+        i=Image.open(filename)
+        return True
+    except IOError:
+        return False
 
 def get_upload(f, name):
     if not f.filename == '':
@@ -14,8 +21,7 @@ def get_upload(f, name):
             flash('Error uploading ' + f.filename)
             return
 
-        if mimetypes.guess_type(newname)[0].split("/")[0] == "image":
-            flash(mimetypes.guess_type(newname)[0].split("/")[0])
+        if is_img(newname):
             flash('Uploaded ' + f.filename)
         else:
             os.remove(newname)
