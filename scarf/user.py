@@ -40,10 +40,10 @@ def newuser():
             flash('Creating user')
             data = do_sql("INSERT INTO `scarfage`.`users` (`uid`, `username`, `pwhash`, `pwsalt`, `email`, \
                          `joined`, `lastseen`, `numadds`, `accesslevel`) VALUES (NULL, \
-                          escape(request.form['username']), \
-                          escape(request.form['password']), \
-                          escape(request.form['password']), \
-                          escape(request.form['email']), \
+                          `" + escape(request.form['username']) + "`, \
+                          `" + escape(request.form['password']) + "`, \
+                          `" + escape(request.form['password']) + "`, \
+                          `" + escape(request.form['email']) + "`, \
                           '2015-04-01', \
                           '2015-04-01', \
                           '0', \
