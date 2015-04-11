@@ -48,7 +48,7 @@ def newuser():
                          lastseen="2015-04-01", \
                          numadds=0, \
                          accesslevel=0)
-            data = do_sql(sql)
+            data = do_sql(sql, False)
             if not data:
                 return render_template('error.html', errortext="SQL error")
             else:
