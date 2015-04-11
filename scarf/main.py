@@ -1,5 +1,6 @@
 from scarf import app
-from flask import render_template, session, escape, request
+from flask import render_template, session, escape, request, flash
+from sql import doselect, read
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -11,7 +12,17 @@ def error():
 
 @app.route('/')
 def index():
+    sql = read('scarves')
+    result = doselect(sql)
+    scarves = []
+
+    try:
+        for scarf in result:
+            scarves.append(scarf)
+    except: 
+        flash('no scarves')
+
     if 'username' in session:
-        return render_template('index.html', title="Scarfage", user=escape(session['username']))
+        return render_template('index.html', title="Scarfage", user=escape(session['username']), scarves=scarves)
     else:
-        return render_template('index.html', title="Scarfage")
+        return render_template('index.html', title="Scarfage", scarves=scarves)

@@ -5,6 +5,13 @@
 {% include "login.html" %}
 
 <div id="content">
+
+<ul id="scarflist">
+{% for item in scarves %}
+    <li>{{ item[4] }} - <a href="/scarf/{{ item[2] }}">{{ item[2] }}</a></li>
+{% endfor %}
+</ul><br />
+
 <a href="/scarf/newscarf">Add stuff!</a>
 </div>
 

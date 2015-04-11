@@ -50,6 +50,9 @@ def inc_scarfcount(user):
                  lastseen=datetime.datetime.now())
     data = doupsert(sql)
 
+@app.route('/scarf/')
+def scarfroot():
+    return redirect(url_for('index'))
 
 @app.route('/scarf/<scarf_id>')
 def show_post(scarf_id):
