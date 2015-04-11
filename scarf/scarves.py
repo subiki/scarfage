@@ -3,14 +3,7 @@ from flask import redirect, url_for, request, render_template, session, escape, 
 from werkzeug import secure_filename
 from scarflib import check_login
 import os
-from PIL import Image
-
-def is_img(filename):
-    try:
-        i=Image.open(filename)
-        return True
-    except IOError:
-        return False
+import imghdr
 
 def get_upload(f, name):
     if not f.filename == '':
@@ -21,7 +14,7 @@ def get_upload(f, name):
             flash('Error uploading ' + f.filename)
             return
 
-        if is_img(newname):
+        if imghdr.what(newname):
             flash('Uploaded ' + f.filename)
         else:
             os.remove(newname)
