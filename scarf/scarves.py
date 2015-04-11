@@ -18,7 +18,7 @@ def get_upload(f, name):
         if mime_type.split("/")[-1] == "image":
             flash('Uploaded ' + f.filename)
         else:
-            os.remove("newname")
+            os.remove(newname)
             flash(f.filename + " is not an image.")
 
 @app.route('/scarf/<scarf_id>')
