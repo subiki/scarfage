@@ -15,6 +15,7 @@ def get_upload(f, name):
             return
 
         if mimetypes.guess_type(newname)[0].split("/")[0] == "image":
+            flash(mimetypes.guess_type(newname)[0].split("/")[0])
             flash('Uploaded ' + f.filename)
         else:
             os.remove(newname)
