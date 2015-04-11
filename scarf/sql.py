@@ -2,7 +2,7 @@ import MySQLdb
 from scarf import app
 from flask import redirect, url_for
 
-dbHost = '127.0.0.1'
+dbHost = 'localhost'
 dbName = 'scarfage'
 dbUser = 'scarfage'
 dbPass = '4AybHApWa7n6VRp6'
