@@ -1,7 +1,7 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import check_login, redirect_back
-from sql import do_sql
+from sql import do_sql, upsert
 
 #TODO change me
 app.secret_key = '\x8bN\xe5\xe8Q~p\xbdb\xe5\xa5\x894i\xb0\xd9\x07\x10\xe6\xa0\xe5\xbd\x1e\xf8'
@@ -38,16 +38,16 @@ def newuser():
     except:
         if request.method == 'POST':
             flash('Creating user')
-            sql = "INSERT INTO `scarfage`.`users` (`uid`, `username`, `pwhash`, `pwsalt`, `email`, \
-                  `joined`, `lastseen`, `numadds`, `accesslevel`) VALUES (NULL, \
-                   '" + escape(request.form['username']) + "', \
-                   '" + escape(request.form['password']) + "', \
-                   '" + escape(request.form['password']) + "', \
-                   '" + escape(request.form['email']) + "', \
-                   '2015-04-01', \
-                   '2015-04-01', \
-                   '0', \
-                   '0');"
+            sql = upsert("users", \
+                         uid="NULL", \
+                         username=escape(request.form['username']), \
+                         pwhash=escape(request.form['password']), \
+                         pwsalt=escape(request.form['username']), \
+                         email=escape(request.form['email']), \
+                         joined="2015-04-01", \
+                         lastseen="2015-04-01", \
+                         numadds=0, \
+                         accesslevel=0)
             data = do_sql(sql)
             if not data:
                 return render_template('error.html', errortext="SQL error")
