@@ -44,10 +44,10 @@ def newuser():
                           `" + escape(request.form['password']) + "`, \
                           `" + escape(request.form['password']) + "`, \
                           `" + escape(request.form['email']) + "`, \
-                          '2015-04-01', \
-                          '2015-04-01', \
-                          '0', \
-                          '0');")
+                          `2015-04-01`, \
+                          `2015-04-01`, \
+                          `0`, \
+                          `0`);")
             if not data:
                 return render_template('error.html', errortext="SQL error")
             else:
