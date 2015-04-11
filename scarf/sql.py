@@ -66,12 +66,9 @@ def select(query):
     app.logger.debug(query)
     try:
         db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
+        db.query(query)
 
-        cursor = db.cursor()
-        cursor.execute(query)
-        db.commit()
-        cursor.close()
-        data = cursor.fetch_row(maxrows=0)
+        data = db.store_result()
 
         db.close()
 
