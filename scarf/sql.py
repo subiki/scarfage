@@ -20,3 +20,6 @@ def do_sql(query):
     except MySQLdb.MySQLError, err:
         app.logger.error("Cannot connect to database. MySQL error: " + str(err))
         return 
+
+
+    app.logger.error("Cannot connect to database. MySQL error")
