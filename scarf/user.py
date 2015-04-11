@@ -40,7 +40,7 @@ def newuser():
         if request.method == 'POST':
             flash('Creating user')
             sql = upsert("users", \
-                         uid="NULL", \
+                         uid=0, \
                          username=escape(request.form['username']), \
                          pwhash=escape(request.form['password']), \
                          pwsalt=escape(request.form['username']), \
