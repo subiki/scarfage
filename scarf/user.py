@@ -20,12 +20,6 @@ def check_pw(user, password):
     app.logger.debug(result)
     flash(result)
 
-    try:
-        data = result.fetch_row(maxrows=0)
-        flash(data)
-    except AttributeError:
-        return False
-
     return False
 
 def check_user(user):
@@ -35,12 +29,6 @@ def check_user(user):
     app.logger.debug(sql)
     app.logger.debug(result)
     flash(result)
-
-    try:
-        data = result.fetch_row(maxrows=0)
-        flash(data)
-    except AttributeError:
-        return 
 
     return data
 

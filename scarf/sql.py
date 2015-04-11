@@ -66,12 +66,11 @@ def insert(query):
 def select(query):
     try:
         db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
-        #db.query(query)
 
-        cursor = db.cursor()
-        cursor.execute( query )
-        cursor.close()
-        data = db.store_result()
+        cur = db.cursor()
+        cur.execute(query)
+
+        data = cur.fetchall()
 
         db.close()
 
