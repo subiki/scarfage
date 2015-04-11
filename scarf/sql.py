@@ -41,17 +41,20 @@ def delete(table, **kwargs):
     sql.append(";")
     return "".join(sql)
 
-def do_sql(query):
+def do_sql(query, ret):
+    app.logger.debug(query)
     try:
         db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
 
         cursor = db.cursor()
         cursor.execute(query)
-        data = cursor.fetch_row(maxrows=0)
+        if ret:
+            data = cursor.fetch_row(maxrows=0)
+
         db.close()
 
-        app.logger.error("connected to db")
         return data
+
     except MySQLdb.MySQLError, err:
         app.logger.error("Cannot connect to database. MySQL error: " + str(err))
         return 
