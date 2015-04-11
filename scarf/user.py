@@ -38,16 +38,18 @@ def newuser():
     except:
         if request.method == 'POST':
             flash('Creating user')
-            data = do_sql("INSERT INTO `scarfage`.`users` (`uid`, `username`, `pwhash`, `pwsalt`, `email`, \
-                         `joined`, `lastseen`, `numadds`, `accesslevel`) VALUES (NULL, \
-                          `" + escape(request.form['username']) + "`, \
-                          `" + escape(request.form['password']) + "`, \
-                          `" + escape(request.form['password']) + "`, \
-                          `" + escape(request.form['email']) + "`, \
-                          `2015-04-01`, \
-                          `2015-04-01`, \
-                          `0`, \
-                          `0`);")
+            sql = "INSERT INTO `scarfage`.`users` (`uid`, `username`, `pwhash`, `pwsalt`, `email`, \
+                  `joined`, `lastseen`, `numadds`, `accesslevel`) VALUES (NULL, \
+                   '" + escape(request.form['username']) + "', \
+                   '" + escape(request.form['password']) + "', \
+                   '" + escape(request.form['password']) + "', \
+                   '" + escape(request.form['email']) + "', \
+                   '2015-04-01', \
+                   '2015-04-01', \
+                   '0', \
+                   '0');"
+            return render_template('error.html', errortext=sql)
+            data = do_sql(sql)
             if not data:
                 return render_template('error.html', errortext="SQL error")
             else:
