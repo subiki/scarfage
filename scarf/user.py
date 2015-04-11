@@ -1,5 +1,6 @@
 import os
 import uuid
+import hashlib
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import check_login, redirect_back
@@ -7,6 +8,9 @@ from sql import insert, upsert
 
 #TODO change me
 app.secret_key = '\x8bN\xe5\xe8Q~p\xbdb\xe5\xa5\x894i\xb0\xd9\x07\x10\xe6\xa0\xe5\xbd\x1e\xf8'
+
+def get_pwhash(password, salt):
+    return hashlib.sha224(password + salt).hexdigest()
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -41,11 +45,12 @@ def newuser():
     except:
         if request.method == 'POST':
             flash('Creating user')
+            salt=str(uuid.uuid4().get_hex().upper()[0:6])
             sql = upsert("users", \
                          uid=0, \
                          username=escape(request.form['username']), \
-                         pwhash=escape(request.form['password']), \
-                         pwsalt=str(uuid.uuid4().get_hex().upper()[0:6]), \
+                         pwhash=get_pwhash(request.form['password'], salt), \
+                         pwsalt=salt, \
                          email=escape(request.form['email']), \
                          joined="2015-04-01", \
                          lastseen="2015-04-01", \
