@@ -22,7 +22,7 @@ def check_pw(user, password):
     return False
 
 def check_user(user):
-    sql = read(users, **{"username": user})
+    sql = read('users', **{"username": user})
     data = select(sql)
 
     app.logger.debug(sql)
