@@ -8,7 +8,7 @@ app.secret_key = '\x8bN\xe5\xe8Q~p\xbdb\xe5\xa5\x894i\xb0\xd9\x07\x10\xe6\xa0\xe
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    data = do_sql('SELECT VERSION()')
+    data = do_sql('SELECT VERSION();')
     if not data:
         return render_template('error.html', errortext="SQL error")
     else:
