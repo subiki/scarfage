@@ -8,17 +8,16 @@ import os
 def get_upload(f, name):
     if not f.filename == '':
         try:
-            newname = secure_filename(name) + os.path.splitext(f.filename)[1]
-            f.save('/srv/data/web/vhosts/default/static/uploads/' + newname)
+            newname = '/srv/data/web/vhosts/default/static/uploads/' + secure_filename(name) + os.path.splitext(f.filename)[1]
+            f.save(newname)
         except:
             flash('Error uploading ' + f.filename)
             return
 
-        mime_type = mimetypes.guess_type(newname)[0]
-        if mime_type.split("/")[0] == "image":
+        if mimetypes.guess_type(newname)[0].split("/")[0] == "image":
             flash('Uploaded ' + f.filename)
         else:
-            os.remove('/srv/data/web/vhosts/default/static/uploads/' + newname)
+            os.remove(newname)
             flash(f.filename + " is not an image.")
 
 @app.route('/scarf/<scarf_id>')
