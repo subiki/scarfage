@@ -8,7 +8,7 @@ import uuid
 import datetime
 from sql import upsert, doupsert, read, doselect
 
-def get_upload(f, name):
+def get_imgupload(f, name, tag):
     if not f.filename == '':
         try:
             newname = '/srv/data/web/vhosts/default/static/uploads/' + secure_filename(name) + os.path.splitext(f.filename)[1]
@@ -18,6 +18,16 @@ def get_upload(f, name):
             return
 
         if imghdr.what(newname):
+            uuid=uuid.uuid4()
+            sql = upsert("images", \
+                         uid=0, \
+                         uuid=uuid, \
+                         filename=newname, \
+                         tag=escape(tag))
+            data = doupsert(sql)
+            if not data:
+                return render_template('error.html', errortext="SQL error")
+
             flash('Uploaded ' + f.filename)
         else:
             os.remove(newname)
@@ -83,8 +93,8 @@ def newscarf():
             flash('A scarf with that name already exists')
             return redirect('/scarf/newscarf')
 
-        get_upload(request.files['front'], escape(request.form['name']) + "_front")
-        get_upload(request.files['back'], escape(request.form['name']) + "_back")
+        get_imgupload(request.files['front'], escape(request.form['name']), "front")
+        get_imgupload(request.files['back'], escape(request.form['name']), "back")
 
         #TODO image table & join
 
