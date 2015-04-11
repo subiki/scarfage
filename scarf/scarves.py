@@ -15,7 +15,7 @@ def get_upload(f, name):
             return
 
         mime_type = mimetypes.guess_type(newname)[0]
-        if mime_type.split("/")[-1] == "image":
+        if mime_type.split("/")[0] == "image":
             flash('Uploaded ' + f.filename)
         else:
             os.remove('/srv/data/web/vhosts/default/static/uploads/' + newname)
