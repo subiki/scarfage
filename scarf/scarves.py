@@ -7,9 +7,8 @@ import os
 
 def get_upload(f, name):
     if not f.filename == '':
-        try:
-            f.save('/srv/data/web/vhosts/default/static/uploads/' + newname)
-            newname = secure_filename(name) + os.path.splitext(f.filename)[1]
+        f.save('/srv/data/web/vhosts/default/static/uploads/' + newname)
+        newname = secure_filename(name) + os.path.splitext(f.filename)[1]
         except:
             flash('Error uploading ' + f.filename)
             return
