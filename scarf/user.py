@@ -48,7 +48,6 @@ def newuser():
                    '2015-04-01', \
                    '0', \
                    '0');"
-            return render_template('error.html', errortext=sql)
             data = do_sql(sql)
             if not data:
                 return render_template('error.html', errortext="SQL error")
