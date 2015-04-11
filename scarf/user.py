@@ -13,11 +13,18 @@ def gen_pwhash(password, salt):
     return hashlib.sha224(password + salt).hexdigest()
 
 def check_pw(user, password):
-    sql = 'SELECT `username`, `pwhash`, `pwsalt` FROM `users` WHERE username = `' + user + '`;'
+    sql = "SELECT `username`, `pwhash`, `pwsalt` FROM `users` WHERE username = '" + user + "`;"
     data = select(sql)
     app.logger.debug(data)
 
     return False
+
+def check_user(user):
+    sql = "SELECT `username` FROM `users` WHERE username = '" + user + "`;"
+    data = select(sql)
+    app.logger.debug(data)
+
+    return data
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -44,6 +51,11 @@ def newuser():
             return redirect(url_for('index'))
     except:
         if request.method == 'POST':
+            if check_user(escape(request.form['username'])):
+                flash("User already exists")
+                # TODO, re-fill form
+                return render_template('newuser.html', title="New User")
+
             flash('Creating user')
             salt=str(uuid.uuid4().get_hex().upper()[0:6])
             sql = upsert("users", \
