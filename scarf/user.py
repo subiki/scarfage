@@ -5,7 +5,7 @@ import datetime
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
-from scarflib import check_login, redirect_back
+from scarflib import check_login, redirect_back, hit_lastseen
 from sql import doupsert, upsert, doselect, read
 
 
@@ -34,6 +34,7 @@ def check_pw(user, password):
     checkhash = gen_pwhash(password, pwsalt)
 
     if checkhash == pwhash:
+        hit_lastseen('username')
         return uid
 
     return False

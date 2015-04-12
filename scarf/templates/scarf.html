@@ -11,6 +11,7 @@
 <h1>{{ scarfname }}</h1><br />
 </div>
 
+{% if user is not undefined %}
 <div id="scarfactions">
 {% if myscarfinfo is defined %}
 
@@ -39,6 +40,7 @@ This scarf is up for trade. <a href="/wonttrade/{{ scarfname }}">Nevermind</a>.<
 
 {% endif %}
 </div>
+{% endif %}
 
 <div id="description">
 {{ scarf[3] }}<br />

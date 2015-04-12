@@ -1,6 +1,8 @@
+import datetime
 from scarf import app
-from flask import request, session, redirect, url_for
+from flask import request, session, redirect, url_for, escape
 from urlparse import urlparse, urljoin
+from sql import upsert, doupsert, read, doselect
 
 def removeNonAscii(s): return "".join(i for i in s if ord(i)<128)
 
@@ -21,3 +23,41 @@ def redirect_back(endpoint, **values):
     if not target or not is_safe_url(target):
         target = url_for(endpoint, **values)
     return redirect(target)
+
+def check_scarf(name):
+    sql = read('scarves', **{"name": escape(name)})
+    result = doselect(sql)
+
+    try:
+        return result[0]
+    except:
+        return False
+
+def scarf_imgs(scarf_uid):
+    sql = read('scarfimg', **{"scarfid": scarf_uid})
+    result = doselect(sql)
+    scarfimgs = []
+
+    try:
+        for scarfimg in result:
+            sql = read('images', **{"uuid": scarfimg[1]})
+            result = doselect(sql)
+            scarfimgs.append(result)
+    except:
+        return scarfimgs
+
+    return scarfimgs
+
+def hit_lastseen(user):
+    sql = read('users', **{"username": user})
+    result = doselect(sql)
+
+    try:
+        uid = result[0][0]
+    except: 
+        return False
+
+    sql = upsert("users", \
+                 uid=uid, \
+                 lastseen=datetime.datetime.now())
+    data = doupsert(sql)

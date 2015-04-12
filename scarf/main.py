@@ -1,6 +1,7 @@
 from scarf import app
 from flask import render_template, session, escape, request, flash
 from sql import doselect, read
+from scarflib import hit_lastseen
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -23,6 +24,7 @@ def index():
         flash('no scarves')
 
     if 'username' in session:
+        hit_lastseen(escape(session['username']))
         return render_template('index.html', title="Scarfage", user=escape(session['username']), scarves=scarves)
     else:
         return render_template('index.html', title="Scarfage", scarves=scarves)

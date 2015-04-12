@@ -28,13 +28,20 @@
     {% for item in scarves %}
       {% if user == userinfo[1] %}
         {% if item [0][3] == 1 %}
-        <li>
+        <li><a href="/scarf/{{ item[1][2] }}">{{ item[1][2] }}</a> 
         {% if item [0][6] == 0 %}
-            <a href="/scarf/{{ item[1][2] }}">{{ item[1][2] }}</a> <a href="/hide/{{ item[1][2] }}">Hide</a>
+            - <a href="/hide/{{ item[1][2] }}">Hide</a>
         {% else %}
-            <a href="/scarf/{{ item[1][2] }}">{{ item[1][2] }}</a> <a href="/show/{{ item[1][2] }}">Show</a>
+            - <a href="/show/{{ item[1][2] }}">Show</a>
         {% endif %}
-        <a href="/remove/{{ item[1][2] }}">Remove</a>
+
+        {% if item [0][4] == 1 %}
+           - <a href="/wonttrade/{{ item[1][2] }}">Don't trade</a>
+        {% else %}
+           - <a href="/trade/{{ item[1][2] }}">Trade</a>
+        {% endif %}
+
+        - <a href="/remove/{{ item[1][2] }}">Remove</a>
         </li>
         {% endif %}
 
