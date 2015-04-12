@@ -55,6 +55,34 @@ This scarf is up for trade. <a href="/wonttrade/{{ scarfname }}">Nevermind</a>.<
 {% endfor %}
 </p>
 </div>
+
+<div class="havecount">
+{% if shave == 1 %}
+1 person has this scarf
+{% else %}
+{{ shave }} people have this scarf
+{% endif %}
+</div>
+
+<div class="willtradecount">
+{% if willtrade == 1 %}
+1 person is willing to trade this scarf
+{% else %}
+{{ willtrade }} people are willing to trade this scarf
+{% endif %}
+</div>
+
+<div class="wantscount">
+{% if swants == 1 %}
+1 person wants to trade for this scarf
+{% else %}
+{{ swants }} people want to trade for this scarf
+{% endif %}
+</div>
+
+
+
+
 </div>
 
 {% endblock %}

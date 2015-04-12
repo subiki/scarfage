@@ -79,6 +79,33 @@ def show_post(scarf_id):
     if scarf == False:
         return render_template('error.html', title="Scarf not found", errorcode="404", errortext="Scarf not found."), 404
 
+    sql = read('ownwant', **{"scarfid": scarf[1]})
+    sresult = doselect(sql)
+
+    try:
+        swants = 0
+        for res in sresult:
+            if res[5] == 1:
+                swants = swants + 1
+    except:
+        swants = 0
+
+    try:
+        shave = 0
+        for res in sresult:
+            if res[3] == 1:
+                shave = shave + 1
+    except:
+        shave = 0
+
+    try:
+        willtrade = 0
+        for res in sresult:
+            if res[4] == 1:
+                willtrade = willtrade + 1
+    except:
+        willtrade = 0
+
     if check_login():
         userinfo = get_userinfo(escape(session['username']))
         hit_lastseen(escape(session['username']))
@@ -93,11 +120,11 @@ def show_post(scarf_id):
 
         try:
             iuid = result[0][0]
-            return render_template('scarf.html', title=scarf_id, myscarfinfo=result[0], scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf, user=session['username'])
+            return render_template('scarf.html', willtrade=willtrade, shave=shave, swants=swants, title=scarf_id, myscarfinfo=result[0], scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf, user=session['username'])
         except: 
-            return render_template('scarf.html', title=scarf_id, scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf, user=session['username'])
+            return render_template('scarf.html', willtrade=willtrade, shave=shave, swants=swants, title=scarf_id, scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf, user=session['username'])
 
-    return render_template('scarf.html', title=scarf_id, scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf)
+    return render_template('scarf.html', willtrade=willtrade, shave=shave, swants=swants, title=scarf_id, scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf)
 
 @app.route('/scarf/newscarf', methods=['GET', 'POST'])
 def newscarf():
