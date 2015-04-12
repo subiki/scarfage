@@ -11,9 +11,40 @@
 <h1>{{ scarfname }}</h1><br />
 </div>
 
+<div id="scarfactions">
+{% if myscarfinfo is defined %}
+
+{% if myscarfinfo[3] == 0 %}
+<a href="/ihave/{{ scarfname }}">I own this</a></br>
+
+{% if myscarfinfo[5] == 0 %}
+<a href="/want/{{ scarfname }}">I want this</a></br>
+{% else %}
+You want this scarf. <a href="/dontwant/{{ scarfname }}">Nevermind.</a><br />
+{% endif %}
+
+{% else %}
+This scarf is in your collection. <a href="/remove/{{ scarfname }}">Remove it</a>.<br />
+{% if myscarfinfo[4] == 0 %}
+<a href="/willtrade/{{ scarfname }}">I'll trade this</a>
+{% else %}
+This scarf is up for trade. <a href="/wonttrade/{{ scarfname }}">Nevermind</a>.<br />
+{% endif %}
+{% endif %}
+{% else %}
+
+<a href="/ihave/{{ scarfname }}">I own this</a>
+<a href="/willtrade/{{ scarfname }}">I'll trade this</a>
+<a href="/want/{{ scarfname }}">I want this</a>
+
+{% endif %}
+</div>
+
 <div id="description">
 {{ scarf[3] }}<br />
 </div>
+
+
 
 <br>
 <div id="scarfimg">

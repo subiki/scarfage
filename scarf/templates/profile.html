@@ -23,6 +23,59 @@
 
     {% endif %}
 
+    <h1>{{ userinfo[1] }}'s scarves</h1>
+    <ul>
+    {% for item in scarves %}
+      {% if user == userinfo[1] %}
+        {% if item [0][3] == 1 %}
+        <li>
+        {% if item [0][6] == 0 %}
+            <a href="/scarf/{{ item[1][2] }}">{{ item[1][2] }}</a> <a href="/hide/{{ item[1][2] }}">Hide</a>
+        {% else %}
+            <a href="/scarf/{{ item[1][2] }}">{{ item[1][2] }}</a> <a href="/show/{{ item[1][2] }}">Show</a>
+        {% endif %}
+        <a href="/remove/{{ item[1][2] }}">Remove</a>
+        </li>
+        {% endif %}
+
+      {% else %}
+
+        {% if item [0][6] == 0 and item [0][3] == 1 %}
+            <li>
+            {% if item [0][4] == 1 %}
+               up for trade - 
+            {% endif %}
+            
+            <a href="/scarf/{{ item[1][2] }}">{{ item[1][2] }}</a></li>
+        {% endif %}
+
+      {% endif %}
+
+    {% endfor %}
+    </ul>
+
+    <h1>{{ userinfo[1] }}'s wanted scarves</h1>
+    <ul>
+    {% for item in scarves %}
+      {% if user == userinfo[1] %}
+        {% if item [0][5] == 1 %}
+        <li>
+            <a href="/scarf/{{ item[1][2] }}">{{ item[1][2] }}</a> <a href="/dontwant/{{ item[1][2] }}">Nevermind.</a>
+        </li>
+        {% endif %}
+
+      {% else %}
+
+        {% if item [0][5] == 1 %}
+            <li> <a href="/scarf/{{ item[1][2] }}">{{ item[1][2] }}</a></li>
+        {% endif %}
+
+      {% endif %}
+
+
+    {% endfor %}
+    </ul>
+
 
 </div>
 

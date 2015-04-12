@@ -5,8 +5,11 @@ from scarflib import check_login
 import os
 import imghdr
 import uuid
+import re
 import datetime
 from sql import upsert, doupsert, read, doselect
+from profile import get_userinfo
+from scarflib import redirect_back
 
 # DEBUG
 import socket 
@@ -94,6 +97,108 @@ def inc_scarfcount(user):
 def scarfroot():
     return redirect(url_for('index'))
 
+@app.route('/remove/<scarf_id>')
+def remove(scarf_id):
+    ownwant(scarf_id, 4, 0)
+    ownwant(scarf_id, 5, 0)
+    ownwant(scarf_id, 6, 0)
+    ownwant(scarf_id, 7, 0)
+    return redirect_back('/scarf/' + escape(scarf_id))
+
+@app.route('/ihave/<scarf_id>')
+def ihave(scarf_id):
+    ownwant(scarf_id, 4, 1)
+    return redirect_back('/scarf/' + escape(scarf_id))
+
+@app.route('/hide/<scarf_id>')
+def hide(scarf_id):
+    ownwant(scarf_id, 7, 1)
+    return redirect_back('/scarf/' + escape(scarf_id))
+
+@app.route('/show/<scarf_id>')
+def show(scarf_id):
+    ownwant(scarf_id, 7, 0)
+    return redirect_back('/scarf/' + escape(scarf_id))
+
+@app.route('/wonttrade/<scarf_id>')
+def wonttrade(scarf_id):
+    ownwant(scarf_id, 5, 0)
+    return redirect_back('/scarf/' + escape(scarf_id))
+
+@app.route('/willtrade/<scarf_id>')
+def willtrade(scarf_id):
+    ownwant(scarf_id, 4, 1)
+    ownwant(scarf_id, 5, 1)
+    return redirect_back('/scarf/' + escape(scarf_id))
+
+@app.route('/want/<scarf_id>')
+def want(scarf_id):
+    ownwant(scarf_id, 4, 0)
+    ownwant(scarf_id, 6, 1)
+    return redirect_back('/scarf/' + escape(scarf_id))
+
+@app.route('/dontwant/<scarf_id>')
+def dontwant(scarf_id):
+    ownwant(scarf_id, 6, 0)
+    return redirect_back('/scarf/' + escape(scarf_id))
+
+def ownwant(scarf_id, index, value):
+    scarf = check_scarf(escape(scarf_id))
+    if scarf == False:
+        return
+
+    if check_login():
+        userinfo = get_userinfo(escape(session['username']))
+        try:
+            uid = userinfo[0][0]
+        except:
+            flash('userinfo')
+            return
+
+        sql = read('ownwant', **{"userid": uid, "scarfid": scarf[1]})
+        result = doselect(sql)
+        app.logger.debug(result)
+
+        iuid=0
+        try:
+            iuid = result[0][0]
+        except: 
+            iuid=0
+
+        if index == 4:
+            sql = upsert("ownwant", \
+                         uid=iuid,
+                         userid=uid, \
+                         scarfid=scarf[1], \
+                         own=value)
+
+        if index == 5:
+            sql = upsert("ownwant", \
+                         uid=iuid,
+                         userid=uid, \
+                         scarfid=scarf[1], \
+                         willtrade=value)
+
+        if index == 6:
+            sql = upsert("ownwant", \
+                         uid=iuid,
+                         userid=uid, \
+                         scarfid=scarf[1], \
+                         want=value)
+        if index == 7:
+            sql = upsert("ownwant", \
+                         uid=iuid,
+                         userid=uid, \
+                         scarfid=scarf[1], \
+                         hidden=value)
+
+        data = doupsert(sql)
+
+    else:
+        flash("You must be logged in to modify a collection.")
+
+    return 
+
 @app.route('/scarf/<scarf_id>')
 def show_post(scarf_id):
     scarf = check_scarf(escape(scarf_id))
@@ -101,9 +206,23 @@ def show_post(scarf_id):
         return render_template('error.html', title="Scarf not found", errorcode="404", errortext="Scarf not found."), 404
 
     if check_login():
-        return render_template('scarf.html', title=scarf_id, scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf, user=session['username'])
-    else:
-        return render_template('scarf.html', title=scarf_id, scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf)
+        userinfo = get_userinfo(escape(session['username']))
+        try:
+            uid = userinfo[0][0]
+        except:
+            flash('userinfo')
+            return render_template('error.html', errortext="SQL error")
+
+        sql = read('ownwant', **{"userid": uid, "scarfid": scarf[1]})
+        result = doselect(sql)
+
+        try:
+            iuid = result[0][0]
+            return render_template('scarf.html', title=scarf_id, myscarfinfo=result[0], scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf, user=session['username'])
+        except: 
+            return render_template('scarf.html', title=scarf_id, scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf, user=session['username'])
+
+    return render_template('scarf.html', title=scarf_id, scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf)
 
 @app.route('/scarf/newscarf', methods=['GET', 'POST'])
 def newscarf():
@@ -120,6 +239,10 @@ def newscarf():
             flash('Very funny')
             return redirect('/scarf/newscarf')
 
+        if '/' in request.form['name'] or  '\\' in request.form['name']:
+            flash('No slashes in names please')
+            return redirect('/scarf/newscarf')
+
         if check_scarf(escape(request.form['name'])):
             flash('A scarf with that name already exists')
             return redirect('/scarf/newscarf')
@@ -128,8 +251,6 @@ def newscarf():
 
         get_imgupload(request.files['front'], suuid, "front")
         get_imgupload(request.files['back'], suuid, "back")
-
-        #TODO image table & join
 
         sql = upsert("scarves", \
                      uid=0, \
