@@ -8,38 +8,69 @@ import uuid
 import datetime
 from sql import upsert, doupsert, read, doselect
 
-def get_imgupload(f, name, tag):
+# DEBUG
+import socket 
+if socket.gethostname() == "grenadine":
+    upload_dir = '/home/pq/sf/site/scarf/static/uploads/'
+else: 
+    upload_dir = '/srv/data/web/vhosts/default/static/uploads/'
+
+def get_imgupload(f, scarfuid, tag):
     if not f.filename == '':
+        fuuid = uuid.uuid4().get_hex()
         try:
-            newname = '/srv/data/web/vhosts/default/static/uploads/' + secure_filename(name) + os.path.splitext(f.filename)[1]
-            f.save(newname)
+            newname = fuuid + os.path.splitext(f.filename)[1]
+            f.save(upload_dir + newname)
         except:
             flash('Error uploading ' + f.filename)
             return
 
-        if imghdr.what(newname):
+        if imghdr.what(upload_dir + newname):
             sql = upsert("images", \
                          uid=0, \
-                         uuid=uuid.uuid4(), \
+                         uuid=fuuid, \
                          filename=newname, \
                          tag=escape(tag))
             data = doupsert(sql)
             if not data:
                 return render_template('error.html', errortext="SQL error")
 
+            sql = upsert("scarfimg", \
+                         imgid=fuuid, \
+                         scarfid=scarfuid)
+            data = doupsert(sql)
+            if not data:
+                return render_template('error.html', errortext="SQL error")
+
+
             flash('Uploaded ' + f.filename)
         else:
-            os.remove(newname)
+            os.remove(upload_dir + newname)
             flash(f.filename + " is not an image.")
 
 def check_scarf(name):
     sql = read('scarves', **{"name": escape(name)})
     result = doselect(sql)
 
-    if result:
-        return True
+    try:
+        return result[0]
+    except:
+        return False
 
-    return False
+def scarf_imgs(scarf_uid):
+    sql = read('scarfimg', **{"scarfid": scarf_uid})
+    result = doselect(sql)
+    scarfimgs = []
+
+    try:
+        for scarfimg in result:
+            sql = read('images', **{"uuid": scarfimg[1]})
+            result = doselect(sql)
+            scarfimgs.append(result)
+    except:
+        return scarfimgs
+
+    return scarfimgs
 
 def inc_scarfcount(user):
     sql = read('users', **{"username": escape(user)})
@@ -65,13 +96,14 @@ def scarfroot():
 
 @app.route('/scarf/<scarf_id>')
 def show_post(scarf_id):
-    if not check_scarf(escape(scarf_id)):
+    scarf = check_scarf(escape(scarf_id))
+    if scarf == False:
         return render_template('error.html', title="Scarf not found", errorcode="404", errortext="Scarf not found."), 404
 
     if check_login():
-        return render_template('scarf.html', title=scarf_id, scarfname=scarf_id, user=session['username'])
+        return render_template('scarf.html', title=scarf_id, scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf, user=session['username'])
     else:
-        return render_template('scarf.html', title=scarf_id, scarfname=scarf_id)
+        return render_template('scarf.html', title=scarf_id, scarfname=scarf_id, scarfimgs=scarf_imgs(scarf[1]), scarf=scarf)
 
 @app.route('/scarf/newscarf', methods=['GET', 'POST'])
 def newscarf():
@@ -92,14 +124,16 @@ def newscarf():
             flash('A scarf with that name already exists')
             return redirect('/scarf/newscarf')
 
-        get_imgupload(request.files['front'], escape(request.form['name']), "front")
-        get_imgupload(request.files['back'], escape(request.form['name']), "back")
+        suuid=uuid.uuid4().get_hex()
+
+        get_imgupload(request.files['front'], suuid, "front")
+        get_imgupload(request.files['back'], suuid, "back")
 
         #TODO image table & join
 
         sql = upsert("scarves", \
                      uid=0, \
-                     uuid=uuid.uuid4(), \
+                     uuid=suuid, \
                      name=escape(request.form['name']), \
                      description=escape(request.form['desc']), \
                      added=datetime.datetime.now(), \
