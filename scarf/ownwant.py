@@ -22,6 +22,7 @@ def ihave(scarf_id):
 
 @app.route('/hide/<scarf_id>')
 def hide(scarf_id):
+    ownwant(scarf_id, 5, 0)
     ownwant(scarf_id, 7, 1)
     return redirect_back('/scarf/' + escape(scarf_id))
 
@@ -39,6 +40,7 @@ def wonttrade(scarf_id):
 def willtrade(scarf_id):
     ownwant(scarf_id, 4, 1)
     ownwant(scarf_id, 5, 1)
+    ownwant(scarf_id, 7, 0)
     return redirect_back('/scarf/' + escape(scarf_id))
 
 @app.route('/want/<scarf_id>')
