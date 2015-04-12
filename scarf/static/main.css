@@ -18,10 +18,11 @@ html {
 #content {
     float:left;
     padding: 10px;
-    width: 100%;
+    width: 95%;
 }
 
 #flashes {
+    clear: both;
     padding: 5px 5px;
     background:#0000ef;
 }
@@ -56,6 +57,11 @@ form {
   font-weight: bold;
 }
 
+.nav {
+  float:left;
+  padding:10px;
+}
+
 input {
   background: #fff;
   border: 1px solid #c6c7cc;
@@ -88,4 +94,7 @@ input {
 
 .small {
     font-size: 70%;
+}
+
+.resetform {
 }

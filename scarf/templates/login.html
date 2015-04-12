@@ -14,8 +14,6 @@
         <input class="login-form-input" type=password name=password><br />
       </div>
 
-        <input class="login-form-input" type=hidden value="{{ next or '' }}" name=next>
-
       <div class="login-form-group">
         <input class=button type=submit value=Login>
       </div>
@@ -23,7 +21,7 @@
     <a class=small href="/newuser">New user</a>
     </center>
     {% else %}
-        Logged in as: {{ user }}. <a href="/logout">Logout</a> 
+        Logged in as: <a href="/user/{{ user }}">{{ user }}</a>. <a href="/logout">Logout</a> 
     {% endif %}
 </div>
 

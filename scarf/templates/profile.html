@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+    <h1>{{ userinfo[1] }}'s profile</h1>
+    {% if user != userinfo[1] %}
+        <ul>
+            <li>Member since: {{ userinfo[5] }}</li>
+            <li>Scarves added: {{ userinfo[7] }}</li>
+        </ul>
+ 
+    {% else %}
+        <ul>
+            <li>Email: {{ userinfo[4] }}</li>
+            <li>Member since: {{ userinfo[5] }}</li>
+            <li>Scarves added: {{ userinfo[7] }}</li>
+            <li>Access level: {{ userinfo[8] }}</li>
+            <li><a href="/pwreset">Password and email reset</a></li>
+        </ul>
+
+    {% endif %}
+
+
+</div>
+
+{% endblock %}

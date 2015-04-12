@@ -7,6 +7,16 @@
     {% endblock %}
 </head>
 <body>
+    <div id="header">
+        <h1>Something goes here</h1><br />
+        <div class=nav>
+        <a href="/">Home</a>
+        </div>
+        <div class=nav>
+        <a href="/scarf/newscarf">Add a scarf!</a>
+        </div>
+    </div>
+
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <div id="flashes">
