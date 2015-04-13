@@ -6,7 +6,7 @@ import datetime
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
-from scarflib import check_login
+from scarflib import check_login, is_admin
 from sql import upsert, doupsert, read, doselect
 from profile import get_userinfo
 from scarflib import redirect_back, check_scarf, scarf_imgs, hit_lastseen, pagedata
@@ -109,8 +109,9 @@ def show_post(scarf_id):
         pd.willtrade = 0
 
     if check_login():
-        userinfo = get_userinfo(escape(session['username']))
-        hit_lastseen(escape(session['username']))
+        userinfo = get_userinfo(session['username'])
+        hit_lastseen(session['username'])
+        pd.admin = is_admin(session['username'])
         try:
             uid = userinfo[0][0]
         except:
@@ -124,6 +125,7 @@ def show_post(scarf_id):
 
             pd.myscarfinfo=result[0]
             pd.user = session['username']
+            pd.admin = is_admin(username)
         except: 
             app.logger.debug('')
 
@@ -183,7 +185,8 @@ def newscarf():
     pd = pagedata()
     pd.title="Add New Scarf"
     if check_login():
-        hit_lastseen(escape(session['username']))
-        pd.user = escape(session['username'])
+        hit_lastseen(session['username'])
+        pd.user = session['username']
+        pd.admin = is_admin(session['username'])
 
     return render_template('newscarf.html', pd=pd)

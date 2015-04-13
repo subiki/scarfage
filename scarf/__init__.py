@@ -8,3 +8,4 @@ import scarf.scarves
 import scarf.sql
 import scarf.profile
 import scarf.ownwant
+import scarf.admin

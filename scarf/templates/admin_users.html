@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+
+<ul id="userlist">
+<li>username - email - joined - lastseen - # scarves added - accesslevel</li>
+{% for item in pd.users %}
+    <li>{{ item[1] }} - {{ item[4] }} - {{ item[5] }} - {{ item[6] }} - {{ item[7] }} - {{ item[8] }}</a></li>
+{% endfor %}
+</ul><br />
+
+</div>
+
+{% endblock %}

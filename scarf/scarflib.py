@@ -64,3 +64,20 @@ def hit_lastseen(user):
                  uid=uid, \
                  lastseen=datetime.datetime.now())
     data = doupsert(sql)
+
+def get_userinfo(user):
+    sql = read('users', **{"username": user})
+    result = doselect(sql)
+
+    try:
+        return result
+    except:
+        return
+
+def is_admin(user):
+    accesslevel = get_userinfo(user)[0][8]
+
+    if accesslevel == 255:
+       return True
+
+    return False

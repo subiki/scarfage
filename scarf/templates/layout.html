@@ -15,6 +15,11 @@
         <div class=nav>
         <a href="/scarf/newscarf">Add a scarf!</a>
         </div>
+        {% if pd.admin == 1 %}
+        <div class=nav>
+        <a href="/admin/users">Admin</a>
+        </div>
+        {% endif %}
     </div>
 
     {% with messages = get_flashed_messages() %}
