@@ -16,29 +16,36 @@
 {% if pd.myscarfinfo is defined %}
 
 {% if pd.myscarfinfo[3] == 0 %}
-<a href="/ihave/{{ pd.scarfname }}">I own this</a></br>
+<a href="/scarf/{{ pd.scarfname }}/have">I own this</a></br>
 
 {% if pd.myscarfinfo[5] == 0 %}
-<a href="/want/{{ pd.scarfname }}">I want this</a></br>
+<a href="/scarf/{{ pd.scarfname }}/want">I want this</a></br>
 {% else %}
-You want this scarf. <a href="/dontwant/{{ pd.scarfname }}">Nevermind.</a><br />
+You want this scarf. <a href="/scarf/{{ pd.scarfname }}/dontwant">Nevermind.</a><br />
 {% endif %}
 
 {% else %}
-This scarf is in your collection. <a href="/remove/{{ pd.scarfname }}">Remove it</a>.<br />
+This scarf is in your collection. <a href="/scarf/{{ pd.scarfname }}/remove">Remove it</a>.<br />
 {% if pd.myscarfinfo[4] == 0 %}
-<a href="/willtrade/{{ pd.scarfname }}">I'll trade this</a>
+<a href="/scarf/{{ pd.scarfname }}/willtrade">I'll trade this</a>
 {% else %}
-This scarf is up for trade. <a href="/wonttrade/{{ pd.scarfname }}">Nevermind</a>.<br />
+This scarf is up for trade. <a href="/scarf/{{ pd.scarfname }}/wonttrade">Nevermind</a>.<br />
 {% endif %}
 {% endif %}
+
+
 {% else %}
 
-<a href="/ihave/{{ pd.scarfname }}">I own this</a>
-<a href="/willtrade/{{ pd.scarfname }}">I'll trade this</a>
-<a href="/want/{{ pd.scarfname }}">I want this</a>
+<a href="/scarf/{{ pd.scarfname }}/have">I own this</a>
+<a href="/scarf/{{ pd.scarfname }}/willtrade">I'll trade this</a>
+<a href="/scarf/{{ pd.scarfname }}/want">I want this</a>
 
 {% endif %}
+
+{% if pd.accesslevel == 255 %}
+<a href="/scarf/{{ pd.scarfname }}/delete">Delete</a>
+{% endif %}
+
 </div>
 {% endif %}
 
@@ -50,8 +57,8 @@ This scarf is up for trade. <a href="/wonttrade/{{ pd.scarfname }}">Nevermind</a
 
 <br>
 <div id="scarfimg">
-{% for item in pd.scarfimgs %}
-    <img src="/static/uploads/{{ pd.item[0][2] }}" alt="{{ pd.item[0][3] }}"><br />
+{% for item in pd.scarfimg %}
+    <img src="/static/uploads/{{ item[0][2] }}" alt="{{ item[0][3] }}"><br />
 {% endfor %}
 </p>
 </div>
@@ -79,10 +86,6 @@ This scarf is up for trade. <a href="/wonttrade/{{ pd.scarfname }}">Nevermind</a
 {{ pd.swants }} people want to trade for this scarf
 {% endif %}
 </div>
-
-
-
-
 </div>
 
 {% endblock %}

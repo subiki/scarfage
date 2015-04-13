@@ -29,7 +29,6 @@ def accessdenied():
 @app.route('/')
 def index():
     pd = pagedata()
-    pd.load()
     pd.title = "Scarfage"
 
     sql = read('scarves')

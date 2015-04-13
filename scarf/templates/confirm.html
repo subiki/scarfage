@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+
+<p>
+<div id="scarfname">
+<h1>{{ pd.scarfname }}</h1><br />
+</div>
+
+{% if pd.accesslevel >= pd.accessreq %}
+
+<div id=conftext>
+{{ pd.conftext }}
+</div>
+
+<a href="{{ pd.conftarget }}">{{ pd.conflinktext }}</a>
+
+{% else %}
+No way dude.
+{% endif %}
+</div>
+
+</div>
+</div>
+
+{% endblock %}

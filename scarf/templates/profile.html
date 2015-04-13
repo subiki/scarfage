@@ -31,18 +31,18 @@
         {% if item['own'] == 1 %}
         <li><a href="/scarf/{{ item['name'] }}">{{ item['name'] }}</a> 
         {% if item['hidden'] == 0 %}
-            - <a href="/hide/{{ item['name'] }}">Hide</a>
+            - <a href="/scarf/{{ item['name'] }}/hide">Hide</a>
         {% else %}
-            - <a href="/show/{{ item['name'] }}">Show</a>
+            - <a href="/scarf/{{ item['name'] }}/show">Show</a>
         {% endif %}
 
         {% if item['willtrade'] == 1 %}
-           - <a href="/wonttrade/{{ item['name'] }}">Don't trade</a>
+           - <a href="/scarf/{{ item['name'] }}/wonttrade">Don't trade</a>
         {% else %}
-           - <a href="/willtrade/{{ item['name'] }}">Trade</a>
+           - <a href="/scarf/{{ item['name'] }}/willtrade">Trade</a>
         {% endif %}
 
-        - <a href="/remove/{{ item['name'] }}">Remove</a>
+        - <a href="/scarf/{{ item['name'] }}/remove">Remove</a>
         </li>
         {% endif %}
 
@@ -65,10 +65,10 @@
     <h1>{{ pd.userinfo[1] }}'s wanted scarves</h1>
     <ul>
     {% for item in pd.scarves %}
-      {% if user == pd.userinfo[1] %}
+      {% if pd.user == pd.userinfo[1] %}
         {% if item['want'] == 1 %}
         <li>
-            <a href="/scarf/{{ item['name'] }}">{{ item['name'] }}</a> <a href="/dontwant/{{ item['name'] }}">Nevermind.</a>
+            <a href="/scarf/{{ item['name'] }}">{{ item['name'] }}</a> <a href="/scarf/{{ item['name'] }}/dontwant">Nevermind.</a>
         </li>
         {% endif %}
 

@@ -9,7 +9,36 @@
 <ul id="userlist">
 <li>username - email - joined - lastseen - # scarves added - User type</li>
 {% for item in pd.users %}
-    <li>{{ item[1] }} - {{ item[4] }} - {{ item[5] }} - {{ item[6] }} - {{ item[7] }} - {{ pd.accesslevels[item[8]] }}</a></li>
+    <li>{{ item[1] }} - {{ item[4] }} - {{ item[5] }} - {{ item[6] }} - {{ item[7] }} - {{ pd.accesslevels[item[8]] }}</a>
+    
+    {% if item[1] == pd.user %}
+    - you
+    {% else %}
+    
+    {% if item[8] == 0 %}
+    - <a href="/admin/users/{{ item[1] }}/accesslevel/1 }}">Unban</a>
+    {% else %}
+
+        - <a href="/admin/users/{{ item[1] }}/accesslevel/0 }}">Ban</a>
+
+        {% if item[8] < 10 %}
+        - <a href="/admin/users/{{ item[1] }}/accesslevel/10 }}">Promote</a>
+        {% endif %}
+
+        {% if item[8] == 10 %}
+        - <a href="/admin/users/{{ item[1] }}/accesslevel/1 }}">Demote</a>
+        - <a href="/admin/users/{{ item[1] }}/accesslevel/255 }}">Promote</a>
+        {% endif %}
+
+        {% if item[8] == 255 %}
+        - <a href="/admin/users/{{ item[1] }}/accesslevel/1 }}">Demote</a>
+        {% endif %}
+
+    {% endif %}
+
+    {% endif %}
+    
+    </li>
 {% endfor %}
 </ul><br />
 

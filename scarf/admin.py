@@ -3,8 +3,6 @@ from flask import redirect, url_for, render_template, session, escape, request, 
 from scarflib import check_login, redirect_back, hit_lastseen, pagedata, get_userinfo, is_admin
 from sql import doupsert, upsert, doselect, read
 
-accesslevels = {0:'banned', 1:'user', 10:'moderator', 255:'admin'}
-
 def get_users():
     sql = read('users')
     result = doselect(sql)
@@ -22,14 +20,33 @@ def admin_users():
     if 'username' not in session:
         return redirect(url_for('accessdenied'))
 
-    if not is_admin(session['username']):
+    if not pd.accesslevel == 255:
         return redirect(url_for('accessdenied'))
 
     pd.title = "Admin - User List" 
-    pd.user = session['username']
-    pd.admin = 1
 
     pd.users = get_users()
-    pd.accesslevels = accesslevels
 
     return render_template('admin_users.html', pd=pd)
+
+@app.route('/admin/users/<user>/accesslevel/<level>')
+def admin_ban_user(user, level):
+    pd = pagedata()
+
+    if 'username' not in session:
+        return redirect(url_for('accessdenied'))
+
+    if not pd.accesslevel == 255:
+        return redirect(url_for('accessdenied'))
+
+    try:
+        uid = get_userinfo(escape(user))[0][0]
+    except:
+        return render_template('error.html', errortext="SQL error")
+
+    sql = upsert("users", \
+                 uid=uid, \
+                 accesslevel=level)
+    data = doupsert(sql)
+
+    return redirect_back('/admin/users')

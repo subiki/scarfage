@@ -5,16 +5,15 @@ from urlparse import urlparse, urljoin
 from sql import upsert, doupsert, read, doselect
 
 class pagedata:
+    accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
     pass
 
-    def load(self):
+    def __init__(self):
+        self.accesslevel = -1
         if 'username' in session:
             hit_lastseen(session['username'])
             self.user = session['username']
-            self.admin = is_admin(session['username'])
-
-
-
+            self.accesslevel = get_accesslevel(session['username'])
 
 def removeNonAscii(s): return "".join(i for i in s if ord(i)<128)
 
@@ -81,7 +80,11 @@ def get_userinfo(user):
     try:
         return result
     except:
+        flash('no user')
         return
+
+def get_accesslevel(user):
+    return get_userinfo(user)[0][8]
 
 def is_admin(user):
     accesslevel = get_userinfo(user)[0][8]

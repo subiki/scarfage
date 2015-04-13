@@ -5,51 +5,51 @@ from sql import upsert, doupsert, read, doselect
 from profile import get_userinfo
 from scarflib import redirect_back
 
-@app.route('/remove/<scarf_id>')
+@app.route('/scarf/<scarf_id>/remove')
 def remove(scarf_id):
     # TODO actually remove these at some point
     ownwant(scarf_id, 4, 0)
     ownwant(scarf_id, 5, 0)
     ownwant(scarf_id, 6, 0)
     ownwant(scarf_id, 7, 0)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    return redirect_back('/scarf/scarf/' + escape(scarf_id))
 
-@app.route('/ihave/<scarf_id>')
-def ihave(scarf_id):
+@app.route('/scarf/<scarf_id>/have')
+def have(scarf_id):
     ownwant(scarf_id, 4, 1)
     ownwant(scarf_id, 6, 0)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    return redirect_back('/scarf/scarf/' + escape(scarf_id))
 
-@app.route('/hide/<scarf_id>')
+@app.route('/scarf/<scarf_id>/hide')
 def hide(scarf_id):
     ownwant(scarf_id, 5, 0)
     ownwant(scarf_id, 7, 1)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    return redirect_back('/scarf/scarf/' + escape(scarf_id))
 
-@app.route('/show/<scarf_id>')
+@app.route('/scarf/<scarf_id>/show')
 def show(scarf_id):
     ownwant(scarf_id, 7, 0)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    return redirect_back('/scarf/scarf/' + escape(scarf_id))
 
-@app.route('/wonttrade/<scarf_id>')
+@app.route('/scarf/<scarf_id>/wonttrade')
 def wonttrade(scarf_id):
     ownwant(scarf_id, 5, 0)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    return redirect_back('/scarf/scarf/' + escape(scarf_id))
 
-@app.route('/willtrade/<scarf_id>')
+@app.route('/scarf/<scarf_id>/willtrade')
 def willtrade(scarf_id):
     ownwant(scarf_id, 4, 1)
     ownwant(scarf_id, 5, 1)
     ownwant(scarf_id, 7, 0)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    return redirect_back('/scarf/scarf/' + escape(scarf_id))
 
-@app.route('/want/<scarf_id>')
+@app.route('/scarf/<scarf_id>/want')
 def want(scarf_id):
     ownwant(scarf_id, 4, 0)
     ownwant(scarf_id, 6, 1)
     return redirect_back('/scarf/' + escape(scarf_id))
 
-@app.route('/dontwant/<scarf_id>')
+@app.route('/scarf/<scarf_id>/dontwant')
 def dontwant(scarf_id):
     ownwant(scarf_id, 6, 0)
     return redirect_back('/scarf/' + escape(scarf_id))

@@ -5,14 +5,13 @@ from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import check_login, redirect_back, pagedata, get_userinfo, is_admin
 from sql import doupsert, upsert, doselect, read
+from main import page_not_found
 
 @app.route('/pwreset')
 def pwreset():
     if 'username' in session:
         pd = pagedata()
         pd.title = title="Reset Password"
-        pd.user = session['username']
-        pd.admin = is_admin(session['username'])
         return render_template('pwreset.html', pd=pd)
     else:
         return redirect(url_for('index'))
@@ -43,10 +42,6 @@ def show_user_profile(username):
         except: 
             app.logger.debug(result)
     except:
-         return render_template('error.html', errortext="SQL error")
-
-    if 'username' in session:
-        pd.user = session['username']
-        pd.admin = is_admin(session['username'])
+        return page_not_found(404)
 
     return render_template('profile.html', pd=pd)

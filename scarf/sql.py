@@ -71,6 +71,7 @@ def doupsert(query):
 
     app.logger.error("Cannot connect to database. MySQL error")
 
+#TODO rename, also does deletes
 def doselect(query):
     app.logger.debug(query)
 
@@ -82,6 +83,7 @@ def doselect(query):
 
         data = cur.fetchall()
 
+        db.commit()
         db.close()
 
         return data

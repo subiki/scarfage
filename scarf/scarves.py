@@ -7,9 +7,10 @@ from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
 from scarflib import check_login, is_admin
-from sql import upsert, doupsert, read, doselect
+from sql import upsert, doupsert, read, doselect, delete
 from profile import get_userinfo
 from scarflib import redirect_back, check_scarf, scarf_imgs, hit_lastseen, pagedata
+from main import page_not_found
 
 # DEBUG
 import socket 
@@ -19,6 +20,7 @@ else:
     upload_dir = '/srv/data/web/vhosts/default/static/uploads/'
 
 def get_imgupload(f, scarfuid, tag):
+    pd = pagedata()
     if not f.filename == '':
         fuuid = uuid.uuid4().get_hex()
         try:
@@ -36,19 +38,23 @@ def get_imgupload(f, scarfuid, tag):
                          tag=escape(tag))
             data = doupsert(sql)
             if not data:
-                return render_template('error.html', errortext="SQL error")
+                pd.errortext="SQL error"
+                return render_template('error.html', pd=pd)
 
             sql = upsert("scarfimg", \
                          imgid=fuuid, \
                          scarfid=scarfuid)
             data = doupsert(sql)
             if not data:
-                return render_template('error.html', errortext="SQL error")
-
+                pd.errortext="SQL error"
+                return render_template('error.html', pd=pd)
 
             flash('Uploaded ' + f.filename)
         else:
-            os.remove(upload_dir + newname)
+            try:
+                os.remove(upload_dir + newname)
+            except:
+                app.logger.error("Error removing failed image upload: " + upload_dir + newname)
             flash(f.filename + " is not an image.")
 
 def inc_scarfcount(user):
@@ -73,11 +79,74 @@ def inc_scarfcount(user):
 def scarfroot():
     return redirect(url_for('index'))
 
-@app.route('/scarf/<scarf_id>')
-def show_post(scarf_id):
+@app.route('/scarf/<scarf_id>/reallydelete')
+def reallydelete_scarf(scarf_id):
     scarf = check_scarf(escape(scarf_id))
     if scarf == False:
-        return render_template('error.html', title="Scarf not found", errorcode="404", errortext="Scarf not found."), 404
+        return page_not_found(404)
+
+    pd = pagedata()
+
+    if not pd.accesslevel == 255:
+        return redirect(url_for('accessdenied'))
+
+    pd.title=escape(scarf_id) + " has been deleted"
+    pd.scarfname=escape(scarf_id)
+    pd.scarfimg=scarf_imgs(scarf[1])
+
+    for i in pd.scarfimg:
+        try:
+            os.remove(upload_dir + i[0][2])
+
+            sql = delete('images', **{"uuid": i[0][1]})
+            result = doselect(sql)
+        except:
+            flash("Error removing image: " + i[0][2])
+            app.logger.error("Error removing image: " + i[0][2])
+
+    sql = delete('scarves', **{"uuid": scarf[1]})
+    result = doselect(sql)
+
+    sql = delete('scarfimg', **{"scarfid": scarf[1]})
+    result = doselect(sql)
+
+    sql = delete('ownwant', **{"scarfid": scarf[1]})
+    result = doselect(sql)
+
+    pd.accessreq = 255
+    pd.conftext = pd.scarfname + " and its images have been deleted. I hope you meant to do that."
+    pd.conftarget = ""
+    pd.conflinktext = ""
+    return render_template('confirm.html', pd=pd)
+
+@app.route('/scarf/<scarf_id>/delete')
+def delete_scarf(scarf_id):
+    scarf = check_scarf(escape(scarf_id))
+    if scarf == False:
+        return page_not_found(404)
+
+    pd = pagedata()
+
+    if not pd.accesslevel == 255:
+        return redirect(url_for('accessdenied'))
+
+    pd.title=escape(scarf_id)
+    pd.scarfname=escape(scarf_id)
+    pd.scarfimg=scarf_imgs(scarf[1])
+    pd.scarf = scarf
+
+    pd.accessreq = 255
+    pd.conftext = "Deleting scarf " + pd.scarfname
+    pd.conftarget = "/scarf/" + pd.scarfname + "/reallydelete"
+    pd.conflinktext = "Yup, I'm sure"
+
+    return render_template('confirm.html', pd=pd)
+
+@app.route('/scarf/<scarf_id>')
+def show_scarf(scarf_id):
+    scarf = check_scarf(escape(scarf_id))
+    if scarf == False:
+        return page_not_found(404)
 
     sql = read('ownwant', **{"scarfid": scarf[1]})
     sresult = doselect(sql)
@@ -109,10 +178,6 @@ def show_post(scarf_id):
         pd.willtrade = 0
 
     if check_login():
-        hit_lastseen(session['username'])
-        pd.admin = is_admin(session['username'])
-        pd.user = session['username']
-
         userinfo = get_userinfo(session['username'])
         try:
             uid = userinfo[0][0]
@@ -137,6 +202,7 @@ def show_post(scarf_id):
 
 @app.route('/scarf/newscarf', methods=['GET', 'POST'])
 def newscarf():
+    pd = pagedata()
     if request.method == 'POST':
         if not check_login():
             flash('You must be logged in to create a scarf.')
@@ -177,17 +243,13 @@ def newscarf():
 
         data = doupsert(sql)
         if not data:
-            return render_template('error.html', errortext="SQL error")
+            pd.errortext="SQL error"
+            return render_template('error.html', pd=pd)
 
         flash('Added scarf!')
         inc_scarfcount(session['username'])
         return redirect('/scarf/' + escape(request.form['name']))
 
-    pd = pagedata()
     pd.title="Add New Scarf"
-    if check_login():
-        hit_lastseen(session['username'])
-        pd.user = session['username']
-        pd.admin = is_admin(session['username'])
 
     return render_template('newscarf.html', pd=pd)
