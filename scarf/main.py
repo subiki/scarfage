@@ -29,6 +29,7 @@ def accessdenied():
 @app.route('/')
 def index():
     pd = pagedata()
+    pd.load()
     pd.title = "Scarfage"
 
     sql = read('scarves')
@@ -38,10 +39,5 @@ def index():
         pd.scarves = result
     except: 
         pd.scarves = []
-
-    if 'username' in session:
-        hit_lastseen(session['username'])
-        pd.user = session['username']
-        pd.admin = is_admin(session['username'])
 
     return render_template('index.html', pd=pd)

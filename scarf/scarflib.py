@@ -7,6 +7,14 @@ from sql import upsert, doupsert, read, doselect
 class pagedata:
     pass
 
+    def load(self):
+        if 'username' in session:
+            hit_lastseen(session['username'])
+            self.user = session['username']
+            self.admin = is_admin(session['username'])
+
+
+
 
 def removeNonAscii(s): return "".join(i for i in s if ord(i)<128)
 
