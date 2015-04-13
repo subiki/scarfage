@@ -1,7 +1,7 @@
 from scarf import app
 from flask import render_template, session, escape, request, flash
 from sql import doselect, read
-from scarflib import hit_lastseen, pagedata, is_admin
+from scarflib import pagedata
 
 
 @app.errorhandler(404)

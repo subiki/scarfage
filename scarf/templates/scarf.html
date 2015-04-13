@@ -43,7 +43,7 @@ This scarf is up for trade. <a href="/scarf/{{ pd.scarfname }}/wonttrade">Neverm
 {% endif %}
 
 {% if pd.accesslevel == 255 %}
-<a href="/scarf/{{ pd.scarfname }}/delete">Delete</a>
+<a href="/scarf/{{ pd.scarfname }}/delete">Delete scarf</a>
 {% endif %}
 
 </div>
@@ -59,7 +59,21 @@ This scarf is up for trade. <a href="/scarf/{{ pd.scarfname }}/wonttrade">Neverm
 <div id="scarfimg">
 {% for item in pd.scarfimg %}
     <img src="/static/uploads/{{ item[0][2] }}" alt="{{ item[0][3] }}"><br />
+
+{% if pd.accesslevel >= 10 %}
+<a href="/image/{{ item[0][2] }}/delete">Delete image</a>
+{% endif %}
+
 {% endfor %}
+
+{% if pd.user is not undefined %}
+    <form action="/image/upload" method="post" enctype="multipart/form-data">
+        Tag: <input type=text name=tag><br />
+        <input type="file" name="image" accept="image/*"><br />
+        <input type="hidden" name="scarfname" value="{{ pd.scarfname }}">
+        <input type=submit value=Submit>
+    </form>
+{% endif %}
 </p>
 </div>
 

@@ -1,8 +1,18 @@
+import os
 import datetime
+import imghdr
+import uuid
 from scarf import app
-from flask import request, session, redirect, url_for, escape
+from flask import request, session, redirect, url_for, escape, flash
 from urlparse import urlparse, urljoin
 from sql import upsert, doupsert, read, doselect
+
+# DEBUG
+import socket 
+if socket.gethostname() == "grenadine":
+    upload_dir = '/home/pq/sf/site/scarf/static/uploads/'
+else: 
+    upload_dir = '/srv/data/web/vhosts/default/static/uploads/'
 
 class pagedata:
     accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
@@ -22,6 +32,9 @@ def check_login():
         return True
     else:
         return False
+
+def get_accesslevel(user):
+    return get_userinfo(user)[0][8]
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
@@ -83,13 +96,39 @@ def get_userinfo(user):
         flash('no user')
         return
 
-def get_accesslevel(user):
-    return get_userinfo(user)[0][8]
+def get_imgupload(f, scarfuid, tag):
+    if not f.filename == '':
+        fuuid = uuid.uuid4().get_hex()
+        try:
+            newname = fuuid + os.path.splitext(f.filename)[1]
+            f.save(upload_dir + newname)
+        except:
+            flash('Failed to upload image: ' + f.filename)
+            return False
 
-def is_admin(user):
-    accesslevel = get_userinfo(user)[0][8]
+        if imghdr.what(upload_dir + newname):
+            sql = upsert("images", \
+                         uid=0, \
+                         uuid=fuuid, \
+                         filename=newname, \
+                         tag=escape(tag))
+            data = doupsert(sql)
+            if not data:
+                return False
 
-    if accesslevel == 255:
-       return True
+            sql = upsert("scarfimg", \
+                         imgid=fuuid, \
+                         scarfid=scarfuid)
+            data = doupsert(sql)
+            if not data:
+                return False
 
-    return False
+            flash('Uploaded ' + f.filename)
+            return True
+        else:
+            try:
+                os.remove(upload_dir + newname)
+            except:
+                app.logger.error("Error removing failed image upload: " + upload_dir + newname)
+            flash(f.filename + " is not an image.")
+        return False

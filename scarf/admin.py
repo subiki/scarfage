@@ -1,6 +1,6 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
-from scarflib import check_login, redirect_back, hit_lastseen, pagedata, get_userinfo, is_admin
+from scarflib import check_login, redirect_back, hit_lastseen, pagedata, get_userinfo
 from sql import doupsert, upsert, doselect, read, delete
 
 def get_users():

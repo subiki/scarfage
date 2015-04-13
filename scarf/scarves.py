@@ -6,56 +6,11 @@ import datetime
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
-from scarflib import check_login, is_admin
+from scarflib import check_login
 from sql import upsert, doupsert, read, doselect, delete
 from profile import get_userinfo
-from scarflib import redirect_back, check_scarf, scarf_imgs, hit_lastseen, pagedata
+from scarflib import redirect_back, check_scarf, scarf_imgs, pagedata, get_imgupload, upload_dir
 from main import page_not_found
-
-# DEBUG
-import socket 
-if socket.gethostname() == "grenadine":
-    upload_dir = '/home/pq/sf/site/scarf/static/uploads/'
-else: 
-    upload_dir = '/srv/data/web/vhosts/default/static/uploads/'
-
-def get_imgupload(f, scarfuid, tag):
-    pd = pagedata()
-    if not f.filename == '':
-        fuuid = uuid.uuid4().get_hex()
-        try:
-            newname = fuuid + os.path.splitext(f.filename)[1]
-            f.save(upload_dir + newname)
-        except:
-            flash('Error uploading ' + f.filename)
-            return
-
-        if imghdr.what(upload_dir + newname):
-            sql = upsert("images", \
-                         uid=0, \
-                         uuid=fuuid, \
-                         filename=newname, \
-                         tag=escape(tag))
-            data = doupsert(sql)
-            if not data:
-                pd.errortext="SQL error"
-                return render_template('error.html', pd=pd)
-
-            sql = upsert("scarfimg", \
-                         imgid=fuuid, \
-                         scarfid=scarfuid)
-            data = doupsert(sql)
-            if not data:
-                pd.errortext="SQL error"
-                return render_template('error.html', pd=pd)
-
-            flash('Uploaded ' + f.filename)
-        else:
-            try:
-                os.remove(upload_dir + newname)
-            except:
-                app.logger.error("Error removing failed image upload: " + upload_dir + newname)
-            flash(f.filename + " is not an image.")
 
 def inc_scarfcount(user):
     sql = read('users', **{"username": escape(user)})
@@ -230,8 +185,6 @@ def newscarf():
 
         get_imgupload(request.files['front'], suuid, "front")
         get_imgupload(request.files['back'], suuid, "back")
-
-        hit_lastseen(session['username'])
 
         sql = upsert("scarves", \
                      uid=0, \
