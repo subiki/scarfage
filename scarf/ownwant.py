@@ -60,7 +60,7 @@ def ownwant(scarf_id, index, value):
         return
 
     if check_login():
-        userinfo = get_userinfo(escape(session['username']))
+        userinfo = get_userinfo(session['username'])
         try:
             uid = userinfo[0][0]
         except:

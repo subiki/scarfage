@@ -22,7 +22,6 @@ def show_user_profile(username):
     pd = pagedata()
     pd.scarves = []
     pd.title = "Profile for " + escape(username)
-    pd.admin = is_admin(username)
 
     userinfo = get_userinfo(escape(username))
 
@@ -48,5 +47,6 @@ def show_user_profile(username):
 
     if 'username' in session:
         pd.user = session['username']
+        pd.admin = is_admin(session['username'])
 
     return render_template('profile.html', pd=pd)

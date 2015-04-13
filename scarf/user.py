@@ -5,7 +5,7 @@ import datetime
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
-from scarflib import check_login, redirect_back, hit_lastseen
+from scarflib import check_login, redirect_back, hit_lastseen, pagedata
 from sql import doupsert, upsert, doselect, read
 
 
@@ -55,6 +55,12 @@ def check_new_user(request):
             flash("User already exists")
             ret = False
 
+        invalid = '[]{}\'"<>;/\\'
+        for c in invalid:
+            if c in request.form['username']:
+                flash("Invalid character in username: " + c)
+                ret = False
+
         pass1 = escape(request.form['password'])
         pass2 = escape(request.form['password2'])
 
@@ -69,6 +75,7 @@ def check_new_user(request):
         if not re.match("[^@]+@[^@]+\.[^@]+", escape(request.form['email'])):
             flash("Invalid email address")
             ret = False
+
     except:
         return False
 
@@ -98,6 +105,8 @@ def login():
 
 @app.route('/newuser', methods=['GET', 'POST'])
 def newuser():
+    pd = pagedata();
+    pd.title = "New User"
     try:
         if session['username'] != "":
             flash('Don\'t be greedy')
@@ -106,7 +115,7 @@ def newuser():
         if request.method == 'POST':
             if not check_new_user(request):
                 # TODO, re-fill form
-                return render_template('newuser.html', title="New User")
+                return render_template('newuser.html', pd=pd)
 
             salt=str(uuid.uuid4().get_hex().upper()[0:6])
             sql = upsert("users", \
@@ -121,13 +130,14 @@ def newuser():
                          accesslevel=1)
             data = doupsert(sql)
             if not data:
+#TODO fix for pd object
                 return render_template('error.html', errortext="SQL error")
 
             session['username'] = escape(request.form['username'])
             flash('Welcome ' + session['username'])
             return redirect(url_for('index'))
 
-        return render_template('newuser.html', title="New User")
+        return render_template('newuser.html', pd=pd)
 
 @app.route('/logout')
 def logout():

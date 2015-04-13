@@ -109,9 +109,11 @@ def show_post(scarf_id):
         pd.willtrade = 0
 
     if check_login():
-        userinfo = get_userinfo(session['username'])
         hit_lastseen(session['username'])
         pd.admin = is_admin(session['username'])
+        pd.user = session['username']
+
+        userinfo = get_userinfo(session['username'])
         try:
             uid = userinfo[0][0]
         except:
@@ -122,10 +124,7 @@ def show_post(scarf_id):
 
         try:
             iuid = result[0][0]
-
             pd.myscarfinfo=result[0]
-            pd.user = session['username']
-            pd.admin = is_admin(username)
         except: 
             app.logger.debug('')
 
@@ -151,9 +150,11 @@ def newscarf():
             flash('Very funny')
             return redirect('/scarf/newscarf')
 
-        if '/' in request.form['name'] or  '\\' in request.form['name']:
-            flash('No slashes in names please')
-            return redirect('/scarf/newscarf')
+        invalid = '[]{}\'"<>;/\\'
+        for c in invalid:
+            if c in request.form['name']:
+                flash("Invalid character in name: " + c)
+                return redirect('/scarf/newscarf')
 
         if check_scarf(escape(request.form['name'])):
             flash('A scarf with that name already exists')
@@ -164,7 +165,7 @@ def newscarf():
         get_imgupload(request.files['front'], suuid, "front")
         get_imgupload(request.files['back'], suuid, "back")
 
-        hit_lastseen(escape(session['username']))
+        hit_lastseen(session['username'])
 
         sql = upsert("scarves", \
                      uid=0, \

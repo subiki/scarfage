@@ -7,6 +7,7 @@ from sql import upsert, doupsert, read, doselect
 class pagedata:
     pass
 
+
 def removeNonAscii(s): return "".join(i for i in s if ord(i)<128)
 
 def check_login():
