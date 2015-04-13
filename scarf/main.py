@@ -3,6 +3,7 @@ from flask import render_template, session, escape, request, flash
 from sql import doselect, read
 from scarflib import hit_lastseen, pagedata, is_admin
 
+
 @app.errorhandler(404)
 def page_not_found(error):
     pd = pagedata()
@@ -17,6 +18,13 @@ def error():
     pd.title = "Error!"
     pd.errortext="Oh noes!"
     return render_template('error.html', pd=pd)
+
+@app.route('/accessdenied')
+def accessdenied():
+    pd = pagedata()
+    pd.title = "Access Denied"
+    pd.errortext = "Access Denied"
+    return render_template('error.html', pd=pd), 403
 
 @app.route('/')
 def index():

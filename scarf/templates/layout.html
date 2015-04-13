@@ -15,6 +15,7 @@
         <div class=nav>
         <a href="/scarf/newscarf">Add a scarf!</a>
         </div>
+        <!-- rewrite for accesslevel -->
         {% if pd.admin == 1 %}
         <div class=nav>
         <a href="/admin/users">Admin</a>
@@ -22,17 +23,17 @@
         {% endif %}
     </div>
 
+    <div id="flashes">
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <div id="flashes">
         <ul class=flashes>
         {% for message in messages %}
           <li>{{ message }}</li>
         {% endfor %}
         </ul>
-        </div>
       {% endif %}
     {% endwith %}
+    </div>
 
     {% block body %}{% endblock %}
 

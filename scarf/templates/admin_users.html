@@ -7,9 +7,9 @@
 <div id="content">
 
 <ul id="userlist">
-<li>username - email - joined - lastseen - # scarves added - accesslevel</li>
+<li>username - email - joined - lastseen - # scarves added - User type</li>
 {% for item in pd.users %}
-    <li>{{ item[1] }} - {{ item[4] }} - {{ item[5] }} - {{ item[6] }} - {{ item[7] }} - {{ item[8] }}</a></li>
+    <li>{{ item[1] }} - {{ item[4] }} - {{ item[5] }} - {{ item[6] }} - {{ item[7] }} - {{ pd.accesslevels[item[8]] }}</a></li>
 {% endfor %}
 </ul><br />
 
