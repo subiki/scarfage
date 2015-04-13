@@ -8,75 +8,75 @@
 
 <p>
 <div id="scarfname">
-<h1>{{ scarfname }}</h1><br />
+<h1>{{ pd.scarfname }}</h1><br />
 </div>
 
-{% if user is not undefined %}
+{% if pd.user is not undefined %}
 <div id="scarfactions">
-{% if myscarfinfo is defined %}
+{% if pd.myscarfinfo is defined %}
 
-{% if myscarfinfo[3] == 0 %}
-<a href="/ihave/{{ scarfname }}">I own this</a></br>
+{% if pd.myscarfinfo[3] == 0 %}
+<a href="/ihave/{{ pd.scarfname }}">I own this</a></br>
 
-{% if myscarfinfo[5] == 0 %}
-<a href="/want/{{ scarfname }}">I want this</a></br>
+{% if pd.myscarfinfo[5] == 0 %}
+<a href="/want/{{ pd.scarfname }}">I want this</a></br>
 {% else %}
-You want this scarf. <a href="/dontwant/{{ scarfname }}">Nevermind.</a><br />
+You want this scarf. <a href="/dontwant/{{ pd.scarfname }}">Nevermind.</a><br />
 {% endif %}
 
 {% else %}
-This scarf is in your collection. <a href="/remove/{{ scarfname }}">Remove it</a>.<br />
-{% if myscarfinfo[4] == 0 %}
-<a href="/willtrade/{{ scarfname }}">I'll trade this</a>
+This scarf is in your collection. <a href="/remove/{{ pd.scarfname }}">Remove it</a>.<br />
+{% if pd.myscarfinfo[4] == 0 %}
+<a href="/willtrade/{{ pd.scarfname }}">I'll trade this</a>
 {% else %}
-This scarf is up for trade. <a href="/wonttrade/{{ scarfname }}">Nevermind</a>.<br />
+This scarf is up for trade. <a href="/wonttrade/{{ pd.scarfname }}">Nevermind</a>.<br />
 {% endif %}
 {% endif %}
 {% else %}
 
-<a href="/ihave/{{ scarfname }}">I own this</a>
-<a href="/willtrade/{{ scarfname }}">I'll trade this</a>
-<a href="/want/{{ scarfname }}">I want this</a>
+<a href="/ihave/{{ pd.scarfname }}">I own this</a>
+<a href="/willtrade/{{ pd.scarfname }}">I'll trade this</a>
+<a href="/want/{{ pd.scarfname }}">I want this</a>
 
 {% endif %}
 </div>
 {% endif %}
 
 <div id="description">
-{{ scarf[3] }}<br />
+{{ pd.scarf[3] }}<br />
 </div>
 
 
 
 <br>
 <div id="scarfimg">
-{% for item in scarfimgs %}
-    <img src="/static/uploads/{{ item[0][2] }}" alt="{{ item[0][3] }}"><br />
+{% for item in pd.scarfimgs %}
+    <img src="/static/uploads/{{ pd.item[0][2] }}" alt="{{ pd.item[0][3] }}"><br />
 {% endfor %}
 </p>
 </div>
 
 <div class="havecount">
-{% if shave == 1 %}
+{% if pd.shave == 1 %}
 1 person has this scarf
 {% else %}
-{{ shave }} people have this scarf
+{{ pd.shave }} people have this scarf
 {% endif %}
 </div>
 
 <div class="willtradecount">
-{% if willtrade == 1 %}
+{% if pd.willtrade == 1 %}
 1 person is willing to trade this scarf
 {% else %}
-{{ willtrade }} people are willing to trade this scarf
+{{ pd.willtrade }} people are willing to trade this scarf
 {% endif %}
 </div>
 
 <div class="wantscount">
-{% if swants == 1 %}
+{% if pd.swants == 1 %}
 1 person wants to trade for this scarf
 {% else %}
-{{ swants }} people want to trade for this scarf
+{{ pd.swants }} people want to trade for this scarf
 {% endif %}
 </div>
 

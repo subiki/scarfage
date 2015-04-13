@@ -5,7 +5,7 @@
 {% include "login.html" %}
 
 <div id="content">
-{% if user is undefined %}
+{% if pd.user is undefined %}
     You must be logged in to create a scarf.
 {% else %}
     <form action="/scarf/newscarf" method="post" enctype="multipart/form-data">

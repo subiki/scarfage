@@ -1,30 +1,38 @@
 from scarf import app
 from flask import render_template, session, escape, request, flash
 from sql import doselect, read
-from scarflib import hit_lastseen
+from scarflib import hit_lastseen, pagedata
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('error.html', title="File not found", errorcode="404", errortext="File not found."), 404
+    pd = pagedata()
+    pd.title = "File not found"
+    pd.errorcode="404"
+    pd.errortext="File not found."
+    return render_template('error.html', pd=pd), 404
 
 @app.route('/error')
 def error():
-    return render_template('error.html', title="Error!", errortext="Oh noes!")
+    pd = pagedata()
+    pd.title = "Error!"
+    pd.errortext="Oh noes!"
+    return render_template('error.html', pd=pd)
 
 @app.route('/')
 def index():
+    pd = pagedata()
+    pd.title = "Scarfage"
+
     sql = read('scarves')
     result = doselect(sql)
-    scarves = []
 
     try:
-        for scarf in result:
-            scarves.append(scarf)
+        pd.scarves = result
     except: 
-        flash('no scarves')
+        pd.scarves = []
 
     if 'username' in session:
         hit_lastseen(escape(session['username']))
-        return render_template('index.html', title="Scarfage", user=escape(session['username']), scarves=scarves)
-    else:
-        return render_template('index.html', title="Scarfage", scarves=scarves)
+        pd.user = escape(session['username'])
+
+    return render_template('index.html', pd=pd)

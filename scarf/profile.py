@@ -3,7 +3,7 @@ import uuid
 import datetime
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
-from scarflib import check_login, redirect_back
+from scarflib import check_login, redirect_back, pagedata
 from sql import doupsert, upsert, doselect, read
 
 def get_userinfo(user):
@@ -18,15 +18,23 @@ def get_userinfo(user):
 @app.route('/pwreset')
 def pwreset():
     if 'username' in session:
-        return render_template('pwreset.html', user=escape(session['username']), title="Reset Password")
+        pd = pagedata()
+        pd.title = title="Reset Password"
+        pd.user = session['username']
+        return render_template('pwreset.html', pd=pd)
     else:
         return redirect(url_for('index'))
 
 @app.route('/user/<username>')
 def show_user_profile(username):
+    pd = pagedata()
+    pd.scarves = []
+    pd.title = "Profile for " + escape(username)
+
     userinfo = get_userinfo(escape(username))
-    scarves = []
+
     try:
+        pd.userinfo=userinfo[0]
         uid = userinfo[0][0]
 
         sql = read('ownwant', **{"userid": uid})
@@ -37,7 +45,7 @@ def show_user_profile(username):
                 sresult = doselect(sql)
 
                 try:
-                    scarves.append([scarf, sresult[0]])
+                    pd.scarves.append({'name': sresult[0][2], 'own': scarf[3], 'willtrade': scarf[4], 'want': scarf[5], 'hidden': scarf[6]})
                 except:
                     app.logger.debug('SQL error reading scarves table for profile')
         except: 
@@ -46,6 +54,6 @@ def show_user_profile(username):
          return render_template('error.html', errortext="SQL error")
 
     if 'username' in session:
-        return render_template('profile.html', scarves=scarves, user=escape(session['username']), userinfo=userinfo[0], title="Profile for " + escape(username))
-    else:
-        return render_template('profile.html', scarves=scarves, userinfo=userinfo[0], title="Profile for " + escape(username))
+        pd.user = session['username']
+
+    return render_template('profile.html', pd=pd)
