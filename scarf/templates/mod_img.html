@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+
+
+<a href="/image/{{ pd.filename }}/delete">Delete image</a>
+<a href="/mod/image/{{ pd.filename }}/approve">Approve image</a>
+
+<pre>
+{{ pd.ascii }}
+</pre>
+
+<a href="/static/uploads/{{ pd.filename }}"><img src="/image/{{ pd.filename }}/thumbnail" alt="{{ pd.filename }}"><br />
+</div>
+
+{% endblock %}

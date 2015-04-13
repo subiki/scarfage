@@ -113,15 +113,15 @@ def get_imgupload(f, scarfuid, tag):
                          filename=newname, \
                          tag=escape(tag))
             data = doupsert(sql)
-            if not data:
-                return False
 
             sql = upsert("scarfimg", \
                          imgid=fuuid, \
                          scarfid=scarfuid)
             data = doupsert(sql)
-            if not data:
-                return False
+
+            sql = upsert("imgmods", \
+                         imgid=fuuid)
+            data = doupsert(sql)
 
             flash('Uploaded ' + f.filename)
             return True

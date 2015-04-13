@@ -58,7 +58,7 @@ This scarf is up for trade. <a href="/scarf/{{ pd.scarfname }}/wonttrade">Neverm
 <br>
 <div id="scarfimg">
 {% for item in pd.scarfimg %}
-    <img src="/static/uploads/{{ item[0][2] }}" alt="{{ item[0][3] }}"><br />
+    <a href="/static/uploads/{{ item[0][2] }}"><img src="/image/{{ item[0][2] }}/thumbnail" alt="{{ item[0][3] }}"><br />
 
 {% if pd.accesslevel >= 10 %}
 <a href="/image/{{ item[0][2] }}/delete">Delete image</a>

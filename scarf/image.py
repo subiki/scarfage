@@ -3,8 +3,10 @@ import imghdr
 import uuid
 import re
 import datetime
+from StringIO import StringIO
+from PIL import Image
 from scarf import app
-from flask import redirect, url_for, request, render_template, session, escape, flash
+from flask import redirect, url_for, request, render_template, session, escape, flash, send_file
 from werkzeug import secure_filename
 from scarflib import check_login
 from sql import upsert, doupsert, read, doselect, delete
@@ -32,6 +34,9 @@ def reallydelete_image(img_id):
     result = doselect(sql)
 
     sql = delete('images', **{"uuid": uuid})
+    result = doselect(sql)
+
+    sql = delete('imgmods', **{"imgid": uuid})
     result = doselect(sql)
 
     try:
@@ -90,3 +95,28 @@ def imageupload():
         flash('Image added to ' + escape(request.form['scarfname']))
 
     return redirect_back('/index')
+
+def serve_pil_image(pil_img):
+    img_io = StringIO()
+    pil_img.save(img_io, 'JPEG', quality=70)
+    img_io.seek(0)
+    return send_file(img_io, mimetype='image/jpeg')
+
+@app.route('/image/<image>/thumbnail')
+def serve_img(image):
+    img=Image.open(upload_dir + escape(image))
+
+    maxwidth = 800.0
+    maxheight = 200.0
+
+    hsize = img.size[0]
+    vsize = img.size[1]
+
+    if hsize > maxwidth or vsize > maxheight:
+        if vsize > hsize:
+            factor = maxheight / vsize
+        else:
+            factor = maxwidth / hsize
+
+        img = img.resize((int(hsize * factor), int(vsize * factor)), Image.ANTIALIAS)
+    return serve_pil_image(img)
