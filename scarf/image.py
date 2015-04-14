@@ -102,21 +102,39 @@ def serve_pil_image(pil_img):
     img_io.seek(0)
     return send_file(img_io, mimetype='image/jpeg')
 
-@app.route('/image/<image>/thumbnail')
-def serve_img(image):
-    img=Image.open(upload_dir + escape(image))
-
-    maxwidth = 800.0
-    maxheight = 200.0
-
+def resize(img, maxwidth, maxheight):
     hsize = img.size[0]
     vsize = img.size[1]
 
-    if hsize > maxwidth or vsize > maxheight:
-        if vsize > hsize:
-            factor = maxheight / vsize
+    hfactor = 1
+    if hsize > maxwidth:
+        if vsize < hsize:
+            hfactor = maxheight / vsize
         else:
-            factor = maxwidth / hsize
+            hfactor = maxwidth / hsize
 
-        img = img.resize((int(hsize * factor), int(vsize * factor)), Image.ANTIALIAS)
+    vfactor = 1
+    if vsize > maxheight:
+        if vsize > hsize:
+            vfactor = maxheight / vsize
+        else:
+            vfactor = maxwidth / hsize
+
+    if vfactor < hfactor:
+        factor = vfactor
+    else:
+        factor = hfactor
+
+    return img.resize((int(hsize * factor), int(vsize * factor)), Image.ANTIALIAS)
+
+@app.route('/image/<image>/thumbnail')
+def serve_thumb(image):
+    img=Image.open(upload_dir + escape(image))
+    img = resize(img, 800.0, 200.0)
+    return serve_pil_image(img)
+
+@app.route('/image/<image>/preview')
+def serve_preview(image):
+    img=Image.open(upload_dir + escape(image))
+    img = resize(img, 800.0, 800.0)
     return serve_pil_image(img)

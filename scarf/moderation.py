@@ -65,6 +65,16 @@ def mod_img(image):
 
     pd.filename = escape(image)
 
+    sql = read('images', **{"filename": pd.filename})
+    result = doselect(sql)
+
+    try:
+        pd.uuid = result[0][1]
+    except:
+        pd.title = "SQL error"
+        pd.errortext = "SQL error"
+        return render_template('error.html', pd=pd)
+
     im=Image.open(upload_dir + escape(image))
     basewidth = 100
     wpercent = (basewidth/float(im.size[0]))
@@ -85,14 +95,22 @@ def mod_img(image):
 
     return render_template('mod_img.html', pd=pd)
 
-@app.route('/mod/image/<image>/approve')
-def mod_img_approve(image):
+@app.route('/mod/image/<imageid>/approve')
+def mod_img_approve(imageid):
     pd = pagedata()
 
-#TODO things
     if 'username' not in session or pd.accesslevel < 10:
         return redirect(url_for('accessdenied'))
 
-    pd.filename = escape(image)
+    sql = read('imgmods', **{"imgid": escape(imageid)})
+    result = doselect(sql)
+
+    try:
+        sql = delete('imgmods', **{"imgid": result[0][0]})
+        result = doselect(sql)
+    except:
+        pd.title = "SQL error"
+        pd.errortext = "SQL error"
+        return render_template('error.html', pd=pd)
 
     return redirect(url_for('moderate'))
