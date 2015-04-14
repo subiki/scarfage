@@ -102,28 +102,31 @@ def serve_pil_image(pil_img):
     img_io.seek(0)
     return send_file(img_io, mimetype='image/jpeg')
 
+#TODO this is broken, I hate it
 def resize(img, maxwidth, maxheight):
     hsize = img.size[0]
     vsize = img.size[1]
+    factor = 1
 
-    hfactor = 1
-    if hsize > maxwidth:
-        if vsize < hsize:
-            hfactor = maxheight / vsize
+    if hsize > maxwidth or vsize > maxheight:
+        hfactor = 1
+        if hsize > maxwidth:
+            if vsize < hsize:
+                hfactor = maxheight / vsize
+            else:
+                hfactor = maxwidth / hsize
+
+        vfactor = 1
+        if vsize > maxheight:
+            if vsize > hsize:
+                vfactor = maxheight / vsize
+            else:
+                vfactor = maxwidth / hsize
+
+        if vfactor < hfactor:
+            factor = vfactor
         else:
-            hfactor = maxwidth / hsize
-
-    vfactor = 1
-    if vsize > maxheight:
-        if vsize > hsize:
-            vfactor = maxheight / vsize
-        else:
-            vfactor = maxwidth / hsize
-
-    if vfactor < hfactor:
-        factor = vfactor
-    else:
-        factor = hfactor
+            factor = hfactor
 
     return img.resize((int(hsize * factor), int(vsize * factor)), Image.ANTIALIAS)
 

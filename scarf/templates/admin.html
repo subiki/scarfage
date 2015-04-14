@@ -18,22 +18,22 @@
     - <a href="/admin/users/{{ item[1] }}/delete">Delete</a>
     
     {% if item[8] == 0 %}
-    - <a href="/admin/users/{{ item[1] }}/accesslevel/1 }}">Unban</a>
+    - <a href="/admin/users/{{ item[1] }}/accesslevel/1">Unban</a>
     {% else %}
 
-        - <a href="/admin/users/{{ item[1] }}/accesslevel/0 }}">Ban</a>
+        - <a href="/admin/users/{{ item[1] }}/accesslevel/0">Ban</a>
 
         {% if item[8] < 10 %}
-        - <a href="/admin/users/{{ item[1] }}/accesslevel/10 }}">Promote</a>
+        - <a href="/admin/users/{{ item[1] }}/accesslevel/10">Promote</a>
         {% endif %}
 
         {% if item[8] == 10 %}
-        - <a href="/admin/users/{{ item[1] }}/accesslevel/1 }}">Demote</a>
-        - <a href="/admin/users/{{ item[1] }}/accesslevel/255 }}">Promote</a>
+        - <a href="/admin/users/{{ item[1] }}/accesslevel/1">Demote</a>
+        - <a href="/admin/users/{{ item[1] }}/accesslevel/255">Promote</a>
         {% endif %}
 
         {% if item[8] == 255 %}
-        - <a href="/admin/users/{{ item[1] }}/accesslevel/1 }}">Demote</a>
+        - <a href="/admin/users/{{ item[1] }}/accesslevel/1">Demote</a>
         {% endif %}
 
     {% endif %}

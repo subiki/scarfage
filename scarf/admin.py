@@ -68,13 +68,31 @@ def admin_delete_user(user):
 def admin_ban_user(user, level):
     pd = pagedata()
 
-    if 'username' not in session or pd.accesslevel < 255:
+    if 'username' not in session or pd.accesslevel < 10:
         return redirect(url_for('accessdenied'))
 
+    if session['username'] == user:
+        flash("WTF mate, you can't edit your own permissions!")
+        return redirect_back('index')
+
+    useraccess = get_userinfo(escape(user))[0][8]
+
     try:
-        uid = get_userinfo(escape(user))[0][0]
+        ui = get_userinfo(escape(user))[0]
+        uid = ui[0]
+        al = ui[8]
     except:
-        return render_template('error.html', errortext="SQL error")
+        pd.title = "SQL error"
+        pd.errortext = "SQL error"
+        return render_template('error.html', pd=pd)
+
+    if pd.accesslevel != 255 and pd.accesslevel <= level:
+        flash("No.")
+        return redirect_back('index')
+
+    if al >= pd.accesslevel:
+        flash("Please contact an admin to modify this user's account.")
+        return redirect_back('index')
 
     sql = upsert("users", \
                  uid=uid, \

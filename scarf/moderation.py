@@ -35,6 +35,7 @@ def moderate():
         try:
             uuid = mod[0]
             flag = mod[2]
+            user = mod[3]
             if mod[1] == 0:
                 sql = read('images', **{"uuid": uuid})
                 img = doselect(sql)[0]
@@ -45,6 +46,7 @@ def moderate():
 
                 mod.filename = img[2]
                 mod.tag = img[3]
+                mod.user = user
                 mod.flag = flag
                 pd.mods.append(mod)
         except:
@@ -70,6 +72,13 @@ def mod_img(image):
 
     try:
         pd.uuid = result[0][1]
+        app.logger.debug(pd.uuid)
+
+        sql = read('imgmods', **{"imgid": pd.uuid})
+        result = doselect(sql)
+        app.logger.debug(result[0])
+        
+        pd.moduser = result[0][3]
     except:
         pd.title = "SQL error"
         pd.errortext = "SQL error"

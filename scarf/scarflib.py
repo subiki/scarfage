@@ -120,6 +120,7 @@ def get_imgupload(f, scarfuid, tag):
             data = doupsert(sql)
 
             sql = upsert("imgmods", \
+                         username=session['username'], \
                          imgid=fuuid)
             data = doupsert(sql)
 
