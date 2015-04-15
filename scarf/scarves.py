@@ -107,15 +107,30 @@ def show_scarf(scarf_id):
 
     sql = read('ownwant', **{"scarfid": scarf[1], "own": "1"})
     res = doselect(sql)
-    pd.shave = len(res)
+    pd.have = len(res)
+    pd.haveusers = []
+    for user in res:
+        sql = read('users', **{"uid": user[1]})
+        res = doselect(sql)
+        pd.haveusers.append(res[0][1])
 
     sql = read('ownwant', **{"scarfid": scarf[1], "want": "1"})
     res = doselect(sql)
-    pd.swants = len(res)
+    pd.want = len(res)
+    pd.wantusers = []
+    for user in res:
+        sql = read('users', **{"uid": user[1]})
+        res = doselect(sql)
+        pd.wantusers.append(res[0][1])
 
     sql = read('ownwant', **{"scarfid": scarf[1], "willtrade": "1"})
     res = doselect(sql)
     pd.willtrade = len(res)
+    pd.willtradeusers = []
+    for user in res:
+        sql = read('users', **{"uid": user[1]})
+        res = doselect(sql)
+        pd.willtradeusers.append(res[0][1])
 
     if check_login():
         userinfo = get_userinfo(session['username'])
@@ -129,9 +144,9 @@ def show_scarf(scarf_id):
 
         try:
             iuid = result[0][0]
-            pd.myscarfinfo=result[0]
+            pd.myscarfinfo = result[0]
         except IndexError:
-            return render_template('error.html', errortext="SQL error")
+            pd.myscarfinfo = []
 
     pd.title=scarf_id
     pd.scarfname=scarf_id

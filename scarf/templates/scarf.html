@@ -78,27 +78,43 @@ This scarf is up for trade. <a href="/scarf/{{ pd.scarfname }}/wonttrade">Neverm
 </div>
 
 <div class="havecount">
-{% if pd.shave == 1 %}
-1 person has this scarf
+{% if pd.have == 1 %}
+1 person has this scarf<br />
 {% else %}
-{{ pd.shave }} people have this scarf
+{{ pd.shave }} people have this scarf<br />
 {% endif %}
+
+{% for user in pd.haveusers %}
+<a href="/user/{{ user}}">{{ user }}</a><br />
+{% endfor %}
 </div>
 
 <div class="willtradecount">
 {% if pd.willtrade == 1 %}
-1 person is willing to trade this scarf
+1 person is willing to trade this scarf<br />
 {% else %}
-{{ pd.willtrade }} people are willing to trade this scarf
+{{ pd.willtrade }} people are willing to trade this scarf<br />
 {% endif %}
+
+{% for user in pd.willtradeusers %}
+<a href="/user/{{ user}}">{{ user }}</a><br />
+{% endfor %}
+
 </div>
 
 <div class="wantscount">
-{% if pd.swants == 1 %}
-1 person wants to trade for this scarf
+{% if pd.want == 1 %}
+1 person wants to trade for this scarf<br />
 {% else %}
-{{ pd.swants }} people want to trade for this scarf
+{{ pd.want }} people want to trade for this scarf<br />
 {% endif %}
+
+{% for user in pd.wantusers %}
+<a href="/user/{{ user}}">{{ user }}</a><br />
+{% endfor %}
+
+
+
 </div>
 </div>
 

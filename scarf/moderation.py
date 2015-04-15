@@ -58,6 +58,26 @@ def moderate():
 
     return render_template('moderation.html', pd=pd)
 
+@app.route('/mod/ban/<user>')
+def mod_ban_user(user):
+    pd = pagedata()
+
+    if 'username' not in session or pd.accesslevel < 255:
+        return redirect(url_for('accessdenied'))
+
+    if get_userinfo(escape(user))[0][8] == 0:
+        flash('User has been banned')
+        return redirect(url_for('moderate'))
+
+    pd.title="Banning user " + escape(user)
+
+    pd.accessreq = 10 
+    pd.conftext = "Banning user " + escape(user)
+    pd.conftarget = "/admin/users/" + escape(user) + "/accesslevel/0"
+    pd.conflinktext = "Yup, I'm sure."
+
+    return render_template('confirm.html', pd=pd)
+
 @app.route('/mod/image/<image>')
 def mod_img(image):
     pd = pagedata()

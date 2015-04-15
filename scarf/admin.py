@@ -76,6 +76,7 @@ def admin_ban_user(user, level):
         return redirect_back('index')
 
     try:
+#FIXME dupe variables
         useraccess = get_userinfo(escape(user))[0][8]
         ui = get_userinfo(escape(user))[0]
         uid = ui[0]

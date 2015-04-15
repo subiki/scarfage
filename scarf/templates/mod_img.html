@@ -9,7 +9,7 @@
 <h3>Uploaded by {{ pd.moduser }}</h3>
 
 {% if pd.moduser != "anon" %}
-<a href="/admin/users/{{ pd.moduser }}/accesslevel/0">Ban this user</a>
+<a href="/mod/ban/{{ pd.moduser }}">Ban this user</a>
 {% endif %}
 
 <a href="/image/{{ pd.filename }}/delete">Delete image</a>
