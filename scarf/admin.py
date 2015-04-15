@@ -10,7 +10,7 @@ def get_users():
     try:
         uid = result[0][0]
         return result
-    except: 
+    except IndexError: 
         return []
 
 @app.route('/admin')
@@ -41,7 +41,7 @@ def admin_reallydelete_user(user):
 
         sql = delete('ownwant', **{"userid": uid})
         result = doselect(sql)
-    except:
+    except IndexError:
         pd.title = "SQL error"
         pd.errortext = "SQL error"
         return render_template('error.html', pd=pd)
@@ -75,15 +75,14 @@ def admin_ban_user(user, level):
         flash("WTF mate, you can't edit your own permissions!")
         return redirect_back('index')
 
-    useraccess = get_userinfo(escape(user))[0][8]
-
     try:
+        useraccess = get_userinfo(escape(user))[0][8]
         ui = get_userinfo(escape(user))[0]
         uid = ui[0]
         al = ui[8]
-    except:
-        pd.title = "SQL error"
-        pd.errortext = "SQL error"
+    except IndexError:
+        pd.title = "User does not exist"
+        pd.errortext = "The user does not exist"
         return render_template('error.html', pd=pd)
 
     if pd.accesslevel != 255 and pd.accesslevel <= level:

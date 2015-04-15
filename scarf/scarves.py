@@ -19,7 +19,7 @@ def inc_scarfcount(user):
     try:
         uid = result[0][0]
         numadds = result[0][7]
-    except: 
+    except IndexError: 
         return False
 
     numadds=numadds+1
@@ -103,40 +103,25 @@ def show_scarf(scarf_id):
     if scarf == False:
         return page_not_found(404)
 
-    sql = read('ownwant', **{"scarfid": scarf[1]})
-    sresult = doselect(sql)
-
     pd = pagedata()
 
-    try:
-        pd.swants = 0
-        for res in sresult:
-            if res[5] == 1:
-                pd.swants = pd.swants + 1
-    except:
-        pd.swants = 0
+    sql = read('ownwant', **{"scarfid": scarf[1], "own": "1"})
+    res = doselect(sql)
+    pd.shave = len(res)
 
-    try:
-        pd.shave = 0
-        for res in sresult:
-            if res[3] == 1:
-                pd.shave = pd.shave + 1
-    except:
-        pd.shave = 0
+    sql = read('ownwant', **{"scarfid": scarf[1], "want": "1"})
+    res = doselect(sql)
+    pd.swants = len(res)
 
-    try:
-        pd.willtrade = 0
-        for res in sresult:
-            if res[4] == 1:
-                pd.willtrade = pd.willtrade + 1
-    except:
-        pd.willtrade = 0
+    sql = read('ownwant', **{"scarfid": scarf[1], "willtrade": "1"})
+    res = doselect(sql)
+    pd.willtrade = len(res)
 
     if check_login():
         userinfo = get_userinfo(session['username'])
         try:
             uid = userinfo[0][0]
-        except:
+        except IndexError:
             return render_template('error.html', errortext="SQL error")
 
         sql = read('ownwant', **{"userid": uid, "scarfid": scarf[1]})
@@ -145,8 +130,8 @@ def show_scarf(scarf_id):
         try:
             iuid = result[0][0]
             pd.myscarfinfo=result[0]
-        except: 
-            app.logger.debug('')
+        except IndexError:
+            return render_template('error.html', errortext="SQL error")
 
     pd.title=scarf_id
     pd.scarfname=scarf_id

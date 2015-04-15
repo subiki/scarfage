@@ -27,7 +27,7 @@ def reallydelete_image(img_id):
     try:
         uuid = result[0][1]
         filename = result[0][2]
-    except: 
+    except IndexError: 
         return page_not_found(404)
 
     sql = delete('scarfimg', **{"imgid": uuid})

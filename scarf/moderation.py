@@ -49,7 +49,7 @@ def moderate():
                 mod.user = user
                 mod.flag = flag
                 pd.mods.append(mod)
-        except:
+        except IndexError:
             pd.title = "SQL error"
             pd.errortext = "SQL error"
             return render_template('error.html', pd=pd)
@@ -72,14 +72,13 @@ def mod_img(image):
 
     try:
         pd.uuid = result[0][1]
-        app.logger.debug(pd.uuid)
 
         sql = read('imgmods', **{"imgid": pd.uuid})
         result = doselect(sql)
         app.logger.debug(result[0])
         
         pd.moduser = result[0][3]
-    except:
+    except IndexError:
         pd.title = "SQL error"
         pd.errortext = "SQL error"
         return render_template('error.html', pd=pd)
@@ -117,7 +116,7 @@ def mod_img_approve(imageid):
     try:
         sql = delete('imgmods', **{"imgid": result[0][0]})
         result = doselect(sql)
-    except:
+    except IndexError:
         pd.title = "SQL error"
         pd.errortext = "SQL error"
         return render_template('error.html', pd=pd)

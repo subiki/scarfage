@@ -24,7 +24,7 @@ def check_pw(user, password):
         pwhash = result[0][2]
         pwsalt = result[0][3]
         accesslevel = result[0][8]
-    except: 
+    except IndexError: 
         return False
 
     if accesslevel == 0:
@@ -107,11 +107,10 @@ def login():
 def newuser():
     pd = pagedata();
     pd.title = "New User"
-    try:
-        if session['username'] != "":
-            flash('Don\'t be greedy')
-            return redirect(url_for('index'))
-    except:
+    if 'username' in session:
+        flash('Don\'t be greedy')
+        return redirect(url_for('index'))
+    else:
         if request.method == 'POST':
             if not check_new_user(request):
                 # TODO, re-fill form

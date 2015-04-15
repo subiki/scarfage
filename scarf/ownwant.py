@@ -63,8 +63,8 @@ def ownwant(scarf_id, index, value):
         userinfo = get_userinfo(session['username'])
         try:
             uid = userinfo[0][0]
-        except:
-            return
+        except IndexError:
+            return -1
 
         sql = read('ownwant', **{"userid": uid, "scarfid": scarf[1]})
         result = doselect(sql)
@@ -73,7 +73,7 @@ def ownwant(scarf_id, index, value):
         iuid=0
         try:
             iuid = result[0][0]
-        except: 
+        except IndexError: 
             iuid=0
 
         if index == 4:

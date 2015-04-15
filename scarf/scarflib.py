@@ -54,7 +54,7 @@ def check_scarf(name):
 
     try:
         return result[0]
-    except:
+    except IndexError:
         return False
 
 def scarf_imgs(scarf_uid):
@@ -67,7 +67,7 @@ def scarf_imgs(scarf_uid):
             sql = read('images', **{"uuid": scarfimg[1]})
             result = doselect(sql)
             scarfimgs.append(result)
-    except:
+    except IndexError:
         return scarfimgs
 
     return scarfimgs
@@ -78,13 +78,14 @@ def hit_lastseen(user):
 
     try:
         uid = result[0][0]
-    except: 
+    except IndexError: 
         return False
 
     sql = upsert("users", \
                  uid=uid, \
                  lastseen=datetime.datetime.now())
     data = doupsert(sql)
+    return True
 
 def get_userinfo(user):
     sql = read('users', **{"username": user})
@@ -93,7 +94,6 @@ def get_userinfo(user):
     try:
         return result
     except:
-        flash('no user')
         return
 
 def get_imgupload(f, scarfuid, tag):
