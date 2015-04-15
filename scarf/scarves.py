@@ -146,7 +146,7 @@ def show_scarf(scarf_id):
             iuid = result[0][0]
             pd.myscarfinfo = result[0]
         except IndexError:
-            pd.myscarfinfo = []
+            pass
 
     pd.title=scarf_id
     pd.scarfname=scarf_id
