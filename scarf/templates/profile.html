@@ -24,7 +24,7 @@
 
     {% endif %}
 
-    <h1>{{ pd.userinfo[1] }}'s scarves</h1>
+    <h1>{{ pd.userinfo[1] }}'s collection</h1>
     <ul>
     {% for item in pd.scarves %}
       {% if pd.user == pd.userinfo[1] %}
@@ -62,7 +62,7 @@
     {% endfor %}
     </ul>
 
-    <h1>{{ pd.userinfo[1] }}'s wanted scarves</h1>
+    <h1>{{ pd.userinfo[1] }}'s wanted list</h1>
     <ul>
     {% for item in pd.scarves %}
       {% if pd.user == pd.userinfo[1] %}
