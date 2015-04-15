@@ -119,8 +119,13 @@ def get_imgupload(f, scarfuid, tag):
                          scarfid=scarfuid)
             data = doupsert(sql)
 
+            try:
+                username = session['username']
+            except KeyError:
+                username = "anon"
+
             sql = upsert("imgmods", \
-                         username=session['username'], \
+                         username=username, \
                          imgid=fuuid)
             data = doupsert(sql)
 

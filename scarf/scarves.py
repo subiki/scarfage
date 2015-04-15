@@ -159,9 +159,9 @@ def show_scarf(scarf_id):
 def newscarf():
     pd = pagedata()
     if request.method == 'POST':
-        if not check_login():
-            flash('You must be logged in to create a scarf.')
-            return redirect(url_for('/newuser'))
+#        if not check_login():
+#            flash('You must be logged in to create a scarf.')
+#            return redirect(url_for('/newuser'))
 
         if request.form['name'] == '':
             flash('This scarf has no name?')
@@ -200,7 +200,12 @@ def newscarf():
             return render_template('error.html', pd=pd)
 
         flash('Added scarf!')
-        inc_scarfcount(session['username'])
+
+        try:
+            inc_scarfcount(session['username'])
+        except KeyError:
+            flash('Log in to add this scarf to your collection.')
+
         return redirect('/scarf/' + escape(request.form['name']))
 
     pd.title="Add New Scarf"

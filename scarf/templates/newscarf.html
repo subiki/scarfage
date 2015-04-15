@@ -5,9 +5,6 @@
 {% include "login.html" %}
 
 <div id="content">
-{% if pd.user is undefined %}
-    You must be logged in to create a scarf.
-{% else %}
     <form action="/scarf/newscarf" method="post" enctype="multipart/form-data">
         Name: <input type=text name=name><br />
         Front: <input type="file" name="front" accept="image/*"><br />
@@ -15,7 +12,6 @@
         <textarea name=desc rows="4" cols="50">Description</textarea><br />
         <input type=submit value=Submit>
     </form>
-{% endif %}
 </div>
 
 {% endblock %}
