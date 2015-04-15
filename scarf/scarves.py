@@ -155,7 +155,7 @@ def show_scarf(scarf_id):
 
     return render_template('scarf.html', pd=pd)
 
-@app.route('/scarf/newscarf', methods=['GET', 'POST'])
+@app.route('/new', methods=['GET', 'POST'])
 def newscarf():
     pd = pagedata()
     if request.method == 'POST':
@@ -164,22 +164,18 @@ def newscarf():
 #            return redirect(url_for('/newuser'))
 
         if request.form['name'] == '':
-            flash('This scarf has no name?')
-            return redirect('/scarf/newscarf')
-
-        if request.form['name'] == 'newscarf':
-            flash('Very funny')
-            return redirect('/scarf/newscarf')
+            flash('No name?')
+            return redirect(url_for('newscarf'))
 
         invalid = '[]{}\'"<>;/\\'
         for c in invalid:
             if c in request.form['name']:
                 flash("Invalid character in name: " + c)
-                return redirect('/scarf/newscarf')
+                return redirect(url_for('newscarf'))
 
         if check_scarf(escape(request.form['name'])):
             flash('A scarf with that name already exists')
-            return redirect('/scarf/newscarf')
+            return redirect(url_for('newscarf'))
 
         suuid=uuid.uuid4().get_hex()
 
