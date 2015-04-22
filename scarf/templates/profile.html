@@ -10,18 +10,18 @@
         <ul>
             <li>Member since: {{ pd.userinfo[5] }}</li>
             <li>Last seen: {{ pd.userinfo[6] }}</li>
-            <li>Scarves added: {{ pd.userinfo[7] }}</li>
+            <li>Items added: {{ pd.userinfo[7] }}</li>
         </ul>
  
     {% else %}
         <ul>
             <li>Email: {{ pd.userinfo[4] }}</li>
             <li>Member since: {{ pd.userinfo[5] }}</li>
-            <li>Scarves added: {{ pd.userinfo[7] }}</li>
-            <li>Access level: {{ pd.userinfo[8] }}</li>
-            <li><a href="/pwreset">Password and email reset</a></li>
+            <li>Items added: {{ pd.userinfo[7] }}</li>
+            <li>Access level: {{ pd.accesslevels[pd.userinfo[8]] }}</li>
         </ul>
 
+        <a href="/userupdate">Reset Password or Update Email Address</a>
     {% endif %}
 
     <h1>{{ pd.userinfo[1] }}'s collection</h1>
@@ -42,7 +42,7 @@
            - <a href="/scarf/{{ item['name'] }}/willtrade">Trade</a>
         {% endif %}
 
-        - <a href="/scarf/{{ item['name'] }}/remove">Remove</a>
+        - <a href="/scarf/{{ item['name'] }}/donthave">Don't have</a>
         </li>
         {% endif %}
 

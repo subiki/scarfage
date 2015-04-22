@@ -18,19 +18,21 @@
 {% if pd.myscarfinfo[3] == 0 %}
 <a href="/scarf/{{ pd.scarfname }}/have">I own this</a></br>
 
-{% if pd.myscarfinfo[5] == 0 %}
-<a href="/scarf/{{ pd.scarfname }}/want">I want this</a></br>
 {% else %}
-You want this. <a href="/scarf/{{ pd.scarfname }}/dontwant">Nevermind.</a><br />
-{% endif %}
+This is in your collection. <a href="/scarf/{{ pd.scarfname }}/donthave">Remove it</a>.<br />
 
-{% else %}
-This is in your collection. <a href="/scarf/{{ pd.scarfname }}/remove">Remove it</a>.<br />
 {% if pd.myscarfinfo[4] == 0 %}
 <a href="/scarf/{{ pd.scarfname }}/willtrade">I'll trade this</a>
 {% else %}
 This is up for trade. <a href="/scarf/{{ pd.scarfname }}/wonttrade">Nevermind</a>.<br />
 {% endif %}
+
+{% endif %}
+
+{% if pd.myscarfinfo[5] == 0 %}
+<a href="/scarf/{{ pd.scarfname }}/want">I want this</a></br>
+{% else %}
+You want this. <a href="/scarf/{{ pd.scarfname }}/dontwant">Nevermind.</a><br />
 {% endif %}
 
 {% else %}
