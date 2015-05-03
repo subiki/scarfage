@@ -12,49 +12,84 @@ from sql import doupsert, upsert, doselect, read
 #TODO change me
 app.secret_key = '\x8bN\xe5\xe8Q~p\xbdb\xe5\xa5\x894i\xb0\xd9\x07\x10\xe6\xa0\xe5\xbd\x1e\xf8'
 
+class suser:
+    def __init__(self, username):
+        self.auth = False
+        self.username = username
+        self.collection = []
+
+        sql = read('users', **{"username": user})
+        result = doselect(sql)
+
+        try:
+            self.uid = result[0][0]
+            self.pwhash = result[0][2]
+            self.pwsalt = result[0][3]
+            self.lastseen = result[0]#FIXME
+            self.numadds = result[0][7]
+            self.accesslevel = result[0][8]
+        except:
+            pass
+            #return
+            # TODO: throw nouser exception
+
+        # Update lastseen if we're looking up the currently logged in user
+        if 'username' in session:
+            if session['username'] is username:
+                self.seen()
+
+    def writedb(self):
+        try:
+            sql = upsert("users", \
+                         uid=self.uid, \
+                         pwhash=self.pwhash,
+                         pwsalt=self.pwsalt,
+                         lastseen=self.lastseen) # TODO add the rest
+            data = doupsert(sql)
+        except:
+            pass
+            #TODO check for sql exceptions
+
+    def seen(self):
+        self.lastseen=datetime.datetime.now())
+        self.writedb()
+        # Update last seen column in user table
+
+    def authenticate(self, password):
+        if self.accesslevel == 0:
+            flash('Your account has been banned')
+        else:
+            checkhash = gen_pwhash(password, self.pwsalt)
+
+            if checkhash == self.pwhash:
+                self.seen()
+                self.auth = True
+
+    def incadds(self):
+        self.numadds=self.numadds+1
+        self.writedb()
+
+    def delete(self):
+        sql = delete('users', **{"uid": self.uid})
+        result = doselect(sql)
+
+        sql = delete('ownwant', **{"userid": self.uid})
+        result = doselect(sql)
+    except IndexError:
+        pass
+        #TODO: throw SQLError
+
 def gen_pwhash(password, salt):
     return hashlib.sha224(password + salt).hexdigest()
-
-def check_pw(user, password):
-    sql = read('users', **{"username": user})
-    result = doselect(sql)
-
-    try:
-        uid = result[0][0]
-        pwhash = result[0][2]
-        pwsalt = result[0][3]
-        accesslevel = result[0][8]
-    except IndexError: 
-        return False
-
-    if accesslevel == 0:
-        flash('Your account has been banned')
-        return False
-
-    checkhash = gen_pwhash(password, pwsalt)
-
-    if checkhash == pwhash:
-        hit_lastseen('username')
-        return uid
-
-    return False
-
-def check_user(user):
-    sql = read('users', **{"username": escape(user)})
-    result = doselect(sql)
-
-    if result:
-        return True
-
-    return False
 
 def check_new_user(request):
     ret = True
     try:
-        if check_user(escape(request.form['username'])):
-            flash("User already exists")
-            ret = False
-
+        user = suser(escape(request.form['username']))
+        flash("User already exists")
+        ret = False
+    #FIXME this exception isn't thrown yet
+    except NoUser:
         invalid = '[]{}\'"<>;/\\'
         for c in invalid:
             if c in request.form['username']:
@@ -75,9 +110,6 @@ def check_new_user(request):
         if not re.match("[^@]+@[^@]+\.[^@]+", escape(request.form['email'])):
             flash("Invalid email address")
             ret = False
-
-    except:
-        return False
 
     return ret
 

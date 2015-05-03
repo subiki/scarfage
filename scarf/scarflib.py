@@ -25,17 +25,6 @@ class pagedata:
             self.user = session['username']
             self.accesslevel = get_accesslevel(session['username'])
 
-def removeNonAscii(s): return "".join(i for i in s if ord(i)<128)
-
-def check_login():
-    if 'username' in session:
-        return True
-    else:
-        return False
-
-def get_accesslevel(user):
-    return get_userinfo(user)[0][8]
-
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
@@ -71,30 +60,6 @@ def scarf_imgs(scarf_uid):
         return scarfimgs
 
     return scarfimgs
-
-def hit_lastseen(user):
-    sql = read('users', **{"username": user})
-    result = doselect(sql)
-
-    try:
-        uid = result[0][0]
-    except IndexError: 
-        return False
-
-    sql = upsert("users", \
-                 uid=uid, \
-                 lastseen=datetime.datetime.now())
-    data = doupsert(sql)
-    return True
-
-def get_userinfo(user):
-    sql = read('users', **{"username": user})
-    result = doselect(sql)
-
-    try:
-        return result
-    except:
-        return
 
 def get_imgupload(f, scarfuid, tag):
     if not f.filename == '':

@@ -6,29 +6,17 @@ import datetime
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
+
 from scarflib import check_login
 from sql import upsert, doupsert, read, doselect, delete
 from profile import get_userinfo
 from scarflib import redirect_back, check_scarf, scarf_imgs, pagedata, get_imgupload, upload_dir
 from main import page_not_found
 
-def inc_scarfcount(user):
-    sql = read('users', **{"username": escape(user)})
-    result = doselect(sql)
-
-    try:
-        uid = result[0][0]
-        numadds = result[0][7]
-    except IndexError: 
-        return False
-
-    numadds=numadds+1
-
-    sql = upsert("users", \
-                 uid=uid, \
-                 numadds=numadds, \
-                 lastseen=datetime.datetime.now())
-    data = doupsert(sql)
+class item:
+    def __init__(self, name):
+        self.name = name
+        self.imgs = []
 
 @app.route('/scarf/')
 def scarfroot():
