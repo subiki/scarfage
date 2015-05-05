@@ -6,11 +6,11 @@
 
 <div id="content">
  
- {{ pd.testsession }}
+{{ pd.testsession }}
 
-<ul id="scarflist">
-{% for item in pd.scarves %}
-    <li>{{ item[4] }} - <a href="/scarf/{{ item[2] }}">{{ item[2] }}</a></li>
+<ul id="itemlist">
+{% for item in pd.items %}
+    <li>{{ item.added }} - <a href="/item/{{ item.name }}">{{ item.name }}</a> - {{ item.description }}</li>
 {% endfor %}
 </ul><br />
 

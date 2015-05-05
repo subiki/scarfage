@@ -29,20 +29,20 @@
     {% for item in pd.profileuser.collection %}
       {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
         {% if item.have == 1 %}
-        <li><a href="/scarf/{{ item.name }}">{{ item.name }}</a> 
+        <li><a href="/item/{{ item.name }}">{{ item.name }}</a> 
         {% if item.hidden == 0 %}
-            - <a href="/scarf/{{ item.name }}/hide">Hide</a>
+            - <a href="/item/{{ item.name }}/hide">Hide</a>
         {% else %}
-            - <a href="/scarf/{{ item.name }}/show">Show</a>
+            - <a href="/item/{{ item.name }}/show">Show</a>
         {% endif %}
 
         {% if item.willtrade == 1 %}
-           - <a href="/scarf/{{ item.name }}/wonttrade">Don't trade</a>
+           - <a href="/item/{{ item.name }}/wonttrade">Don't trade</a>
         {% else %}
-           - <a href="/scarf/{{ item.name }}/willtrade">Trade</a>
+           - <a href="/item/{{ item.name }}/willtrade">Trade</a>
         {% endif %}
 
-        - <a href="/scarf/{{ item.name }}/donthave">Don't have</a>
+        - <a href="/item/{{ item.name }}/donthave">Don't have</a>
         </li>
         {% endif %}
 
@@ -54,7 +54,7 @@
                up for trade - 
             {% endif %}
             
-            <a href="/scarf/{{ item.name }}">{{ item.name }}</a></li>
+            <a href="/item/{{ item.name }}">{{ item.name }}</a></li>
         {% endif %}
 
       {% endif %}
@@ -68,14 +68,14 @@
       {% if pd.authuser is defined and pd.authuser.uid != pd.profileuser.uid %}
         {% if item.want == 1 %}
         <li>
-            <a href="/scarf/{{ item.name }}">{{ item.name }}</a> <a href="/scarf/{{ item.name }}/dontwant">Nevermind.</a>
+            <a href="/item/{{ item.name }}">{{ item.name }}</a> <a href="/item/{{ item.name }}/dontwant">Nevermind.</a>
         </li>
         {% endif %}
 
       {% else %}
 
         {% if item.want == 1 %}
-            <li> <a href="/scarf/{{ item.name }}">{{ item.name }}</a></li>
+            <li> <a href="/item/{{ item.name }}">{{ item.name }}</a></li>
         {% endif %}
 
       {% endif %}

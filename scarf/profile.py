@@ -86,7 +86,6 @@ def pwreset():
 @app.route('/user/<username>')
 def show_user_profile(username):
     pd = pagedata()
-    pd.scarves = []
     pd.title = "Profile for " + escape(username)
 
     try:

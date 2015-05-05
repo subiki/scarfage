@@ -1,7 +1,7 @@
 from scarf import app
 from flask import render_template, session, escape, request, flash
 from sql import doselect, read
-from scarflib import pagedata
+from scarflib import pagedata, all_items
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -30,12 +30,9 @@ def index():
     pd = pagedata()
     pd.title = "Scarfage"
 
-    sql = read('scarves')
+    sql = read('items')
     result = doselect(sql)
 
-    try:
-        pd.scarves = result
-    except: 
-        pd.scarves = []
+    pd.items = all_items()
 
     return render_template('index.html', pd=pd)

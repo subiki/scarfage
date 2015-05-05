@@ -48,7 +48,7 @@ def delete_image(img_id):
 @app.route('/image/upload', methods=['POST'])
 def imageupload():
     try:
-        item = siteitem(escape(request.form['scarfname']))
+        item = siteitem(escape(request.form['itemname']))
     except NoItem:
         flash('Error uploading image')
         return redirect_back('/index')
@@ -64,7 +64,7 @@ def imageupload():
 
         item.newimg(request.files['image'], escape(request.form['tag']))
 
-        flash('Image added to ' + escape(request.form['scarfname']))
+        flash('Image added to ' + escape(request.form['itemname']))
 
     return redirect_back('/index')
 

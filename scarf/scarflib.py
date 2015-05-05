@@ -92,7 +92,7 @@ class siteuser:
         result = doselect(sql)
 
         for item in result:
-            sql = read('scarves', **{"uid": item[2]})
+            sql = read('items', **{"uid": item[2]})
             sresult = doselect(sql)
 
             sitem = siteitem(sresult[0][2])
@@ -117,10 +117,10 @@ class siteuser:
         ret = __ownwant__()
 
         try:
-            sql = read('scarves', **{"name": item})
+            sql = read('items', **{"name": item})
             sresult = doselect(sql)
      
-            sql = read('ownwant', **{"userid": self.uid, "scarfid": sresult[0][0]})
+            sql = read('ownwant', **{"userid": self.uid, "itemid": sresult[0][0]})
             result = doselect(sql)
 
             ret.uid = result[0][0]
@@ -209,7 +209,7 @@ class siteimage:
 #TODO throw exception
 
     def delete(self):
-        sql = delete('scarfimg', **{"imgid": self.uid})
+        sql = delete('itemimg', **{"imgid": self.uid})
         result = doselect(sql)
 
         sql = delete('images', **{"uid": self.uid})
@@ -234,19 +234,23 @@ class NoItem(Exception):
     def __init__(self, item):
         Exception.__init__(self, item)
 
-class siteitem:
-    def __init__(self, name):
-        self.name = name
-        self.images = []
+class __siteitem__:
+    def __init__(self):
+        self.name = ""
         self.have = 0
         self.want = 0
         self.willtrade = 0
         self.hidden = 0
+
+class siteitem(__siteitem__):
+    def __init__(self, name):
+        self.name = name
+        self.images = []
         self.haveusers = []
         self.wantusers = []
         self.willtradeusers = []
 
-        sql = read('scarves', **{"name": name})
+        sql = read('items', **{"name": name})
         result = doselect(sql)
 
         try:
@@ -259,17 +263,18 @@ class siteitem:
         except IndexError:
             raise NoItem(name)
 
-        sql = read('scarfimg', **{"scarfid": self.uid})
+        sql = read('itemimg', **{"itemid": self.uid})
         result = doselect(sql)
 
         try:
-            for scarfimg in result:
-                image = siteimage(scarfimg[1])
+            for itemimg in result:
+                image = siteimage(itemimg[1])
                 self.images.append(image)
         except IndexError:
             pass
 
-        sql = read('ownwant', **{"scarfid": self.uid, "own": "1"})
+        #FIXME this should only be one query
+        sql = read('ownwant', **{"itemid": self.uid, "own": "1"})
         res = doselect(sql)
         self.have = len(res)
         for user in res:
@@ -278,7 +283,7 @@ class siteitem:
             userinfo = siteuser(result[0][1])
             self.haveusers.append(userinfo)
 
-        sql = read('ownwant', **{"scarfid": self.uid, "want": "1"})
+        sql = read('ownwant', **{"itemid": self.uid, "want": "1"})
         res = doselect(sql)
         self.want = len(res)
         for user in res:
@@ -287,7 +292,7 @@ class siteitem:
             userinfo = siteuser(result[0][1])
             self.wantusers.append(userinfo)
 
-        sql = read('ownwant', **{"scarfid": self.uid, "willtrade": "1"})
+        sql = read('ownwant', **{"itemid": self.uid, "willtrade": "1"})
         res = doselect(sql)
         self.willtrade = len(res)
         for user in res:
@@ -307,13 +312,13 @@ class siteitem:
                 flash("Error removing image: " + i.filename) 
                 app.logger.error("Error removing image: " + i.filename) 
      
-        sql = delete('scarves', **{"uid": self.uid}) 
+        sql = delete('items', **{"uid": self.uid}) 
         result = doselect(sql) 
      
-        sql = delete('scarfimg', **{"scarfid": self.uid}) 
+        sql = delete('itemimg', **{"itemid": self.uid}) 
         result = doselect(sql) 
      
-        sql = delete('ownwant', **{"scarfid": self.uid}) 
+        sql = delete('ownwant', **{"itemid": self.uid}) 
         result = doselect(sql) 
      
 
@@ -334,9 +339,9 @@ class siteitem:
                              tag=escape(tag))
                 imgid = doupsert(sql)
 
-                sql = upsert("scarfimg", \
+                sql = upsert("itemimg", \
                              imgid=imgid, \
-                             scarfid=self.uid)
+                             itemid=self.uid)
                 data = doupsert(sql)
 
                 try:
@@ -363,7 +368,7 @@ class siteitem:
 def new_item(name, description, username):
     suuid=uuid.uuid4().get_hex()
 
-    sql = upsert("scarves", \
+    sql = upsert("items", \
                  uid=0, \
                  uuid=suuid, \
                  name=name, \
@@ -372,6 +377,27 @@ def new_item(name, description, username):
                  modified=datetime.datetime.now())
 
     data = doupsert(sql)
+
+def all_items():
+    items = []
+
+    try:
+        sql = read('items')
+        result = doselect(sql)
+
+        for item in result:
+            newitem = __siteitem__()
+            newitem.uid = item[0]
+            newitem.name = item[2]
+            newitem.description = item[3]
+            newitem.added = item[4]
+            newitem.modified = item[5]
+
+            items.append(newitem)
+    except TypeError:
+        pass
+
+    return items
 
 ######### Redirect stuff
 

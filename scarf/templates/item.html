@@ -14,35 +14,35 @@
 {% if pd.authuser is not undefined %}
     <div id="itemactions">
     {% if pd.iteminfo.have == 0 %}
-        <a href="/scarf/{{ pd.item.name }}/have">I own this</a></br>
+        <a href="/item/{{ pd.item.name }}/have">I own this</a></br>
 
     {% else %}
-        This is in your collection. <a href="/scarf/{{ pd.item.name }}/donthave">Remove it</a>.<br />
+        This is in your collection. <a href="/item/{{ pd.item.name }}/donthave">Remove it</a>.<br />
 
         {% if pd.iteminfo.willtrade == 0 %}
-        <a href="/scarf/{{ pd.item.name }}/willtrade">I'll trade this</a>
+        <a href="/item/{{ pd.item.name }}/willtrade">I'll trade this</a>
         {% else %}
-        This is up for trade. <a href="/scarf/{{ pd.item.name }}/wonttrade">Nevermind</a>.<br />
+        This is up for trade. <a href="/item/{{ pd.item.name }}/wonttrade">Nevermind</a>.<br />
         {% endif %}
 
     {% endif %}
 
     {% if pd.iteminfo.want == 0 %}
-    <a href="/scarf/{{ pd.item.name }}/want">I want this</a></br>
+    <a href="/item/{{ pd.item.name }}/want">I want this</a></br>
     {% else %}
-    You want this. <a href="/scarf/{{ pd.item.name }}/dontwant">Nevermind.</a><br />
+    You want this. <a href="/item/{{ pd.item.name }}/dontwant">Nevermind.</a><br />
     {% endif %}
 
 {% else %}
 
-<a href="/scarf/{{ pd.item.name }}/have">I own this</a>
-<a href="/scarf/{{ pd.item.name }}/willtrade">I'll trade this</a>
-<a href="/scarf/{{ pd.item.name }}/want">I want this</a>
+<a href="/item/{{ pd.item.name }}/have">I own this</a>
+<a href="/item/{{ pd.item.name }}/willtrade">I'll trade this</a>
+<a href="/item/{{ pd.item.name }}/want">I want this</a>
 
 {% endif %}
 
 {% if pd.authuser.accesslevel == 255 %}
-<a href="/scarf/{{ pd.item.name }}/delete">Delete scarf</a>
+<a href="/item/{{ pd.item.name }}/delete">Delete item</a>
 {% endif %}
 
 </div>
@@ -52,7 +52,7 @@
 </div>
 
 <br>
-<div id="scarfimg">
+<div id="itemimg">
 {% for image in pd.item.images %}
     <a href="/static/uploads/{{ image.filename }}"><img src="/image/{{ image.filename }}/thumbnail" alt="{{ image.tag }}"></a><br />
 
@@ -66,7 +66,7 @@
     <form action="/image/upload" method="post" enctype="multipart/form-data">
         Tag: <input type=text name=tag><br />
         <input type="file" name="image" accept="image/*"><br />
-        <input type="hidden" name="scarfname" value="{{ pd.item.name }}">
+        <input type="hidden" name="itemname" value="{{ pd.item.name }}">
         <input type=submit value=Submit>
     </form>
 {% endif %}
