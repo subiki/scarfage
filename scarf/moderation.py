@@ -1,3 +1,5 @@
+from scarflib import siteimage
+
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import redirect_back, pagedata, upload_dir
@@ -33,11 +35,11 @@ def moderate():
 
     for mod in result:
         try:
-            uuid = mod[0]
+            imgid = mod[0]
             flag = mod[2]
             user = mod[3]
             if mod[1] == 0:
-                sql = read('images', **{"uuid": uuid})
+                sql = read('images', **{"uid": imgid})
                 img = doselect(sql)[0]
                 app.logger.debug(img)
                 
@@ -81,15 +83,22 @@ def mod_img(image):
     if 'username' not in session or pd.authuser.accesslevel < 10:
         return redirect(url_for('accessdenied'))
 
-    pd.filename = escape(image)
+    try:
+        sql = read('images', **{"filename": escape(image)})
+        result = doselect(sql)
+        modimg = siteimage(result[0][0])
+    except: #FIXME
+        return redirect(url_for('accessdenied')) #FIXME 404
 
-    sql = read('images', **{"filename": pd.filename})
+    pd.image = modimg
+
+    sql = read('images', **{"filename": modimg.filename})
     result = doselect(sql)
 
     try:
         pd.uuid = result[0][1]
 
-        sql = read('imgmods', **{"imgid": pd.uuid})
+        sql = read('imgmods', **{"imgid": modimg.uid})
         result = doselect(sql)
         app.logger.debug(result[0])
         
@@ -123,18 +132,15 @@ def mod_img(image):
 def mod_img_approve(imageid):
     pd = pagedata()
 
+    try:
+        modimg = siteimage(escape(imageid))
+    except:
+        flash('Error during moderation')
+        return redirect(url_for('moderate'))
+
     if 'username' not in session or pd.authuser.accesslevel < 10:
         return redirect(url_for('accessdenied'))
 
-    sql = read('imgmods', **{"imgid": escape(imageid)})
-    result = doselect(sql)
-
-    try:
-        sql = delete('imgmods', **{"imgid": result[0][0]})
-        result = doselect(sql)
-    except IndexError:
-        pd.title = "SQL error"
-        pd.errortext = "SQL error"
-        return render_template('error.html', pd=pd)
+    modimg.approve()
 
     return redirect(url_for('moderate'))

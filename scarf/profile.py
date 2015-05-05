@@ -92,21 +92,8 @@ def show_user_profile(username):
 
     try:
         pd.profileuser = siteuser(escape(username))
+        pd.profileuser.collection = pd.profileuser.get_collection()
     except NoUser:
-        return page_not_found(404)
-
-    try:
-        sql = read('ownwant', **{"userid": pd.profileuser.uid})
-        result = doselect(sql)
-        for scarf in result:
-            sql = read('scarves', **{"uuid": scarf[2]})
-            sresult = doselect(sql)
-
-            try:
-                pd.scarves.append({'name': sresult[0][2], 'own': scarf[3], 'willtrade': scarf[4], 'want': scarf[5], 'hidden': scarf[6]})
-            except IndexError:
-                app.logger.debug('SQL error reading scarves table for profile')
-    except IndexError:
         return page_not_found(404)
 
     return render_template('profile.html', pd=pd)

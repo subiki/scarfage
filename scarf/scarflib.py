@@ -86,26 +86,53 @@ class siteuser:
             pass
             #TODO check for sql exceptions
 
-    def collection(self):
+    def get_collection(self):
+        collection = []
+
         sql = read('ownwant', **{"userid": self.uid})
         result = doselect(sql)
 
+        for item in result:
+            sql = read('scarves', **{"uid": item[2]})
+            sresult = doselect(sql)
 
-# TODO list of item objects
+            sitem = siteitem(sresult[0][2])
+            sitem.have = item[3]
+            sitem.willtrade = item[4]
+            sitem.want = item[5]
+            sitem.hidden = item[6]
 
-        return result
+            collection.append(sitem)
+
+        return collection
 
     def query_collection(self, item):
+        class __ownwant__:
+            def __init__(self):
+                self.have = 0
+                self.want = 0
+                self.willtrade = 0
+                self.hidden = 0
+                pass
+
+        ret = __ownwant__()
+
         try:
             sql = read('scarves', **{"name": item})
             sresult = doselect(sql)
      
-            sql = read('ownwant', **{"userid": self.uid, "scarfid": sresult[0][1]})
+            sql = read('ownwant', **{"userid": self.uid, "scarfid": sresult[0][0]})
             result = doselect(sql)
 
-            return result[0]
+            ret.uid = result[0][0]
+            ret.have = result[0][3]
+            ret.willtrade = result[0][4]
+            ret.want = result[0][5]
+            ret.hidden = result[0][6]
         except IndexError:
-            return []
+            pass
+
+        return ret
 
     def seen(self):
         self.lastseen=datetime.datetime.now()
@@ -169,12 +196,12 @@ def new_user(username, password, email):
 ######### Image stuff
 
 class siteimage:
-    def __init__(self, uuid):
-        sql = read('images', **{"uuid": uuid})
+    def __init__(self, uid):
+        sql = read('images', **{"uid": uid})
         result = doselect(sql)
 
         try: 
-            self.uid = result[0][1]
+            self.uid = result[0][0]
             self.uuid = uuid
             self.filename = result[0][2]
             self.tag = result[0][3]
@@ -182,6 +209,25 @@ class siteimage:
             pass
 #TODO throw exception
 
+    def delete(self):
+        sql = delete('scarfimg', **{"imgid": self.uid})
+        result = doselect(sql)
+
+        sql = delete('images', **{"uid": self.uid})
+        result = doselect(sql)
+
+        sql = delete('imgmods', **{"imgid": self.uid})
+        result = doselect(sql)
+
+        try:
+            os.remove(upload_dir + self.filename)
+        except:
+            app.logger.error("Error removing image: " + escape(img_id))
+            #TODO pass through exception
+
+    def approve(self):
+        sql = delete('imgmods', **{"imgid": self.uid})
+        result = doselect(sql)
 
 ######### Item stuff
 
@@ -196,6 +242,7 @@ class siteitem:
         self.have = 0
         self.want = 0
         self.willtrade = 0
+        self.hidden = 0
         self.haveusers = []
         self.wantusers = []
         self.willtradeusers = []
@@ -205,7 +252,7 @@ class siteitem:
 
         try:
             self.uid = result[0][0]
-            self.uuid = result[0][1] # TODO, remove uuid
+            #self.uuid = result[0][1] # TODO, remove uuid
             #self.name = result[0][2]
             self.description = result[0][3]
             self.added = result[0][4]
@@ -213,7 +260,7 @@ class siteitem:
         except IndexError:
             raise NoItem(name)
 
-        sql = read('scarfimg', **{"scarfid": self.uuid})
+        sql = read('scarfimg', **{"scarfid": self.uid})
         result = doselect(sql)
 
         try:
@@ -223,7 +270,7 @@ class siteitem:
         except IndexError:
             pass
 
-        sql = read('ownwant', **{"scarfid": self.uuid, "own": "1"})
+        sql = read('ownwant', **{"scarfid": self.uid, "own": "1"})
         res = doselect(sql)
         self.have = len(res)
         for user in res:
@@ -232,7 +279,7 @@ class siteitem:
             userinfo = siteuser(result[0][1])
             self.haveusers.append(userinfo)
 
-        sql = read('ownwant', **{"scarfid": self.uuid, "want": "1"})
+        sql = read('ownwant', **{"scarfid": self.uid, "want": "1"})
         res = doselect(sql)
         self.want = len(res)
         for user in res:
@@ -241,7 +288,7 @@ class siteitem:
             userinfo = siteuser(result[0][1])
             self.wantusers.append(userinfo)
 
-        sql = read('ownwant', **{"scarfid": self.uuid, "willtrade": "1"})
+        sql = read('ownwant', **{"scarfid": self.uid, "willtrade": "1"})
         res = doselect(sql)
         self.willtrade = len(res)
         for user in res:
@@ -255,19 +302,19 @@ class siteitem:
             try: 
                 os.remove(upload_dir + i.filename) 
      
-                sql = delete('images', **{"uuid": i.uuid}) 
+                sql = delete('images', **{"uid": i.uid}) 
                 result = doselect(sql) 
             except: 
                 flash("Error removing image: " + i.filename) 
                 app.logger.error("Error removing image: " + i.filename) 
      
-        sql = delete('scarves', **{"uuid": self.uuid}) 
+        sql = delete('scarves', **{"uid": self.uid}) 
         result = doselect(sql) 
      
-        sql = delete('scarfimg', **{"scarfid": self.uuid}) 
+        sql = delete('scarfimg', **{"scarfid": self.uid}) 
         result = doselect(sql) 
      
-        sql = delete('ownwant', **{"scarfid": self.uuid}) 
+        sql = delete('ownwant', **{"scarfid": self.uid}) 
         result = doselect(sql) 
      
 
@@ -286,11 +333,11 @@ class siteitem:
                              uuid=fuuid, \
                              filename=newname, \
                              tag=escape(tag))
-                data = doupsert(sql)
+                imgid = doupsert(sql)
 
                 sql = upsert("scarfimg", \
-                             imgid=fuuid, \
-                             scarfid=self.uuid)
+                             imgid=imgid, \
+                             scarfid=self.uid)
                 data = doupsert(sql)
 
                 try:
@@ -300,7 +347,7 @@ class siteitem:
 
                 sql = upsert("imgmods", \
                              username=username, \
-                             imgid=fuuid)
+                             imgid=imgid)
                 data = doupsert(sql)
 
                 #TODO put this eslewhere

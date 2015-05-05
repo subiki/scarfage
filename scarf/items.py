@@ -71,7 +71,7 @@ def show_item(item_id):
     if 'username' in session:
         try:
             user = siteuser(session['username'])
-            pd.myscarfinfo = user.query_collection(showitem.name)
+            pd.iteminfo = user.query_collection(showitem.name)
         except NoUser:
             pass
 

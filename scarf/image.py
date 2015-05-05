@@ -1,4 +1,4 @@
-from scarflib import redirect_back, pagedata, upload_dir
+from scarflib import redirect_back, pagedata, siteimage, upload_dir, siteitem, NoItem
 
 import os
 import imghdr
@@ -17,39 +17,15 @@ from main import page_not_found
 def reallydelete_image(img_id):
     pd = pagedata()
 
-    if not pd.accesslevel >= 10:
+    if not pd.authuser.accesslevel >= 10:
         return redirect(url_for('accessdenied'))
 
-    sql = read('images', **{"filename": escape(img_id)})
-    result = doselect(sql)
+    delimg = siteimage(escape(img_id))
+    delimg.delete()
 
-    try:
-        uuid = result[0][1]
-        filename = result[0][2]
-    except IndexError: 
-        return page_not_found(404)
-
-    sql = delete('scarfimg', **{"imgid": uuid})
-    result = doselect(sql)
-
-    sql = delete('images', **{"uuid": uuid})
-    result = doselect(sql)
-
-    sql = delete('imgmods', **{"imgid": uuid})
-    result = doselect(sql)
-
-    try:
-        os.remove(upload_dir + filename)
-    except:
-        app.logger.error("Error removing image: " + escape(img_id))
-
-        pd.title = "Error deleting image"
-        pd.errortext = "Error deleting image " + escape(img_id)
-        return render_template("error.html", pd=pd)
-
-    pd.title=escape(img_id) + " has been deleted"
+    pd.title = delimg.filename + " has been deleted"
     pd.accessreq = 10
-    pd.conftext = escape(img_id) + " has been deleted. I hope you meant to do that."
+    pd.conftext = delimg.filename + " has been deleted. I hope you meant to do that."
     pd.conftarget = ""
     pd.conflinktext = ""
     return render_template('confirm.html', pd=pd)
@@ -58,13 +34,15 @@ def reallydelete_image(img_id):
 def delete_image(img_id):
     pd = pagedata()
 
-    if not pd.accesslevel >= 10:
+    if not pd.authuser.accesslevel >= 10:
         return redirect(url_for('accessdenied'))
 
-    pd.title=escape(img_id)
+    delimg = siteimage(escape(img_id))
+
+    pd.title=escape(delimg.filename)
 
     pd.accessreq = 10
-    pd.conftext = "Deleting image " + escape(img_id)
+    pd.conftext = "Deleting image " + delimg.filename
     pd.conftarget = "/image/" + escape(img_id) + "/reallydelete"
     pd.conflinktext = "Yup, I'm sure"
 
@@ -72,8 +50,10 @@ def delete_image(img_id):
 
 @app.route('/image/upload', methods=['POST'])
 def imageupload():
-    scarf = check_scarf(escape(request.form['scarfname']))
-    if scarf == False:
+    try:
+        item = siteitem(escape(request.form['scarfname']))
+    except NoItem:
+        flash('Error uploading image')
         return redirect_back('/index')
 
     if request.method == 'POST':
@@ -85,7 +65,7 @@ def imageupload():
             flash('Please upload something.')
             return redirect_back('/index')
 
-        get_imgupload(request.files['image'], scarf[1], escape(request.form['tag']))
+        item.newimg(request.files['image'], escape(request.form['tag']))
 
         flash('Image added to ' + escape(request.form['scarfname']))
 

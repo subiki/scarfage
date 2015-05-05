@@ -26,35 +26,35 @@
 
     <h1>{{ pd.profileuser.username }}'s collection</h1>
     <ul>
-    {% for item in pd.scarves %}
-      {% if pd.authuser.uid != pd.profileuser.uid %}
-        {% if item['own'] == 1 %}
-        <li><a href="/scarf/{{ item['name'] }}">{{ item['name'] }}</a> 
-        {% if item['hidden'] == 0 %}
-            - <a href="/scarf/{{ item['name'] }}/hide">Hide</a>
+    {% for item in pd.profileuser.collection %}
+      {% if pd.authuser.uid == pd.profileuser.uid %}
+        {% if item.have == 1 %}
+        <li><a href="/scarf/{{ item.name }}">{{ item.name }}</a> 
+        {% if item.hidden == 0 %}
+            - <a href="/scarf/{{ item.name }}/hide">Hide</a>
         {% else %}
-            - <a href="/scarf/{{ item['name'] }}/show">Show</a>
+            - <a href="/scarf/{{ item.name }}/show">Show</a>
         {% endif %}
 
-        {% if item['willtrade'] == 1 %}
-           - <a href="/scarf/{{ item['name'] }}/wonttrade">Don't trade</a>
+        {% if item.willtrade == 1 %}
+           - <a href="/scarf/{{ item.name }}/wonttrade">Don't trade</a>
         {% else %}
-           - <a href="/scarf/{{ item['name'] }}/willtrade">Trade</a>
+           - <a href="/scarf/{{ item.name }}/willtrade">Trade</a>
         {% endif %}
 
-        - <a href="/scarf/{{ item['name'] }}/donthave">Don't have</a>
+        - <a href="/scarf/{{ item.name }}/donthave">Don't have</a>
         </li>
         {% endif %}
 
       {% else %}
 
-        {% if item['hidden'] == 0 and item['own'] == 1 %}
+        {% if item.hidden == 0 and item.have == 1 %}
             <li>
-            {% if item['willtrade'] == 1 %}
+            {% if item.willtrade == 1 %}
                up for trade - 
             {% endif %}
             
-            <a href="/scarf/{{ item['name'] }}">{{ item['name'] }}</a></li>
+            <a href="/scarf/{{ item.name }}">{{ item.name }}</a></li>
         {% endif %}
 
       {% endif %}
@@ -66,16 +66,16 @@
     <ul>
     {% for item in pd.scarves %}
       {% if pd.authuser.uid != pd.profileuser.uid %}
-        {% if item['want'] == 1 %}
+        {% if item.want == 1 %}
         <li>
-            <a href="/scarf/{{ item['name'] }}">{{ item['name'] }}</a> <a href="/scarf/{{ item['name'] }}/dontwant">Nevermind.</a>
+            <a href="/scarf/{{ item.name }}">{{ item.name }}</a> <a href="/scarf/{{ item.name }}/dontwant">Nevermind.</a>
         </li>
         {% endif %}
 
       {% else %}
 
         {% if item ['want'] == 1 %}
-            <li> <a href="/scarf/{{ item['name'] }}">{{ item['name'] }}</a></li>
+            <li> <a href="/scarf/{{ item.name }}">{{ item.name }}</a></li>
         {% endif %}
 
       {% endif %}

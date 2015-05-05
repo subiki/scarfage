@@ -19,13 +19,13 @@ def have(item_id):
 
 @app.route('/scarf/<item_id>/hide')
 def hide(item_id):
-    update = dict(hide=1)
+    update = dict(hidden=1)
     ownwant(escape(item_id), update)
     return redirect_back('/scarf/' + escape(item_id))
 
 @app.route('/scarf/<item_id>/show')
 def show(item_id):
-    update = dict(hide=0)
+    update = dict(hidden=0)
     ownwant(escape(item_id), update)
     return redirect_back('/scarf/' + escape(item_id))
 
@@ -69,11 +69,11 @@ def ownwant(item_id, values):
     result = user.query_collection(item_id)
 
     try:
-        iuid = result[0]
-    except IndexError: 
+        iuid = result.uid
+    except AttributeError: 
         iuid=0
 
-    update = dict(uid=iuid, userid=user.uid, scarfid=moditem.uuid)
+    update = dict(uid=iuid, userid=user.uid, scarfid=moditem.uid)
     update.update(values)
 
     sql = upsert("ownwant", \

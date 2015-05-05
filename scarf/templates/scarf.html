@@ -15,13 +15,13 @@
 <div id="itemactions">
 {% if pd.authuser.collection is defined %}
 
-{% if pd.myscarfinfo[3] == 0 %}
+{% if pd.iteminfo.have == 0 %}
 <a href="/scarf/{{ pd.item.name }}/have">I own this</a></br>
 
 {% else %}
 This is in your collection. <a href="/scarf/{{ pd.item.name }}/donthave">Remove it</a>.<br />
 
-{% if pd.myscarfinfo[4] == 0 %}
+{% if pd.iteminfo.willtrade == 0 %}
 <a href="/scarf/{{ pd.item.name }}/willtrade">I'll trade this</a>
 {% else %}
 This is up for trade. <a href="/scarf/{{ pd.item.name }}/wonttrade">Nevermind</a>.<br />
@@ -29,7 +29,7 @@ This is up for trade. <a href="/scarf/{{ pd.item.name }}/wonttrade">Nevermind</a
 
 {% endif %}
 
-{% if pd.myscarfinfo[5] == 0 %}
+{% if pd.iteminfo.want == 0 %}
 <a href="/scarf/{{ pd.item.name }}/want">I want this</a></br>
 {% else %}
 You want this. <a href="/scarf/{{ pd.item.name }}/dontwant">Nevermind.</a><br />
@@ -60,7 +60,7 @@ You want this. <a href="/scarf/{{ pd.item.name }}/dontwant">Nevermind.</a><br />
     <a href="/static/uploads/{{ image.filename }}"><img src="/image/{{ image.filename }}/thumbnail" alt="{{ image.tag }}"></a><br />
 
 {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
-<a href="/image/{{ image.filename }}/delete">Delete image</a>
+<a href="/image/{{ image.uid }}/delete">Delete image</a>
 {% endif %}
 
 {% endfor %}
@@ -69,7 +69,7 @@ You want this. <a href="/scarf/{{ pd.item.name }}/dontwant">Nevermind.</a><br />
     <form action="/image/upload" method="post" enctype="multipart/form-data">
         Tag: <input type=text name=tag><br />
         <input type="file" name="image" accept="image/*"><br />
-        <input type="hidden" name="scarfname" value="{{ pd.scarfname }}">
+        <input type="hidden" name="scarfname" value="{{ pd.item.name }}">
         <input type=submit value=Submit>
     </form>
 {% endif %}

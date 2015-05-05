@@ -12,14 +12,14 @@
 <a href="/mod/ban/{{ pd.moduser }}">Ban this user</a>
 {% endif %}
 
-<a href="/image/{{ pd.filename }}/delete">Delete image</a>
-<a href="/mod/image/{{ pd.uuid }}/approve">Approve image</a>
+<a href="/image/{{ pd.image.uid }}/delete">Delete image</a>
+<a href="/mod/image/{{ pd.image.uid }}/approve">Approve image</a>
 
 <pre>
 {{ pd.ascii }}
 </pre>
 
-<a href="/static/uploads/{{ pd.filename }}"><img src="/image/{{ pd.filename }}/preview" alt="{{ pd.filename }}"><br />
+<a href="/static/uploads/{{ pd.image.filename }}"><img src="/image/{{ pd.image.filename }}/preview" alt="{{ pd.image.filename }}"><br />
 </div>
 
 {% endblock %}
