@@ -5,29 +5,29 @@
 {% include "login.html" %}
 
 <div id="content">
-    <h1>{{ pd.userinfo[1] }}'s profile</h1>
-    {% if pd.user != pd.userinfo[1] %}
+    <h1>{{ pd.profileuser.username }}'s profile</h1>
+    {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
         <ul>
-            <li>Member since: {{ pd.userinfo[5] }}</li>
-            <li>Last seen: {{ pd.userinfo[6] }}</li>
-            <li>Items added: {{ pd.userinfo[7] }}</li>
+            <li>Member since: {{ pd.profileuser.joined }}</li>
+            <li>Last seen: {{ pd.profileuser.lastseen }}</li>
+            <li>Items added: {{ pd.profileuser.numadds }}</li>
         </ul>
  
     {% else %}
         <ul>
-            <li>Email: {{ pd.userinfo[4] }}</li>
-            <li>Member since: {{ pd.userinfo[5] }}</li>
-            <li>Items added: {{ pd.userinfo[7] }}</li>
-            <li>Access level: {{ pd.accesslevels[pd.userinfo[8]] }}</li>
+            <li>Email: {{ pd.profileuser.email }}</li>
+            <li>Member since: {{ pd.profileuser.joined }}</li>
+            <li>Items added: {{ pd.profileuser.numadds }}</li>
+            <li>Access level: {{ pd.accesslevels[pd.profileuser.accesslevel] }}</li>
         </ul>
 
         <a href="/userupdate">Reset Password or Update Email Address</a>
     {% endif %}
 
-    <h1>{{ pd.userinfo[1] }}'s collection</h1>
+    <h1>{{ pd.profileuser.username }}'s collection</h1>
     <ul>
     {% for item in pd.scarves %}
-      {% if pd.user == pd.userinfo[1] %}
+      {% if pd.authuser.uid != pd.profileuser.uid %}
         {% if item['own'] == 1 %}
         <li><a href="/scarf/{{ item['name'] }}">{{ item['name'] }}</a> 
         {% if item['hidden'] == 0 %}
@@ -62,10 +62,10 @@
     {% endfor %}
     </ul>
 
-    <h1>{{ pd.userinfo[1] }}'s wanted list</h1>
+    <h1>{{ pd.profileuser.username }}'s wanted list</h1>
     <ul>
     {% for item in pd.scarves %}
-      {% if pd.user == pd.userinfo[1] %}
+      {% if pd.authuser.uid != pd.profileuser.uid %}
         {% if item['want'] == 1 %}
         <li>
             <a href="/scarf/{{ item['name'] }}">{{ item['name'] }}</a> <a href="/scarf/{{ item['name'] }}/dontwant">Nevermind.</a>

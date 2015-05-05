@@ -1,12 +1,13 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
-from scarflib import check_login, redirect_back, hit_lastseen, pagedata, get_userinfo
+from scarflib import redirect_back, pagedata, NoUser, siteuser
 from sql import doupsert, upsert, doselect, read, delete
 
 def get_users():
     sql = read('users')
     result = doselect(sql)
 
+    #FIXME if sizeof result == 0 then return []
     try:
         uid = result[0][0]
         return result
@@ -17,7 +18,7 @@ def get_users():
 def admin_users():
     pd = pagedata()
 
-    if 'username' not in session or pd.accesslevel < 255:
+    if 'username' not in session or pd.authuser.accesslevel < 255:
         return redirect(url_for('accessdenied'))
 
     pd.title = "Admin" 
@@ -30,21 +31,16 @@ def admin_users():
 def admin_reallydelete_user(user):
     pd = pagedata()
 
-    if 'username' not in session or pd.accesslevel < 255:
+    if 'username' not in session or pd.authuser.accesslevel < 255:
         return redirect(url_for('accessdenied'))
 
     try:
-        uid = get_userinfo(escape(user))[0][0]
+        deluser = siteuser(escape(user))
+        deluser.delete()
 
-        sql = delete('users', **{"uid": uid})
-        result = doselect(sql)
-
-        sql = delete('ownwant', **{"userid": uid})
-        result = doselect(sql)
-    except IndexError:
-        pd.title = "SQL error"
-        pd.errortext = "SQL error"
-        return render_template('error.html', pd=pd)
+        flash('Deleted user: ' + user)
+    except:
+        flash('Error deleting user: ' + user)
 
     return redirect('/admin')
 
@@ -52,7 +48,7 @@ def admin_reallydelete_user(user):
 def admin_delete_user(user):
     pd = pagedata()
 
-    if 'username' not in session or pd.accesslevel < 255:
+    if 'username' not in session or pd.authuser.accesslevel < 255:
         return redirect(url_for('accessdenied'))
 
     pd.title="Deleting user " + escape(user)
@@ -65,38 +61,33 @@ def admin_delete_user(user):
     return render_template('confirm.html', pd=pd)
 
 @app.route('/admin/users/<user>/accesslevel/<level>')
-def admin_ban_user(user, level):
+def admin_set_accesslevel(user, level):
     pd = pagedata()
 
-    if 'username' not in session or pd.accesslevel < 10:
+    if 'username' not in session or pd.authuser.accesslevel < 10:
         return redirect(url_for('accessdenied'))
 
     if session['username'] == user:
         flash("WTF mate, you can't edit your own permissions!")
         return redirect_back('index')
 
+    if pd.authuser.accesslevel != 255 and pd.authuser.accesslevel <= level:
+        flash("No.")
+        return redirect_back('index')
+
     try:
-#FIXME dupe variables
-        useraccess = get_userinfo(escape(user))[0][8]
-        ui = get_userinfo(escape(user))[0]
-        uid = ui[0]
-        al = ui[8]
-    except IndexError:
+        moduser = siteuser(escape(user))
+
+    except NoUser:
         pd.title = "User does not exist"
         pd.errortext = "The user does not exist"
         return render_template('error.html', pd=pd)
 
-    if pd.accesslevel != 255 and pd.accesslevel <= level:
-        flash("No.")
-        return redirect_back('index')
-
-    if al >= pd.accesslevel:
+    if moduser.accesslevel >= pd.authuser.accesslevel:
         flash("Please contact an admin to modify this user's account.")
         return redirect_back('index')
 
-    sql = upsert("users", \
-                 uid=uid, \
-                 accesslevel=level)
-    data = doupsert(sql)
+    moduser.newaccesslevel(escape(level))
+    flash('User ' + user + '\'s accesslevel has been set to ' + level)
 
     return redirect_back('/admin')

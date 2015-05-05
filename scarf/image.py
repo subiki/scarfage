@@ -8,9 +8,7 @@ from PIL import Image
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash, send_file
 from werkzeug import secure_filename
-from scarflib import check_login
 from sql import upsert, doupsert, read, doselect, delete
-from profile import get_userinfo
 from scarflib import redirect_back, check_scarf, scarf_imgs, pagedata, get_imgupload, upload_dir
 from main import page_not_found
 
@@ -73,10 +71,6 @@ def delete_image(img_id):
 
 @app.route('/image/upload', methods=['POST'])
 def imageupload():
-    if not check_login():
-        flash('You must be logged in to upload a picture.')
-        return redirect_back('/index')
-
     scarf = check_scarf(escape(request.form['scarfname']))
     if scarf == False:
         return redirect_back('/index')

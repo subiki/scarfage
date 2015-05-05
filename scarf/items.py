@@ -1,3 +1,5 @@
+from scarflib import siteuser, NoUser
+
 import os
 import imghdr
 import uuid
@@ -7,9 +9,7 @@ from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
 
-from scarflib import check_login
 from sql import upsert, doupsert, read, doselect, delete
-from profile import get_userinfo
 from scarflib import redirect_back, check_scarf, scarf_imgs, pagedata, get_imgupload, upload_dir
 from main import page_not_found
 
@@ -120,14 +120,10 @@ def show_scarf(scarf_id):
         res = doselect(sql)
         pd.willtradeusers.append(res[0][1])
 
-    if check_login():
-        userinfo = get_userinfo(session['username'])
-        try:
-            uid = userinfo[0][0]
-        except IndexError:
-            return render_template('error.html', errortext="SQL error")
+    try:
+        user = siteuser(session['username'])
 
-        sql = read('ownwant', **{"userid": uid, "scarfid": scarf[1]})
+        sql = read('ownwant', **{"userid": user.uid, "scarfid": scarf[1]})
         result = doselect(sql)
 
         try:
@@ -135,6 +131,8 @@ def show_scarf(scarf_id):
             pd.myscarfinfo = result[0]
         except IndexError:
             pass
+    except NoUser:
+        pass
 
     pd.title=scarf_id
     pd.scarfname=scarf_id
@@ -147,10 +145,6 @@ def show_scarf(scarf_id):
 def newscarf():
     pd = pagedata()
     if request.method == 'POST':
-#        if not check_login():
-#            flash('You must be logged in to create a scarf.')
-#            return redirect(url_for('/newuser'))
-
         if request.form['name'] == '':
             flash('No name?')
             return redirect(url_for('newscarf'))

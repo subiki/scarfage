@@ -1,8 +1,9 @@
+from scarflib import siteuser
+
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
-from scarflib import check_login, check_scarf
+from scarflib import check_scarf
 from sql import upsert, doupsert, read, doselect, delete
-from profile import get_userinfo
 from scarflib import redirect_back
 
 @app.route('/scarf/<scarf_id>/donthave')
@@ -58,30 +59,28 @@ def ownwant(scarf_id, values):
     if scarf == False:
         return
 
-    if check_login():
-        userinfo = get_userinfo(session['username'])
-        try:
-            uid = userinfo[0][0]
-        except IndexError:
-            return -1
+    try:
+        user = siteuser(escape(request.form['username']))
+    except NoUser:
+        return
 
-        sql = read('ownwant', **{"userid": uid, "scarfid": scarf[1]})
-        result = doselect(sql)
-        app.logger.debug(result)
+    sql = read('ownwant', **{"userid": user.uid, "scarfid": scarf[1]})
+    result = doselect(sql)
+    app.logger.debug(result)
 
+    iuid=0
+    try:
+        iuid = result[0][0]
+    except IndexError: 
         iuid=0
-        try:
-            iuid = result[0][0]
-        except IndexError: 
-            iuid=0
 
-        update = dict(uid=iuid, userid=uid, scarfid=scarf[1])
-        update.update(values)
+    update = dict(uid=iuid, userid=user.uid, scarfid=scarf[1])
+    update.update(values)
 
-        sql = upsert("ownwant", \
-                     **update)
+    sql = upsert("ownwant", \
+                 **update)
 
-        data = doupsert(sql)
+    data = doupsert(sql)
 
     sql = delete('ownwant', **{ 'own': '0', 'willtrade': '0', 'want': '0', 'hidden': '0' })
     result = doselect(sql)

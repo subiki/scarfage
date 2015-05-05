@@ -4,10 +4,9 @@ import datetime
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
-from scarflib import check_login, redirect_back, pagedata, get_userinfo
+from scarflib import redirect_back, pagedata, siteuser, NoUser
 from sql import doupsert, upsert, doselect, read
 from main import page_not_found
-from user import check_pw, gen_pwhash
 
 @app.route('/userupdate')
 def userupdate():
@@ -23,63 +22,46 @@ def emailupdate():
     pd = pagedata()
     if 'username' in session:
         if request.method == 'POST':
-            userinfo = get_userinfo(escape(session['username']))
-
             try:
-                pd.userinfo=userinfo[0]
-                uid = userinfo[0][0]
-            except IndexError:
-                pd.title = "SQL Error"
-                pd.errortext = "SQL Error"
+                user = siteuser(session['username'])
+            except NoUser:
                 return render_template('error.html', pd=pd)
 
-            ret = False
-            if not check_pw(escape(session['username']), escape(request.form['password'])):
-                flash("Please check your password and try again")
-                ret = True
+            try:
+                user.authenticate(request.form['password'])
+            except AuthFail:
+                flash("Please check your current password and try again")
+                return redirect(url_for('userupdate'))
 
             email = escape(request.form['email'])
 
             if not re.match("[^@]+@[^@]+\.[^@]+", escape(request.form['email'])):
                 flash("Invalid email address")
-                ret = True
+                return redirect(url_for('userupdate'))
 
-            if ret:
-                return redirect_back(url_for('userupdate'))
-
-            sql = upsert("users", \
-                         uid=uid, \
-                         email=email)
-            app.logger.debug(sql)
-
-            data = doupsert(sql)
+            user.newemail(email)
 
             flash("Your email address has been changed.")
             return redirect(url_for('userupdate'))
 
     return redirect(url_for('index'))
-
-
  
 @app.route('/pwreset', methods=['GET', 'POST'])
 def pwreset():
     pd = pagedata()
     if 'username' in session:
+        ret = False
         if request.method == 'POST':
-            userinfo = get_userinfo(escape(session['username']))
-
             try:
-                pd.userinfo=userinfo[0]
-                uid = userinfo[0][0]
-            except IndexError:
-                pd.title = "SQL Error"
-                pd.errortext = "SQL Error"
+                user = siteuser(session['username'])
+            except NoUser:
                 return render_template('error.html', pd=pd)
 
-            ret = False
-            if not check_pw(escape(session['username']), escape(request.form['password'])):
+            try:
+                user.authenticate(request.form['password'])
+            except AuthFail:
                 flash("Please check your current password and try again")
-                ret = True
+                return redirect(url_for('userupdate'))
 
             pass1 = escape(request.form['newpassword'])
             pass2 = escape(request.form['newpassword2'])
@@ -95,20 +77,7 @@ def pwreset():
             if ret:
                 return redirect_back(url_for('userupdate'))
 
-            salt=str(uuid.uuid4().get_hex().upper()[0:6])
-            app.logger.debug(salt)
-
-            app.logger.debug(request.form)
-            pwhash=gen_pwhash(escape(request.form['newpassword']), salt)
-            app.logger.debug(pwhash)
-
-            sql = upsert("users", \
-                         uid=uid, \
-                         pwhash=pwhash, \
-                         pwsalt=salt)
-            app.logger.debug(sql)
-
-            data = doupsert(sql)
+            user.newpassword(escape(request.form['newpassword']))
 
             flash("Your password has been reset.")
             return redirect(url_for('userupdate'))
@@ -121,13 +90,13 @@ def show_user_profile(username):
     pd.scarves = []
     pd.title = "Profile for " + escape(username)
 
-    userinfo = get_userinfo(escape(username))
+    try:
+        pd.profileuser = siteuser(escape(username))
+    except NoUser:
+        return page_not_found(404)
 
     try:
-        pd.userinfo=userinfo[0]
-        uid = userinfo[0][0]
-
-        sql = read('ownwant', **{"userid": uid})
+        sql = read('ownwant', **{"userid": pd.profileuser.uid})
         result = doselect(sql)
         for scarf in result:
             sql = read('scarves', **{"uuid": scarf[2]})

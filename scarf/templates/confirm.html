@@ -11,7 +11,7 @@
 <h1>{{ pd.scarfname }}</h1><br />
 </div>
 
-{% if pd.accesslevel >= pd.accessreq %}
+{% if pd.authuser.accesslevel >= pd.accessreq %}
 
 <div id=conftext>
 {{ pd.conftext }}

@@ -17,13 +17,13 @@
         <a href="/new">Upload</a>
         </div>
 
-        {% if pd.accesslevel >= 10 %}
+        {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
         <div class=nav>
         <a href="/mod">Moderate</a>
         </div>
         {% endif %}
 
-        {% if pd.accesslevel == 255 %}
+        {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
         <div class=nav>
         <a href="/admin">Admin</a>
         </div>

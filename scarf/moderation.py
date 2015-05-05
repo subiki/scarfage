@@ -1,6 +1,6 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
-from scarflib import check_login, redirect_back, pagedata, get_userinfo, upload_dir
+from scarflib import redirect_back, pagedata, upload_dir
 from sql import doupsert, upsert, doselect, read, delete
 
 from PIL import Image
@@ -23,7 +23,7 @@ greyscale = [
 def moderate():
     pd = pagedata()
 
-    if 'username' not in session or pd.accesslevel < 10:
+    if 'username' not in session or pd.authuser.accesslevel < 10:
         return redirect(url_for('accessdenied'))
 
     sql = read('imgmods')
@@ -62,12 +62,8 @@ def moderate():
 def mod_ban_user(user):
     pd = pagedata()
 
-    if 'username' not in session or pd.accesslevel < 255:
+    if 'username' not in session or pd.authuser.accesslevel < 255:
         return redirect(url_for('accessdenied'))
-
-    if get_userinfo(escape(user))[0][8] == 0:
-        flash('User has been banned')
-        return redirect(url_for('moderate'))
 
     pd.title="Banning user " + escape(user)
 
@@ -82,7 +78,7 @@ def mod_ban_user(user):
 def mod_img(image):
     pd = pagedata()
 
-    if 'username' not in session or pd.accesslevel < 10:
+    if 'username' not in session or pd.authuser.accesslevel < 10:
         return redirect(url_for('accessdenied'))
 
     pd.filename = escape(image)
@@ -127,7 +123,7 @@ def mod_img(image):
 def mod_img_approve(imageid):
     pd = pagedata()
 
-    if 'username' not in session or pd.accesslevel < 10:
+    if 'username' not in session or pd.authuser.accesslevel < 10:
         return redirect(url_for('accessdenied'))
 
     sql = read('imgmods', **{"imgid": escape(imageid)})
