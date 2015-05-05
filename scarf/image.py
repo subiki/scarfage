@@ -1,14 +1,9 @@
-#import os
-#import imghdr
-#import uuid
-#import re
-#import datetime
-
 from StringIO import StringIO
 from PIL import Image
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash, send_file
 from scarflib import redirect_back, pagedata, siteimage, upload_dir, siteitem, NoItem
+from main import page_not_found
 
 @app.route('/image/<img_id>/reallydelete')
 def reallydelete_image(img_id):
@@ -20,6 +15,7 @@ def reallydelete_image(img_id):
     delimg = siteimage(escape(img_id))
     delimg.delete()
 
+    app.logger.info(delimg.filename + " has been deleted by " + pd.authuser.username)
     pd.title = delimg.filename + " has been deleted"
     pd.accessreq = 10
     pd.conftext = delimg.filename + " has been deleted. I hope you meant to do that."
@@ -70,9 +66,14 @@ def imageupload():
 
 def serve_pil_image(pil_img):
     img_io = StringIO()
-    pil_img.save(img_io, 'JPEG', quality=70)
+
+    pil_img.save(img_io, 'PNG', quality=70)
     img_io.seek(0)
-    return send_file(img_io, mimetype='image/jpeg')
+    return send_file(img_io, mimetype='image/png')
+
+#    pil_img.save(img_io, 'JPEG', quality=70)
+#    img_io.seek(0)
+#    return send_file(img_io, mimetype='image/jpeg')
 
 #TODO this is broken, I hate it
 def resize(img, maxwidth, maxheight):
@@ -104,12 +105,18 @@ def resize(img, maxwidth, maxheight):
 
 @app.route('/image/<image>/thumbnail')
 def serve_thumb(image):
-    img=Image.open(upload_dir + escape(image))
-    img = resize(img, 800.0, 200.0)
-    return serve_pil_image(img)
+    try:
+        img=Image.open(upload_dir + escape(image))
+        img = resize(img, 800.0, 200.0)
+        return serve_pil_image(img)
+    except:
+        return page_not_found(404)
 
 @app.route('/image/<image>/preview')
 def serve_preview(image):
-    img=Image.open(upload_dir + escape(image))
-    img = resize(img, 800.0, 800.0)
-    return serve_pil_image(img)
+    try:
+        img=Image.open(upload_dir + escape(image))
+        img = resize(img, 800.0, 800.0)
+        return serve_pil_image(img)
+    except:
+        return page_not_found(404)

@@ -1,17 +1,15 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import redirect_back, pagedata, NoUser, siteuser
-from sql import read, doselect
+from sql import read, doquery
 
 def get_users():
     sql = read('users')
-    result = doselect(sql)
+    result = doquery(sql)
 
-    app.logger.debug(result)
     users = []
 
     for user in result:
-        app.logger.debug(user[1])
         users.append(siteuser(user[1]))
 
     return users
@@ -35,16 +33,19 @@ def admin_reallydelete_user(user):
     if 'username' not in session or pd.authuser.accesslevel < 255:
         return redirect(url_for('accessdenied'))
 
-    if session['username'] == pd.authuser.username:
+    if user == pd.authuser.username:
         return redirect(url_for('accessdenied'))
 
     try:
         deluser = siteuser(escape(user))
         deluser.delete()
 
-        flash('Deleted user: ' + user)
+        msg = 'Deleted user: ' + user
     except:
-        flash('Error deleting user: ' + user)
+        msg = 'Error deleting user: ' + user
+
+    flash(msg)
+    app.logger.info(msg)
 
     return redirect('/admin')
 
@@ -72,10 +73,12 @@ def admin_set_accesslevel(user, level):
         return redirect(url_for('accessdenied'))
 
     if session['username'] == user:
+        app.logger.error('Accesslevel change was denied for user: ' + pd.authuser.username)
         flash("WTF, you can't edit your own permissions!")
         return redirect_back('index')
 
     if pd.authuser.accesslevel != 255 and pd.authuser.accesslevel <= level:
+        app.logger.error('Accesslevel change was denied for user: ' + pd.authuser.username)
         flash("No.")
         return redirect_back('index')
 
@@ -83,6 +86,7 @@ def admin_set_accesslevel(user, level):
         moduser = siteuser(escape(user))
 
     except NoUser:
+        app.logger.error('Accesslevel change attempted for invalid user by: ' + pd.authuser.username)
         pd.title = "User does not exist"
         pd.errortext = "The user does not exist"
         return render_template('error.html', pd=pd)
@@ -92,6 +96,7 @@ def admin_set_accesslevel(user, level):
         return redirect_back('index')
 
     moduser.newaccesslevel(escape(level))
+    app.logger.info('Accesslevel change for ' + user)
     flash('User ' + user + '\'s accesslevel has been set to ' + level)
 
     return redirect_back('/admin')

@@ -1,6 +1,3 @@
-#import os
-#import uuid
-#import datetime
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash

@@ -9,7 +9,7 @@
     <form role="form" action="/newuser" method="post">
       <div class="form-group">
         <label class="newuser-label" for="username">Username:</label>
-        <input type=text name=username required><br />
+        <input type=text name=username value="{{ pd.username }}" required><br />
       <div>
 
       <div class="form-group">
@@ -24,7 +24,7 @@
 
       <div class="form-group">
         <label class="newuser-label" for="email">Email address:</label>
-        <input type=text name=email required><br />
+        <input type=text name=email value="{{ pd.email }}" required><br />
       <div>
 
       <div class="form-group">

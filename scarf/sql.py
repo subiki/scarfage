@@ -1,6 +1,5 @@
 import MySQLdb
 from scarf import app
-from flask import redirect, url_for
 import socket
 import datetime
 
@@ -47,10 +46,8 @@ def delete(table, **kwargs):
     sql.append(";")
     return "".join(sql)
 
-#TODO input checking
-
 def doupsert(query):
-    app.logger.debug(query)
+#    app.logger.debug(query)
 
     try:
         db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
@@ -65,16 +62,12 @@ def doupsert(query):
 
         return data
 
-    except MySQLdb.MySQLError, err:
-        app.logger.error("Cannot connect to database. MySQL error: " + str(err))
-        return 
+    except MySQLdb.MySQLError as e:
+        app.logger.error("Cannot connect to database. MySQL error: " + str(e))
+        raise
 
-    app.logger.error("Cannot connect to database. MySQL error")
-
-#TODO rename, also does deletes
-#TODO better error checking from this
-def doselect(query):
-    app.logger.debug(query)
+def doquery(query):
+#    app.logger.debug(query)
 
     try:
         db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
@@ -89,8 +82,6 @@ def doselect(query):
 
         return data
 
-    except MySQLdb.MySQLError, err:
-        app.logger.error("Cannot connect to database. MySQL error: " + str(err))
-        return 
-
-    app.logger.error("Cannot connect to database. MySQL error")
+    except MySQLdb.MySQLError as e:
+        app.logger.error("Cannot connect to database. MySQL error: " + str(e))
+        raise

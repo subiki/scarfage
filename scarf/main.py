@@ -1,6 +1,6 @@
 from scarf import app
 from flask import render_template, session, escape, request, flash
-from sql import doselect, read
+from sql import doquery, read
 from scarflib import pagedata, all_items
 
 @app.errorhandler(404)
@@ -31,7 +31,7 @@ def index():
     pd.title = "Scarfage"
 
     sql = read('items')
-    result = doselect(sql)
+    result = doquery(sql)
 
     pd.items = all_items()
 

@@ -1,7 +1,7 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
-from scarflib import redirect_back, pagedata, upload_dir, siteimage
-from sql import doupsert, upsert, doselect, read, delete
+from scarflib import redirect_back, pagedata, upload_dir, siteimage, NoImage
+from sql import doupsert, upsert, doquery, read, delete
 from main import page_not_found
 
 from PIL import Image
@@ -28,7 +28,7 @@ def moderate():
         return redirect(url_for('accessdenied'))
 
     sql = read('imgmods')
-    result = doselect(sql)
+    result = doquery(sql)
 
     pd.mods = []
 
@@ -39,8 +39,7 @@ def moderate():
             user = mod[3]
             if mod[1] == 0:
                 sql = read('images', **{"uid": imgid})
-                img = doselect(sql)[0]
-                app.logger.debug(img)
+                img = doquery(sql)[0]
                 
                 class mod:
                     pass
@@ -84,22 +83,19 @@ def mod_img(image):
 
     try:
         sql = read('images', **{"filename": escape(image)})
-        result = doselect(sql)
+        result = doquery(sql)
         modimg = siteimage(result[0][0])
-    except: #FIXME
+    except NoImage:
         return page_not_found(404)
 
     pd.image = modimg
 
     sql = read('images', **{"filename": modimg.filename})
-    result = doselect(sql)
+    result = doquery(sql)
 
     try:
-        pd.uuid = result[0][1]
-
         sql = read('imgmods', **{"imgid": modimg.uid})
-        result = doselect(sql)
-        app.logger.debug(result[0])
+        result = doquery(sql)
         
         pd.moduser = result[0][3]
     except IndexError:

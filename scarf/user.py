@@ -1,6 +1,3 @@
-#import os
-#import uuid
-#import datetime
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
@@ -62,13 +59,15 @@ def login():
 def newuser():
     pd = pagedata();
     pd.title = "New User"
+
     if 'username' in session:
         flash('Don\'t be greedy')
         return redirect(url_for('index'))
     else:
         if request.method == 'POST':
             if not check_new_user(request):
-                # TODO, re-fill form
+                pd.username = request.form['username']
+                pd.email = request.form['email']
                 return render_template('newuser.html', pd=pd)
 
             if not new_user(escape(request.form['username']), escape(request.form['password']), escape(request.form['email'])):

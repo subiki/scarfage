@@ -1,14 +1,6 @@
-
-#import os
-#import imghdr
-#import uuid
-#import re
-#import datetime
-
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
-
 from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back
 from main import page_not_found
 
@@ -20,7 +12,7 @@ def itemroot():
 def reallydelete_item(item_id):
     try:
         delitem = siteitem(escape(item_id))
-    except: #FIXME
+    except NoItem: 
         return page_not_found(404)
 
     pd = pagedata()
@@ -42,7 +34,7 @@ def reallydelete_item(item_id):
 def delete_item(item_id):
     try:
         delitem = siteitem(escape(item_id))
-    except: #FIXME
+    except NoItem: 
         return page_not_found(404)
 
     pd = pagedata()
@@ -103,7 +95,7 @@ def newitem():
             newitem = siteitem(escape(request.form['name']))
             flash('An item with that name already exists')
             return redirect(url_for('newitem'))
-        except: #FIXME NoItem
+        except NoItem:
             new_item(escape(request.form['name']), escape(request.form['desc']), username)
 
         flash('Added item!')
@@ -112,7 +104,7 @@ def newitem():
             newitem = siteitem(escape(request.form['name']))
             newitem.newimg(request.files['front'], "front")
             newitem.newimg(request.files['back'], "back")
-        except: #FIXME noitem
+        except NoItem:
             flash('Error adding item!')
             return redirect(url_for('newitem'))
 

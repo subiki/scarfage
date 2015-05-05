@@ -25,13 +25,19 @@
     {% endif %}
 
     <h1>{{ pd.profileuser.username }}'s collection</h1>
-    <ul>
     {% for item in pd.profileuser.collection %}
+    <div id="item">
       {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
         {% if item.have == 1 %}
-        <li><a href="/item/{{ item.name }}">{{ item.name }}</a> 
+         {% if item.images[0] is defined %}
+         <h4><a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
+         <img src="/image/{{ item.images[0].filename }}/thumbnail" alt="{{ item.images[0].tag }}"> <br />
+         {% else %}
+         No thumbnail.<br />
+         {% endif %}
+
         {% if item.hidden == 0 %}
-            - <a href="/item/{{ item.name }}/hide">Hide</a>
+            <a href="/item/{{ item.name }}/hide">Hide</a>
         {% else %}
             - <a href="/item/{{ item.name }}/show">Show</a>
         {% endif %}
@@ -43,46 +49,44 @@
         {% endif %}
 
         - <a href="/item/{{ item.name }}/donthave">Don't have</a>
-        </li>
         {% endif %}
 
       {% else %}
 
         {% if item.hidden == 0 and item.have == 1 %}
-            <li>
+        <h4>
             {% if item.willtrade == 1 %}
                up for trade - 
             {% endif %}
-            
-            <a href="/item/{{ item.name }}">{{ item.name }}</a></li>
+         <a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
+         {% if item.images[0] is defined %}
+         <img src="/image/{{ item.images[0].filename }}/thumbnail" alt="{{ item.images[0].tag }}"> <br />
+         {% else %}
+         No thumbnail.<br />
+         {% endif %}
+
         {% endif %}
 
       {% endif %}
-
+    </div>
     {% endfor %}
-    </ul>
 
     <h1>{{ pd.profileuser.username }}'s wanted list</h1>
-    <ul>
+    <div id="items">
     {% for item in pd.profileuser.collection %}
-      {% if pd.authuser is defined and pd.authuser.uid != pd.profileuser.uid %}
-        {% if item.want == 1 %}
-        <li>
-            <a href="/item/{{ item.name }}">{{ item.name }}</a> <a href="/item/{{ item.name }}/dontwant">Nevermind.</a>
-        </li>
-        {% endif %}
-
-      {% else %}
-
-        {% if item.want == 1 %}
-            <li> <a href="/item/{{ item.name }}">{{ item.name }}</a></li>
-        {% endif %}
-
-      {% endif %}
-
-
+     {% if item.want == 1 %}
+         <h4><a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
+         {% if item.images[0] is defined %}
+         <img src="/image/{{ item.images[0].filename }}/thumbnail" alt="{{ item.images[0].tag }}"> <br />
+         {% else %}
+         No thumbnail.<br />
+         {% endif %}
+       {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
+       <a href="/item/{{ item.name }}/dontwant">Nevermind.</a>
+       {% endif %}
+     {% endif %}
     {% endfor %}
-    </ul>
+    </div>
 
 
 </div>

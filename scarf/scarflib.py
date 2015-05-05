@@ -1,14 +1,12 @@
 import hashlib
-
 import os
 import datetime
 import imghdr
 import uuid
 from scarf import app
-# TODO no flask stuff here besides escape and session
-from flask import request, session, redirect, url_for, escape, flash
+from flask import request, redirect, session, escape, flash
 from urlparse import urlparse, urljoin
-from sql import upsert, doupsert, read, doselect, delete
+from sql import upsert, doupsert, read, doquery, delete
 
 # DEBUG
 import socket 
@@ -46,7 +44,7 @@ class siteuser:
         self.username = username
 
         sql = read('users', **{"username": username})
-        result = doselect(sql)
+        result = doquery(sql)
 
         try:
             self.uid = result[0][0]
@@ -70,32 +68,28 @@ class siteuser:
                 self.auth = True
 
     def __writedb__(self):
-        try:
-            sql = upsert("users", \
-                         uid=self.uid, \
-                         pwhash=self.pwhash,
-                         pwsalt=self.pwsalt,
-                         email=self.email,
-                         joined=self.joined,
-                         lastseen=self.lastseen,
-                         numadds=self.numadds,
-                         accesslevel=self.accesslevel)
-            data = doupsert(sql)
-        except:
-            pass
-            #TODO check for sql exceptions
+        sql = upsert("users", \
+                     uid=self.uid, \
+                     pwhash=self.pwhash,
+                     pwsalt=self.pwsalt,
+                     email=self.email,
+                     joined=self.joined,
+                     lastseen=self.lastseen,
+                     numadds=self.numadds,
+                     accesslevel=self.accesslevel)
+        data = doupsert(sql)
 
     def get_collection(self):
         collection = []
 
         sql = read('ownwant', **{"userid": self.uid})
-        result = doselect(sql)
+        result = doquery(sql)
 
         for item in result:
             sql = read('items', **{"uid": item[2]})
-            sresult = doselect(sql)
+            sresult = doquery(sql)
 
-            sitem = siteitem(sresult[0][2])
+            sitem = siteitem(sresult[0][1])
             sitem.have = item[3]
             sitem.willtrade = item[4]
             sitem.want = item[5]
@@ -118,10 +112,10 @@ class siteuser:
 
         try:
             sql = read('items', **{"name": item})
-            sresult = doselect(sql)
+            sresult = doquery(sql)
      
             sql = read('ownwant', **{"userid": self.uid, "itemid": sresult[0][0]})
-            result = doselect(sql)
+            result = doquery(sql)
 
             ret.uid = result[0][0]
             ret.have = result[0][3]
@@ -167,66 +161,71 @@ class siteuser:
 
     def delete(self):
         sql = delete('users', **{"uid": self.uid}) 
-        result = doselect(sql) 
+        result = doquery(sql) 
  
         sql = delete('ownwant', **{"userid": self.uid}) 
-        result = doselect(sql)
+        result = doquery(sql)
 
 def gen_pwhash(password, salt):
     return hashlib.sha224(password + salt).hexdigest()
 
 def new_user(username, password, email):
-    salt=str(uuid.uuid4().get_hex().upper()[0:6])
-    sql = upsert("users", \
-                 uid=0, \
-                 username=username, \
-                 pwhash=gen_pwhash(password, salt), \
-                 pwsalt=salt, \
-                 email=email, \
-                 joined=datetime.datetime.now(), \
-                 lastseen=datetime.datetime.now(), \
-                 numadds=0, \
-                 accesslevel=1)
-    data = doupsert(sql)
+    try:
+        salt=str(uuid.uuid4().get_hex().upper()[0:6])
+        sql = upsert("users", \
+                     uid=0, \
+                     username=username, \
+                     pwhash=gen_pwhash(password, salt), \
+                     pwsalt=salt, \
+                     email=email, \
+                     joined=datetime.datetime.now(), \
+                     lastseen=datetime.datetime.now(), \
+                     numadds=0, \
+                     accesslevel=1)
+        data = doupsert(sql)
+    except Exception as e:
+        app.logger.error("Error creating new user: " + e)
+        return False
 
-    #TODO error checking
     return True
 
 ######### Image stuff
 
+class NoImage(Exception):
+    def __init__(self, item):
+        Exception.__init__(self, item)
+
 class siteimage:
     def __init__(self, uid):
         sql = read('images', **{"uid": uid})
-        result = doselect(sql)
+        result = doquery(sql)
 
         try: 
             self.uid = result[0][0]
-            self.uuid = uuid
-            self.filename = result[0][2]
-            self.tag = result[0][3]
+            self.filename = result[0][1]
+            self.tag = result[0][1]
         except IndexError:
-            pass
-#TODO throw exception
+            raise NoImage(uid)
 
     def delete(self):
         sql = delete('itemimg', **{"imgid": self.uid})
-        result = doselect(sql)
+        result = doquery(sql)
 
         sql = delete('images', **{"uid": self.uid})
-        result = doselect(sql)
+        result = doquery(sql)
 
         sql = delete('imgmods', **{"imgid": self.uid})
-        result = doselect(sql)
+        result = doquery(sql)
 
         try:
             os.remove(upload_dir + self.filename)
-        except:
-            app.logger.error("Error removing image: " + escape(img_id))
-            #TODO pass through exception
+        except Exception as e:
+            app.logger.error("Error removing image: " + e)
+            raise
 
     def approve(self):
         sql = delete('imgmods', **{"imgid": self.uid})
-        result = doselect(sql)
+        result = doquery(sql)
 
 ######### Item stuff
 
@@ -251,20 +250,19 @@ class siteitem(__siteitem__):
         self.willtradeusers = []
 
         sql = read('items', **{"name": name})
-        result = doselect(sql)
+        result = doquery(sql)
 
         try:
             self.uid = result[0][0]
-            #self.uuid = result[0][1] # TODO, remove uuid
-            #self.name = result[0][2]
-            self.description = result[0][3]
-            self.added = result[0][4]
-            self.modified = result[0][5]
+            #self.name = result[0][1]
+            self.description = result[0][2]
+            self.added = result[0][3]
+            self.modified = result[0][4]
         except IndexError:
             raise NoItem(name)
 
         sql = read('itemimg', **{"itemid": self.uid})
-        result = doselect(sql)
+        result = doquery(sql)
 
         try:
             for itemimg in result:
@@ -273,31 +271,30 @@ class siteitem(__siteitem__):
         except IndexError:
             pass
 
-        #FIXME this should only be one query
         sql = read('ownwant', **{"itemid": self.uid, "own": "1"})
-        res = doselect(sql)
+        res = doquery(sql)
         self.have = len(res)
         for user in res:
             sql = read('users', **{"uid": user[1]})
-            result = doselect(sql)
+            result = doquery(sql)
             userinfo = siteuser(result[0][1])
             self.haveusers.append(userinfo)
 
         sql = read('ownwant', **{"itemid": self.uid, "want": "1"})
-        res = doselect(sql)
+        res = doquery(sql)
         self.want = len(res)
         for user in res:
             sql = read('users', **{"uid": user[1]})
-            result = doselect(sql)
+            result = doquery(sql)
             userinfo = siteuser(result[0][1])
             self.wantusers.append(userinfo)
 
         sql = read('ownwant', **{"itemid": self.uid, "willtrade": "1"})
-        res = doselect(sql)
+        res = doquery(sql)
         self.willtrade = len(res)
         for user in res:
             sql = read('users', **{"uid": user[1]})
-            result = doselect(sql)
+            result = doquery(sql)
             userinfo = siteuser(result[0][1])
             self.willtradeusers.append(userinfo)
 
@@ -307,19 +304,19 @@ class siteitem(__siteitem__):
                 os.remove(upload_dir + i.filename) 
      
                 sql = delete('images', **{"uid": i.uid}) 
-                result = doselect(sql) 
+                result = doquery(sql) 
             except: 
                 flash("Error removing image: " + i.filename) 
                 app.logger.error("Error removing image: " + i.filename) 
      
         sql = delete('items', **{"uid": self.uid}) 
-        result = doselect(sql) 
+        result = doquery(sql) 
      
         sql = delete('itemimg', **{"itemid": self.uid}) 
-        result = doselect(sql) 
+        result = doquery(sql) 
      
         sql = delete('ownwant', **{"itemid": self.uid}) 
-        result = doselect(sql) 
+        result = doquery(sql) 
      
 
     def newimg(self, f, tag):
@@ -334,7 +331,6 @@ class siteitem(__siteitem__):
             if imghdr.what(upload_dir + newname):
                 sql = upsert("images", \
                              uid=0, \
-                             uuid=fuuid, \
                              filename=newname, \
                              tag=escape(tag))
                 imgid = doupsert(sql)
@@ -354,7 +350,6 @@ class siteitem(__siteitem__):
                              imgid=imgid)
                 data = doupsert(sql)
 
-                #TODO put this eslewhere
                 flash('Uploaded ' + f.filename)
             else:
                 try:
@@ -362,15 +357,11 @@ class siteitem(__siteitem__):
                 except:
                     app.logger.error("Error removing failed image upload: " + upload_dir + newname)
 
-                #TODO put this eslewhere
                 flash(f.filename + " is not an image.")
 
 def new_item(name, description, username):
-    suuid=uuid.uuid4().get_hex()
-
     sql = upsert("items", \
                  uid=0, \
-                 uuid=suuid, \
                  name=name, \
                  description=description, \
                  added=datetime.datetime.now(), \
@@ -383,15 +374,15 @@ def all_items():
 
     try:
         sql = read('items')
-        result = doselect(sql)
+        result = doquery(sql)
 
         for item in result:
             newitem = __siteitem__()
             newitem.uid = item[0]
-            newitem.name = item[2]
-            newitem.description = item[3]
-            newitem.added = item[4]
-            newitem.modified = item[5]
+            newitem.name = item[1]
+            newitem.description = item[2]
+            newitem.added = item[3]
+            newitem.modified = item[4]
 
             items.append(newitem)
     except TypeError:

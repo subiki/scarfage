@@ -1,6 +1,6 @@
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
-from sql import upsert, doupsert, read, doselect, delete
+from sql import upsert, doupsert, read, doquery, delete
 from scarflib import siteuser, NoUser, siteitem, NoItem, redirect_back
 
 @app.route('/item/<item_id>/donthave')
@@ -52,10 +52,9 @@ def dontwant(item_id):
     return redirect_back('/item/' + escape(item_id))
 
 def ownwant(item_id, values):
-    moditem = siteitem(item_id)
     try:
         moditem = siteitem(item_id)
-    except: #FIXME
+    except NoItem:
         return
 
     try:
@@ -79,6 +78,6 @@ def ownwant(item_id, values):
     data = doupsert(sql)
 
     sql = delete('ownwant', **{ 'own': '0', 'willtrade': '0', 'want': '0', 'hidden': '0' })
-    result = doselect(sql)
+    result = doquery(sql)
 
     return 
