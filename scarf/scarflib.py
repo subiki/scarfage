@@ -8,7 +8,7 @@ from scarf import app
 # TODO no flask stuff here besides escape and session
 from flask import request, session, redirect, url_for, escape, flash
 from urlparse import urlparse, urljoin
-from sql import upsert, doupsert, read, doselect
+from sql import upsert, doupsert, read, doselect, delete
 
 # DEBUG
 import socket 
@@ -45,7 +45,6 @@ class siteuser:
     def __init__(self, username):
         self.auth = False
         self.username = username
-        self.collection = []
 
         sql = read('users', **{"username": username})
         result = doselect(sql)
@@ -60,8 +59,10 @@ class siteuser:
             self.lastseen = result[0][6]
             self.numadds = result[0][7]
             self.accesslevel = result[0][8]
-        except:
+        except IndexError:
             raise NoUser(username)
+        except TypeError:
+            pass
 
         # Update lastseen if we're looking up the currently logged in user
         if 'username' in session:
@@ -85,10 +86,34 @@ class siteuser:
             pass
             #TODO check for sql exceptions
 
+    def collection(self):
+        sql = read('ownwant', **{"userid": self.uid})
+        result = doselect(sql)
+
+
+# TODO list of item objects
+
+        return result
+
+    def query_collection(self, item):
+        try:
+            sql = read('scarves', **{"name": item})
+            sresult = doselect(sql)
+     
+            sql = read('ownwant', **{"userid": self.uid, "scarfid": sresult[0][1]})
+            result = doselect(sql)
+
+            return result[0]
+        except IndexError:
+            return []
+
     def seen(self):
         self.lastseen=datetime.datetime.now()
         self.__writedb__()
-        # Update last seen column in user table
+
+    def incadd(self):
+        self.numadds = self.numadds + 1
+        self.__writedb__()
 
     def authenticate(self, password):
         if self.accesslevel == 0:
@@ -141,6 +166,167 @@ def new_user(username, password, email):
     #TODO error checking
     return True
 
+######### Image stuff
+
+class siteimage:
+    def __init__(self, uuid):
+        sql = read('images', **{"uuid": uuid})
+        result = doselect(sql)
+
+        try: 
+            self.uid = result[0][1]
+            self.uuid = uuid
+            self.filename = result[0][2]
+            self.tag = result[0][3]
+        except IndexError:
+            pass
+#TODO throw exception
+
+
+######### Item stuff
+
+class NoItem(Exception):
+    def __init__(self, item):
+        Exception.__init__(self, item)
+
+class siteitem:
+    def __init__(self, name):
+        self.name = name
+        self.images = []
+        self.have = 0
+        self.want = 0
+        self.willtrade = 0
+        self.haveusers = []
+        self.wantusers = []
+        self.willtradeusers = []
+
+        sql = read('scarves', **{"name": name})
+        result = doselect(sql)
+
+        try:
+            self.uid = result[0][0]
+            self.uuid = result[0][1] # TODO, remove uuid
+            #self.name = result[0][2]
+            self.description = result[0][3]
+            self.added = result[0][4]
+            self.modified = result[0][5]
+        except IndexError:
+            raise NoItem(name)
+
+        sql = read('scarfimg', **{"scarfid": self.uuid})
+        result = doselect(sql)
+
+        try:
+            for scarfimg in result:
+                image = siteimage(scarfimg[1])
+                self.images.append(image)
+        except IndexError:
+            pass
+
+        sql = read('ownwant', **{"scarfid": self.uuid, "own": "1"})
+        res = doselect(sql)
+        self.have = len(res)
+        for user in res:
+            sql = read('users', **{"uid": user[1]})
+            result = doselect(sql)
+            userinfo = siteuser(result[0][1])
+            self.haveusers.append(userinfo)
+
+        sql = read('ownwant', **{"scarfid": self.uuid, "want": "1"})
+        res = doselect(sql)
+        self.want = len(res)
+        for user in res:
+            sql = read('users', **{"uid": user[1]})
+            result = doselect(sql)
+            userinfo = siteuser(result[0][1])
+            self.wantusers.append(userinfo)
+
+        sql = read('ownwant', **{"scarfid": self.uuid, "willtrade": "1"})
+        res = doselect(sql)
+        self.willtrade = len(res)
+        for user in res:
+            sql = read('users', **{"uid": user[1]})
+            result = doselect(sql)
+            userinfo = siteuser(result[0][1])
+            self.willtradeusers.append(userinfo)
+
+    def delete(self):
+        for i in self.images: 
+            try: 
+                os.remove(upload_dir + i.filename) 
+     
+                sql = delete('images', **{"uuid": i.uuid}) 
+                result = doselect(sql) 
+            except: 
+                flash("Error removing image: " + i.filename) 
+                app.logger.error("Error removing image: " + i.filename) 
+     
+        sql = delete('scarves', **{"uuid": self.uuid}) 
+        result = doselect(sql) 
+     
+        sql = delete('scarfimg', **{"scarfid": self.uuid}) 
+        result = doselect(sql) 
+     
+        sql = delete('ownwant', **{"scarfid": self.uuid}) 
+        result = doselect(sql) 
+     
+
+    def newimg(self, f, tag):
+        if not f.filename == '':
+            fuuid = uuid.uuid4().get_hex()
+            try:
+                newname = fuuid + os.path.splitext(f.filename)[1]
+                f.save(upload_dir + newname)
+            except Exception as e:
+                raise
+
+            if imghdr.what(upload_dir + newname):
+                sql = upsert("images", \
+                             uid=0, \
+                             uuid=fuuid, \
+                             filename=newname, \
+                             tag=escape(tag))
+                data = doupsert(sql)
+
+                sql = upsert("scarfimg", \
+                             imgid=fuuid, \
+                             scarfid=self.uuid)
+                data = doupsert(sql)
+
+                try:
+                    username = session['username']
+                except KeyError:
+                    username = "anon"
+
+                sql = upsert("imgmods", \
+                             username=username, \
+                             imgid=fuuid)
+                data = doupsert(sql)
+
+                #TODO put this eslewhere
+                flash('Uploaded ' + f.filename)
+            else:
+                try:
+                    os.remove(upload_dir + newname)
+                except:
+                    app.logger.error("Error removing failed image upload: " + upload_dir + newname)
+
+                #TODO put this eslewhere
+                flash(f.filename + " is not an image.")
+
+def new_item(name, description, username):
+    suuid=uuid.uuid4().get_hex()
+
+    sql = upsert("scarves", \
+                 uid=0, \
+                 uuid=suuid, \
+                 name=name, \
+                 description=description, \
+                 added=datetime.datetime.now(), \
+                 modified=datetime.datetime.now())
+
+    data = doupsert(sql)
+
 ######### Redirect stuff
 
 def is_safe_url(target):
@@ -155,69 +341,4 @@ def redirect_back(endpoint, **values):
         target = url_for(endpoint, **values)
     return redirect(target)
 
-def check_scarf(name):
-    sql = read('scarves', **{"name": escape(name)})
-    result = doselect(sql)
 
-    try:
-        return result[0]
-    except IndexError:
-        return False
-
-def scarf_imgs(scarf_uid):
-    sql = read('scarfimg', **{"scarfid": scarf_uid})
-    result = doselect(sql)
-    scarfimgs = []
-
-    try:
-        for scarfimg in result:
-            sql = read('images', **{"uuid": scarfimg[1]})
-            result = doselect(sql)
-            scarfimgs.append(result)
-    except IndexError:
-        return scarfimgs
-
-    return scarfimgs
-
-def get_imgupload(f, scarfuid, tag):
-    if not f.filename == '':
-        fuuid = uuid.uuid4().get_hex()
-        try:
-            newname = fuuid + os.path.splitext(f.filename)[1]
-            f.save(upload_dir + newname)
-        except:
-            flash('Failed to upload image: ' + f.filename)
-            return False
-
-        if imghdr.what(upload_dir + newname):
-            sql = upsert("images", \
-                         uid=0, \
-                         uuid=fuuid, \
-                         filename=newname, \
-                         tag=escape(tag))
-            data = doupsert(sql)
-
-            sql = upsert("scarfimg", \
-                         imgid=fuuid, \
-                         scarfid=scarfuid)
-            data = doupsert(sql)
-
-            try:
-                username = session['username']
-            except KeyError:
-                username = "anon"
-
-            sql = upsert("imgmods", \
-                         username=username, \
-                         imgid=fuuid)
-            data = doupsert(sql)
-
-            flash('Uploaded ' + f.filename)
-            return True
-        else:
-            try:
-                os.remove(upload_dir + newname)
-            except:
-                app.logger.error("Error removing failed image upload: " + upload_dir + newname)
-            flash(f.filename + " is not an image.")
-        return False

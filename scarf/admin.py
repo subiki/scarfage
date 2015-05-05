@@ -1,19 +1,20 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import redirect_back, pagedata, NoUser, siteuser
-from sql import doupsert, upsert, doselect, read, delete
+from sql import read, doselect
 
 def get_users():
     sql = read('users')
     result = doselect(sql)
 
-    #FIXME if sizeof result == 0 then return []
-    try:
-        uid = result[0][0]
-        return result
-    except IndexError: 
-        return []
+    app.logger.debug(result)
+    users = []
 
+    for user in result:
+        app.logger.debug(user[1])
+        users.append(siteuser(user[1]))
+
+    return users
 @app.route('/admin')
 def admin_users():
     pd = pagedata()
@@ -32,6 +33,9 @@ def admin_reallydelete_user(user):
     pd = pagedata()
 
     if 'username' not in session or pd.authuser.accesslevel < 255:
+        return redirect(url_for('accessdenied'))
+
+    if session['username'] == pd.authuser.username:
         return redirect(url_for('accessdenied'))
 
     try:
@@ -68,7 +72,7 @@ def admin_set_accesslevel(user, level):
         return redirect(url_for('accessdenied'))
 
     if session['username'] == user:
-        flash("WTF mate, you can't edit your own permissions!")
+        flash("WTF, you can't edit your own permissions!")
         return redirect_back('index')
 
     if pd.authuser.accesslevel != 255 and pd.authuser.accesslevel <= level:
@@ -83,7 +87,7 @@ def admin_set_accesslevel(user, level):
         pd.errortext = "The user does not exist"
         return render_template('error.html', pd=pd)
 
-    if moduser.accesslevel >= pd.authuser.accesslevel:
+    if pd.authuser.accesslevel != 255 and moduser.accesslevel >= pd.authuser.accesslevel:
         flash("Please contact an admin to modify this user's account.")
         return redirect_back('index')
 

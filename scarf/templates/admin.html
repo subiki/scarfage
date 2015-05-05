@@ -8,32 +8,32 @@
 
 <ul id="userlist">
 <li>username - email - joined - lastseen - # scarves added - User type</li>
-{% for item in pd.users %}
-    <li>{{ item[1] }} - {{ item[4] }} - {{ item[5] }} - {{ item[6] }} - {{ item[7] }} - {{ pd.accesslevels[item[8]] }}</a>
+{% for user in pd.users %}
+    <li>{{ user.username }}  {{ pd.accesslevels[user.accesslevel] }} </a>
     
-    {% if item[1] == pd.user %}
+    {% if user.uid == pd.authuser.uid %}
     - you
     {% else %}
 
-    - <a href="/admin/users/{{ item[1] }}/delete">Delete</a>
+    - <a href="/admin/users/{{ user.username }}/delete">Delete</a>
     
-    {% if item[8] == 0 %}
-    - <a href="/admin/users/{{ item[1] }}/accesslevel/1">Unban</a>
+    {% if user.accesslevel == 0 %}
+    - <a href="/admin/users/{{ user.username }}/accesslevel/1">Unban</a>
     {% else %}
 
-        - <a href="/admin/users/{{ item[1] }}/accesslevel/0">Ban</a>
+        - <a href="/admin/users/{{ user.username }}/accesslevel/0">Ban</a>
 
-        {% if item[8] < 10 %}
-        - <a href="/admin/users/{{ item[1] }}/accesslevel/10">Promote</a>
+        {% if user.accesslevel < 10 %}
+        - <a href="/admin/users/{{ user.username }}/accesslevel/10">Promote to moderator</a>
         {% endif %}
 
-        {% if item[8] == 10 %}
-        - <a href="/admin/users/{{ item[1] }}/accesslevel/1">Demote</a>
-        - <a href="/admin/users/{{ item[1] }}/accesslevel/255">Promote</a>
+        {% if user.accesslevel == 10 %}
+        - <a href="/admin/users/{{ user.username }}/accesslevel/1">Demote</a>
+        - <a href="/admin/users/{{ user.username }}/accesslevel/255">Promote to admin</a>
         {% endif %}
 
-        {% if item[8] == 255 %}
-        - <a href="/admin/users/{{ item[1] }}/accesslevel/1">Demote</a>
+        {% if user.accesslevel == 255 %}
+        - <a href="/admin/users/{{ user.username }}/accesslevel/1">Demote</a>
         {% endif %}
 
     {% endif %}

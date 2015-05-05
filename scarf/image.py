@@ -1,3 +1,5 @@
+from scarflib import redirect_back, pagedata, upload_dir
+
 import os
 import imghdr
 import uuid
@@ -9,7 +11,6 @@ from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash, send_file
 from werkzeug import secure_filename
 from sql import upsert, doupsert, read, doselect, delete
-from scarflib import redirect_back, check_scarf, scarf_imgs, pagedata, get_imgupload, upload_dir
 from main import page_not_found
 
 @app.route('/image/<img_id>/reallydelete')

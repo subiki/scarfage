@@ -1,80 +1,79 @@
-from scarflib import siteuser
+from scarflib import siteuser, NoUser, siteitem, NoItem
 
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
-from scarflib import check_scarf
 from sql import upsert, doupsert, read, doselect, delete
 from scarflib import redirect_back
 
-@app.route('/scarf/<scarf_id>/donthave')
-def donthave(scarf_id):
+@app.route('/scarf/<item_id>/donthave')
+def donthave(item_id):
     update = dict(willtrade=0, own=0)
-    ownwant(scarf_id, update)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    ownwant(escape(item_id), update)
+    return redirect_back('/scarf/' + escape(item_id))
 
-@app.route('/scarf/<scarf_id>/have')
-def have(scarf_id):
+@app.route('/scarf/<item_id>/have')
+def have(item_id):
     update = dict(own=1)
-    ownwant(scarf_id, update)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    ownwant(escape(item_id), update)
+    return redirect_back('/scarf/' + escape(item_id))
 
-@app.route('/scarf/<scarf_id>/hide')
-def hide(scarf_id):
+@app.route('/scarf/<item_id>/hide')
+def hide(item_id):
     update = dict(hide=1)
-    ownwant(scarf_id, update)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    ownwant(escape(item_id), update)
+    return redirect_back('/scarf/' + escape(item_id))
 
-@app.route('/scarf/<scarf_id>/show')
-def show(scarf_id):
+@app.route('/scarf/<item_id>/show')
+def show(item_id):
     update = dict(hide=0)
-    ownwant(scarf_id, update)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    ownwant(escape(item_id), update)
+    return redirect_back('/scarf/' + escape(item_id))
 
-@app.route('/scarf/<scarf_id>/wonttrade')
-def wonttrade(scarf_id):
+@app.route('/scarf/<item_id>/wonttrade')
+def wonttrade(item_id):
     update = dict(willtrade=0)
-    ownwant(scarf_id, update)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    ownwant(escape(item_id), update)
+    return redirect_back('/scarf/' + escape(item_id))
 
-@app.route('/scarf/<scarf_id>/willtrade')
-def willtrade(scarf_id):
+@app.route('/scarf/<item_id>/willtrade')
+def willtrade(item_id):
     update = dict(own=1, hidden=0, willtrade=1)
-    ownwant(scarf_id, update)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    ownwant(escape(item_id), update)
+    return redirect_back('/scarf/' + escape(item_id))
 
-@app.route('/scarf/<scarf_id>/want')
-def want(scarf_id):
+@app.route('/scarf/<item_id>/want')
+def want(item_id):
     update = dict(want=1)
-    ownwant(scarf_id, update)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    ownwant(escape(item_id), update)
+    return redirect_back('/scarf/' + escape(item_id))
 
-@app.route('/scarf/<scarf_id>/dontwant')
-def dontwant(scarf_id):
+@app.route('/scarf/<item_id>/dontwant')
+def dontwant(item_id):
     update = dict(want=0)
-    ownwant(scarf_id, update)
-    return redirect_back('/scarf/' + escape(scarf_id))
+    ownwant(escape(item_id), update)
+    return redirect_back('/scarf/' + escape(item_id))
 
-def ownwant(scarf_id, values):
-    scarf = check_scarf(escape(scarf_id))
-    if scarf == False:
+# TODO move to user object
+def ownwant(item_id, values):
+    moditem = siteitem(item_id)
+    try:
+        moditem = siteitem(item_id)
+    except: #FIXME
         return
 
     try:
-        user = siteuser(escape(request.form['username']))
+        user = siteuser(session['username'])
     except NoUser:
         return
 
-    sql = read('ownwant', **{"userid": user.uid, "scarfid": scarf[1]})
-    result = doselect(sql)
-    app.logger.debug(result)
+    result = user.query_collection(item_id)
 
-    iuid=0
     try:
-        iuid = result[0][0]
+        iuid = result[0]
     except IndexError: 
         iuid=0
 
-    update = dict(uid=iuid, userid=user.uid, scarfid=scarf[1])
+    update = dict(uid=iuid, userid=user.uid, scarfid=moditem.uuid)
     update.update(values)
 
     sql = upsert("ownwant", \

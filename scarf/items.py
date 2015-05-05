@@ -1,4 +1,4 @@
-from scarflib import siteuser, NoUser
+from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item
 
 import os
 import imghdr
@@ -9,135 +9,74 @@ from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
 
-from sql import upsert, doupsert, read, doselect, delete
-from scarflib import redirect_back, check_scarf, scarf_imgs, pagedata, get_imgupload, upload_dir
+from scarflib import redirect_back
 from main import page_not_found
-
-class item:
-    def __init__(self, name):
-        self.name = name
-        self.imgs = []
 
 @app.route('/scarf/')
 def scarfroot():
     return redirect(url_for('index'))
 
-@app.route('/scarf/<scarf_id>/reallydelete')
-def reallydelete_scarf(scarf_id):
-    scarf = check_scarf(escape(scarf_id))
-    if scarf == False:
+@app.route('/scarf/<item_id>/reallydelete')
+def reallydelete_item(item_id):
+    try:
+        delitem = siteitem(escape(item_id))
+    except: #FIXME
         return page_not_found(404)
 
     pd = pagedata()
 
-    if not pd.accesslevel == 255:
+    if not pd.authuser.accesslevel == 255:
         return redirect(url_for('accessdenied'))
 
-    pd.title=escape(scarf_id) + " has been deleted"
-    pd.scarfname=escape(scarf_id)
-    pd.scarfimg=scarf_imgs(scarf[1])
+    pd.title=escape(item_id) + " has been deleted"
 
-    for i in pd.scarfimg:
-        try:
-            os.remove(upload_dir + i[0][2])
-
-            sql = delete('images', **{"uuid": i[0][1]})
-            result = doselect(sql)
-        except:
-            flash("Error removing image: " + i[0][2])
-            app.logger.error("Error removing image: " + i[0][2])
-
-    sql = delete('scarves', **{"uuid": scarf[1]})
-    result = doselect(sql)
-
-    sql = delete('scarfimg', **{"scarfid": scarf[1]})
-    result = doselect(sql)
-
-    sql = delete('ownwant', **{"scarfid": scarf[1]})
-    result = doselect(sql)
+    delitem.delete()
 
     pd.accessreq = 255
-    pd.conftext = pd.scarfname + " and its images have been deleted. I hope you meant to do that."
+    pd.conftext = delitem.name + " and its images have been deleted. I hope you meant to do that."
     pd.conftarget = ""
     pd.conflinktext = ""
     return render_template('confirm.html', pd=pd)
 
-@app.route('/scarf/<scarf_id>/delete')
-def delete_scarf(scarf_id):
-    scarf = check_scarf(escape(scarf_id))
-    if scarf == False:
+@app.route('/scarf/<item_id>/delete')
+def delete_item(item_id):
+    try:
+        delitem = siteitem(escape(item_id))
+    except: #FIXME
         return page_not_found(404)
 
     pd = pagedata()
 
-    if not pd.accesslevel == 255:
+    if not pd.authuser.accesslevel == 255:
         return redirect(url_for('accessdenied'))
 
-    pd.title=escape(scarf_id)
-    pd.scarfname=escape(scarf_id)
-    pd.scarfimg=scarf_imgs(scarf[1])
-    pd.scarf = scarf
+    pd.title=escape(item_id)
 
     pd.accessreq = 255
-    pd.conftext = "Deleting scarf " + pd.scarfname
-    pd.conftarget = "/scarf/" + pd.scarfname + "/reallydelete"
+    pd.conftext = "Deleting scarf " + delitem.name
+    pd.conftarget = "/scarf/" + delitem.name + "/reallydelete"
     pd.conflinktext = "Yup, I'm sure"
 
     return render_template('confirm.html', pd=pd)
 
-@app.route('/scarf/<scarf_id>')
-def show_scarf(scarf_id):
-    scarf = check_scarf(escape(scarf_id))
-    if scarf == False:
-        return page_not_found(404)
-
+@app.route('/scarf/<item_id>')
+def show_item(item_id):
     pd = pagedata()
 
-    sql = read('ownwant', **{"scarfid": scarf[1], "own": "1"})
-    res = doselect(sql)
-    pd.have = len(res)
-    pd.haveusers = []
-    for user in res:
-        sql = read('users', **{"uid": user[1]})
-        res = doselect(sql)
-        pd.haveusers.append(res[0][1])
-
-    sql = read('ownwant', **{"scarfid": scarf[1], "want": "1"})
-    res = doselect(sql)
-    pd.want = len(res)
-    pd.wantusers = []
-    for user in res:
-        sql = read('users', **{"uid": user[1]})
-        res = doselect(sql)
-        pd.wantusers.append(res[0][1])
-
-    sql = read('ownwant', **{"scarfid": scarf[1], "willtrade": "1"})
-    res = doselect(sql)
-    pd.willtrade = len(res)
-    pd.willtradeusers = []
-    for user in res:
-        sql = read('users', **{"uid": user[1]})
-        res = doselect(sql)
-        pd.willtradeusers.append(res[0][1])
-
     try:
-        user = siteuser(session['username'])
+        showitem = siteitem(escape(item_id))
+    except NoItem:
+        return page_not_found(404)
 
-        sql = read('ownwant', **{"userid": user.uid, "scarfid": scarf[1]})
-        result = doselect(sql)
-
+    if 'username' in session:
         try:
-            iuid = result[0][0]
-            pd.myscarfinfo = result[0]
-        except IndexError:
+            user = siteuser(session['username'])
+            pd.myscarfinfo = user.query_collection(showitem.name)
+        except NoUser:
             pass
-    except NoUser:
-        pass
 
-    pd.title=scarf_id
-    pd.scarfname=scarf_id
-    pd.scarfimg=scarf_imgs(scarf[1])
-    pd.scarf = scarf
+    pd.title = item_id
+    pd.item = showitem
 
     return render_template('scarf.html', pd=pd)
 
@@ -155,33 +94,32 @@ def newscarf():
                 flash("Invalid character in name: " + c)
                 return redirect(url_for('newscarf'))
 
-        if check_scarf(escape(request.form['name'])):
+        if 'username' in session:
+            username = session['username']
+        else:
+            username = ""
+
+        try:
+            newitem = siteitem(escape(request.form['name']))
             flash('A scarf with that name already exists')
             return redirect(url_for('newscarf'))
-
-        suuid=uuid.uuid4().get_hex()
-
-        get_imgupload(request.files['front'], suuid, "front")
-        get_imgupload(request.files['back'], suuid, "back")
-
-        sql = upsert("scarves", \
-                     uid=0, \
-                     uuid=suuid, \
-                     name=escape(request.form['name']), \
-                     description=escape(request.form['desc']), \
-                     added=datetime.datetime.now(), \
-                     modified=datetime.datetime.now())
-
-        data = doupsert(sql)
-        if not data:
-            pd.errortext="SQL error"
-            return render_template('error.html', pd=pd)
+        except: #FIXME NoItem
+            new_item(escape(request.form['name']), escape(request.form['desc']), username)
 
         flash('Added scarf!')
 
         try:
-            inc_scarfcount(session['username'])
-        except KeyError:
+            newitem = siteitem(escape(request.form['name']))
+            newitem.newimg(request.files['front'], "front")
+            newitem.newimg(request.files['back'], "back")
+        except: #FIXME noitem
+            flash('Error adding scarf!')
+            return redirect(url_for('newscarf'))
+
+        try:
+            incuser = siteuser(username)
+            incuser.incadd()
+        except NoUser:
             flash('Log in to add this scarf to your collection.')
 
         return redirect('/scarf/' + escape(request.form['name']))
