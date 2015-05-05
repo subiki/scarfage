@@ -1,11 +1,10 @@
-import os
-import uuid
-import datetime
+#import os
+#import uuid
+#import datetime
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import redirect_back, pagedata, siteuser, NoUser
-from sql import doupsert, upsert, doselect, read
 from main import page_not_found
 
 @app.route('/userupdate')

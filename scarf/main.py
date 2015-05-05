@@ -3,7 +3,6 @@ from flask import render_template, session, escape, request, flash
 from sql import doselect, read
 from scarflib import pagedata
 
-
 @app.errorhandler(404)
 def page_not_found(error):
     pd = pagedata()

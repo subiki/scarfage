@@ -1,9 +1,7 @@
-from scarflib import siteuser, NoUser, siteitem, NoItem
-
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from sql import upsert, doupsert, read, doselect, delete
-from scarflib import redirect_back
+from scarflib import siteuser, NoUser, siteitem, NoItem, redirect_back
 
 @app.route('/scarf/<item_id>/donthave')
 def donthave(item_id):
@@ -53,7 +51,6 @@ def dontwant(item_id):
     ownwant(escape(item_id), update)
     return redirect_back('/scarf/' + escape(item_id))
 
-# TODO move to user object
 def ownwant(item_id, values):
     moditem = siteitem(item_id)
     try:

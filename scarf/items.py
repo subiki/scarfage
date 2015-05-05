@@ -1,15 +1,15 @@
-from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item
 
-import os
-import imghdr
-import uuid
-import re
-import datetime
+#import os
+#import imghdr
+#import uuid
+#import re
+#import datetime
+
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash
 from werkzeug import secure_filename
 
-from scarflib import redirect_back
+from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back
 from main import page_not_found
 
 @app.route('/scarf/')
@@ -53,7 +53,7 @@ def delete_item(item_id):
     pd.title=escape(item_id)
 
     pd.accessreq = 255
-    pd.conftext = "Deleting scarf " + delitem.name
+    pd.conftext = "Deleting item " + delitem.name
     pd.conftarget = "/scarf/" + delitem.name + "/reallydelete"
     pd.conflinktext = "Yup, I'm sure"
 
@@ -101,29 +101,29 @@ def newscarf():
 
         try:
             newitem = siteitem(escape(request.form['name']))
-            flash('A scarf with that name already exists')
+            flash('An item with that name already exists')
             return redirect(url_for('newscarf'))
         except: #FIXME NoItem
             new_item(escape(request.form['name']), escape(request.form['desc']), username)
 
-        flash('Added scarf!')
+        flash('Added item!')
 
         try:
             newitem = siteitem(escape(request.form['name']))
             newitem.newimg(request.files['front'], "front")
             newitem.newimg(request.files['back'], "back")
         except: #FIXME noitem
-            flash('Error adding scarf!')
+            flash('Error adding item!')
             return redirect(url_for('newscarf'))
 
         try:
             incuser = siteuser(username)
             incuser.incadd()
         except NoUser:
-            flash('Log in to add this scarf to your collection.')
+            flash('Log in to add this item to your collection.')
 
         return redirect('/scarf/' + escape(request.form['name']))
 
-    pd.title="Add New Scarf"
+    pd.title="Add New Item"
 
     return render_template('newscarf.html', pd=pd)

@@ -27,7 +27,7 @@
     <h1>{{ pd.profileuser.username }}'s collection</h1>
     <ul>
     {% for item in pd.profileuser.collection %}
-      {% if pd.authuser.uid == pd.profileuser.uid %}
+      {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
         {% if item.have == 1 %}
         <li><a href="/scarf/{{ item.name }}">{{ item.name }}</a> 
         {% if item.hidden == 0 %}
@@ -64,8 +64,8 @@
 
     <h1>{{ pd.profileuser.username }}'s wanted list</h1>
     <ul>
-    {% for item in pd.scarves %}
-      {% if pd.authuser.uid != pd.profileuser.uid %}
+    {% for item in pd.profileuser.collection %}
+      {% if pd.authuser is defined and pd.authuser.uid != pd.profileuser.uid %}
         {% if item.want == 1 %}
         <li>
             <a href="/scarf/{{ item.name }}">{{ item.name }}</a> <a href="/scarf/{{ item.name }}/dontwant">Nevermind.</a>
@@ -74,7 +74,7 @@
 
       {% else %}
 
-        {% if item ['want'] == 1 %}
+        {% if item.want == 1 %}
             <li> <a href="/scarf/{{ item.name }}">{{ item.name }}</a></li>
         {% endif %}
 

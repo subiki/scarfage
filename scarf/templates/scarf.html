@@ -12,28 +12,26 @@
 </div>
 
 {% if pd.authuser is not undefined %}
-<div id="itemactions">
-{% if pd.authuser.collection is defined %}
+    <div id="itemactions">
+    {% if pd.iteminfo.have == 0 %}
+        <a href="/scarf/{{ pd.item.name }}/have">I own this</a></br>
 
-{% if pd.iteminfo.have == 0 %}
-<a href="/scarf/{{ pd.item.name }}/have">I own this</a></br>
+    {% else %}
+        This is in your collection. <a href="/scarf/{{ pd.item.name }}/donthave">Remove it</a>.<br />
 
-{% else %}
-This is in your collection. <a href="/scarf/{{ pd.item.name }}/donthave">Remove it</a>.<br />
+        {% if pd.iteminfo.willtrade == 0 %}
+        <a href="/scarf/{{ pd.item.name }}/willtrade">I'll trade this</a>
+        {% else %}
+        This is up for trade. <a href="/scarf/{{ pd.item.name }}/wonttrade">Nevermind</a>.<br />
+        {% endif %}
 
-{% if pd.iteminfo.willtrade == 0 %}
-<a href="/scarf/{{ pd.item.name }}/willtrade">I'll trade this</a>
-{% else %}
-This is up for trade. <a href="/scarf/{{ pd.item.name }}/wonttrade">Nevermind</a>.<br />
-{% endif %}
+    {% endif %}
 
-{% endif %}
-
-{% if pd.iteminfo.want == 0 %}
-<a href="/scarf/{{ pd.item.name }}/want">I want this</a></br>
-{% else %}
-You want this. <a href="/scarf/{{ pd.item.name }}/dontwant">Nevermind.</a><br />
-{% endif %}
+    {% if pd.iteminfo.want == 0 %}
+    <a href="/scarf/{{ pd.item.name }}/want">I want this</a></br>
+    {% else %}
+    You want this. <a href="/scarf/{{ pd.item.name }}/dontwant">Nevermind.</a><br />
+    {% endif %}
 
 {% else %}
 
@@ -48,7 +46,6 @@ You want this. <a href="/scarf/{{ pd.item.name }}/dontwant">Nevermind.</a><br />
 {% endif %}
 
 </div>
-{% endif %}
 
 <div id="description">
 {{ pd.item.description }}<br />

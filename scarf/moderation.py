@@ -1,9 +1,8 @@
-from scarflib import siteimage
-
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
-from scarflib import redirect_back, pagedata, upload_dir
+from scarflib import redirect_back, pagedata, upload_dir, siteimage
 from sql import doupsert, upsert, doselect, read, delete
+from main import page_not_found
 
 from PIL import Image
 import random
@@ -88,7 +87,7 @@ def mod_img(image):
         result = doselect(sql)
         modimg = siteimage(result[0][0])
     except: #FIXME
-        return redirect(url_for('accessdenied')) #FIXME 404
+        return page_not_found(404)
 
     pd.image = modimg
 

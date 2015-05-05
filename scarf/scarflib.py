@@ -18,7 +18,6 @@ else:
     upload_dir = '/srv/data/web/vhosts/default/static/uploads/'
 
 class pagedata:
-    #FIXME put this somewhere else and inherit/copy it
     accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
     pass
 
@@ -67,7 +66,7 @@ class siteuser:
         # Update lastseen if we're looking up the currently logged in user
         if 'username' in session:
             if session['username'] is username:
-        #        self.seen()
+                self.seen()
                 self.auth = True
 
     def __writedb__(self):
@@ -151,7 +150,7 @@ class siteuser:
             if checkhash == self.pwhash:
                 session['username'] = self.username
             else:
-                raise AuthFail
+                raise AuthFail(self.username)
 
     def newaccesslevel(self, accesslevel):
         self.accesslevel = int(accesslevel)

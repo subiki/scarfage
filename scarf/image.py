@@ -1,17 +1,14 @@
-from scarflib import redirect_back, pagedata, siteimage, upload_dir, siteitem, NoItem
+#import os
+#import imghdr
+#import uuid
+#import re
+#import datetime
 
-import os
-import imghdr
-import uuid
-import re
-import datetime
 from StringIO import StringIO
 from PIL import Image
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash, send_file
-from werkzeug import secure_filename
-from sql import upsert, doupsert, read, doselect, delete
-from main import page_not_found
+from scarflib import redirect_back, pagedata, siteimage, upload_dir, siteitem, NoItem
 
 @app.route('/image/<img_id>/reallydelete')
 def reallydelete_image(img_id):
