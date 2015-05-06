@@ -20,7 +20,7 @@
         This is in your collection. <a href="/item/{{ pd.item.name }}/donthave">Remove it</a>.<br />
 
         {% if pd.iteminfo.willtrade == 0 %}
-        <a href="/item/{{ pd.item.name }}/willtrade">I'll trade this</a>
+        <a href="/item/{{ pd.item.name }}/willtrade">I'll trade this</a><br />
         {% else %}
         This is up for trade. <a href="/item/{{ pd.item.name }}/wonttrade">Nevermind</a>.<br />
         {% endif %}
@@ -35,14 +35,14 @@
 
 {% else %}
 
-<a href="/item/{{ pd.item.name }}/have">I own this</a>
-<a href="/item/{{ pd.item.name }}/willtrade">I'll trade this</a>
-<a href="/item/{{ pd.item.name }}/want">I want this</a>
+<a href="/item/{{ pd.item.name }}/have">I own this</a><br />
+<a href="/item/{{ pd.item.name }}/willtrade">I'll trade this</a><br />
+<a href="/item/{{ pd.item.name }}/want">I want this</a><br />
 
 {% endif %}
 
 {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
-<a href="/item/{{ pd.item.name }}/delete">Delete item</a>
+<a href="/item/{{ pd.item.name }}/delete">Delete item</a><br />
 {% endif %}
 
 </div>
@@ -57,9 +57,9 @@
     <a href="/static/uploads/{{ image.filename }}"><img src="/image/{{ image.filename }}/thumbnail" alt="{{ image.tag }}"></a><br />
 
 {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
-<a href="/image/{{ image.uid }}/delete">Delete image</a>
+<a href="/image/{{ image.uid }}/delete">Delete image</a><br />
 {% endif %}
-<a href="/image/{{ image.uid }}/flag">Flag this for review</a>
+<a class=small href="/image/{{ image.uid }}/flag">Flag image for review</a><br />
 {% endfor %}
 
 {% if pd.authuser is not undefined %}
@@ -108,9 +108,6 @@
 {% for user in pd.item.wantusers %}
 <a href="/user/{{ user.username }}">{{ user.username }}</a><br />
 {% endfor %}
-
-
-
 </div>
 </div>
 

@@ -48,6 +48,8 @@ def flag_image(img_id):
     flagimg = siteimage(escape(img_id))
     flagimg.flag()
 
+    flash("The image has been flagged and will be reviewed by a moderator.")
+
     return redirect_back('index') 
 
 @app.route('/image/upload', methods=['POST'])
