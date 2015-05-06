@@ -4,7 +4,7 @@ import datetime
 import imghdr
 import uuid
 from scarf import app
-from flask import request, redirect, session, escape, flash
+from flask import request, redirect, session, escape, flash, url_for
 from urlparse import urlparse, urljoin
 from sql import upsert, doupsert, read, doquery, delete
 
@@ -225,6 +225,15 @@ class siteimage:
 
     def approve(self):
         sql = delete('imgmods', **{"imgid": self.uid})
+        result = doquery(sql)
+
+    def flag(self):
+        if 'username' in session:
+            username = session['username']
+        else:
+            username = "anon"
+
+        sql = upsert('imgmods', **{"imgid": self.uid, "username": username, "flag": 1})
         result = doquery(sql)
 
 ######### Item stuff

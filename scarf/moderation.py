@@ -37,15 +37,15 @@ def moderate():
             imgid = mod[0]
             flag = mod[2]
             user = mod[3]
-            if mod[1] == 0:
+            if mod[1] == 0 or flag == 1:
                 sql = read('images', **{"uid": imgid})
                 img = doquery(sql)[0]
                 
                 class mod:
                     pass
 
-                mod.filename = img[2]
-                mod.tag = img[3]
+                mod.filename = img[1]
+                mod.tag = img[2]
                 mod.user = user
                 mod.flag = flag
                 pd.mods.append(mod)

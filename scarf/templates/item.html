@@ -41,7 +41,7 @@
 
 {% endif %}
 
-{% if pd.authuser.accesslevel == 255 %}
+{% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
 <a href="/item/{{ pd.item.name }}/delete">Delete item</a>
 {% endif %}
 
@@ -59,7 +59,7 @@
 {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
 <a href="/image/{{ image.uid }}/delete">Delete image</a>
 {% endif %}
-
+<a href="/image/{{ image.uid }}/flag">Flag this for review</a>
 {% endfor %}
 
 {% if pd.authuser is not undefined %}

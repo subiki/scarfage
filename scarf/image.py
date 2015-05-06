@@ -41,6 +41,15 @@ def delete_image(img_id):
 
     return render_template('confirm.html', pd=pd)
 
+@app.route('/image/<img_id>/flag')
+def flag_image(img_id):
+    pd = pagedata()
+
+    flagimg = siteimage(escape(img_id))
+    flagimg.flag()
+
+    return redirect_back('index') 
+
 @app.route('/image/upload', methods=['POST'])
 def imageupload():
     try:

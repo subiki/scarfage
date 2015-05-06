@@ -6,7 +6,7 @@
 
 <div id="content">
 
-{% if pd.authuser.accesslevel >= pd.accessreq %}
+{% if pd.authuser is defined and pd.authuser.accesslevel >= pd.accessreq %}
 
 <div id=conftext>
 {{ pd.conftext }}

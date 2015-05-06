@@ -8,7 +8,7 @@
 
 <ul id="userlist">
 {% for mod in pd.mods %}
-    <li>{{ mod.user }} - {{ mod.tag }} - <a href="/mod/image/{{ mod.filename }}">{{ mod.filename }}</a> - {% if mod.flag == 1%}flagged{% else %}not flagged{% endif %} </a></li>
+    <li>{{ mod.user }} - {{ mod.tag }} - <a href="/mod/image/{{ mod.filename }}">{{ mod.filename }}</a> - {% if mod.flag == 1 %}flagged{% else %}not flagged{% endif %} </a></li>
 {% endfor %}
 </ul><br />
 
