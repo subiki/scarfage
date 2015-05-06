@@ -11,3 +11,4 @@ import scarf.profile
 import scarf.admin
 import scarf.moderation
 import scarf.user
+import scarf.trade

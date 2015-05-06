@@ -33,6 +33,13 @@ html {
     margin-right: 20px;
 }
 
+#itemactions {
+    position: absolute;
+    right:0;
+    width:200px;
+    margin-right: 20px;
+}
+
 #signupform {
     margin-left: auto;
     margin-right: auto;

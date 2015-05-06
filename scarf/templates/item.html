@@ -11,15 +11,15 @@
 <h1>{{ pd.item.name }}</h1><br />
 </div>
 
-{% if pd.authuser is not undefined %}
+{% if pd.authuser is defined %}
     <div id="itemactions">
-    {% if pd.iteminfo.have == 0 %}
+    {% if pd.iteminfo is defined and pd.iteminfo.have == 0 %}
         <a href="/item/{{ pd.item.name }}/have">I own this</a></br>
 
     {% else %}
         This is in your collection. <a href="/item/{{ pd.item.name }}/donthave">Remove it</a>.<br />
 
-        {% if pd.iteminfo.willtrade == 0 %}
+        {% if pd.iteminfo is defined and pd.iteminfo.willtrade == 0 %}
         <a href="/item/{{ pd.item.name }}/willtrade">I'll trade this</a><br />
         {% else %}
         This is up for trade. <a href="/item/{{ pd.item.name }}/wonttrade">Nevermind</a>.<br />
@@ -27,7 +27,7 @@
 
     {% endif %}
 
-    {% if pd.iteminfo.want == 0 %}
+    {% if pd.iteminfo is defined and pd.iteminfo.want == 0 %}
     <a href="/item/{{ pd.item.name }}/want">I want this</a></br>
     {% else %}
     You want this. <a href="/item/{{ pd.item.name }}/dontwant">Nevermind.</a><br />
@@ -57,7 +57,7 @@
     <a href="/static/uploads/{{ image.filename }}"><img src="/image/{{ image.filename }}/thumbnail" alt="{{ image.tag }}"></a><br />
 
 {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
-<a href="/image/{{ image.uid }}/delete">Delete image</a><br />
+<a class=small href="/image/{{ image.uid }}/delete">Delete image</a><br />
 {% endif %}
 <a class=small href="/image/{{ image.uid }}/flag">Flag image for review</a><br />
 {% endfor %}
@@ -81,7 +81,7 @@
 {% endif %}
 
 {% for user in pd.item.haveusers %}
-<a href="/user/{{ user.username }}">{{ user.username }}</a><br />
+<a href="/user/{{ user.username }}/trade/{{pd.item.name}}">{{ user.username }}</a><br />
 {% endfor %}
 </div>
 
@@ -93,7 +93,7 @@
 {% endif %}
 
 {% for user in pd.item.willtradeusers %}
-<a href="/user/{{ user.username }}">{{ user.username }}</a><br />
+<a href="/user/{{ user.username }}/trade/{{pd.item.name}}">{{ user.username }}</a><br />
 {% endfor %}
 
 </div>
@@ -106,9 +106,10 @@
 {% endif %}
 
 {% for user in pd.item.wantusers %}
-<a href="/user/{{ user.username }}">{{ user.username }}</a><br />
+<a href="/user/{{ user.username }}/trade/{{pd.item.name}}">{{ user.username }}</a><br />
 {% endfor %}
 </div>
+
 </div>
 
 {% endblock %}

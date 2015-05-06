@@ -4,6 +4,7 @@ from flask import redirect, url_for, render_template, session, escape, request, 
 from scarflib import redirect_back, pagedata, siteuser, NoUser
 from main import page_not_found
 
+#TODO /user/<user>/<whatever>
 @app.route('/userupdate')
 def userupdate():
     pd = pagedata()
@@ -13,6 +14,7 @@ def userupdate():
 
     return redirect(url_for('index'))
 
+#TODO /user/<user>/<whatever>
 @app.route('/emailupdate', methods=['GET', 'POST'])
 def emailupdate():
     pd = pagedata()
@@ -42,6 +44,7 @@ def emailupdate():
 
     return redirect(url_for('index'))
  
+#TODO /user/<user>/<whatever>
 @app.route('/pwreset', methods=['GET', 'POST'])
 def pwreset():
     pd = pagedata()

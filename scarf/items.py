@@ -64,7 +64,7 @@ def show_item(item_id):
         try:
             user = siteuser(session['username'])
             pd.iteminfo = user.query_collection(showitem.name)
-        except NoUser:
+        except (NoUser, NoItem):
             pass
 
     pd.title = item_id

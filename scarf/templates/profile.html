@@ -11,6 +11,7 @@
             <li>Member since: {{ pd.profileuser.joined }}</li>
             <li>Last seen: {{ pd.profileuser.lastseen }}</li>
             <li>Items added: {{ pd.profileuser.numadds }}</li>
+            <li><a href="/user/{{ pd.profileuser.username }}/pm">Send Private Message</a></li>
         </ul>
  
     {% else %}
@@ -29,8 +30,8 @@
     <div id="item">
       {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
         {% if item.have == 1 %}
-         {% if item.images[0] is defined %}
          <h4><a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
+         {% if item.images[0] is defined %}
          <img src="/image/{{ item.images[0].filename }}/thumbnail" alt="{{ item.images[0].tag }}"> <br />
          {% else %}
          No thumbnail.<br />
@@ -65,6 +66,10 @@
          No thumbnail.<br />
          {% endif %}
 
+         {% if item.willtrade == 1 %}
+         <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a>
+         {% endif %}
+
         {% endif %}
 
       {% endif %}
@@ -83,6 +88,8 @@
          {% endif %}
        {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
        <a href="/item/{{ item.name }}/dontwant">Nevermind.</a>
+       {%else%}
+         <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a>
        {% endif %}
      {% endif %}
     {% endfor %}
