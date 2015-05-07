@@ -16,6 +16,7 @@
 Trading with yourself would get awful lonely...
 {% elif pd.authuser is defined %}
 
+
     {% if pd.tradeuser.ownwant.want == 1 %}
 
         {% if pd.authuser.ownwant.have == 1 %}
@@ -38,6 +39,8 @@ Trading with yourself would get awful lonely...
         {% endif %}
 
     {% endif %}
+
+    <!-- both trade types should be available if someone has an item and wants more -->
 
     {% if pd.tradeuser.ownwant.willtrade == 1 %}
         {{ pd.tradeuser.username }} has {{ pd.item.name }} available for trade, make an offer:

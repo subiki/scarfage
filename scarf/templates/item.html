@@ -63,6 +63,7 @@
 {% endfor %}
 
 {% if pd.authuser is not undefined %}
+    Add an image:<br />
     <form action="/image/upload" method="post" enctype="multipart/form-data">
         Tag: <input type=text name=tag><br />
         <input type="file" name="image" accept="image/*"><br />

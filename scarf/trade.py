@@ -15,6 +15,30 @@ def trade(username, itemid):
     if 'username' in session:
         if request.method == 'POST':
             items = request.form.getlist('item')
+            message = request.form['body']
+
+# insert into messages
+#+------------+---------+------+-----+---------+----------------+
+#| Field      | Type    | Null | Key | Default | Extra          |
+#+------------+---------+------+-----+---------+----------------+
+#| uid        | int(32) | NO   | PRI | NULL    | auto_increment |
+#| fromuserid | int(32) | NO   |     | NULL    |                |
+#| touserid   | int(32) | NO   |     | NULL    |                |
+#| message    | text    | NO   |     | NULL    |                |
+#| status     | int(8)  | NO   |     | NULL    |                |
+#+------------+---------+------+-----+---------+----------------+
+
+            for item in items:
+# insert into tradelist
+#+--------------+------------+------+-----+---------+----------------+
+#| Field        | Type       | Null | Key | Default | Extra          |
+#+--------------+------------+------+-----+---------+----------------+
+#| uid          | int(32)    | NO   | PRI | NULL    | auto_increment |
+#| itemid       | int(32)    | NO   |     | NULL    |                |
+#| messageid    | int(32)    | NO   |     | NULL    |                |
+#| userid       | int(32)    | NO   |     | NULL    |                |
+#| acceptstatus | tinyint(1) | NO   |     | NULL    |                |
+#+--------------+------------+------+-----+---------+----------------+
             return redirect_back('index')
 
     pd.title = "Trade for " + itemid

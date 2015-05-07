@@ -57,9 +57,12 @@ def ownwant(item_id, values):
     except NoItem:
         return
 
-    try:
-        user = siteuser(session['username'])
-    except NoUser:
+    if username in session:
+        try:
+            user = siteuser(session['username'])
+        except NoUser:
+            return
+    else
         return
 
     result = user.query_collection(item_id)
