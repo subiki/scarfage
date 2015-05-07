@@ -3,6 +3,8 @@ from flask import redirect, url_for, request, render_template, session, escape, 
 from sql import upsert, doupsert, read, doquery, delete
 from scarflib import siteuser, NoUser, siteitem, NoItem, redirect_back
 
+#TODO more user feedback
+
 @app.route('/item/<item_id>/donthave')
 def donthave(item_id):
     update = dict(willtrade=0, own=0)
@@ -55,15 +57,18 @@ def ownwant(item_id, values):
     try:
         moditem = siteitem(item_id)
     except NoItem:
-        return
+        flash('Error adding ' + item_id + 'to your collection')
+        return False
 
-    if username in session:
+    if 'username' in session:
         try:
             user = siteuser(session['username'])
         except NoUser:
-            return
+            flash('You must be logged in to add items to a collection')
+            return False
     else:
-        return
+        flash('You must be logged in to add items to a collection')
+        return False
 
     result = user.query_collection(item_id)
 
@@ -83,4 +88,4 @@ def ownwant(item_id, values):
     sql = delete('ownwant', **{ 'own': '0', 'willtrade': '0', 'want': '0', 'hidden': '0' })
     result = doquery(sql)
 
-    return 
+    return True 
