@@ -69,9 +69,8 @@ def imageupload():
             flash('Please upload something.')
             return redirect_back('/index')
 
-        item.newimg(request.files['image'], escape(request.form['tag']))
-
-        flash('Image added to ' + escape(request.form['itemname']))
+        if item.newimg(request.files['image'], escape(request.form['tag'])):
+            flash('Image added to ' + escape(request.form['itemname']))
 
     return redirect_back('/index')
 

@@ -1,12 +1,21 @@
 import hashlib
 import os
 import datetime
-import imghdr
 import uuid
+import imghdr
+
 from scarf import app
 from flask import request, redirect, session, escape, flash, url_for
 from urlparse import urlparse, urljoin
 from sql import upsert, doupsert, read, doquery, delete
+
+# https://coderwall.com/p/btbwlq/fix-imghdr-what-being-unable-to-detect-jpegs-with-icc_profile
+# https://bugs.python.org/issue16512
+def test_icc_profile_images(h, f):
+    if h.startswith('\xff\xd8') and h[6:17] == b'ICC_PROFILE':
+        return "jpeg"
+
+imghdr.tests.append(test_icc_profile_images)
 
 # DEBUG
 import socket 
@@ -309,6 +318,7 @@ class siteitem(__siteitem__):
             self.willtradeusers.append(userinfo)
 
     def delete(self):
+        #TODO image purgatory
         for i in self.images: 
             try: 
                 os.remove(upload_dir + i.filename) 
@@ -361,6 +371,7 @@ class siteitem(__siteitem__):
                 data = doupsert(sql)
 
                 flash('Uploaded ' + f.filename)
+                return True
             else:
                 try:
                     os.remove(upload_dir + newname)
@@ -368,6 +379,7 @@ class siteitem(__siteitem__):
                     app.logger.error("Error removing failed image upload: " + upload_dir + newname)
 
                 flash(f.filename + " is not an image.")
+                return False
 
 def new_item(name, description, username):
     sql = upsert("items", \
