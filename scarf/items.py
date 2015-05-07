@@ -98,12 +98,17 @@ def newitem():
         except NoItem:
             new_item(escape(request.form['name']), escape(request.form['desc']), username)
 
-        flash('Added item!')
-
         try:
             newitem = siteitem(escape(request.form['name']))
-            newitem.newimg(request.files['front'], "front")
-            newitem.newimg(request.files['back'], "back")
+
+            file = request.files['img']
+            if file:
+                if request.form['imgtag'] == '':
+                    flash('Please add a tag for this picture.')
+                    return redirect(url_for('newitem'))
+
+                newitem.newimg(request.files['img'], escape(request.form['imgtag']))
+
         except NoItem:
             flash('Error adding item!')
             return redirect(url_for('newitem'))
@@ -114,6 +119,7 @@ def newitem():
         except NoUser:
             flash('Log in to add this item to your collection.')
 
+        flash('Added item!')
         return redirect('/item/' + escape(request.form['name']))
 
     pd.title="Add New Item"

@@ -9,8 +9,10 @@ from flask import request, redirect, session, escape, flash, url_for
 from urlparse import urlparse, urljoin
 from sql import upsert, doupsert, read, doquery, delete
 
-# https://coderwall.com/p/btbwlq/fix-imghdr-what-being-unable-to-detect-jpegs-with-icc_profile
+# Workaround for the issue identified here:
 # https://bugs.python.org/issue16512
+# Credit to:
+# https://coderwall.com/p/btbwlq/fix-imghdr-what-being-unable-to-detect-jpegs-with-icc_profile
 def test_icc_profile_images(h, f):
     if h.startswith('\xff\xd8') and h[6:17] == b'ICC_PROFILE':
         return "jpeg"

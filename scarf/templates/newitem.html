@@ -7,8 +7,8 @@
 <div id="content">
     <form action="/new" method="post" enctype="multipart/form-data">
         Name: <input type=text name=name><br />
-        Front: <input type="file" name="front" accept="image/*"><br />
-        Back: <input type="file" name="back" accept="image/*"><br />
+        <input type="file" name="img" accept="image/*"><br />
+        Image tag: <input type=text name=imgtag><br />
         <textarea name=desc rows="4" cols="50">Description</textarea><br />
         <input type=submit value=Submit>
     </form>
