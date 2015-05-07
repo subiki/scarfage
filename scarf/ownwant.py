@@ -62,7 +62,7 @@ def ownwant(item_id, values):
             user = siteuser(session['username'])
         except NoUser:
             return
-    else
+    else:
         return
 
     result = user.query_collection(item_id)

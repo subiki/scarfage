@@ -29,6 +29,7 @@ def trade(username, itemid):
 #+------------+---------+------+-----+---------+----------------+
 
             for item in items:
+                pass
 # insert into tradelist
 #+--------------+------------+------+-----+---------+----------------+
 #| Field        | Type       | Null | Key | Default | Extra          |
