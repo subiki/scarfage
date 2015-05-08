@@ -134,7 +134,6 @@ class siteuser:
             ret.want = result[0][5]
             ret.hidden = result[0][6]
         except IndexError:
-            #raise NoItem(item)
             pass
 
         return ret
