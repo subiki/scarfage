@@ -39,19 +39,23 @@ def moderate():
             user = mod[3]
             if mod[1] == 0 or flag == 1:
                 sql = read('images', **{"uid": imgid})
-                img = doquery(sql)[0]
+                app.logger.debug(sql)
+                img = doquery(sql)
                 
                 class mod:
                     pass
 
-                mod.filename = img[1]
-                mod.tag = img[2]
-                mod.user = user
-                mod.flag = flag
-                pd.mods.append(mod)
+                if img:
+                    mod.filename = img[0][1]
+                    mod.tag = img[0][2]
+                    mod.user = user
+                    mod.flag = flag
+                    pd.mods.append(mod)
+                else:
+                    flash('Error loading data for image ' + str(imgid))
         except IndexError as e:
             pd.title = "SQL error"
-            pd.errortext = e
+            pd.errortext = "SQL error"
             return render_template('error.html', pd=pd)
 
     pd.title = "Unmoderated images" 

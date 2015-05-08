@@ -195,7 +195,6 @@ def new_user(username, password, email):
                      accesslevel=1)
         data = doupsert(sql)
     except Exception as e:
-        app.logger.error("Error creating new user: " + e)
         return False
 
     return True
@@ -231,7 +230,6 @@ class siteimage:
         try:
             os.remove(upload_dir + self.filename)
         except Exception as e:
-            app.logger.error("Error removing image: " + e)
             raise
 
     def approve(self):
@@ -321,14 +319,8 @@ class siteitem(__siteitem__):
     def delete(self):
         #TODO image purgatory
         for i in self.images: 
-            try: 
-                os.remove(upload_dir + i.filename) 
-     
-                sql = delete('images', **{"uid": i.uid}) 
-                result = doquery(sql) 
-            except: 
-                flash("Error removing image: " + i.filename) 
-                app.logger.error("Error removing image: " + i.filename) 
+            delimg = siteimage(escape(i.uid))
+            delimg.delete()
      
         sql = delete('items', **{"uid": self.uid}) 
         result = doquery(sql) 
