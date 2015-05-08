@@ -49,9 +49,9 @@ def moderate():
                 mod.user = user
                 mod.flag = flag
                 pd.mods.append(mod)
-        except IndexError:
+        except IndexError as e:
             pd.title = "SQL error"
-            pd.errortext = "SQL error"
+            pd.errortext = "SQL error - " + e
             return render_template('error.html', pd=pd)
 
     pd.title = "Unmoderated images" 
