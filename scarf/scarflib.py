@@ -41,6 +41,15 @@ class pagedata:
 
 ######### User stuff
 
+def user_by_uid(uid):
+    sql = read('users', **{"uid": uid})
+    result = doquery(sql)
+
+    try:
+        return result[0][1]
+    except IndexError:
+        return
+
 class NoUser(Exception):
     def __init__(self, username):
         Exception.__init__(self, username)
@@ -246,6 +255,16 @@ class siteimage:
         result = doquery(sql)
 
 ######### Item stuff
+
+def item_by_uid(uid):
+    sql = read('items', **{"uid": uid})
+    result = doquery(sql)
+
+    try:
+        return result[0][1]
+    except IndexError:
+        return
+
 
 class NoItem(Exception):
     def __init__(self, item):
