@@ -15,7 +15,7 @@ def page_not_found(error):
 def error():
     pd = pagedata()
     pd.title = "Error!"
-    pd.errortext="Oh noes!"
+    pd.errortext="Oh noes!!"
     return render_template('error.html', pd=pd)
 
 @app.route('/accessdenied')
