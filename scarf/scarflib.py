@@ -147,6 +147,30 @@ class siteuser:
 
         return ret
 
+    def pms(self):
+        self.pm_from = []
+        self.pm_to = []
+
+        sql = read('messages', **{"fromuserid": self.uid})
+        fromresult = doquery(sql)
+
+        #messagestatus = {'active_trade': 0, 'closed_trade': 1, 'unread_pm': 2, 'read_pm': 3}
+
+        for item in fromresult:
+            if item[4] >= 2:
+                self.pm_from.append(pmessage(item[0]))
+            else:
+                self.pm_from.append(trademessage(item[0]))
+
+        sql = read('messages', **{"touserid": self.uid})
+        toresult = doquery(sql)
+
+        for item in toresult:
+            if item[4] >= 2:
+                self.pm_to.append(pmessage(item[0]))
+            else:
+                self.pm_to.append(trademessage(item[0]))
+
     def seen(self):
         self.lastseen=datetime.datetime.now()
         self.__writedb__()
@@ -438,4 +462,92 @@ def redirect_back(endpoint, **values):
         target = url_for(endpoint, **values)
     return redirect(target)
 
+
+# Trade and message stuff
+
+messagestatus = {'active_trade': 0, 'closed_trade': 1, 'unread_pm': 2, 'read_pm': 3}
+
+class pmessage:
+    def __init__(self, messageid):
+        sql = read('messages', **{"messageid": messageid})
+        result = doquery(sql)
+
+        self.uid = result[0]
+        self.from_uid = result[1]
+        self.to_uid = result[2]
+        self.message = result[3]
+        self.status = result[4]
+
+        self.from_user = siteuser(user_by_uid(self.from_uid)).username
+        self.to_user = siteuser(user_by_uid(self.to_uid)).username
+
+class tradeitem:
+    def __init__(self):
+        self.uid = 0
+        self.itemid = 0
+        self.messageid = 0
+        self.userid = 0
+        self.acceptstatus = 0
+
+class trademessage(pmessage):
+    def __init__(self, messageid):
+        sql = read('messages', **{"uid": messageid})
+        result = doquery(sql)
+
+        try:
+            self.uid = result[0][0]
+            self.from_uid = result[0][1]
+            self.to_uid = result[0][2]
+            self.message = result[0][3]
+            self.status = result[0][4]
+
+            self.from_user = siteuser(user_by_uid(self.from_uid)).username
+            self.to_user = siteuser(user_by_uid(self.to_uid)).username
+        except IndexError:
+            pass
+
+        self.items = []
+
+        sql = read('tradelist', **{"messageid": messageid})
+        result = doquery(sql)
+
+        for item in result:
+            ti = tradeitem()
+            ti.uid = item[0]
+            ti.itemid = item[1]
+            ti.messageid = item[2]
+            ti.userid = item[3]
+            ti.acceptstatus = item[4]
+            ti.item = siteitem(item_by_uid(ti.itemid))
+            ti.user = siteuser(user_by_uid(ti.userid))
+
+            self.items.append(ti)
+
+def send_pm(fromuserid, touserid, message, status):
+    try:
+        sql = upsert("messages", \
+                     uid=0, \
+                     fromuserid=fromuserid, \
+                     touserid=touserid, \
+                     message=message, \
+                     status=status)
+        data = doupsert(sql)
+    except Exception as e:
+        raise
+
+    return data
+
+def add_tradeitem(itemid, messageid, userid, acceptstatus):
+    try:
+        sql = upsert("tradelist", \
+                     uid=0, \
+                     itemid=itemid, \
+                     messageid=messageid, \
+                     userid=userid, \
+                     acceptstatus=acceptstatus)
+        data = doupsert(sql)
+    except Exception as e:
+        return False
+
+    return True
 

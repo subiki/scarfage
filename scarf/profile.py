@@ -91,6 +91,7 @@ def show_user_profile(username):
     try:
         pd.profileuser = siteuser(escape(username))
         pd.profileuser.collection = pd.profileuser.get_collection()
+        pd.profileuser.pms()
     except NoUser:
         return page_not_found(404)
 

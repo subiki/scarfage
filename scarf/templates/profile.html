@@ -7,6 +7,7 @@
 <div id="content">
     <h1>{{ pd.profileuser.username }}'s profile</h1>
     {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
+        <h2>User info:</h2>
         <ul>
             <li>Member since: {{ pd.profileuser.joined }}</li>
             <li>Last seen: {{ pd.profileuser.lastseen }}</li>
@@ -15,6 +16,33 @@
         </ul>
  
     {% else %}
+        <div id="messages">
+        <h2>Private messages and trade requests:</h2><br/>
+        {% for pm in pd.profileuser.pm_from %}
+        <div id="message">
+        to: {{ pm.to_user }}<br/>
+        from: {{ pm.from_user }}<br/>
+        message: {{ pm.message }} <br/>
+        {% if pm.items is defined %}
+        <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View trade request</a></br>
+        {% endif %}
+        </div><br />
+        {% endfor %}
+
+        {% for pm in pd.profileuser.pm_to %}
+        <div id="message">
+        to: {{ pm.to_user }}<br/>
+        from: {{ pm.from_user }}<br/>
+        message: {{ pm.message }} <br/>
+        {% if pm.items is defined %}
+        <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View trade request</a></br>
+        {% endif %}
+        </div>
+        {% endfor %}
+ 
+        </div>
+
+        <h2>User info:</h2>
         <ul>
             <li>Email: {{ pd.profileuser.email }}</li>
             <li>Member since: {{ pd.profileuser.joined }}</li>
