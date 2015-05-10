@@ -5,8 +5,6 @@ import datetime
 
 if socket.gethostname() == "grenadine":
     dbHost = 'sql.home.mazuc.net'
-elif socket.gethostname()=="prefect":
-    dbHost = '127.0.0.1'
 else: 
     dbHost = 'localhost'
 
