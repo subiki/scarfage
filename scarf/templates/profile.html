@@ -17,8 +17,9 @@
  
     {% else %}
         <div id="messages">
-        <h2>Private messages and trade requests:</h2><br/>
+        <h2>Private messages and open trade requests:</h2><br/>
         {% for pm in pd.profileuser.pm_from %}
+        {% if pm.status < pm.messagestatus['settled_trade'] or pm.status >= pm.messagestatus['unread_pm'] %}
         <div id="message">
         From: <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a><br />
         To: <a href="/user/{{ pm.from_user }}">{{ pm.to_user }}</a><br />
@@ -27,9 +28,11 @@
         <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View trade request</a></br>
         {% endif %}
         </div><br />
+        {% endif %}
         {% endfor %}
 
         {% for pm in pd.profileuser.pm_to %}
+        {% if pm.status < pm.messagestatus['settled_trade'] or pm.status >= pm.messagestatus['unread_pm'] %}
         <div id="message">
         From: <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a><br />
         To: <a href="/user/{{ pm.from_user }}">{{ pm.to_user }}</a><br />
@@ -37,7 +40,8 @@
         {% if pm.items is defined %}
         <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View trade request</a></br>
         {% endif %}
-        </div>
+        </div><br />
+        {% endif %}
         {% endfor %}
  
         </div>

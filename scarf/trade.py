@@ -4,7 +4,7 @@ from scarflib import pagedata, NoItem, NoUser, siteuser, siteitem, redirect_back
 from main import page_not_found
 
 @app.route('/user/<username>/pm/<messageid>/accept/<item>')
-def accepttrade(username, messageid, item):
+def accepttradeitem(username, messageid, item):
     pd = pagedata()
 
     if not pd.authuser.username == username:
@@ -26,7 +26,7 @@ def accepttrade(username, messageid, item):
     return redirect_back('index')
 
 @app.route('/user/<username>/pm/<messageid>/reject/<item>')
-def rejecttrade(username, messageid, item):
+def rejecttradeitem(username, messageid, item):
     pd = pagedata()
 
     if not pd.authuser.username == username:
@@ -35,6 +35,36 @@ def rejecttrade(username, messageid, item):
     if 'username' in session:
         try:
             t = tradeitem(escape(item))
+            t.reject()
+        except:
+            return page_not_found(404)
+
+    return redirect_back('index')
+
+@app.route('/user/<username>/pm/<messageid>/settle')
+def settletrade(username, messageid):
+    pd = pagedata()
+
+    if not pd.authuser.username == username:
+        return page_not_found(404)
+
+    if 'username' in session:
+        t = trademessage(escape(messageid))
+        t.settle()
+            #return page_not_found(404)
+
+    return redirect_back('index')
+
+@app.route('/user/<username>/pm/<messageid>/reject')
+def rejecttrade(username, messageid):
+    pd = pagedata()
+
+    if not pd.authuser.username == username:
+        return page_not_found(404)
+
+    if 'username' in session:
+        try:
+            t = trademessage(escape(messageid))
             t.reject()
         except:
             return page_not_found(404)
@@ -54,14 +84,6 @@ def viewpm(username, messageid):
         t = trademessage(escape(messageid))
 
         pd.pm = t
-
-        settle = True
-        for item in t.items:
-            if (item.acceptstatus != tradestatus['accepted']):
-                settle = False
-
-        if settle == True:
-            pd.pm.status = messagestatus['closed_trade']
 
     return render_template('pm.html', pd=pd)
  

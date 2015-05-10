@@ -53,13 +53,16 @@ Message:
     {% endif %}
 {% endfor %}
 
-{% if pd.pm.status == pd.pm.messagestatus['closed_trade'] %}
+{% if pd.pm.status == pd.pm.messagestatus['complete_trade'] %}
 All parties have accepted, please coordinate with {{ pd.pm.from_user }} to complete your trade!<br />
 <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/settle">Mark as settled!</a><br />
-{% else %}
+{% elif pd.pm.status == pd.pm.messagestatus['active_trade'] %}
 <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/reject">Reject trade</a><br />
+{% elif pd.pm.status == pd.pm.messagestatus['rejected_trade'] %}
+This trade has been closed as rejected!<br/>
+{% elif pd.pm.status == pd.pm.messagestatus['settled_trade'] %}
+Trade has been closed as settled!<br/>
 {% endif %}
-
 </div>
 </div>
 

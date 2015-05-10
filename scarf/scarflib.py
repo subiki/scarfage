@@ -28,7 +28,6 @@ elif socket.getbyhostname()=="prefect":
 else: 
     upload_dir = '/srv/data/web/vhosts/default/static/uploads/'
 
-
 class pagedata:
     accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
     pass
@@ -157,10 +156,8 @@ class siteuser:
         sql = read('messages', **{"fromuserid": self.uid})
         fromresult = doquery(sql)
 
-        #messagestatus = {'active_trade': 0, 'closed_trade': 1, 'unread_pm': 2, 'read_pm': 3}
-
         for item in fromresult:
-            if item[4] >= 2:
+            if item[4] >= messagestatus['unread_pm']:
                 self.pm_from.append(pmessage(item[0]))
             else:
                 self.pm_from.append(trademessage(item[0]))
@@ -169,7 +166,7 @@ class siteuser:
         toresult = doquery(sql)
 
         for item in toresult:
-            if item[4] >= 2:
+            if item[4] >= messagestatus['unread_pm']:
                 self.pm_to.append(pmessage(item[0]))
             else:
                 self.pm_to.append(trademessage(item[0]))
@@ -468,7 +465,7 @@ def redirect_back(endpoint, **values):
 
 # Trade and message stuff
 
-messagestatus = {'active_trade': 0, 'complete_trade': 1, 'closed_trade': 2,'unread_pm': 10, 'read_pm': 11}
+messagestatus = {'active_trade': 0, 'complete_trade': 1, 'settled_trade': 2, 'rejected_trade': 3, 'unread_pm': 10, 'read_pm': 11}
 tradestatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
 
 class pmessage:
@@ -513,8 +510,6 @@ class tradeitem:
         else:
             return
 
-
-
 class trademessage(pmessage):
     def __init__(self, messageid):
         self.messagestatus = messagestatus
@@ -540,6 +535,7 @@ class trademessage(pmessage):
         sql = read('tradelist', **{"messageid": messageid})
         result = doquery(sql)
 
+        complete = True
         for item in result:
             ti = tradeitem(item[0])
             ti.itemid = item[1]
@@ -550,6 +546,30 @@ class trademessage(pmessage):
             ti.user = siteuser(user_by_uid(ti.userid))
 
             self.items.append(ti)
+
+            if (ti.acceptstatus != tradestatus['accepted']):
+                complete = False
+
+        if complete == True and self.status < messagestatus['settled_trade']:
+            self.status = messagestatus['complete_trade']
+
+    def settle(self):
+        if self.uid > 0:
+            sql = upsert("messages", \
+                         uid=self.uid, \
+                         status=messagestatus['settled_trade'])
+            data = doupsert(sql)
+        else:
+            return
+
+    def reject(self):
+        if self.uid > 0:
+            sql = upsert("messages", \
+                         uid=self.uid, \
+                         status=messagestatus['rejected_trade'])
+            data = doupsert(sql)
+        else:
+            return
 
 def send_pm(fromuserid, touserid, message, status):
     try:
