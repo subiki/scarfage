@@ -54,7 +54,7 @@
 <br>
 <div id="itemimg">
 {% for image in pd.item.images %}
-    <a href="/static/uploads/{{ image.filename }}"><img src="/image/{{ image.filename }}/thumbnail" alt="{{ image.tag }}"></a><br />
+    <a href="/image/{{ image.uid }}"><img src="/image/{{ image.filename }}/thumbnail" alt="{{ image.tag }}"></a><br />
 
 {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
 <a class=small href="/image/{{ image.uid }}/delete">Delete image</a><br />

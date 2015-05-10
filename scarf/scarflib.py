@@ -249,7 +249,7 @@ class siteimage:
         try: 
             self.uid = result[0][0]
             self.filename = result[0][1]
-            self.tag = result[0][1]
+            self.tag = result[0][2]
         except IndexError:
             raise NoImage(uid)
 

@@ -2,7 +2,7 @@ from StringIO import StringIO
 from PIL import Image
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash, send_file
-from scarflib import redirect_back, pagedata, siteimage, upload_dir, siteitem, NoItem
+from scarflib import redirect_back, pagedata, siteimage, upload_dir, siteitem, NoItem, NoImage
 from main import page_not_found
 
 @app.route('/image/<img_id>/reallydelete')
@@ -132,3 +132,15 @@ def serve_preview(image):
         return serve_pil_image(img)
     except:
         return page_not_found(404)
+
+@app.route('/image/<img_id>')
+def show_image(img_id):
+    pd = pagedata()
+
+    try:
+        pd.img = siteimage(escape(img_id))
+        pd.title=escape(pd.img.tag)
+    except NoImage:
+        return page_not_found(404)
+
+    return render_template('image.html', pd=pd)
