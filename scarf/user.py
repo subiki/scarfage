@@ -3,8 +3,8 @@ from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
 from scarflib import redirect_back, pagedata, siteuser, NoUser, new_user, AuthFail
 
-#TODO change me
-app.secret_key = '\x8bN\xe5\xe8Q~p\xbdb\xe5\xa5\x894i\xb0\xd9\x07\x10\xe6\xa0\xe5\xbd\x1e\xf8'
+from config import secret_key
+app.secret_key = secret_key
 
 def check_new_user(request):
     ret = True

@@ -1,8 +1,10 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, escape, request, flash
-from scarflib import redirect_back, pagedata, upload_dir, siteimage, NoImage
+from scarflib import redirect_back, pagedata, siteimage, NoImage
 from sql import doupsert, upsert, doquery, read, delete
 from main import page_not_found
+ 
+from config import upload_dir
 
 from PIL import Image
 import random

@@ -3,14 +3,7 @@ from scarf import app
 import socket
 import datetime
 
-if socket.gethostname() == "grenadine":
-    dbHost = 'sql.home.mazuc.net'
-else: 
-    dbHost = 'localhost'
-
-dbName = 'scarfage'
-dbUser = 'scarfage'
-dbPass = '4AybHApWa7n6VRp6'
+from config import dbHost, dbName, dbUser, dbPass
 
 def read(table, **kwargs):
     """ Generates SQL for a SELECT statement matching the kwargs passed. """

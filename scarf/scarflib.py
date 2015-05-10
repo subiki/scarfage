@@ -9,6 +9,8 @@ from flask import request, redirect, session, escape, flash, url_for
 from urlparse import urlparse, urljoin
 from sql import upsert, doupsert, read, doquery, delete
 
+from config import upload_dir
+
 # Workaround for the issue identified here:
 # https://bugs.python.org/issue16512
 # Credit to:
@@ -18,17 +20,6 @@ def test_icc_profile_images(h, f):
         return "jpeg"
 
 imghdr.tests.append(test_icc_profile_images)
-
-# DEBUG
-import socket 
-if os.path.isdir("/home/pq"):
-    upload_dir = '/home/pq/sf/site/scarf/static/uploads/'
-elif socket.gethostname()=="prefect":
-    upload_dir = os.path.normpath("c:/users/lambert/desktop/scarfagehub/upload_dir/")
-elif os.path.isdir("/home/subiki"):
-    upload_dir = '/home/subiki/scarfage/scarf/static/uploads/'
-else: 
-    upload_dir = '/srv/data/web/vhosts/default/static/uploads/'
 
 class pagedata:
     accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}

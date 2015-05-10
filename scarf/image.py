@@ -2,8 +2,10 @@ from StringIO import StringIO
 from PIL import Image
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, escape, flash, send_file
-from scarflib import redirect_back, pagedata, siteimage, upload_dir, siteitem, NoItem, NoImage
+from scarflib import redirect_back, pagedata, siteimage, siteitem, NoItem, NoImage
 from main import page_not_found
+
+from config import upload_dir
 
 @app.route('/image/<img_id>/reallydelete')
 def reallydelete_image(img_id):
