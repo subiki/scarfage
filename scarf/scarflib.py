@@ -24,7 +24,7 @@ import socket
 if socket.gethostname() == "grenadine":
     upload_dir = '/home/pq/sf/site/scarf/static/uploads/'
 elif socket.getbyhostname()=="prefect":
-    upload_dir = 'c:\users\lambert\desktop\scarfage\upload_dir'
+    upload_dir = 'c:\users\lambert\desktop\scarfagehub\upload_dir'
 else: 
     upload_dir = '/srv/data/web/vhosts/default/static/uploads/'
 
