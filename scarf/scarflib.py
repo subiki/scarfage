@@ -23,8 +23,11 @@ imghdr.tests.append(test_icc_profile_images)
 import socket 
 if socket.gethostname() == "grenadine":
     upload_dir = '/home/pq/sf/site/scarf/static/uploads/'
+elif socket.getbyhostname()=="prefect":
+    upload_dir = 'c:\users\lambert\desktop\scarfage\upload_dir'
 else: 
     upload_dir = '/srv/data/web/vhosts/default/static/uploads/'
+
 
 class pagedata:
     accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
