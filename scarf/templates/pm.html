@@ -15,8 +15,7 @@ Message:
 <div id=tradeitem>
     {% if ti.user.uid == pd.authuser.uid %}
     ----]] your trade: {{ ti.item.name }}<br/>
-    {% else %}
-    [[---- {{ti.user.username }}'s trade: {{ ti.item.name }} - <br />
+    {% if ti.user.uid == pd.authuser.uid %}
     {% if ti.acceptstatus < pd.pm.tradestatus['accepted'] %}
         <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/accept/{{ ti.uid }}">Accept item</a><br />
 
@@ -29,6 +28,24 @@ Message:
         Accepted<br />
     {%endif%}
     {%endif%}
+ 
+    {% else %}
+    [[---- {{ti.user.username }}'s trade: {{ ti.item.name }} - <br />
+
+    {% if ti.user.uid == pd.authuser.uid %}
+    {% if ti.acceptstatus < pd.pm.tradestatus['accepted'] %}
+        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/accept/{{ ti.uid }}">Accept item</a><br />
+
+        {% if ti.acceptstatus == pd.pm.tradestatus['rejected'] %}
+        Rejected<br />
+        {% else %}
+        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/reject/{{ ti.uid }}">Reject item</a> 
+        {% endif %}
+    {% else %}
+        Accepted<br />
+    {%endif%}
+    {%endif%}
+    {%endif%}
     {% if ti.item.images[0] is defined %}
         <img src="/image/{{ ti.item.images[0].filename }}/thumbnail" alt="{{ ti.item.images[0].tag }}"><br />
     {% endif %}
@@ -37,6 +54,8 @@ Message:
 {% if pd.pm.status == pd.pm.messagestatus['closed_trade'] %}
 All parties have accepted, please coordinate with {{ pd.pm.from_user }} to complete your trade!<br />
 <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/settle">Mark as settled!</a><br />
+{% else %}
+<a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/settle">Reject trade</a><br />
 {% endif %}
 
 </div>

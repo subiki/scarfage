@@ -47,7 +47,7 @@ def rejecttrade(username, messageid, item):
 def viewpm(username, messageid):
     pd = pagedata()
 
-    if not pd.authuser.username == username:
+    if not 'username' in session or not pd.authuser.username == username:
         return page_not_found(404)
 
     if 'username' in session:
@@ -55,13 +55,13 @@ def viewpm(username, messageid):
 
         pd.pm = t
 
+        settle = True
         for item in t.items:
-            settle = True
             if (item.acceptstatus != tradestatus['accepted']):
                 settle = False
 
-            if settle == True:
-                pd.pm.status = messagestatus['closed_trade']
+        if settle == True:
+            pd.pm.status = messagestatus['closed_trade']
 
     return render_template('pm.html', pd=pd)
  
@@ -84,9 +84,9 @@ def trade(username, itemid):
                 messageid = send_pm(pd.authuser.uid, pd.tradeuser.uid, message, 0)
 
                 for item in items:
-                    add_tradeitem(item, messageid, pd.authuser.uid, tradestatus['unmarked'])
+                    add_tradeitem(item, messageid, pd.authuser.uid, tradestatus['accepted'])
 
-                add_tradeitem(siteitem(itemid).uid, messageid, pd.tradeuser.uid, tradestatus['accepted'])
+                add_tradeitem(siteitem(itemid).uid, messageid, pd.tradeuser.uid, tradestatus['unmarked'])
 
                 if messageid:
                     flash('Submitted trade request!')
