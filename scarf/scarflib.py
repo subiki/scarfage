@@ -90,8 +90,9 @@ class siteuser:
                 self.auth = True
 
     def __writedb__(self):
-        sql = upsert("users", \
-                     uid=self.uid, \
+        sql = upsert("users", 
+                     uid=self.uid, 
+                     username=self.username, 
                      pwhash=self.pwhash,
                      pwsalt=self.pwsalt,
                      email=self.email,
