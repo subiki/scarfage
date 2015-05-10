@@ -465,10 +465,13 @@ def redirect_back(endpoint, **values):
 
 # Trade and message stuff
 
-messagestatus = {'active_trade': 0, 'closed_trade': 1, 'unread_pm': 2, 'read_pm': 3}
+messagestatus = {'active_trade': 0, 'complete_trade': 1, 'closed_trade': 2,'unread_pm': 10, 'read_pm': 11}
+tradestatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
 
 class pmessage:
     def __init__(self, messageid):
+        self.messagestatus = messagestatus
+
         sql = read('messages', **{"messageid": messageid})
         result = doquery(sql)
 
@@ -482,15 +485,38 @@ class pmessage:
         self.to_user = siteuser(user_by_uid(self.to_uid)).username
 
 class tradeitem:
-    def __init__(self):
-        self.uid = 0
+    def __init__(self, itemid):
+        self.uid = itemid 
         self.itemid = 0
         self.messageid = 0
         self.userid = 0
         self.acceptstatus = 0
 
+    def accept(self):
+        if self.uid > 0:
+            sql = upsert("tradelist", \
+                         uid=self.uid, \
+                         acceptstatus=tradestatus['accepted'])
+            data = doupsert(sql)
+        else:
+            return
+
+    def reject(self):
+        if self.uid > 0:
+            sql = upsert("tradelist", \
+                         uid=self.uid, \
+                         acceptstatus=tradestatus['rejected'])
+            data = doupsert(sql)
+        else:
+            return
+
+
+
 class trademessage(pmessage):
     def __init__(self, messageid):
+        self.messagestatus = messagestatus
+        self.tradestatus = tradestatus
+
         sql = read('messages', **{"uid": messageid})
         result = doquery(sql)
 
@@ -512,8 +538,7 @@ class trademessage(pmessage):
         result = doquery(sql)
 
         for item in result:
-            ti = tradeitem()
-            ti.uid = item[0]
+            ti = tradeitem(item[0])
             ti.itemid = item[1]
             ti.messageid = item[2]
             ti.userid = item[3]

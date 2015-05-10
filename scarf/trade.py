@@ -1,7 +1,47 @@
 from scarf import app
 from flask import escape, flash, render_template, session, request, redirect
-from scarflib import pagedata, NoItem, NoUser, siteuser, siteitem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, pmessage, trademessage, messagestatus
+from scarflib import pagedata, NoItem, NoUser, siteuser, siteitem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, pmessage, trademessage, messagestatus, tradeitem, tradestatus
 from main import page_not_found
+
+@app.route('/user/<username>/pm/<messageid>/accept/<item>')
+def accepttrade(username, messageid, item):
+    pd = pagedata()
+
+    if not pd.authuser.username == username:
+        return page_not_found(404)
+
+    if 'username' in session:
+        try:
+            ti = tradeitem(escape(item))
+        except:
+            return page_not_found(404)
+
+        try:
+            t = trademessage(escape(messageid))
+        except:
+            return page_not_found(404)
+
+        ti.accept()
+
+    return redirect_back('index')
+
+@app.route('/user/<username>/pm/<messageid>/reject/<item>')
+def rejecttrade(username, messageid, item):
+    pd = pagedata()
+
+    if not pd.authuser.username == username:
+        return page_not_found(404)
+
+    if 'username' in session:
+        try:
+            t = tradeitem(escape(item))
+            t.reject()
+        except:
+            return page_not_found(404)
+
+    return redirect_back('index')
+
+
 
 @app.route('/user/<username>/pm/<messageid>')
 def viewpm(username, messageid):
@@ -14,6 +54,14 @@ def viewpm(username, messageid):
         t = trademessage(escape(messageid))
 
         pd.pm = t
+
+        for item in t.items:
+            settle = True
+            if (item.acceptstatus != tradestatus['accepted']):
+                settle = False
+
+            if settle == True:
+                pd.pm.status = messagestatus['closed_trade']
 
     return render_template('pm.html', pd=pd)
  
@@ -36,9 +84,9 @@ def trade(username, itemid):
                 messageid = send_pm(pd.authuser.uid, pd.tradeuser.uid, message, 0)
 
                 for item in items:
-                    add_tradeitem(item, messageid, pd.authuser.uid, messagestatus['active_trade'])
+                    add_tradeitem(item, messageid, pd.authuser.uid, tradestatus['unmarked'])
 
-                add_tradeitem(siteitem(itemid).uid, messageid, pd.tradeuser.uid, messagestatus['active_trade'])
+                add_tradeitem(siteitem(itemid).uid, messageid, pd.tradeuser.uid, tradestatus['accepted'])
 
                 if messageid:
                     flash('Submitted trade request!')
