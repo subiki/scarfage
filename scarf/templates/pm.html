@@ -7,6 +7,8 @@
 <div id="content">
 
 <div id="message">
+From: <a href="/user/{{ pd.pm.from_user }}">{{ pd.pm.from_user }}</a><br />
+To: <a href="/user/{{ pd.pm.from_user }}">{{ pd.pm.to_user }}</a><br />
 Message:
 {{ pd.pm.message }}<br/>
 </div>
@@ -55,7 +57,7 @@ Message:
 All parties have accepted, please coordinate with {{ pd.pm.from_user }} to complete your trade!<br />
 <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/settle">Mark as settled!</a><br />
 {% else %}
-<a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/settle">Reject trade</a><br />
+<a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/reject">Reject trade</a><br />
 {% endif %}
 
 </div>

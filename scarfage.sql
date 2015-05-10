@@ -1,257 +1,206 @@
--- phpMyAdmin SQL Dump
--- version 4.3.12
--- http://www.phpmyadmin.net
+-- MySQL dump 10.13  Distrib 5.5.41, for debian-linux-gnu (x86_64)
 --
--- Host: localhost
--- Generation Time: May 08, 2015 at 02:44 AM
--- Server version: 5.5.41-0+wheezy1-log
--- PHP Version: 5.4.39-0+deb7u1
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
+-- Host: localhost    Database: scarfage
+-- ------------------------------------------------------
+-- Server version	5.5.41-0+wheezy1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
-
---
--- Database: `scarfage`
---
-
--- --------------------------------------------------------
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
 -- Table structure for table `images`
 --
 
-CREATE TABLE IF NOT EXISTS `images` (
-  `uid` int(32) NOT NULL,
+DROP TABLE IF EXISTS `images`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `images` (
+  `uid` int(32) NOT NULL AUTO_INCREMENT,
   `filename` varchar(200) NOT NULL,
-  `tag` varchar(200) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=latin1;
+  `tag` varchar(200) NOT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `images`
 --
 
-INSERT INTO `images` (`uid`, `filename`, `tag`) VALUES
-(17, '3d6165cefaa3406a9e5a566fd1a38530.jpg', 'front'),
-(20, '1335bf359cf942048b1085a607f05c5d.jpg', 'kmkk'),
-(21, 'c3b9f22117ec4dec9ad0808bb50ddfc9.jpg', 'lklkjkekle'),
-(22, 'fd5388a04cb64272ac564bd0dfb9f8f3.jpg', 'front'),
-(23, '329813ed677f4964ae26dd3071371ea9.jpg', 'ecs'),
-(24, 'bb844a8033684b5cbec62c1ff46b4163.jpeg', 'front'),
-(25, '590dfaf739b44eb2864be625eaed2957.png', 'front'),
-(26, '51e9b8091f794c5191fba242abbb785a.jpeg', 'wtf'),
-(27, '46962606557440fc9eec0dc6b6778b77.jpg', 'front'),
-(28, 'f8764b0383714e9fa01fe4470208dcd3.jpg', 'front'),
-(29, 'cd07c133445d4392938ed219ab93bbe4.jpg', 'front'),
-(30, '276f9f0c806041379ffc8a3817f91b8a.jpg', 'fix'),
-(31, '76145b5cd4544132a72f8f105d875cb2.jpg', 'beer'),
-(32, '78b2391e53fa41d9862d0510b4832eb0.png', 'front'),
-(33, 'cf342b3ac5fe4bdf82531cd26c6cd68b.jpg', 'back'),
-(34, '9895f6a672014a1884626a780709df58.jpg', 'front'),
-(35, '34cf3add7db14216bcd6db45aa8cfaf0.jpg', 'front'),
-(36, '56fba7bc3d544950a48124216aa3ca31.jpg', 'Little Bobby Tables;delete from ownwant;'),
-(38, '22bfdc25c5c24a138f85de33ef7e951f.jpg', 'ascii THIS'),
-(39, 'f33043abb2a74aa5b45be07e5f3c8959.JPG', 'wall'),
-(40, '0719f7d1274b423e9122182096751e32.jpg', 'joe'),
-(41, '1fde0d7377844cebb18d1b5ae3312854.jpg', 'tat'),
-(42, 'a39bed59e9fe430984bb1fed7a93913f.png', 'fuck yea'),
-(45, '54ce7f5d896543dfacb4e037637f35cb.jpg', 'nexus'),
-(46, 'c88276c72b6043e381e16512203e38fb.jpg', 'tetris'),
-(47, 'b4c34977e5934f45944903493de3822f.png', 'thats right');
-
--- --------------------------------------------------------
+LOCK TABLES `images` WRITE;
+/*!40000 ALTER TABLE `images` DISABLE KEYS */;
+/*!40000 ALTER TABLE `images` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `imgmods`
 --
 
-CREATE TABLE IF NOT EXISTS `imgmods` (
+DROP TABLE IF EXISTS `imgmods`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `imgmods` (
   `imgid` int(32) NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '0',
   `flag` tinyint(1) NOT NULL DEFAULT '0',
-  `username` varchar(200) NOT NULL
+  `username` varchar(200) NOT NULL,
+  UNIQUE KEY `imgid` (`imgid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `imgmods`
 --
 
-INSERT INTO `imgmods` (`imgid`, `status`, `flag`, `username`) VALUES
-(33, 0, 0, 'Zirra'),
-(34, 0, 0, 'Zirra'),
-(38, 0, 0, 'Zirra'),
-(39, 0, 0, 'Zirra'),
-(40, 0, 0, 'Zirra'),
-(41, 0, 0, 'Zirra'),
-(42, 0, 0, 'admin'),
-(43, 0, 1, 'admin'),
-(44, 0, 0, 'Zirra'),
-(45, 0, 0, 'Zirra'),
-(46, 0, 0, 'Zirra'),
-(47, 0, 0, 'Zirra');
-
--- --------------------------------------------------------
+LOCK TABLES `imgmods` WRITE;
+/*!40000 ALTER TABLE `imgmods` DISABLE KEYS */;
+/*!40000 ALTER TABLE `imgmods` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `itemimg`
 --
 
-CREATE TABLE IF NOT EXISTS `itemimg` (
+DROP TABLE IF EXISTS `itemimg`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `itemimg` (
   `itemid` int(32) NOT NULL,
   `imgid` int(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `itemimg`
 --
 
-INSERT INTO `itemimg` (`itemid`, `imgid`) VALUES
-(18, 17),
-(17, 20),
-(17, 21),
-(20, 22),
-(17, 23),
-(21, 24),
-(22, 25),
-(21, 26),
-(24, 27),
-(25, 28),
-(27, 29),
-(24, 30),
-(23, 31),
-(29, 32),
-(29, 33),
-(30, 34),
-(31, 35),
-(32, 36),
-(35, 38),
-(37, 39),
-(38, 40),
-(39, 41),
-(40, 42),
-(43, 45),
-(44, 46),
-(45, 47);
-
--- --------------------------------------------------------
+LOCK TABLES `itemimg` WRITE;
+/*!40000 ALTER TABLE `itemimg` DISABLE KEYS */;
+/*!40000 ALTER TABLE `itemimg` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `items`
 --
 
-CREATE TABLE IF NOT EXISTS `items` (
-  `uid` int(32) NOT NULL,
+DROP TABLE IF EXISTS `items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `items` (
+  `uid` int(32) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
   `description` text NOT NULL,
   `added` date NOT NULL,
-  `modified` date NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=latin1;
+  `modified` date NOT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `items`
 --
 
-INSERT INTO `items` (`uid`, `name`, `description`, `added`, `modified`) VALUES
-(17, 'ecs', 'Description', '2015-05-05', '2015-05-05'),
-(18, 'test', 'Description', '2015-05-05', '2015-05-05'),
-(20, 'fuck yea awesome scarf', 'Description', '2015-05-06', '2015-05-06'),
-(21, 'wtf', 'Description', '2015-05-06', '2015-05-06'),
-(22, 'triforce', 'Feel the power!', '2015-05-06', '2015-05-06'),
-(23, 'beer', 'fuck yea, beer.', '2015-05-07', '2015-05-07'),
-(24, 'testtt', 'Description', '2015-05-07', '2015-05-07'),
-(25, 'bowtie', 'bow ties are cool.', '2015-05-07', '2015-05-07'),
-(27, 'ecp', 'Description', '2015-05-07', '2015-05-07'),
-(29, 'Zirra1', 'Test 1', '2015-05-07', '2015-05-07'),
-(30, 'this', 'this 3', '2015-05-07', '2015-05-07'),
-(31, 'fuck vancouver', 'wankouver whitecraps', '2015-05-07', '2015-05-07'),
-(32, 'sql inject test', 'Description', '2015-05-07', '2015-05-07'),
-(33, 'test6', 'Description', '2015-05-07', '2015-05-07'),
-(34, 'exeuploadtest', 'Description', '2015-05-07', '2015-05-07'),
-(35, 'exetest', 'Description', '2015-05-07', '2015-05-07'),
-(36, 'ldldldld', 'Description', '2015-05-07', '2015-05-07'),
-(37, 'more ascii fun', 'Description', '2015-05-07', '2015-05-07'),
-(38, 'ascii', 'Description', '2015-05-07', '2015-05-07'),
-(39, 'tat', 'Description', '2015-05-07', '2015-05-07'),
-(40, 'stuff', 'Description', '2015-05-07', '2015-05-07'),
-(43, 'this is how all phones should be', '', '2015-05-07', '2015-05-07'),
-(44, 'tetris', 'Description', '2015-05-07', '2015-05-07'),
-(45, 'the mother fucking greatest', 'the greatestDescription', '2015-05-07', '2015-05-07');
-
--- --------------------------------------------------------
+LOCK TABLES `items` WRITE;
+/*!40000 ALTER TABLE `items` DISABLE KEYS */;
+/*!40000 ALTER TABLE `items` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `messages`
 --
 
-CREATE TABLE IF NOT EXISTS `messages` (
-  `uid` int(32) NOT NULL,
+DROP TABLE IF EXISTS `messages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `messages` (
+  `uid` int(32) NOT NULL AUTO_INCREMENT,
   `fromuserid` int(32) NOT NULL,
   `touserid` int(32) NOT NULL,
   `message` text NOT NULL,
-  `status` int(8) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `status` int(8) NOT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- --------------------------------------------------------
+--
+-- Dumping data for table `messages`
+--
+
+LOCK TABLES `messages` WRITE;
+/*!40000 ALTER TABLE `messages` DISABLE KEYS */;
+/*!40000 ALTER TABLE `messages` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ownwant`
 --
 
-CREATE TABLE IF NOT EXISTS `ownwant` (
-  `uid` int(32) NOT NULL,
+DROP TABLE IF EXISTS `ownwant`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ownwant` (
+  `uid` int(32) NOT NULL AUTO_INCREMENT,
   `userid` int(32) NOT NULL,
   `itemid` int(32) NOT NULL,
   `own` tinyint(1) NOT NULL DEFAULT '0',
   `willtrade` tinyint(1) NOT NULL DEFAULT '0',
   `want` tinyint(1) NOT NULL DEFAULT '0',
-  `hidden` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
+  `hidden` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=120 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `ownwant`
 --
 
-INSERT INTO `ownwant` (`uid`, `userid`, `itemid`, `own`, `willtrade`, `want`, `hidden`) VALUES
-(9, 25, 18, 1, 0, 1, 0),
-(10, 25, 17, 1, 1, 0, 0),
-(11, 26, 17, 0, 0, 1, 0),
-(13, 26, 18, 1, 1, 0, 0),
-(15, 25, 20, 1, 1, 1, 0),
-(17, 27, 20, 0, 0, 1, 0),
-(18, 27, 18, 0, 0, 1, 0),
-(19, 27, 22, 1, 0, 0, 0),
-(20, 25, 22, 0, 0, 1, 0),
-(21, 27, 27, 0, 0, 1, 0),
-(23, 28, 31, 1, 0, 0, 0),
-(24, 28, 25, 1, 1, 1, 0);
-
--- --------------------------------------------------------
+LOCK TABLES `ownwant` WRITE;
+/*!40000 ALTER TABLE `ownwant` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ownwant` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `tradelist`
 --
 
-CREATE TABLE IF NOT EXISTS `tradelist` (
-  `uid` int(32) NOT NULL,
+DROP TABLE IF EXISTS `tradelist`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tradelist` (
+  `uid` int(32) NOT NULL AUTO_INCREMENT,
   `itemid` int(32) NOT NULL,
   `messageid` int(32) NOT NULL,
   `userid` int(32) NOT NULL,
-  `acceptstatus` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `acceptstatus` tinyint(1) NOT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- --------------------------------------------------------
+--
+-- Dumping data for table `tradelist`
+--
+
+LOCK TABLES `tradelist` WRITE;
+/*!40000 ALTER TABLE `tradelist` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tradelist` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
-  `uid` int(32) NOT NULL,
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `uid` int(32) NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL,
   `pwhash` varchar(200) NOT NULL,
   `pwsalt` varchar(20) NOT NULL,
@@ -259,99 +208,29 @@ CREATE TABLE IF NOT EXISTS `users` (
   `joined` date DEFAULT NULL,
   `lastseen` date DEFAULT NULL,
   `numadds` int(32) NOT NULL DEFAULT '0',
-  `accesslevel` int(32) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
+  `accesslevel` int(32) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`uid`),
+  UNIQUE KEY `uid` (`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`uid`, `username`, `pwhash`, `pwsalt`, `email`, `joined`, `lastseen`, `numadds`, `accesslevel`) VALUES
-(25, 'admin', '3f24653f8fa7815ecb2a35f8960e352b49e74f14028b78070e1ce43e', '82AA87', 'email@am.com', '2015-04-11', '2015-05-08', 22, 255),
-(26, 'testuser', 'd09ed5ae1c102a4b3d0608bf6d92f3297d37edf1c49411ddfdeeb8ca', 'E0197E', 'email@am.com', '2015-05-06', '2015-05-06', 1, 10),
-(27, 'subiki', 'e996396c29ba1d32e3b79809371b117e116000d3a790c15b1bb5979a', 'AB3612', 'karmicj@gmail.com', '2015-05-06', '2015-05-08', 6, 255),
-(28, 'Zirra', 'f576a73aba47eb268c7c4027b6b4565167159973eb4638cd71789439', '3B7AE6', 'thescottzirra@gmail.com', '2015-05-07', '2015-05-07', 12, 255);
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (25,'admin','3f24653f8fa7815ecb2a35f8960e352b49e74f14028b78070e1ce43e','82AA87','email@am.com','2015-04-11','2015-05-09',23,255),(26,'testuser','d09ed5ae1c102a4b3d0608bf6d92f3297d37edf1c49411ddfdeeb8ca','E0197E','email@am.com','2015-05-06','2015-05-09',1,10),(27,'subiki','e996396c29ba1d32e3b79809371b117e116000d3a790c15b1bb5979a','AB3612','karmicj@gmail.com','2015-05-06','2015-05-08',6,255),(28,'Zirra','f576a73aba47eb268c7c4027b6b4565167159973eb4638cd71789439','3B7AE6','thescottzirra@gmail.com','2015-05-07','2015-05-07',12,255);
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `images`
---
-ALTER TABLE `images`
-  ADD PRIMARY KEY (`uid`);
-
---
--- Indexes for table `imgmods`
---
-ALTER TABLE `imgmods`
-  ADD PRIMARY KEY (`imgid`), ADD UNIQUE KEY `imgid` (`imgid`);
-
---
--- Indexes for table `items`
---
-ALTER TABLE `items`
-  ADD PRIMARY KEY (`uid`);
-
---
--- Indexes for table `messages`
---
-ALTER TABLE `messages`
-  ADD PRIMARY KEY (`uid`);
-
---
--- Indexes for table `ownwant`
---
-ALTER TABLE `ownwant`
-  ADD PRIMARY KEY (`uid`);
-
---
--- Indexes for table `tradelist`
---
-ALTER TABLE `tradelist`
-  ADD PRIMARY KEY (`uid`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`uid`), ADD UNIQUE KEY `uid` (`uid`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `images`
---
-ALTER TABLE `images`
-  MODIFY `uid` int(32) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=48;
---
--- AUTO_INCREMENT for table `items`
---
-ALTER TABLE `items`
-  MODIFY `uid` int(32) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=46;
---
--- AUTO_INCREMENT for table `messages`
---
-ALTER TABLE `messages`
-  MODIFY `uid` int(32) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `ownwant`
---
-ALTER TABLE `ownwant`
-  MODIFY `uid` int(32) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=25;
---
--- AUTO_INCREMENT for table `tradelist`
---
-ALTER TABLE `tradelist`
-  MODIFY `uid` int(32) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `uid` int(32) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=29;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2015-05-09 19:59:48

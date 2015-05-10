@@ -20,8 +20,8 @@
         <h2>Private messages and trade requests:</h2><br/>
         {% for pm in pd.profileuser.pm_from %}
         <div id="message">
-        to: {{ pm.to_user }}<br/>
-        from: {{ pm.from_user }}<br/>
+        From: <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a><br />
+        To: <a href="/user/{{ pm.from_user }}">{{ pm.to_user }}</a><br />
         message: {{ pm.message }} <br/>
         {% if pm.items is defined %}
         <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View trade request</a></br>
@@ -31,8 +31,8 @@
 
         {% for pm in pd.profileuser.pm_to %}
         <div id="message">
-        to: {{ pm.to_user }}<br/>
-        from: {{ pm.from_user }}<br/>
+        From: <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a><br />
+        To: <a href="/user/{{ pm.from_user }}">{{ pm.to_user }}</a><br />
         message: {{ pm.message }} <br/>
         {% if pm.items is defined %}
         <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View trade request</a></br>
