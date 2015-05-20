@@ -245,6 +245,7 @@ class siteimage:
             raise NoImage(uid)
 
     def delete(self):
+        #TODO image purgatory
         sql = delete('itemimg', **{"imgid": self.uid})
         result = doquery(sql)
 
@@ -354,7 +355,6 @@ class siteitem(__siteitem__):
             self.willtradeusers.append(userinfo)
 
     def delete(self):
-        #TODO image purgatory
         for i in self.images: 
             delimg = siteimage(escape(i.uid))
             delimg.delete()
@@ -367,7 +367,10 @@ class siteitem(__siteitem__):
      
         sql = delete('ownwant', **{"itemid": self.uid}) 
         result = doquery(sql) 
-     
+
+        # Instead of deleting maybe we should replace the item id with something to point to an "unknown item" page
+        sql = delete('tradelist', **{"itemid": self.uid}) 
+        result = doquery(sql) 
 
     def newimg(self, f, tag):
         if not f.filename == '':

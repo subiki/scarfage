@@ -45,7 +45,7 @@ def delete_item(item_id):
     pd.title=escape(item_id)
 
     pd.accessreq = 255
-    pd.conftext = "Deleting item " + delitem.name
+    pd.conftext = "Deleting item " + delitem.name + ". This will also delete all trades but not the associated PMs. If this item has open trades you are going to confuse people. Are you really sure you want to do this?"
     pd.conftarget = "/item/" + delitem.name + "/reallydelete"
     pd.conflinktext = "Yup, I'm sure"
 
