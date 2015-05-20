@@ -85,44 +85,43 @@ def serve_pil_image(pil_img):
     img_io.seek(0)
     return send_file(img_io, mimetype='image/png')
 
-# for whatever reason the above works with both PNGs and JPEGs
-
 #    pil_img.save(img_io, 'JPEG', quality=70)
 #    img_io.seek(0)
 #    return send_file(img_io, mimetype='image/jpeg')
 
-def resize(img, box, fit):
-    #preresize image with factor 2, 4, 8 and fast algorithm
+#TODO this is broken, I hate it
+def resize(img, maxwidth, maxheight):
+    hsize = img.size[0]
+    vsize = img.size[1]
     factor = 1
-    while img.size[0]/factor > 2*box[0] and img.size[1]*2/factor > 2*box[1]:
-        factor *=2
-    if factor > 1:
-        img.thumbnail((img.size[0]/factor, img.size[1]/factor), Image.NEAREST)
 
-    #calculate the cropping box and get the cropped part
-    if fit:
-        x1 = y1 = 0
-        x2, y2 = img.size
-        wRatio = 1.0 * x2/box[0]
-        hRatio = 1.0 * y2/box[1]
-        if hRatio > wRatio:
-            y1 = int(y2/2-box[1]*wRatio/2)
-            y2 = int(y2/2+box[1]*wRatio/2)
+    if hsize > maxwidth or vsize > maxheight:
+        hfactor = 1
+        if hsize > maxwidth:
+            if vsize < hsize:
+                hfactor = maxheight / vsize
+            else:
+                hfactor = maxwidth / hsize
+
+        vfactor = 1
+        if vsize > maxheight:
+            if vsize > hsize:
+                vfactor = maxheight / vsize
+            else:
+                vfactor = maxwidth / hsize
+
+        if vfactor < hfactor:
+            factor = vfactor
         else:
-            x1 = int(x2/2-box[0]*hRatio/2)
-            x2 = int(x2/2+box[0]*hRatio/2)
-        img = img.crop((x1,y1,x2,y2))
+            factor = hfactor
 
-    #Resize the image with best quality algorithm ANTI-ALIAS
-    img.resize(box, Image.ANTIALIAS)
-
-    return img
+    return img.resize((int(hsize * factor), int(vsize * factor)), Image.ANTIALIAS)
 
 @app.route('/image/<image>/thumbnail')
 def serve_thumb(image):
     try:
         img=Image.open(upload_dir + escape(image))
-        img = resize(img, (600, 150), True)
+        img = resize(img, 800.0, 200.0)
         return serve_pil_image(img)
     except:
         return page_not_found(404)
@@ -131,7 +130,7 @@ def serve_thumb(image):
 def serve_preview(image):
     try:
         img=Image.open(upload_dir + escape(image))
-        img = resize(img, (800, 800), True)
+        img = resize(img, 800.0, 800.0)
         return serve_pil_image(img)
     except:
         return page_not_found(404)
