@@ -12,3 +12,4 @@ import scarf.admin
 import scarf.moderation
 import scarf.user
 import scarf.trade
+import scarf.stats

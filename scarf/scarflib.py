@@ -26,7 +26,6 @@ class pagedata:
     pass
 
     def __init__(self):
-        self.accesslevel = -1
         if 'username' in session:
             self.authuser = siteuser(escape(session['username']))
             try:
@@ -35,6 +34,14 @@ class pagedata:
                 pass
 
 ######### User stuff
+
+def get_whores_table():
+    sql = """select count(ownwant.userid), users.username, users.joined, 
+           users.lastseen from users join ownwant on ownwant.userid=users.uid  
+           order by count(ownwant.userid) limit 50;"""
+    result = doquery(sql)
+
+    return result;
 
 def user_by_uid(uid):
     sql = read('users', **{"uid": uid})
@@ -55,6 +62,10 @@ class AuthFail(Exception):
 
 class siteuser:
     def __init__(self, username):
+        self.collection = []
+        self.pm_from = []
+        self.pm_to = []
+
         self.auth = False
         self.username = username
 
@@ -95,8 +106,7 @@ class siteuser:
                      accesslevel=self.accesslevel)
         data = doupsert(sql)
 
-    def get_collection(self):
-        collection = []
+    def pop_collection(self):
 
         sql = read('ownwant', **{"userid": self.uid})
         result = doquery(sql)
@@ -105,15 +115,14 @@ class siteuser:
             sql = read('items', **{"uid": item[2]})
             sresult = doquery(sql)
 
+            # TODO use ownwant object here, remember to document the change
             sitem = siteitem(sresult[0][1])
             sitem.have = item[3]
             sitem.willtrade = item[4]
             sitem.want = item[5]
             sitem.hidden = item[6]
 
-            collection.append(sitem)
-
-        return collection
+            self.collection.append(sitem)
 
     def query_collection(self, item):
         class __ownwant__:
@@ -144,9 +153,6 @@ class siteuser:
         return ret
 
     def pms(self):
-        self.pm_from = []
-        self.pm_to = []
-
         sql = read('messages', **{"fromuserid": self.uid})
         fromresult = doquery(sql)
 
@@ -295,7 +301,6 @@ class __siteitem__:
         self.have = 0
         self.want = 0
         self.willtrade = 0
-        self.hidden = 0
 
 class siteitem(__siteitem__):
     def __init__(self, name):
@@ -327,6 +332,7 @@ class siteitem(__siteitem__):
         except IndexError:
             pass
 
+        # FIXME check for hidden?
         sql = read('ownwant', **{"itemid": self.uid, "own": "1"})
         res = doquery(sql)
         self.have = len(res)

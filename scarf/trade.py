@@ -119,13 +119,13 @@ def trade(username, itemid):
     pd.title = "Trade for " + itemid
 
     try:
-        pd.authuser.collection = pd.authuser.get_collection()
+        pd.authuser.pop_collection()
         pd.authuser.ownwant = pd.authuser.query_collection(escape(itemid))
     except AttributeError:
         pass
 
     try:
-        pd.tradeuser.collection = pd.tradeuser.get_collection()
+        pd.tradeuser.pop_collection()
         pd.tradeuser.ownwant = pd.tradeuser.query_collection(escape(itemid))
         pd.item = siteitem(escape(itemid))
     except (NoItem, NoUser):
