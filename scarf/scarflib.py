@@ -36,9 +36,9 @@ class pagedata:
 ######### User stuff
 
 def get_whores_table():
-    sql = """select count(ownwant.userid), users.username, users.joined, 
-           users.lastseen from users join ownwant on ownwant.userid=users.uid  
-           order by count(ownwant.userid) limit 50;"""
+    sql = """select count(*), users.username, users.joined, users.lastseen from users 
+             join ownwant on ownwant.userid=users.uid where ownwant.own = 1 
+             group by users.uid, ownwant.own;"""
     result = doquery(sql)
 
     return result;
