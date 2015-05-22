@@ -9,7 +9,7 @@
 <ul id="userlist">
 <li>username - email - joined - lastseen - # items added - User type</li>
 {% for user in pd.users %}
-    <li><a href="/user/{{ user.username }}">{{ user.username }}</a> - {{ pd.accesslevels[user.accesslevel] }} - {{ user.joined }} - {{ user.lastseen }} </a>
+    <li><a href="/user/{{ user.username }}">{{ user.username }}</a> - {{ pd.accesslevels[user.accesslevel] }} - {{ user.joined }} - {{ user.lastseen }}  - {{ user.numadds }} </a>
     
     {% if user.uid == pd.authuser.uid %}
     - you

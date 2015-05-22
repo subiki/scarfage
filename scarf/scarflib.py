@@ -36,9 +36,12 @@ class pagedata:
 ######### User stuff
 
 def get_whores_table():
-    sql = """select count(*), users.numadds, users.username, users.joined, users.lastseen from users 
-             join ownwant on ownwant.userid=users.uid where ownwant.own = 1 
-             group by users.uid, ownwant.own order by count(*) desc limit 50;"""
+    sql = """select count(*), users.numadds, users.username, users.joined, users.lastseen 
+             from users 
+             join ownwant on ownwant.userid=users.uid 
+             where ownwant.own = 1 
+             group by users.uid, ownwant.own 
+             order by count(*) desc limit 50;"""
     result = doquery(sql)
 
     return result;
@@ -68,19 +71,24 @@ class siteuser:
         self.auth = False
         self.username = username
 
-        sql = read('users', **{"username": username})
+        sql = """select users.uid, users.pwhash, users.pwsalt, users.email, users.joined, users.lastseen, userstat_uploads.count, users.accesslevel 
+                 from users
+                 join userstat_uploads on userstat_uploads.uid=users.uid 
+                 where users.username = "%s"; """ % username
+        app.logger.debug(sql)
         result = doquery(sql)
+        app.logger.debug(result)
 
         try:
             self.uid = result[0][0]
             # self.username = result[0][1]
-            self.pwhash = result[0][2]
-            self.pwsalt = result[0][3]
-            self.email = result[0][4]
-            self.joined = result[0][5]
-            self.lastseen = result[0][6]
-            self.numadds = result[0][7]
-            self.accesslevel = result[0][8]
+            self.pwhash = result[0][1]
+            self.pwsalt = result[0][2]
+            self.email = result[0][3]
+            self.joined = result[0][4]
+            self.lastseen = result[0][5]
+            self.numadds = result[0][6]
+            self.accesslevel = result[0][7]
         except IndexError:
             raise NoUser(username)
         except TypeError:
@@ -172,11 +180,17 @@ class siteuser:
 
     def seen(self):
         self.lastseen=datetime.datetime.now()
-        self.__writedb__()
+        sql = upsert("users", 
+                     uid=self.uid, 
+                     lastseen=self.lastseen)
+        data = doupsert(sql)
 
     def incadd(self):
         self.numadds = self.numadds + 1
-        self.__writedb__()
+        sql = upsert("userstat_uploads", 
+                     uid=self.uid, 
+                     count=self.numadds)
+        data = doupsert(sql)
 
     def authenticate(self, password):
         if self.accesslevel == 0:
