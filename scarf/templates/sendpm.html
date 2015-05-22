@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+
+<p>
+
+{% if pd.authuser is defined and pd.authuser.uid == pd.recipient.uid %}
+Talking with yourself would get awful lonely...
+{% elif pd.authuser is defined %}
+
+            To: {{ pd.recipient.username }}</br>
+            <form action="/user/{{ pd.recipient.username }}/pm" method="post" enctype="multipart/form-data">
+                Your message:</br>
+                <textarea name=body rows="4" cols="50"></textarea><br />
+                <input type=submit value=Submit>
+            </form>
+
+{% else %}
+
+You must be logged in to send a message.
+
+{% endif %}
+</p>
+</div>
+
+</div>
+
+{% endblock %}

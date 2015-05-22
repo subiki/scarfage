@@ -3,6 +3,7 @@ from flask import escape, flash, render_template, session, request, redirect
 from scarflib import pagedata, NoItem, NoUser, siteuser, siteitem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, pmessage, trademessage, messagestatus, tradeitem, tradestatus
 from main import page_not_found
 
+# fix these URLs s/pm/trade/
 @app.route('/user/<username>/pm/<messageid>/accept/<item>')
 def accepttradeitem(username, messageid, item):
     pd = pagedata()
@@ -71,23 +72,6 @@ def rejecttrade(username, messageid):
 
     return redirect_back('index')
 
-
-
-@app.route('/user/<username>/pm/<messageid>')
-def viewpm(username, messageid):
-    pd = pagedata()
-
-    if not 'username' in session or not pd.authuser.username == username:
-        return page_not_found(404)
-
-    if 'username' in session:
-        t = trademessage(escape(messageid))
-
-        pd.pm = t
-
-    return render_template('pm.html', pd=pd)
- 
-
 @app.route('/user/<username>/trade/<itemid>', methods=['GET', 'POST'])
 def trade(username, itemid):
     pd = pagedata()
@@ -103,7 +87,7 @@ def trade(username, itemid):
             message = request.form['body']
 
             if items and message:
-                messageid = send_pm(pd.authuser.uid, pd.tradeuser.uid, message, 0)
+                messageid = send_pm(pd.authuser.uid, pd.tradeuser.uid, message, messagestatus['unread_trade'])
 
                 for item in items:
                     add_tradeitem(item, messageid, pd.authuser.uid, tradestatus['accepted'])
