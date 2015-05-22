@@ -8,17 +8,19 @@
  
 <table>
   <tr>
-  <th>#</th>
   <th>user</th>
+  <th># items</th>
+  <th># uploads</th>
   <th>joined</th>
   <th>last seen</th>
   </tr>
 {% for user in pd.topcollectors %}
   <tr>
+  <td><a href="/user/{{ user[1] }}">{{ user[2] }}</a></td>
   <td>{{ user[0] }}</td>
-  <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
-  <td>{{ user[2] }}</td>
+  <td>{{ user[1] }}</td>
   <td>{{ user[3] }}</td>
+  <td>{{ user[4] }}</td>
   </tr>
 {% endfor %}
 </table>
