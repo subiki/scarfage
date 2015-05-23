@@ -15,8 +15,6 @@
     - you
     {% else %}
 
-    - <a href="/admin/users/{{ user.username }}/delete">Delete</a>
-    
     {% if user.accesslevel == 0 %}
     - <a href="/admin/users/{{ user.username }}/accesslevel/1">Unban</a>
     {% else %}

@@ -36,9 +36,11 @@ class pagedata:
 ######### User stuff
 
 def get_whores_table():
-    sql = """select count(*), users.numadds, users.username, users.joined, users.lastseen 
+    sql = """select count(*), userstat_uploads.count, users.username, users.joined, userstat_lastseen.date 
              from users 
              join ownwant on ownwant.userid=users.uid 
+             join userstat_uploads on userstat_uploads.uid=users.uid 
+             join userstat_lastseen on userstat_lastseen.uid=users.uid 
              where ownwant.own = 1 
              group by users.uid, ownwant.own 
              order by count(*) desc limit 50;"""
@@ -71,9 +73,10 @@ class siteuser:
         self.auth = False
         self.username = username
 
-        sql = """select users.uid, users.pwhash, users.pwsalt, users.email, users.joined, users.lastseen, userstat_uploads.count, users.accesslevel 
+        sql = """select users.uid, users.pwhash, users.pwsalt, users.email, users.joined, userstat_lastseen.date, userstat_uploads.count, users.accesslevel 
                  from users
                  join userstat_uploads on userstat_uploads.uid=users.uid 
+                 join userstat_lastseen on userstat_lastseen.uid=users.uid 
                  where users.username = "%s"; """ % username
         app.logger.debug(sql)
         result = doquery(sql)
@@ -100,21 +103,7 @@ class siteuser:
                 self.seen()
                 self.auth = True
 
-    def __writedb__(self):
-        sql = upsert("users", 
-                     uid=self.uid, 
-                     username=self.username, 
-                     pwhash=self.pwhash,
-                     pwsalt=self.pwsalt,
-                     email=self.email,
-                     joined=self.joined,
-                     lastseen=self.lastseen,
-                     numadds=self.numadds,
-                     accesslevel=self.accesslevel)
-        data = doupsert(sql)
-
     def pop_collection(self):
-
         sql = read('ownwant', **{"userid": self.uid})
         result = doquery(sql)
 
@@ -180,10 +169,11 @@ class siteuser:
 
     def seen(self):
         self.lastseen=datetime.datetime.now()
-        sql = upsert("users", 
-                     uid=self.uid, 
-                     lastseen=self.lastseen)
-        data = doupsert(sql)
+
+        sql = upsert("userstat_lastseen", \
+                     uid=self.uid, \
+                     date=self.lastseen)
+        result = doupsert(sql)
 
     def incadd(self):
         self.numadds = self.numadds + 1
@@ -205,23 +195,29 @@ class siteuser:
 
     def newaccesslevel(self, accesslevel):
         self.accesslevel = int(accesslevel)
-        self.__writedb__()
+
+        sql = upsert("users", 
+                     uid=self.uid, 
+                     accesslevel=self.accesslevel)
+        data = doupsert(sql)
 
     def newpassword(self, password):
         self.pwsalt = str(uuid.uuid4().get_hex().upper()[0:6])
         self.pwhash = gen_pwhash(password, self.pwsalt)
-        self.__writedb__()
+
+        sql = upsert("users", 
+                     uid=self.uid, 
+                     pwsalt=self.pwsalt,
+                     pwhash=self.pwhash)
+        data = doupsert(sql)
 
     def newemail(self, email):
         self.email = email
-        self.__writedb__()
 
-    def delete(self):
-        sql = delete('users', **{"uid": self.uid}) 
-        result = doquery(sql) 
- 
-        sql = delete('ownwant', **{"userid": self.uid}) 
-        result = doquery(sql)
+        sql = upsert("users", 
+                     uid=self.uid, 
+                     email=self.email,
+        data = doupsert(sql)
 
 def gen_pwhash(password, salt):
     return hashlib.sha224(password + salt).hexdigest()
@@ -236,10 +232,19 @@ def new_user(username, password, email):
                      pwsalt=salt, \
                      email=email, \
                      joined=datetime.datetime.now(), \
-                     lastseen=datetime.datetime.now(), \
-                     numadds=0, \
                      accesslevel=1)
-        data = doupsert(sql)
+        uid = doupsert(sql)
+
+        sql = upsert("userstat_uploads", \
+                     uid=uid, \
+                     count=0)
+        result = doupsert(sql)
+
+        sql = upsert("userstat_lastseen", \
+                     uid=uid, \
+                     date=datetime.datetime.now())
+        result = doupsert(sql)
+ 
     except Exception as e:
         return False
 

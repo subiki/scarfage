@@ -26,45 +26,6 @@ def admin_users():
 
     return render_template('admin.html', pd=pd)
 
-@app.route('/admin/users/<user>/reallydelete')
-def admin_reallydelete_user(user):
-    pd = pagedata()
-
-    if 'username' not in session or pd.authuser.accesslevel < 255:
-        return redirect(url_for('accessdenied'))
-
-    if user == pd.authuser.username:
-        return redirect(url_for('accessdenied'))
-
-    try:
-        deluser = siteuser(escape(user))
-        deluser.delete()
-
-        msg = 'Deleted user: ' + user
-    except:
-        msg = 'Error deleting user: ' + user
-
-    flash(msg)
-    app.logger.info(msg)
-
-    return redirect('/admin')
-
-@app.route('/admin/users/<user>/delete')
-def admin_delete_user(user):
-    pd = pagedata()
-
-    if 'username' not in session or pd.authuser.accesslevel < 255:
-        return redirect(url_for('accessdenied'))
-
-    pd.title="Deleting user " + escape(user)
-
-    pd.accessreq = 255
-    pd.conftext = "Deleting user " + escape(user)
-    pd.conftarget = "/admin/users/" + escape(user) + "/reallydelete"
-    pd.conflinktext = "Yup, I'm sure"
-
-    return render_template('confirm.html', pd=pd)
-
 @app.route('/admin/users/<user>/accesslevel/<level>')
 def admin_set_accesslevel(user, level):
     pd = pagedata()
