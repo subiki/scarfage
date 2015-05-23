@@ -24,6 +24,7 @@
         <th>Subject</th>
         <th>From</th>
         <th>To</th>
+        <th>Sent</th>
         <th></th>
         </tr>
 
@@ -51,6 +52,8 @@
             <a href="/user/{{ pm.to_user }}">{{ pm.to_user }}</a><br />
             </td>
 
+            <td>{{ pm.sent }}</td>
+
             <td>
             <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View</a></br>
             </td>
@@ -68,6 +71,7 @@
         <tr>
         <th>Subject</th>
         <th>From</th>
+        <th>Sent</th>
         <th></th>
         </tr>
 
@@ -87,6 +91,8 @@
             <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a>
             </td>
 
+            <td>{{ pm.sent }}</td>
+
             <td>
             <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View</a></br>
             </td>
@@ -103,6 +109,7 @@
         <tr>
         <th>Subject</th>
         <th>To</th>
+        <th>Sent</th>
         <th></th>
         </tr>
 
@@ -117,6 +124,8 @@
             <td>
             <a href="/user/{{ pm.to_user }}">{{ pm.to_user }}</a><br />
             </td>
+
+            <td>{{ pm.sent }}</td>
 
             <td>
             <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View</a></br>

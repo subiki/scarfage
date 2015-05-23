@@ -508,6 +508,8 @@ class pmessage:
             self.subject = result[0][3]
             self.message = result[0][4]
             self.status = result[0][5]
+            self.parent = result[0][6]
+            self.sent = result[0][7]
 
             self.from_user = siteuser(user_by_uid(self.from_uid)).username
             self.to_user = siteuser(user_by_uid(self.to_uid)).username
@@ -560,6 +562,7 @@ class tradeitem:
         else:
             return
 
+#FIXME inheritance
 class trademessage(pmessage):
     def __init__(self, messageid):
         self.messagestatus = messagestatus
@@ -575,6 +578,8 @@ class trademessage(pmessage):
             self.subject = result[0][3]
             self.message = result[0][4]
             self.status = result[0][5]
+            self.parent = result[0][6]
+            self.sent = result[0][7]
 
             self.from_user = siteuser(user_by_uid(self.from_uid)).username
             self.to_user = siteuser(user_by_uid(self.to_uid)).username
@@ -636,6 +641,7 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
                      subject=subject, \
                      message=message, \
                      parent=parent, \
+                     sent=datetime.datetime.now(), \
                      status=status)
         data = doupsert(sql)
     except Exception as e:
