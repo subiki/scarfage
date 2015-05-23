@@ -29,7 +29,7 @@
         </tr>
 
         {% for pm in pd.profileuser.messages %}
-        {% if pm.status <= pm.messagestatus['rejected_trade'] %}
+        {% if pm.status <= pm.messagestatus['rejected_trade'] and pm.parentid == 0 %}
             <tr>
 
             <td>
@@ -59,6 +59,39 @@
             </td>
 
             </tr>
+
+            {% if pm.replies|length > 0 %}
+            {% for reply in pm.replies %}
+                <tr>
+
+                <td>\-</td>
+
+                <td>
+                {% if reply.status == pm.messagestatus['unread_reply'] %}
+                <b>{{ reply.subject }}</b>
+                {% else %}
+                {{ reply.subject }}
+                {% endif %}
+                </td>
+
+                <td>
+                <a href="/user/{{ reply.from_user }}">{{ reply.from_user }}</a>
+                </td>
+
+                <td>
+                <a href="/user/{{ reply.to_user }}">{{ reply.to_user }}</a>
+                </td>
+
+                <td>{{ reply.sent }}</td>
+
+                <td>
+                <a href="/user/{{ pd.authuser.username }}/reply/{{ reply.uid }}">View</a></br>
+                </td>
+
+                </tr>
+            {% endfor %}
+            {% endif %}
+
         {% endif %}
         {% endfor %}
         </table>
@@ -69,6 +102,7 @@
 
         <table border=1>
         <tr>
+        <th></th>
         <th>Subject</th>
         <th>From</th>
         <th>Sent</th>
@@ -76,9 +110,10 @@
         </tr>
 
         {% for pm in pd.profileuser.messages %}
-        {% if pm.from_user != pd.authuser.username and pm.status >= pm.messagestatus['unread_pm'] %}
+        {% if pm.from_user != pd.authuser.username and pm.status >= pm.messagestatus['unread_pm'] and pm.parentid == 0 %}
             <tr>
 
+            <td></td>
             <td>
             {% if pm.status == pm.messagestatus['unread_pm'] %}
             <b>{{ pm.subject }}</b>
@@ -98,6 +133,42 @@
             </td>
 
             </tr>
+
+            {% if pm.replies|length > 0 %}
+            {% for reply in pm.replies %}
+            {% if pm.from_user != pd.authuser.username and pm.status >= pm.messagestatus['unread_pm'] %}
+                <tr>
+
+                <td>\-</td>
+
+                <td>
+                {% if reply.status == pm.messagestatus['unread_reply'] %}
+                <b>{{ reply.subject }}</b>
+                {% else %}
+                {{ reply.subject }}
+                {% endif %}
+                </td>
+
+                <td>
+                <a href="/user/{{ reply.from_user }}">{{ reply.from_user }}</a>
+                </td>
+
+                <td>
+                <a href="/user/{{ reply.to_user }}">{{ reply.to_user }}</a>
+                </td>
+
+                <td>{{ reply.sent }}</td>
+
+                <td>
+                <a href="/user/{{ pd.authuser.username }}/reply/{{ reply.uid }}">View</a></br>
+                </td>
+
+                </tr>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+
         {% endif %}
         {% endfor %}
 

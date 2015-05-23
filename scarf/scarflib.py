@@ -154,23 +154,30 @@ class siteuser:
         return ret
 
     def pms(self):
+        # fix this sql so we only do this once
         sql = read('messages', **{"fromuserid": self.uid})
         fromresult = doquery(sql)
 
         for item in fromresult:
             if item[4] >= messagestatus['unread_pm']:
-                self.messages.append(pmessage(item[0]))
+                pm = pmessage(item[0])
             else:
-                self.messages.append(trademessage(item[0]))
+                pm = trademessage(item[0])
+
+            pm.load_replies()
+            self.messages.append(pm)
 
         sql = read('messages', **{"touserid": self.uid})
         toresult = doquery(sql)
 
         for item in toresult:
             if item[4] >= messagestatus['unread_pm']:
-                self.messages.append(pmessage(item[0]))
+                pm = pmessage(item[0])
             else:
-                self.messages.append(trademessage(item[0]))
+                pm = trademessage(item[0])
+
+            pm.load_replies()
+            self.messages.append(pm)
 
     def seen(self):
         self.lastseen=datetime.datetime.now()
@@ -524,8 +531,6 @@ class pmessage:
 
 
     def read(self):
-        app.logger.debug(uid_by_user(session['username']))
-        app.logger.debug("uid " + str(self.to_uid))
         if self.uid > 0 and self.status == messagestatus['unread_pm'] and uid_by_user(session['username']) == self.to_uid:
             sql = upsert("messages", \
                          uid=self.uid, \
