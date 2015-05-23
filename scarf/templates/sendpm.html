@@ -14,8 +14,9 @@ Talking with yourself would get awful lonely...
 
             To: {{ pd.recipient.username }}</br>
             <form action="/user/{{ pd.recipient.username }}/pm" method="post" enctype="multipart/form-data">
+                Subject:</br>
+                <input type=text name=subject required></br>
                 Your message:</br>
-                <input type=text name=subject required>
                 <textarea name=body rows="4" cols="50"></textarea><br />
                 <input type=submit value=Submit>
             </form>
