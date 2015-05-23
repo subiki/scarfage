@@ -7,13 +7,14 @@ from main import page_not_found
 def viewpm(username, messageid):
     pd = pagedata()
 
-    if not 'username' in session or not pd.authuser.username == username:
+    if not 'username' in session or pd.authuser.username != username:
         return page_not_found(404)
 
     if 'username' in session:
         app.logger.debug(messageid)
         pm = trademessage(escape(messageid))
         pm.read()
+        pm.load_replies()
 
         if pm.messagestatus < messagestatus['unread_pm']:
             pm = trademessage(escape(messageid))
@@ -21,7 +22,7 @@ def viewpm(username, messageid):
         app.logger.debug(pm.uid)
         pd.pm = pm
 
-    return render_template('pm.html', pd=pd)
+        return render_template('pm.html', pd=pd)
  
 @app.route('/user/<username>/pm', methods=['GET', 'POST'])
 def pm(username):

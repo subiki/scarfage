@@ -508,13 +508,20 @@ class pmessage:
             self.subject = result[0][3]
             self.message = result[0][4]
             self.status = result[0][5]
-            self.parent = result[0][6]
+            self.parentid = result[0][6]
             self.sent = result[0][7]
 
             self.from_user = siteuser(user_by_uid(self.from_uid)).username
             self.to_user = siteuser(user_by_uid(self.to_uid)).username
+
+            if self.parentid > 0:
+                self.parent = pmessage(self.parentid)
+
+            self.replies = []
+
         except IndexError:
             self.uid = 0
+
 
     def read(self):
         app.logger.debug(uid_by_user(session['username']))
@@ -535,6 +542,15 @@ class pmessage:
             data = doupsert(sql)
         else:
             return
+
+    def load_replies(self):
+        sql = read('messages', **{"parent": self.uid})
+        result = doquery(sql)
+
+        for reply in result:
+            pm = pmessage(reply[0])
+            pm.load_replies()
+            self.replies.append(pm)
 
 class tradeitem:
     def __init__(self, itemid):
@@ -578,11 +594,17 @@ class trademessage(pmessage):
             self.subject = result[0][3]
             self.message = result[0][4]
             self.status = result[0][5]
-            self.parent = result[0][6]
+            self.parentid = result[0][6]
             self.sent = result[0][7]
 
             self.from_user = siteuser(user_by_uid(self.from_uid)).username
             self.to_user = siteuser(user_by_uid(self.to_uid)).username
+
+            if self.parentid > 0:
+                self.parent = pmessage(self.parentid)
+
+            self.replies = []
+
         except IndexError:
             self.uid = 0
 
