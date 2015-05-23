@@ -216,7 +216,7 @@ class siteuser:
 
         sql = upsert("users", 
                      uid=self.uid, 
-                     email=self.email,
+                     email=self.email)
         data = doupsert(sql)
 
 def gen_pwhash(password, salt):
