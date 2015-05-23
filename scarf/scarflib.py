@@ -46,6 +46,18 @@ def get_whores_table():
 
     return result;
 
+def get_contribs_table():
+    sql = """select count(*), users.username
+             from users 
+             join userstat_uploads on userstat_uploads.uid=users.uid 
+             group by users.uid, userstat_uploads.uid
+             order by count(*) desc limit 50;"""
+    result = doquery(sql)
+
+    return result;
+
+
+
 def user_by_uid(uid):
     sql = read('users', **{"uid": uid})
     result = doquery(sql)
