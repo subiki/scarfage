@@ -12,7 +12,6 @@
 <th>email</td>
 <th>joined</td>
 <th>last seen</td>
-<th># items added</td>
 <th>user type</td>
 <th></td>
 </tr>
@@ -22,7 +21,6 @@
     <td>{{user.email}}</td>
     <td>{{ user.joined }}</td>
     <td>{{ user.lastseen }}</td>
-    <td>{{ user.numadds }}</td>
     <td>{{ pd.accesslevels[user.accesslevel] }}</td>
     <td> 
     {% if user.uid == pd.authuser.uid %}

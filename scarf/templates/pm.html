@@ -63,7 +63,11 @@ Trade has been closed as settled!<br/>
 {% endif %}
 
 <h3> Reply: </h3>
+    {% if pd.pm.from_user == pd.authuser.username %}
+    <form action="/user/{{ pd.pm.to_user }}/pm" method="post" enctype="multipart/form-data">
+    {% else %}
     <form action="/user/{{ pd.pm.from_user }}/pm" method="post" enctype="multipart/form-data">
+    {% endif %}
         Subject: <input type=text name=subject value="re: {{ pd.pm.subject }}" required></br>
         Message: </br>
         <textarea name=body rows="4" cols="50"></textarea><br />

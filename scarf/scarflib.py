@@ -623,6 +623,11 @@ class trademessage(pmessage):
             return
 
 def send_pm(fromuserid, touserid, subject, message, status, parent):
+    """
+    TODO: validation to ensure someone didn't fuck with the form
+          and reparent their message to someone else's
+    """
+
     try:
         sql = upsert("messages", \
                      uid=0, \
