@@ -622,7 +622,7 @@ class trademessage(pmessage):
         else:
             return
 
-def send_pm(fromuserid, touserid, subject, message, status):
+def send_pm(fromuserid, touserid, subject, message, status, parent):
     try:
         sql = upsert("messages", \
                      uid=0, \
@@ -630,6 +630,7 @@ def send_pm(fromuserid, touserid, subject, message, status):
                      touserid=touserid, \
                      subject=subject, \
                      message=message, \
+                     parent=parent, \
                      status=status)
         data = doupsert(sql)
     except Exception as e:

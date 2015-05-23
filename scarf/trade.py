@@ -85,9 +85,15 @@ def trade(username, itemid):
         if request.method == 'POST':
             items = request.form.getlist('item')
             message = request.form['body']
+            subject = request.form['subject']
 
-            if items and message:
-                messageid = send_pm(pd.authuser.uid, pd.tradeuser.uid, message, messagestatus['unread_trade'])
+            if request.form['parent']:
+                parent = request.form['parent']
+            else:
+                parent = 0
+
+            if items and message and subject:
+                messageid = send_pm(pd.authuser.uid, pd.tradeuser.uid, subject, message, messagestatus['unread_trade'], parent)
 
                 for item in items:
                     add_tradeitem(item, messageid, pd.authuser.uid, tradestatus['accepted'])

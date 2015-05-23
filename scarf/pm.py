@@ -37,14 +37,20 @@ def pm(username):
             message = request.form['body']
             subject = request.form['subject']
 
+            if request.form['parent']:
+                parent = request.form['parent']
+            else:
+                parent = 0
+
             if message and subject:
-                messageid = send_pm(pd.authuser.uid, pd.recipient.uid, subject, message, messagestatus['unread_pm'])
+                messageid = send_pm(pd.authuser.uid, pd.recipient.uid, subject, message, messagestatus['unread_pm'], parent)
 
                 if messageid:
                     flash('Message sent!')
                     return redirect('/user/' + pd.authuser.username + '/pm/' + str(messageid))
             else:
-                flash('Unable to send message!')
+# TODO re-fill form
+                flash('No message or subject')
                 return redirect_back('/user/' + username + '/pm')
 
     return render_template('sendpm.html', pd=pd)

@@ -67,6 +67,7 @@ Trade has been closed as settled!<br/>
         Subject: <input type=text name=subject value="re: {{ pd.pm.subject }}" required></br>
         Message: </br>
         <textarea name=body rows="4" cols="50"></textarea><br />
+        <input type="hidden" name="parent" value="{{ pd.pm.uid }}">
         <input type=submit value=Submit>
     </form>
 
