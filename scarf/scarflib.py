@@ -112,7 +112,18 @@ class siteuser:
         except TypeError:
             pass
 
-        self.numadds = result[0][0]
+        sql = """select count(*), users.username
+                 from userstat_uploads 
+                 join users on userstat_uploads.uid=users.uid 
+                 where userstat_uploads.uid = "%s"
+                 group by users.uid, userstat_uploads.uid
+                 order by count(*) desc limit 50;""" % self.uid
+        result = doquery(sql)
+
+        try:
+            self.numadds = result[0][0]
+        except IndexError:
+            self.numadds = 0
 
         # Update lastseen if we're looking up the currently logged in user
         if 'username' in session:
