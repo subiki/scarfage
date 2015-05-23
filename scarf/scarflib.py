@@ -36,11 +36,9 @@ class pagedata:
 ######### User stuff
 
 def get_whores_table():
-    sql = """select count(*), userstat_uploads.count, users.username, users.joined, userstat_lastseen.date 
+    sql = """select count(*), users.username
              from users 
              join ownwant on ownwant.userid=users.uid 
-             join userstat_uploads on userstat_uploads.uid=users.uid 
-             join userstat_lastseen on userstat_lastseen.uid=users.uid 
              where ownwant.own = 1 
              group by users.uid, ownwant.own 
              order by count(*) desc limit 50;"""
@@ -54,6 +52,15 @@ def user_by_uid(uid):
 
     try:
         return result[0][1]
+    except IndexError:
+        return
+
+def uid_by_user(username):
+    sql = read('users', **{"username": username})
+    result = doquery(sql)
+
+    try:
+        return result[0][0]
     except IndexError:
         return
 
@@ -73,14 +80,11 @@ class siteuser:
         self.auth = False
         self.username = username
 
-        sql = """select users.uid, users.pwhash, users.pwsalt, users.email, users.joined, userstat_lastseen.date, userstat_uploads.count, users.accesslevel 
+        sql = """select users.uid, users.pwhash, users.pwsalt, users.email, users.joined, userstat_lastseen.date, users.accesslevel 
                  from users
-                 join userstat_uploads on userstat_uploads.uid=users.uid 
                  join userstat_lastseen on userstat_lastseen.uid=users.uid 
                  where users.username = "%s"; """ % username
-        app.logger.debug(sql)
         result = doquery(sql)
-        app.logger.debug(result)
 
         try:
             self.uid = result[0][0]
@@ -90,12 +94,13 @@ class siteuser:
             self.email = result[0][3]
             self.joined = result[0][4]
             self.lastseen = result[0][5]
-            self.numadds = result[0][6]
-            self.accesslevel = result[0][7]
+            self.accesslevel = result[0][6]
         except IndexError:
             raise NoUser(username)
         except TypeError:
             pass
+
+        self.numadds = result[0][0]
 
         # Update lastseen if we're looking up the currently logged in user
         if 'username' in session:
@@ -174,13 +179,6 @@ class siteuser:
                      uid=self.uid, \
                      date=self.lastseen)
         result = doupsert(sql)
-
-    def incadd(self):
-        self.numadds = self.numadds + 1
-        sql = upsert("userstat_uploads", 
-                     uid=self.uid, 
-                     count=self.numadds)
-        data = doupsert(sql)
 
     def authenticate(self, password):
         if self.accesslevel == 0:
@@ -438,7 +436,7 @@ class siteitem(__siteitem__):
                 flash(f.filename + " is not an image.")
                 return False
 
-def new_item(name, description, username):
+def new_item(name, description, userid):
     sql = upsert("items", \
                  uid=0, \
                  name=name, \
@@ -447,6 +445,13 @@ def new_item(name, description, username):
                  modified=datetime.datetime.now())
 
     data = doupsert(sql)
+
+    if userid is not 0:
+        sql = upsert("userstat_uploads", 
+                     uid=userid, 
+                     itemid=data)
+        data = doupsert(sql)
+
 
 def all_items():
     items = []
@@ -500,8 +505,9 @@ class pmessage:
             self.uid = result[0][0]
             self.from_uid = result[0][1]
             self.to_uid = result[0][2]
-            self.message = result[0][3]
-            self.status = result[0][4]
+            self.subject = result[0][3]
+            self.message = result[0][4]
+            self.status = result[0][5]
 
             self.from_user = siteuser(user_by_uid(self.from_uid)).username
             self.to_user = siteuser(user_by_uid(self.to_uid)).username
@@ -509,7 +515,9 @@ class pmessage:
             self.uid = 0
 
     def read(self):
-        if self.uid > 0 and self.status == messagestatus['unread_pm']:
+        app.logger.debug(uid_by_user(session['username']))
+        app.logger.debug("uid " + str(self.to_uid))
+        if self.uid > 0 and self.status == messagestatus['unread_pm'] and uid_by_user(session['username']) == self.to_uid:
             sql = upsert("messages", \
                          uid=self.uid, \
                          status=messagestatus['read_pm'])
@@ -518,7 +526,7 @@ class pmessage:
             return
 
     def unread(self):
-        if self.uid > 0 and self.status == messagestatus['read_pm']:
+        if self.uid > 0 and self.status == messagestatus['read_pm'] and uid_by_user(session['username']) == self.to_uid:
             sql = upsert("messages", \
                          uid=self.uid, \
                          status=messagestatus['unread_pm'])
@@ -564,8 +572,9 @@ class trademessage(pmessage):
             self.uid = result[0][0]
             self.from_uid = result[0][1]
             self.to_uid = result[0][2]
-            self.message = result[0][3]
-            self.status = result[0][4]
+            self.subject = result[0][3]
+            self.message = result[0][4]
+            self.status = result[0][5]
 
             self.from_user = siteuser(user_by_uid(self.from_uid)).username
             self.to_user = siteuser(user_by_uid(self.to_uid)).username
@@ -613,12 +622,13 @@ class trademessage(pmessage):
         else:
             return
 
-def send_pm(fromuserid, touserid, message, status):
+def send_pm(fromuserid, touserid, subject, message, status):
     try:
         sql = upsert("messages", \
                      uid=0, \
                      fromuserid=fromuserid, \
                      touserid=touserid, \
+                     subject=subject, \
                      message=message, \
                      status=status)
         data = doupsert(sql)

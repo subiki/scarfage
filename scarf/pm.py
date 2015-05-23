@@ -1,6 +1,6 @@
 from scarf import app
 from flask import escape, flash, render_template, session, request, redirect
-from scarflib import pagedata, NoItem, NoUser, siteuser, redirect_back, user_by_uid, send_pm, pmessage, messagestatus
+from scarflib import pagedata, NoItem, NoUser, siteuser, redirect_back, user_by_uid, send_pm, pmessage, messagestatus, trademessage
 from main import page_not_found
 
 @app.route('/user/<username>/pm/<messageid>')
@@ -12,10 +12,13 @@ def viewpm(username, messageid):
 
     if 'username' in session:
         app.logger.debug(messageid)
-        pm = pmessage(escape(messageid))
-
+        pm = trademessage(escape(messageid))
         pm.read()
 
+        if pm.messagestatus < messagestatus['unread_pm']:
+            pm = trademessage(escape(messageid))
+
+        app.logger.debug(pm.uid)
         pd.pm = pm
 
     return render_template('pm.html', pd=pd)
@@ -32,14 +35,16 @@ def pm(username):
     if 'username' in session:
         if request.method == 'POST':
             message = request.form['body']
+            subject = request.form['subject']
 
-            if message:
-                messageid = send_pm(pd.authuser.uid, pd.recipient.uid, message, messagestatus['unread_pm'])
+            if message and subject:
+                messageid = send_pm(pd.authuser.uid, pd.recipient.uid, subject, message, messagestatus['unread_pm'])
 
                 if messageid:
                     flash('Message sent!')
                     return redirect('/user/' + pd.authuser.username + '/pm/' + str(messageid))
             else:
-                return redirect('/user/' + username + '/pm')
+                flash('Unable to send message!')
+                return redirect_back('/user/' + username + '/pm')
 
     return render_template('sendpm.html', pd=pd)

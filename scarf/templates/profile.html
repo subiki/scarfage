@@ -16,30 +16,32 @@
         </ul>
  
     {% else %}
-        <div id="messages">
-        <h2>Private messages and open trade requests:</h2><br/>
+        <h3>Trade requests:</h3><br/>
 
-        <table>
+        <table border=1>
         <tr>
-        <th></th>
+        <th>Trade status</th>
+        <th>Subject</th>
         <th>From</th>
         <th>To</th>
         <th></th>
         </tr>
 
         {% for pm in pd.profileuser.messages %}
+        {% if pm.status <= pm.messagestatus['rejected_trade'] %}
             <tr>
+
             <td>
-            {% if pm.status < pm.messagestatus['settled_trade'] %}
-            Open Trade
+            {% if pm.status == pm.messagestatus['unread_trade'] and pm.from_user != pd.authuser.username %}
+            <b>New</b>
+            {% elif pm.status < pm.messagestatus['settled_trade'] %}
+            Open
             {% elif pm.status == pm.messagestatus['settled_trade'] or pm.status == pm.messagestatus['rejected_trade'] %}
-            Closed Trade
-            {% elif pm.status == pm.messagestatus['unread_pm'] %}
-            <b>PM</b>
-            {% else %}
-            PM
+            Closed
             {% endif %}
             </td>
+
+            <td>{{ pm.subject }}</td>
 
             <td>
             <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a>
@@ -54,12 +56,84 @@
             </td>
 
             </tr>
+        {% endif %}
         {% endfor %}
         </table>
-
         </div>
 
-        <h2>User info:</h2>
+
+        <h3>Received private messages:</h3><br/>
+
+        <table border=1>
+        <tr>
+        <th>Subject</th>
+        <th>From</th>
+        <th></th>
+        </tr>
+
+        {% for pm in pd.profileuser.messages %}
+        {% if pm.from_user != pd.authuser.username and pm.status >= pm.messagestatus['unread_pm'] %}
+            <tr>
+
+            <td>
+            {% if pm.status == pm.messagestatus['unread_pm'] %}
+            <b>{{ pm.subject }}</b>
+            {% else %}
+            {{ pm.subject }}
+            {% endif %}
+            </td>
+
+            <td>
+            <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a>
+            </td>
+
+            <td>
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View</a></br>
+            </td>
+
+            </tr>
+        {% endif %}
+        {% endfor %}
+
+        </table>
+
+        <h3>Sent private messages:</h3><br/>
+
+        <table border=1>
+        <tr>
+        <th>Subject</th>
+        <th>To</th>
+        <th></th>
+        </tr>
+
+        {% for pm in pd.profileuser.messages %}
+        {% if pm.from_user == pd.authuser.username and pm.status >= pm.messagestatus['unread_pm'] %}
+            <tr>
+
+            <td>
+            {% if pm.status == pm.messagestatus['unread_pm'] %}
+            <b>{{ pm.subject }}</b>
+            {% else %}
+            {{ pm.subject }}
+            {% endif %}
+            </td>
+
+            <td>
+            <a href="/user/{{ pm.to_user }}">{{ pm.to_user }}</a><br />
+            </td>
+
+            <td>
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View</a></br>
+            </td>
+
+            </tr>
+        {% endif %}
+        {% endfor %}
+
+        </table>
+
+
+        <h3>User info:</h3>
         <ul>
             <li>Email: {{ pd.profileuser.email }}</li>
             <li>Member since: {{ pd.profileuser.joined }}</li>

@@ -87,16 +87,16 @@ def newitem():
                 return redirect(url_for('newitem'))
 
         if 'username' in session:
-            username = session['username']
+            uid = pd.authuser.uid
         else:
-            username = ""
+            uid = 0 
 
         try:
             newitem = siteitem(escape(request.form['name']))
             flash('An item with that name already exists')
             return redirect(url_for('newitem'))
         except NoItem:
-            new_item(escape(request.form['name']), escape(request.form['desc']), username)
+            new_item(escape(request.form['name']), escape(request.form['desc']), uid)
 
         try:
             newitem = siteitem(escape(request.form['name']))
@@ -112,12 +112,6 @@ def newitem():
         except NoItem:
             flash('Error adding item!')
             return redirect(url_for('newitem'))
-
-        try:
-            incuser = siteuser(username)
-            incuser.incadd()
-        except NoUser:
-            flash('Log in to add this item to your collection.')
 
         flash('Added item!')
         return redirect('/item/' + escape(request.form['name']))

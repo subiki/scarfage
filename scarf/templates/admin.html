@@ -6,41 +6,57 @@
 
 <div id="content">
 
-<ul id="userlist">
-<li>username - email - joined - lastseen - # items added - User type</li>
+<table>
+<tr>
+<th>username</td>
+<th>email</td>
+<th>joined</td>
+<th>last seen</td>
+<th># items added</td>
+<th>user type</td>
+<th></td>
+</tr>
 {% for user in pd.users %}
-    <li><a href="/user/{{ user.username }}">{{ user.username }}</a> - {{ pd.accesslevels[user.accesslevel] }} - {{ user.joined }} - {{ user.lastseen }}  - {{ user.numadds }} </a>
-    
+    <tr>
+    <td><a href="/user/{{ user.username }}">{{ user.username }}</a></td>
+    <td>{{user.email}}</td>
+    <td>{{ user.joined }}</td>
+    <td>{{ user.lastseen }}</td>
+    <td>{{ user.numadds }}</td>
+    <td>{{ pd.accesslevels[user.accesslevel] }}</td>
+    <td> 
     {% if user.uid == pd.authuser.uid %}
-    - you
+    you
     {% else %}
 
     {% if user.accesslevel == 0 %}
-    - <a href="/admin/users/{{ user.username }}/accesslevel/1">Unban</a>
+    <a href="/admin/users/{{ user.username }}/accesslevel/1">Unban</a>
     {% else %}
 
-        - <a href="/admin/users/{{ user.username }}/accesslevel/0">Ban</a>
+        <a href="/admin/users/{{ user.username }}/accesslevel/0">Ban</a>
 
         {% if user.accesslevel < 10 %}
-        - <a href="/admin/users/{{ user.username }}/accesslevel/10">Promote to moderator</a>
+        <a href="/admin/users/{{ user.username }}/accesslevel/10">Promote to moderator</a>
         {% endif %}
 
         {% if user.accesslevel == 10 %}
-        - <a href="/admin/users/{{ user.username }}/accesslevel/1">Demote</a>
-        - <a href="/admin/users/{{ user.username }}/accesslevel/255">Promote to admin</a>
+        <a href="/admin/users/{{ user.username }}/accesslevel/1">Demote</a><br>
+        <a href="/admin/users/{{ user.username }}/accesslevel/255">Promote to admin</a>
         {% endif %}
 
         {% if user.accesslevel == 255 %}
-        - <a href="/admin/users/{{ user.username }}/accesslevel/1">Demote</a>
+        <a href="/admin/users/{{ user.username }}/accesslevel/1">Demote</a>
         {% endif %}
 
     {% endif %}
+    </td>
+    </tr>
 
     {% endif %}
     
     </li>
 {% endfor %}
-</ul><br />
+</table>
 
 </div>
 
