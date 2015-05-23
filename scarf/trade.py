@@ -87,9 +87,9 @@ def trade(username, itemid):
             message = request.form['body']
             subject = request.form['subject']
 
-            if request.form['parent']:
+            try:
                 parent = request.form['parent']
-            else:
+            except:
                 parent = 0
 
             if items and message and subject:
