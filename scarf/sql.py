@@ -5,6 +5,8 @@ import datetime
 
 from config import dbHost, dbName, dbUser, dbPass
 
+db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
+
 def read(table, **kwargs):
     """ Generates SQL for a SELECT statement matching the kwargs passed. """
     sql = list()
@@ -43,7 +45,6 @@ def doupsert(query):
 #    app.logger.debug(query)
 
     try:
-        db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
 
         cursor = db.cursor()
         cursor.execute(query)
@@ -51,7 +52,7 @@ def doupsert(query):
         cursor.close()
         data = cursor.lastrowid
 
-        db.close()
+        #db.close()
 
         return data
 
@@ -63,7 +64,7 @@ def doquery(query):
 #    app.logger.debug(query)
 
     try:
-        db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
+        #db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
 
         cur = db.cursor()
         cur.execute(query)
@@ -71,7 +72,8 @@ def doquery(query):
         data = cur.fetchall()
 
         db.commit()
-        db.close()
+# FIXME: ON PAGE RENDER
+        #db.close()
 
         return data
 
