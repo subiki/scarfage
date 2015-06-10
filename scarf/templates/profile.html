@@ -286,6 +286,13 @@
     {% endfor %}
     </div>
 
+    <h1>{{ pd.profileuser.username }}'s contributions</h1>
+    <div id="items">
+    {% for item in pd.profileuser.contribs %}
+         <h4><a href="/item/{{ item }}">{{ item }}</a></h4><br />
+    {% endfor %}
+    </div>
+
 
 </div>
 

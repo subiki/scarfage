@@ -56,8 +56,6 @@ def get_contribs_table():
 
     return result;
 
-
-
 def user_by_uid(uid):
     sql = read('users', **{"uid": uid})
     result = doquery(sql)
@@ -88,6 +86,7 @@ class siteuser:
     def __init__(self, username):
         self.collection = []
         self.messages = []
+        self.contribs = []
 
         self.auth = False
         self.username = username
@@ -125,11 +124,24 @@ class siteuser:
         except IndexError:
             self.numadds = 0
 
+        self.pop_contribs()
+
         # Update lastseen if we're looking up the currently logged in user
         if 'username' in session:
             if session['username'] is username:
                 self.seen()
                 self.auth = True
+
+    def pop_contribs(self):
+        sql = """select items.name
+                 from items
+                 join userstat_uploads on userstat_uploads.itemid=items.uid
+                 where userstat_uploads.uid=%s""" % self.uid
+
+        result = doquery(sql)
+
+        for item in result:
+            self.contribs.append(item[0])
 
     def pop_collection(self):
         sql = read('ownwant', **{"userid": self.uid})
