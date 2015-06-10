@@ -91,6 +91,11 @@ def newitem():
         else:
             uid = 0 
 
+        if request.form['imgtag'] == '':
+            flash('Please add a tag for this picture.')
+# TODO: re fill form
+            return redirect(url_for('newitem'))
+
         try:
             newitem = siteitem(escape(request.form['name']))
             flash('An item with that name already exists')
@@ -103,10 +108,6 @@ def newitem():
 
             file = request.files['img']
             if file:
-                if request.form['imgtag'] == '':
-                    flash('Please add a tag for this picture.')
-                    return redirect(url_for('newitem'))
-
                 newitem.newimg(request.files['img'], escape(request.form['imgtag']))
 
         except NoItem:
