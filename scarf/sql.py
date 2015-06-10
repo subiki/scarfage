@@ -5,7 +5,7 @@ import datetime
 
 from config import dbHost, dbName, dbUser, dbPass
 
-db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
+db = None
 
 def read(table, **kwargs):
     """ Generates SQL for a SELECT statement matching the kwargs passed. """
@@ -43,8 +43,12 @@ def delete(table, **kwargs):
 
 def doupsert(query):
 #    app.logger.debug(query)
+    global db
 
     try:
+        if db is None:
+            app.logger.info("Connecting to db host")
+            db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
 
         cursor = db.cursor()
         cursor.execute(query)
@@ -57,14 +61,18 @@ def doupsert(query):
         return data
 
     except MySQLdb.MySQLError as e:
+        db = None
         app.logger.error("Cannot connect to database. MySQL error: " + str(e))
         raise
 
 def doquery(query):
 #    app.logger.debug(query)
+    global db
 
     try:
-        #db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
+        if db is None:
+            app.logger.info("Connecting to db host")
+            db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
 
         cur = db.cursor()
         cur.execute(query)
@@ -78,5 +86,6 @@ def doquery(query):
         return data
 
     except MySQLdb.MySQLError as e:
+        db = None
         app.logger.error("Cannot connect to database. MySQL error: " + str(e))
         raise
