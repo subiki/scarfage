@@ -27,9 +27,9 @@ class pagedata:
 
     def __init__(self):
         if 'username' in session:
-            self.authuser = siteuser(escape(session['username']))
+            self.authuser = siteuser.create(escape(session['username']))
             try:
-                self.authuser = siteuser(escape(session['username']))
+                self.authuser = siteuser.create(escape(session['username']))
             except:
                 pass
 
@@ -56,23 +56,32 @@ def get_contribs_table():
 
     return result;
 
+__user_by_uid_users__ = dict()
 def user_by_uid(uid):
-    sql = read('users', **{"uid": uid})
-    result = doquery(sql)
-
     try:
-        return result[0][1]
-    except IndexError:
-        return
+        return __user_by_uid_users__[uid]
+    except KeyError:
+        sql = read('users', **{"uid": uid})
+        result = doquery(sql)
 
+        try:
+            __user_by_uid_users__[uid] = result[0][1]
+            return result[0][1]
+        except IndexError:
+            return
+__uid_by_user_users__ = dict()
 def uid_by_user(username):
-    sql = read('users', **{"username": username})
-    result = doquery(sql)
-
     try:
-        return result[0][0]
-    except IndexError:
-        return
+        return __uid_by_user_users__[username]
+    except KeyError:
+        sql = read('users', **{"username": username})
+        result = doquery(sql)
+
+        try:
+            __uid_by_user_users__[username] = result[0][0]
+            return result[0][0]
+        except IndexError:
+            return
 
 class NoUser(Exception):
     def __init__(self, username):
@@ -83,6 +92,26 @@ class AuthFail(Exception):
         Exception.__init__(self, username)
 
 class siteuser:
+    cache = []
+
+    @classmethod
+    def __getCache(cls, username):
+        for o in siteuser.cache:
+            if o.username == username:
+                return o
+        app.logger.debug('uncached user object!')
+        return None
+
+    @classmethod
+    def create(cls, username):
+        o = cls.__getCache(username)
+        if o:
+            return o
+
+        o = cls(username)
+        cls.cache.append(o)
+        return o
+
     def __init__(self, username):
         self.collection = []
         self.messages = []
@@ -144,19 +173,20 @@ class siteuser:
             self.contribs.append(item[0])
 
     def pop_collection(self):
-        sql = read('ownwant', **{"userid": self.uid})
+        sql = """select ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden, items.name
+                 from ownwant
+                 join items on items.uid=ownwant.itemid
+                 where ownwant.userid=%s""" % self.uid
+
         result = doquery(sql)
 
         for item in result:
-            sql = read('items', **{"uid": item[2]})
-            sresult = doquery(sql)
-
             # TODO use ownwant object here, remember to document the change
-            sitem = siteitem(sresult[0][1])
-            sitem.have = item[3]
-            sitem.willtrade = item[4]
-            sitem.want = item[5]
-            sitem.hidden = item[6]
+            sitem = siteitem(item[4])
+            sitem.have = item[0]
+            sitem.willtrade = item[1]
+            sitem.want = item[2]
+            sitem.hidden = item[3]
 
             self.collection.append(sitem)
 
@@ -195,9 +225,9 @@ class siteuser:
 
         for item in fromresult:
             if item[4] >= messagestatus['unread_pm']:
-                pm = pmessage(item[0])
+                pm = pmessage.create(item[0])
             else:
-                pm = trademessage(item[0])
+                pm = trademessage.create(item[0])
 
             pm.load_replies()
             self.messages.append(pm)
@@ -207,9 +237,9 @@ class siteuser:
 
         for item in toresult:
             if item[4] >= messagestatus['unread_pm']:
-                pm = pmessage(item[0])
+                pm = pmessage.create(item[0])
             else:
-                pm = trademessage(item[0])
+                pm = trademessage.create(item[0])
 
             pm.load_replies()
             self.messages.append(pm)
@@ -397,7 +427,7 @@ class siteitem(__siteitem__):
         for user in res:
             sql = read('users', **{"uid": user[1]})
             result = doquery(sql)
-            userinfo = siteuser(result[0][1])
+            userinfo = siteuser.create(result[0][1])
             self.haveusers.append(userinfo)
 
         sql = read('ownwant', **{"itemid": self.uid, "want": "1"})
@@ -406,7 +436,7 @@ class siteitem(__siteitem__):
         for user in res:
             sql = read('users', **{"uid": user[1]})
             result = doquery(sql)
-            userinfo = siteuser(result[0][1])
+            userinfo = siteuser.create(result[0][1])
             self.wantusers.append(userinfo)
 
         sql = read('ownwant', **{"itemid": self.uid, "willtrade": "1"})
@@ -415,7 +445,7 @@ class siteitem(__siteitem__):
         for user in res:
             sql = read('users', **{"uid": user[1]})
             result = doquery(sql)
-            userinfo = siteuser(result[0][1])
+            userinfo = siteuser.create(result[0][1])
             self.willtradeusers.append(userinfo)
 
     def delete(self):
@@ -537,6 +567,26 @@ messagestatus = {'unread_trade': 0, 'active_trade': 1, 'complete_trade': 2, 'set
 tradestatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
 
 class pmessage:
+    cache = []
+
+    @classmethod
+    def __getCache(cls, messageid):
+        for o in pmessage.cache:
+            if o.uid == messageid:
+                return o
+        app.logger.debug('uncached pmessage!')
+        return None
+
+    @classmethod
+    def create(cls, messageid):
+        o = cls.__getCache(messageid)
+        if o:
+            return o
+
+        o = cls(messageid)
+        cls.cache.append(o)
+        return o
+
     def __init__(self, messageid):
         self.messagestatus = messagestatus
 
@@ -553,11 +603,11 @@ class pmessage:
             self.parentid = result[0][6]
             self.sent = result[0][7]
 
-            self.from_user = siteuser(user_by_uid(self.from_uid)).username
-            self.to_user = siteuser(user_by_uid(self.to_uid)).username
+            self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
+            self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
 
             if self.parentid > 0:
-                self.parent = pmessage(self.parentid)
+                self.parent = pmessage.create(self.parentid)
 
             self.replies = []
 
@@ -584,11 +634,12 @@ class pmessage:
             return
 
     def load_replies(self):
+        # TODO cache
         sql = read('messages', **{"parent": self.uid})
         result = doquery(sql)
 
         for reply in result:
-            pm = pmessage(reply[0])
+            pm = pmessage.create(reply[0])
             pm.load_replies()
             self.replies.append(pm)
 
@@ -620,6 +671,26 @@ class tradeitem:
 
 #FIXME inheritance
 class trademessage(pmessage):
+    cache = []
+
+    @classmethod
+    def __getCache(cls, messageid):
+        for o in trademessage.cache:
+            if o.uid == messageid:
+                return o
+        app.logger.debug('uncached trademessage!')
+        return None
+
+    @classmethod
+    def create(cls, messageid):
+        o = cls.__getCache(messageid)
+        if o:
+            return o
+
+        o = cls(messageid)
+        cls.cache.append(o)
+        return o
+
     def __init__(self, messageid):
         self.messagestatus = messagestatus
         self.tradestatus = tradestatus
@@ -637,11 +708,11 @@ class trademessage(pmessage):
             self.parentid = result[0][6]
             self.sent = result[0][7]
 
-            self.from_user = siteuser(user_by_uid(self.from_uid)).username
-            self.to_user = siteuser(user_by_uid(self.to_uid)).username
+            self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
+            self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
 
             if self.parentid > 0:
-                self.parent = pmessage(self.parentid)
+                self.parent = pmessage.create(self.parentid)
 
             self.replies = []
 
@@ -661,7 +732,7 @@ class trademessage(pmessage):
             ti.userid = item[3]
             ti.acceptstatus = item[4]
             ti.item = siteitem(item_by_uid(ti.itemid))
-            ti.user = siteuser(user_by_uid(ti.userid))
+            ti.user = siteuser.create(user_by_uid(ti.userid))
 
             self.items.append(ti)
 

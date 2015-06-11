@@ -10,7 +10,7 @@ def get_users():
     users = []
 
     for user in result:
-        users.append(siteuser(user[1]))
+        users.append(siteuser.create(user[1]))
 
     return users
 @app.route('/admin')
@@ -44,7 +44,7 @@ def admin_set_accesslevel(user, level):
         return redirect_back('index')
 
     try:
-        moduser = siteuser(escape(user))
+        moduser = siteuser.create(escape(user))
 
     except NoUser:
         app.logger.error('Accesslevel change attempted for invalid user by: ' + pd.authuser.username)

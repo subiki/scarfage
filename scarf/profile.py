@@ -21,7 +21,7 @@ def emailupdate():
     if 'username' in session:
         if request.method == 'POST':
             try:
-                user = siteuser(session['username'])
+                user = siteuser.create(session['username'])
             except NoUser:
                 return render_template('error.html', pd=pd)
 
@@ -52,7 +52,7 @@ def pwreset():
         ret = False
         if request.method == 'POST':
             try:
-                user = siteuser(session['username'])
+                user = siteuser.create(session['username'])
             except NoUser:
                 return render_template('error.html', pd=pd)
 
@@ -89,7 +89,7 @@ def show_user_profile(username):
     pd.title = "Profile for " + escape(username)
 
     try:
-        pd.profileuser = siteuser(escape(username))
+        pd.profileuser = siteuser.create(escape(username))
         pd.profileuser.pop_collection()
         pd.profileuser.pms()
     except NoUser:

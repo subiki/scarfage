@@ -9,7 +9,7 @@ app.secret_key = secret_key
 def check_new_user(request):
     ret = True
     try:
-        user = siteuser(escape(request.form['username']))
+        user = siteuser.create(escape(request.form['username']))
         flash("User already exists")
         ret = False
     except NoUser:
@@ -40,7 +40,7 @@ def check_new_user(request):
 def login():
     if request.method == 'POST':
         try:
-            user = siteuser(escape(request.form['username']))
+            user = siteuser.create(escape(request.form['username']))
             user.authenticate(escape(request.form['password']))
         except (NoUser, AuthFail) as e:
             app.logger.warning("Failed login: " + e.args[0]) 

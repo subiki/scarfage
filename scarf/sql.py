@@ -42,7 +42,7 @@ def delete(table, **kwargs):
     return "".join(sql)
 
 def doupsert(query):
-#    app.logger.debug(query)
+    app.logger.debug(query)
     global db
 
     try:
@@ -66,7 +66,7 @@ def doupsert(query):
         raise
 
 def doquery(query):
-#    app.logger.debug(query)
+    app.logger.debug(query)
     global db
 
     try:

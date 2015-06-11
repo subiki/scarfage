@@ -18,7 +18,7 @@ def accepttradeitem(username, messageid, item):
             return page_not_found(404)
 
         try:
-            t = trademessage(escape(messageid))
+            t = trademessage.create(escape(messageid))
         except:
             return page_not_found(404)
 
@@ -50,7 +50,7 @@ def settletrade(username, messageid):
         return page_not_found(404)
 
     if 'username' in session:
-        t = trademessage(escape(messageid))
+        t = trademessage.create(escape(messageid))
         t.settle()
             #return page_not_found(404)
 
@@ -65,7 +65,7 @@ def rejecttrade(username, messageid):
 
     if 'username' in session:
         try:
-            t = trademessage(escape(messageid))
+            t = trademessage.create(escape(messageid))
             t.reject()
         except:
             return page_not_found(404)
@@ -77,7 +77,7 @@ def trade(username, itemid):
     pd = pagedata()
 
     try:
-        pd.tradeuser = siteuser(escape(username))
+        pd.tradeuser = siteuser.create(escape(username))
     except (NoItem, NoUser):
         return page_not_found(404)
 

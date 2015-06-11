@@ -12,12 +12,12 @@ def viewpm(username, messageid):
 
     if 'username' in session:
         app.logger.debug(messageid)
-        pm = trademessage(escape(messageid))
+        pm = trademessage.create(escape(messageid))
         pm.read()
         pm.load_replies()
 
         if pm.messagestatus < messagestatus['unread_pm']:
-            pm = trademessage(escape(messageid))
+            pm = trademessage.create(escape(messageid))
 
         app.logger.debug(pm.uid)
         pd.pm = pm
@@ -29,7 +29,7 @@ def pm(username):
     pd = pagedata()
 
     try:
-        pd.recipient = siteuser(escape(username))
+        pd.recipient = siteuser.create(escape(username))
     except (NoItem, NoUser):
         return page_not_found(404)
 

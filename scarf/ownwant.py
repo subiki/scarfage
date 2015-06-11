@@ -62,7 +62,7 @@ def ownwant(item_id, values):
 
     if 'username' in session:
         try:
-            user = siteuser(session['username'])
+            user = siteuser.create(session['username'])
         except NoUser:
             flash('You must be logged in to add items to a collection')
             return False

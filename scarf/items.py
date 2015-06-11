@@ -62,7 +62,7 @@ def show_item(item_id):
 
     if 'username' in session:
         try:
-            user = siteuser(session['username'])
+            user = siteuser.create(session['username'])
             pd.iteminfo = user.query_collection(showitem.name)
         except (NoUser, NoItem):
             pass
