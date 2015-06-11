@@ -95,18 +95,12 @@ class siteuser:
     cache = []
 
     @classmethod
-    def __getCache(cls, username):
+    def create(cls, username):
         for o in siteuser.cache:
             if o.username == username:
                 return o
-        app.logger.debug('uncached user object!')
-        return None
 
-    @classmethod
-    def create(cls, username):
-        o = cls.__getCache(username)
-        if o:
-            return o
+        app.logger.debug('uncached user object!')
 
         o = cls(username)
         cls.cache.append(o)
@@ -162,33 +156,35 @@ class siteuser:
                 self.auth = True
 
     def pop_contribs(self):
-        sql = """select items.name
-                 from items
-                 join userstat_uploads on userstat_uploads.itemid=items.uid
-                 where userstat_uploads.uid=%s""" % self.uid
+        if not self.contribs:
+            sql = """select items.name
+                     from items
+                     join userstat_uploads on userstat_uploads.itemid=items.uid
+                     where userstat_uploads.uid=%s""" % self.uid
 
-        result = doquery(sql)
+            result = doquery(sql)
 
-        for item in result:
-            self.contribs.append(item[0])
+            for item in result:
+                self.contribs.append(item[0])
 
     def pop_collection(self):
-        sql = """select ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden, items.name
-                 from ownwant
-                 join items on items.uid=ownwant.itemid
-                 where ownwant.userid=%s""" % self.uid
+        if not self.collection:
+            sql = """select ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden, items.name
+                     from ownwant
+                     join items on items.uid=ownwant.itemid
+                     where ownwant.userid=%s""" % self.uid
 
-        result = doquery(sql)
+            result = doquery(sql)
 
-        for item in result:
-            # TODO use ownwant object here, remember to document the change
-            sitem = siteitem(item[4])
-            sitem.have = item[0]
-            sitem.willtrade = item[1]
-            sitem.want = item[2]
-            sitem.hidden = item[3]
+            for item in result:
+                # TODO use ownwant object here, remember to document the change
+                sitem = siteitem(item[4])
+                sitem.have = item[0]
+                sitem.willtrade = item[1]
+                sitem.want = item[2]
+                sitem.hidden = item[3]
 
-            self.collection.append(sitem)
+                self.collection.append(sitem)
 
     def query_collection(self, item):
         class __ownwant__:
@@ -219,30 +215,31 @@ class siteuser:
         return ret
 
     def pms(self):
-        # fix this sql so we only do this once
-        sql = read('messages', **{"fromuserid": self.uid})
-        fromresult = doquery(sql)
+        if not self.messages:
+            # fix this sql so we only do this once
+            sql = read('messages', **{"fromuserid": self.uid})
+            fromresult = doquery(sql)
 
-        for item in fromresult:
-            if item[4] >= messagestatus['unread_pm']:
-                pm = pmessage.create(item[0])
-            else:
-                pm = trademessage.create(item[0])
+            for item in fromresult:
+                if item[4] >= messagestatus['unread_pm']:
+                    pm = pmessage.create(item[0])
+                else:
+                    pm = trademessage.create(item[0])
 
-            pm.load_replies()
-            self.messages.append(pm)
+                pm.load_replies()
+                self.messages.append(pm)
 
-        sql = read('messages', **{"touserid": self.uid})
-        toresult = doquery(sql)
+            sql = read('messages', **{"touserid": self.uid})
+            toresult = doquery(sql)
 
-        for item in toresult:
-            if item[4] >= messagestatus['unread_pm']:
-                pm = pmessage.create(item[0])
-            else:
-                pm = trademessage.create(item[0])
+            for item in toresult:
+                if item[4] >= messagestatus['unread_pm']:
+                    pm = pmessage.create(item[0])
+                else:
+                    pm = trademessage.create(item[0])
 
-            pm.load_replies()
-            self.messages.append(pm)
+                pm.load_replies()
+                self.messages.append(pm)
 
     def seen(self):
         self.lastseen=datetime.datetime.now()
@@ -570,19 +567,14 @@ class pmessage:
     cache = []
 
     @classmethod
-    def __getCache(cls, messageid):
+    def create(cls, messageid):
         for o in pmessage.cache:
             if o.uid == messageid:
+                app.logger.debug('cached pmessage!')
                 return o
+
         app.logger.debug('uncached pmessage!')
-        return None
-
-    @classmethod
-    def create(cls, messageid):
-        o = cls.__getCache(messageid)
-        if o:
-            return o
-
+ 
         o = cls(messageid)
         cls.cache.append(o)
         return o
@@ -674,18 +666,12 @@ class trademessage(pmessage):
     cache = []
 
     @classmethod
-    def __getCache(cls, messageid):
+    def create(cls, messageid):
         for o in trademessage.cache:
             if o.uid == messageid:
                 return o
-        app.logger.debug('uncached trademessage!')
-        return None
 
-    @classmethod
-    def create(cls, messageid):
-        o = cls.__getCache(messageid)
-        if o:
-            return o
+        app.logger.debug('uncached trademessage!')
 
         o = cls(messageid)
         cls.cache.append(o)
