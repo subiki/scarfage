@@ -3,9 +3,9 @@ from scarf import app
 import socket
 from time import time
 import datetime
-from memoize import memoize_with_expiry
 
-from config import dbHost, dbName, dbUser, dbPass, cache_persist
+from memoize import memoize_with_expiry, cache_persist, long_cache_persist
+from config import dbHost, dbName, dbUser, dbPass
 
 db = None
 

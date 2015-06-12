@@ -8,6 +8,8 @@ query_cache = dict()
 def doquery(query):
 http://seanblanchfield.com/python-memoize-with-expiry/
 '''
+cache_persist = 0.2
+long_cache_persist = 600
 
 class memoize_with_expiry(object):
    '''

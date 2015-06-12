@@ -10,9 +10,9 @@ from flask import request, redirect, session, escape, flash, url_for
 from urlparse import urlparse, urljoin
 from sql import upsert, doupsert, read, doquery, delete
 
-from memoize import memoize_with_expiry
+from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 
-from config import upload_dir, cache_persist, long_cache_persist
+from config import upload_dir
 
 ########## Utility stuff
 
