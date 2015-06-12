@@ -92,24 +92,13 @@ class AuthFail(Exception):
     def __init__(self, username):
         Exception.__init__(self, username)
 
+siteuser_cache = dict()
 class siteuser:
-    cache = []
  
     @classmethod
+    @memoize_with_expiry(siteuser_cache, cache_persist)
     def create(cls, username):
-#        return siteuser(username)
-
-        for o in siteuser.cache:
-#TODO expiration
-            if o.username == username:
-                return o
- 
-        app.logger.debug('uncached user object!')
- 
-        o = cls(username)
-        cls.cache.append(o)
-
-        return o
+        return cls(username)
 
     def __init__(self, username):
         self.collection = []
@@ -314,6 +303,8 @@ class NoImage(Exception):
         Exception.__init__(self, item)
 
 class siteimage:
+    # add factory and caching
+
     def __init__(self, uid):
         sql = read('images', **{"uid": uid})
         result = doquery(sql)
@@ -556,18 +547,12 @@ def redirect_back(endpoint, **values):
 messagestatus = {'unread_trade': 0, 'active_trade': 1, 'complete_trade': 2, 'settled_trade': 3, 'rejected_trade': 4, 'unread_pm': 10, 'read_pm': 11}
 tradestatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
 
+pmessage_cache = dict()
 class pmessage:
-    cache = []
-
     @classmethod
+    @memoize_with_expiry(pmessage_cache, long_cache_persist)
     def create(cls, messageid):
-        for o in pmessage.cache:
-            if o.uid == messageid:
-                return o
-
-        o = cls(messageid)
-        cls.cache.append(o)
-        return o
+        return cls(messageid)
 
     def __init__(self, messageid):
         self.messagestatus = messagestatus
@@ -615,15 +600,16 @@ class pmessage:
         else:
             return
 
+    @memoize_with_expiry(pmessage_cache, cache_persist)
     def load_replies(self):
-        # TODO cache
-        sql = read('messages', **{"parent": self.uid})
-        result = doquery(sql)
+        if not self.replies:
+            sql = read('messages', **{"parent": self.uid})
+            result = doquery(sql)
 
-        for reply in result:
-            pm = pmessage.create(reply[0])
-            pm.load_replies()
-            self.replies.append(pm)
+            for reply in result:
+                pm = pmessage.create(reply[0])
+                pm.load_replies()
+                self.replies.append(pm)
 
 class tradeitem:
     def __init__(self, itemid):
