@@ -14,3 +14,4 @@ import scarf.user
 import scarf.trade
 import scarf.pm
 import scarf.stats
+import scarf.memoize

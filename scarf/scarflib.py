@@ -97,7 +97,7 @@ class siteuser:
  
     @classmethod
     def create(cls, username):
-        return siteuser(username)
+#        return siteuser(username)
 
         for o in siteuser.cache:
 #TODO expiration
