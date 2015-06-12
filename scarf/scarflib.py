@@ -1,6 +1,7 @@
 import hashlib
 import os
 import datetime
+import time
 import uuid
 import imghdr
 
@@ -9,7 +10,11 @@ from flask import request, redirect, session, escape, flash, url_for
 from urlparse import urlparse, urljoin
 from sql import upsert, doupsert, read, doquery, delete
 
-from config import upload_dir
+from memoize import memoize_with_expiry
+
+from config import upload_dir, cache_persist, long_cache_persist
+
+########## Utility stuff
 
 # Workaround for the issue identified here:
 # https://bugs.python.org/issue16512
@@ -34,7 +39,9 @@ class pagedata:
                 pass
 
 ######### User stuff
+stats_cache = dict()
 
+@memoize_with_expiry(stats_cache, long_cache_persist)
 def get_whores_table():
     sql = """select count(*), users.username
              from users 
@@ -46,6 +53,7 @@ def get_whores_table():
 
     return result;
 
+@memoize_with_expiry(stats_cache, long_cache_persist)
 def get_contribs_table():
     sql = """select count(*), users.username
              from users 
@@ -56,32 +64,25 @@ def get_contribs_table():
 
     return result;
 
-__user_by_uid_users__ = dict()
+@memoize_with_expiry(stats_cache, long_cache_persist)
 def user_by_uid(uid):
-    try:
-        return __user_by_uid_users__[uid]
-    except KeyError:
-        sql = read('users', **{"uid": uid})
-        result = doquery(sql)
+    sql = read('users', **{"uid": uid})
+    result = doquery(sql)
 
-        try:
-            __user_by_uid_users__[uid] = result[0][1]
-            return result[0][1]
-        except IndexError:
-            return
-__uid_by_user_users__ = dict()
+    try:
+        return result[0][1]
+    except IndexError:
+        return
+
+@memoize_with_expiry(stats_cache, long_cache_persist)
 def uid_by_user(username):
-    try:
-        return __uid_by_user_users__[username]
-    except KeyError:
-        sql = read('users', **{"username": username})
-        result = doquery(sql)
+    sql = read('users', **{"username": username})
+    result = doquery(sql)
 
-        try:
-            __uid_by_user_users__[username] = result[0][0]
-            return result[0][0]
-        except IndexError:
-            return
+    try:
+        return result[0][0]
+    except IndexError:
+        return
 
 class NoUser(Exception):
     def __init__(self, username):
@@ -93,17 +94,21 @@ class AuthFail(Exception):
 
 class siteuser:
     cache = []
-
+ 
     @classmethod
     def create(cls, username):
+        return siteuser(username)
+
         for o in siteuser.cache:
+#TODO expiration
             if o.username == username:
                 return o
-
+ 
         app.logger.debug('uncached user object!')
-
+ 
         o = cls(username)
         cls.cache.append(o)
+
         return o
 
     def __init__(self, username):
@@ -147,25 +152,21 @@ class siteuser:
         except IndexError:
             self.numadds = 0
 
-        self.pop_contribs()
-
         # Update lastseen if we're looking up the currently logged in user
         if 'username' in session:
             if session['username'] is username:
                 self.seen()
                 self.auth = True
 
-    def pop_contribs(self):
-        if not self.contribs:
-            sql = """select items.name
-                     from items
-                     join userstat_uploads on userstat_uploads.itemid=items.uid
-                     where userstat_uploads.uid=%s""" % self.uid
+        sql = """select items.name
+                 from items
+                 join userstat_uploads on userstat_uploads.itemid=items.uid
+                 where userstat_uploads.uid=%s""" % self.uid
 
-            result = doquery(sql)
+        result = doquery(sql)
 
-            for item in result:
-                self.contribs.append(item[0])
+        for item in result:
+            self.contribs.append(item[0])
 
     def pop_collection(self):
         if not self.collection:
@@ -214,25 +215,14 @@ class siteuser:
 
         return ret
 
-    def pms(self):
+    def pop_messages(self):
         if not self.messages:
-            # fix this sql so we only do this once
-            sql = read('messages', **{"fromuserid": self.uid})
-            fromresult = doquery(sql)
+            sql = """select * from messages
+                     where fromuserid = '%s' or touserid = '%s'""" % (self.uid, self.uid)
 
-            for item in fromresult:
-                if item[4] >= messagestatus['unread_pm']:
-                    pm = pmessage.create(item[0])
-                else:
-                    pm = trademessage.create(item[0])
+            result = doquery(sql)
 
-                pm.load_replies()
-                self.messages.append(pm)
-
-            sql = read('messages', **{"touserid": self.uid})
-            toresult = doquery(sql)
-
-            for item in toresult:
+            for item in result:
                 if item[4] >= messagestatus['unread_pm']:
                     pm = pmessage.create(item[0])
                 else:
@@ -366,6 +356,9 @@ class siteimage:
 
 ######### Item stuff
 
+item_cache = dict()
+
+@memoize_with_expiry(item_cache, long_cache_persist)
 def item_by_uid(uid):
     sql = read('items', **{"uid": uid})
     result = doquery(sql)
@@ -374,7 +367,6 @@ def item_by_uid(uid):
         return result[0][1]
     except IndexError:
         return
-
 
 class NoItem(Exception):
     def __init__(self, item):
@@ -522,6 +514,7 @@ def new_item(name, description, userid):
         data = doupsert(sql)
 
 
+@memoize_with_expiry(item_cache, long_cache_persist)
 def all_items():
     items = []
 
@@ -570,11 +563,8 @@ class pmessage:
     def create(cls, messageid):
         for o in pmessage.cache:
             if o.uid == messageid:
-                app.logger.debug('cached pmessage!')
                 return o
 
-        app.logger.debug('uncached pmessage!')
- 
         o = cls(messageid)
         cls.cache.append(o)
         return o
@@ -670,8 +660,6 @@ class trademessage(pmessage):
         for o in trademessage.cache:
             if o.uid == messageid:
                 return o
-
-        app.logger.debug('uncached trademessage!')
 
         o = cls(messageid)
         cls.cache.append(o)

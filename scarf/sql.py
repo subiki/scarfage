@@ -1,9 +1,11 @@
 import MySQLdb
 from scarf import app
 import socket
+from time import time
 import datetime
+from memoize import memoize_with_expiry
 
-from config import dbHost, dbName, dbUser, dbPass
+from config import dbHost, dbName, dbUser, dbPass, cache_persist
 
 db = None
 
@@ -15,7 +17,6 @@ def read(table, **kwargs):
         sql.append("WHERE " + " AND ".join("%s = '%s'" % (k, v) for k, v in kwargs.iteritems()))
     sql.append(";")
     return "".join(sql)
-
 
 def upsert(table, **kwargs):
     """ update/insert rows into objects table (update if the row already exists)
@@ -32,7 +33,6 @@ def upsert(table, **kwargs):
     sql.append(";")
     return "".join(sql)
 
-
 def delete(table, **kwargs):
     """ deletes rows from table where **kwargs match """
     sql = list()
@@ -42,6 +42,9 @@ def delete(table, **kwargs):
     return "".join(sql)
 
 def doupsert(query):
+    # dump the cache since we're writing to the db
+    query_cache.clear()
+
     app.logger.debug(query)
     global db
 
@@ -56,8 +59,6 @@ def doupsert(query):
         cursor.close()
         data = cursor.lastrowid
 
-        #db.close()
-
         return data
 
     except MySQLdb.MySQLError as e:
@@ -65,6 +66,8 @@ def doupsert(query):
         app.logger.error("Cannot connect to database. MySQL error: " + str(e))
         raise
 
+query_cache = dict()
+@memoize_with_expiry(query_cache, cache_persist)
 def doquery(query):
     app.logger.debug(query)
     global db
@@ -80,8 +83,6 @@ def doquery(query):
         data = cur.fetchall()
 
         db.commit()
-# FIXME: ON PAGE RENDER
-        #db.close()
 
         return data
 
