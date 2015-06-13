@@ -185,7 +185,7 @@ class siteuser(object):
         ret = ownwant()
 
         try:
-            sql = """select items.uid, ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden
+            sql = """select ownwant.uid, ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden
                      from items
                      join ownwant on ownwant.itemid=items.uid
                      where items.name='%s' and ownwant.userid='%s'""" % (item, self.uid)
