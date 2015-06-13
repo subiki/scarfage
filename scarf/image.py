@@ -123,21 +123,21 @@ def resize(img, maxwidth, maxheight):
 img_cache = dict()
 @app.route('/image/<image>/thumbnail')
 def serve_thumb(image):
-    try:
-        img=Image.open(upload_dir + escape(image))
-        img = resize(img, 800.0, 200.0)
-        return serve_pil_image(img)
-    except:
-        return page_not_found(404)
+    #try:
+    img=Image.open(upload_dir + escape(image))
+    img = resize(img, 800.0, 200.0)
+    return serve_pil_image(img)
+    #except:
+    #    return page_not_found(404)
 
 @app.route('/image/<image>/preview')
 def serve_preview(image):
-    try:
-        img=Image.open(upload_dir + escape(image))
-        img = resize(img, 800.0, 800.0)
-        return serve_pil_image(img)
-    except:
-        return page_not_found(404)
+    #try:
+    img=Image.open(upload_dir + escape(image))
+    img = resize(img, 800.0, 800.0)
+    return serve_pil_image(img)
+    #except:
+    #    return page_not_found(404)
 
 @app.route('/image/<img_id>')
 def show_image(img_id):
