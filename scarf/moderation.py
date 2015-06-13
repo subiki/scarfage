@@ -41,7 +41,6 @@ def moderate():
             user = mod[3]
             if mod[1] == 0 or flag == 1:
                 sql = read('images', **{"uid": imgid})
-                app.logger.debug(sql)
                 img = doquery(sql)
                 
                 class mod:
@@ -90,14 +89,11 @@ def mod_img(image):
     try:
         sql = read('images', **{"filename": escape(image)})
         result = doquery(sql)
-        modimg = siteimage(result[0][0])
+        modimg = siteimage.create(result[0][0])
     except NoImage:
         return page_not_found(404)
 
     pd.image = modimg
-
-    sql = read('images', **{"filename": modimg.filename})
-    result = doquery(sql)
 
     try:
         sql = read('imgmods', **{"imgid": modimg.uid})
@@ -134,7 +130,7 @@ def mod_img_approve(imageid):
     pd = pagedata()
 
     try:
-        modimg = siteimage(escape(imageid))
+        modimg = siteimage.create(escape(imageid))
     except:
         flash('Error during moderation')
         return redirect(url_for('moderate'))

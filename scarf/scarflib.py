@@ -92,9 +92,16 @@ class AuthFail(Exception):
     def __init__(self, username):
         Exception.__init__(self, username)
 
+class ownwant(object):
+    def __init__(self):
+        self.have = 0
+        self.want = 0
+        self.willtrade = 0
+        self.hidden = 0
+
 siteuser_cache = dict()
-class siteuser:
- 
+class siteuser(object):
+
     @classmethod
     @memoize_with_expiry(siteuser_cache, cache_persist)
     def create(cls, username):
@@ -165,9 +172,9 @@ class siteuser:
                      where ownwant.userid=%s""" % self.uid
 
             result = doquery(sql)
+            app.logger.debug(result)
 
             for item in result:
-                # TODO use ownwant object here, remember to document the change
                 sitem = siteitem(item[4])
                 sitem.have = item[0]
                 sitem.willtrade = item[1]
@@ -177,32 +184,24 @@ class siteuser:
                 self.collection.append(sitem)
 
     def query_collection(self, item):
-        class __ownwant__:
-            def __init__(self):
-                self.have = 0
-                self.want = 0
-                self.willtrade = 0
-                self.hidden = 0
-                pass
-
-        ret = __ownwant__()
 
         try:
-            sql = read('items', **{"name": item})
-            sresult = doquery(sql)
-     
-            sql = read('ownwant', **{"userid": self.uid, "itemid": sresult[0][0]})
+            sql = """select items.uid, ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden
+                     from items
+                     join ownwant on ownwant.itemid=items.uid
+                     where items.name='%s' and ownwant.userid='%s'""" % (item, self.uid)
             result = doquery(sql)
 
+            ret = ownwant()
             ret.uid = result[0][0]
-            ret.have = result[0][3]
-            ret.willtrade = result[0][4]
-            ret.want = result[0][5]
-            ret.hidden = result[0][6]
-        except IndexError:
-            pass
+            ret.have = result[0][1]
+            ret.willtrade = result[0][2]
+            ret.want = result[0][3]
+            ret.hidden = result[0][4]
 
-        return ret
+            return ret
+        except IndexError:
+            return None
 
     def pop_messages(self):
         if not self.messages:
@@ -302,8 +301,13 @@ class NoImage(Exception):
     def __init__(self, item):
         Exception.__init__(self, item)
 
+siteimage_cache = dict()
 class siteimage:
-    # add factory and caching
+
+    @classmethod
+    @memoize_with_expiry(siteimage_cache, long_cache_persist)
+    def create(cls, username):
+        return cls(username)
 
     def __init__(self, uid):
         sql = read('images', **{"uid": uid})
@@ -374,6 +378,9 @@ class siteitem(__siteitem__):
     def __init__(self, name):
         self.name = name
         self.images = []
+        self.have = 0
+        self.want = 0
+        self.willtrade = 0
         self.haveusers = []
         self.wantusers = []
         self.willtradeusers = []
@@ -383,7 +390,6 @@ class siteitem(__siteitem__):
 
         try:
             self.uid = result[0][0]
-            #self.name = result[0][1]
             self.description = result[0][2]
             self.added = result[0][3]
             self.modified = result[0][4]
@@ -395,42 +401,33 @@ class siteitem(__siteitem__):
 
         try:
             for itemimg in result:
-                image = siteimage(itemimg[1])
+                image = siteimage.create(itemimg[1])
                 self.images.append(image)
         except IndexError:
             pass
 
-        # FIXME check for hidden?
-        sql = read('ownwant', **{"itemid": self.uid, "own": "1"})
+        sql = read('ownwant', **{"itemid": self.uid})
         res = doquery(sql)
-        self.have = len(res)
+        
         for user in res:
-            sql = read('users', **{"uid": user[1]})
-            result = doquery(sql)
-            userinfo = siteuser.create(result[0][1])
-            self.haveusers.append(userinfo)
+            app.logger.debug(user)
+            userinfo = siteuser.create(user_by_uid(user[1]))
 
-        sql = read('ownwant', **{"itemid": self.uid, "want": "1"})
-        res = doquery(sql)
-        self.want = len(res)
-        for user in res:
-            sql = read('users', **{"uid": user[1]})
-            result = doquery(sql)
-            userinfo = siteuser.create(result[0][1])
-            self.wantusers.append(userinfo)
+            if (user[3] == 1):
+                self.have = self.have + 1
+                self.haveusers.append(userinfo)
 
-        sql = read('ownwant', **{"itemid": self.uid, "willtrade": "1"})
-        res = doquery(sql)
-        self.willtrade = len(res)
-        for user in res:
-            sql = read('users', **{"uid": user[1]})
-            result = doquery(sql)
-            userinfo = siteuser.create(result[0][1])
-            self.willtradeusers.append(userinfo)
+            if (user[4] == 1):
+                self.willtrade = self.willtrade + 1
+                self.willtradeusers.append(userinfo)
+
+            if (user[5] == 1):
+                self.want = self.want + 1
+                self.wantusers.append(userinfo)
 
     def delete(self):
         for i in self.images: 
-            delimg = siteimage(escape(i.uid))
+            delimg = siteimage.create(escape(i.uid))
             delimg.delete()
      
         sql = delete('items', **{"uid": self.uid}) 
@@ -721,12 +718,19 @@ class trademessage(pmessage):
             return
 
 def send_pm(fromuserid, touserid, subject, message, status, parent):
-    """
-    TODO: validation to ensure someone didn't fuck with the form
-          and reparent their message to someone else's
-    """
+    if 'username' not in session:
+        flash('You must be logged in to send a message or trade request!')
+        return
 
     try:
+        # make sure the parent message is to us and that someone didn't fuck with the form
+        # if they want to screw up their index then thats on them
+        if parent:
+            p = pmessage.create(parent)
+
+            if p.to_user is not session['username'] and p.from_user is not session['username']:
+                return
+
         sql = upsert("messages", \
                      uid=0, \
                      fromuserid=fromuserid, \

@@ -5,6 +5,7 @@ from flask import redirect, url_for, request, render_template, session, escape, 
 from scarflib import redirect_back, pagedata, siteimage, siteitem, NoItem, NoImage
 from main import page_not_found
 
+from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 from config import upload_dir
 
 @app.route('/image/<img_id>/reallydelete')
@@ -14,7 +15,7 @@ def reallydelete_image(img_id):
     if not pd.authuser.accesslevel >= 10:
         return redirect(url_for('accessdenied'))
 
-    delimg = siteimage(escape(img_id))
+    delimg = siteimage.create(escape(img_id))
     delimg.delete()
 
     app.logger.info(delimg.filename + " has been deleted by " + pd.authuser.username)
@@ -32,7 +33,7 @@ def delete_image(img_id):
     if not pd.authuser.accesslevel >= 10:
         return redirect(url_for('accessdenied'))
 
-    delimg = siteimage(escape(img_id))
+    delimg = siteimage.create(escape(img_id))
 
     pd.title=escape(delimg.filename)
 
@@ -47,7 +48,7 @@ def delete_image(img_id):
 def flag_image(img_id):
     pd = pagedata()
 
-    flagimg = siteimage(escape(img_id))
+    flagimg = siteimage.create(escape(img_id))
     flagimg.flag()
 
     flash("The image has been flagged and will be reviewed by a moderator.")
@@ -90,6 +91,8 @@ def serve_pil_image(pil_img):
 #    return send_file(img_io, mimetype='image/jpeg')
 
 #TODO this is broken, I hate it
+img_resize_cache = dict()
+@memoize_with_expiry(img_resize_cache, long_cache_persist)
 def resize(img, maxwidth, maxheight):
     hsize = img.size[0]
     vsize = img.size[1]
@@ -117,6 +120,7 @@ def resize(img, maxwidth, maxheight):
 
     return img.resize((int(hsize * factor), int(vsize * factor)), Image.ANTIALIAS)
 
+img_cache = dict()
 @app.route('/image/<image>/thumbnail')
 def serve_thumb(image):
     try:
@@ -140,7 +144,7 @@ def show_image(img_id):
     pd = pagedata()
 
     try:
-        pd.img = siteimage(escape(img_id))
+        pd.img = siteimage.create(escape(img_id))
         pd.title=escape(pd.img.tag)
     except NoImage:
         return page_not_found(404)

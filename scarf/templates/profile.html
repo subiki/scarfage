@@ -136,7 +136,7 @@
 
             {% if pm.replies|length > 0 %}
             {% for reply in pm.replies %}
-            {% if pm.from_user != pd.authuser.username and pm.status >= pm.messagestatus['unread_pm'] %}
+            {% if reply.to_uid == pd.authuser.uid and pm.status >= pm.messagestatus['unread_pm'] %}
                 <tr>
 
                 <td>\-</td>

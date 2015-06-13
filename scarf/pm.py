@@ -11,7 +11,6 @@ def viewpm(username, messageid):
         return page_not_found(404)
 
     if 'username' in session:
-        app.logger.debug(messageid)
         pm = trademessage.create(escape(messageid))
         pm.read()
         pm.load_replies()
@@ -19,7 +18,6 @@ def viewpm(username, messageid):
         if pm.messagestatus < messagestatus['unread_pm']:
             pm = trademessage.create(escape(messageid))
 
-        app.logger.debug(pm.uid)
         pd.pm = pm
 
         return render_template('pm.html', pd=pd)
