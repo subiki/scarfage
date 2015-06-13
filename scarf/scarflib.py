@@ -123,7 +123,6 @@ class siteuser(object):
 
         try:
             self.uid = result[0][0]
-            # self.username = result[0][1]
             self.pwhash = result[0][1]
             self.pwsalt = result[0][2]
             self.email = result[0][3]
@@ -148,7 +147,6 @@ class siteuser(object):
         except IndexError:
             self.numadds = 0
 
-        # Update lastseen if we're looking up the currently logged in user
         if 'username' in session:
             if session['username'] is username:
                 self.seen()
@@ -184,6 +182,7 @@ class siteuser(object):
                 self.collection.append(sitem)
 
     def query_collection(self, item):
+        ret = ownwant()
 
         try:
             sql = """select items.uid, ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden
@@ -192,16 +191,15 @@ class siteuser(object):
                      where items.name='%s' and ownwant.userid='%s'""" % (item, self.uid)
             result = doquery(sql)
 
-            ret = ownwant()
             ret.uid = result[0][0]
             ret.have = result[0][1]
             ret.willtrade = result[0][2]
             ret.want = result[0][3]
             ret.hidden = result[0][4]
-
-            return ret
         except IndexError:
-            return None
+            pass
+
+        return ret
 
     def pop_messages(self):
         if not self.messages:

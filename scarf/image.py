@@ -91,8 +91,6 @@ def serve_pil_image(pil_img):
 #    return send_file(img_io, mimetype='image/jpeg')
 
 #TODO this is broken, I hate it
-img_resize_cache = dict()
-#@memoize_with_expiry(img_resize_cache, long_cache_persist)
 def resize(img, maxwidth, maxheight):
     hsize = img.size[0]
     vsize = img.size[1]
@@ -120,6 +118,7 @@ def resize(img, maxwidth, maxheight):
 
     return img.resize((int(hsize * factor), int(vsize * factor)), Image.ANTIALIAS)
 
+# TODO: vvv
 img_cache = dict()
 @app.route('/image/<image>/thumbnail')
 def serve_thumb(image):
