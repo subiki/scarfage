@@ -170,7 +170,6 @@ class siteuser(object):
                      where ownwant.userid=%s""" % self.uid
 
             result = doquery(sql)
-            app.logger.debug(result)
 
             for item in result:
                 sitem = siteitem(item[4])
@@ -408,20 +407,22 @@ class siteitem(__siteitem__):
         res = doquery(sql)
         
         for user in res:
-            app.logger.debug(user)
             userinfo = siteuser.create(user_by_uid(user[1]))
 
             if (user[3] == 1):
                 self.have = self.have + 1
-                self.haveusers.append(userinfo)
+                if(user[6] == 0):
+                    self.haveusers.append(userinfo)
 
             if (user[4] == 1):
                 self.willtrade = self.willtrade + 1
-                self.willtradeusers.append(userinfo)
+                if(user[6] == 0):
+                    self.willtradeusers.append(userinfo)
 
             if (user[5] == 1):
                 self.want = self.want + 1
-                self.wantusers.append(userinfo)
+                if(user[6] == 0):
+                    self.wantusers.append(userinfo)
 
     def delete(self):
         for i in self.images: 

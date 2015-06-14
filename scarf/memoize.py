@@ -37,7 +37,6 @@ class memoize_with_expiry(object):
                # Check the age.
                age = time() - timestamp
                if not self.expiry_time or age < self.expiry_time:
-                   #app.logger.debug('cache hit!')
                    return result
            # Get a new result
            result = func(*args)
