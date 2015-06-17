@@ -1,3 +1,12 @@
 Flask
 MySQL-python
 Pillow
+
+Compiling Sass/SCSS:
+(Bare Minimum: http://sass-lang.com/documentation/)
+
+Compiling using Gulp:
+http://ryanchristiani.com/getting-started-with-gulp-and-sass/
+
+Compiling using Grunt:
+http://ryanchristiani.com/getting-started-with-grunt-and-sass/
