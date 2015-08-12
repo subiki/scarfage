@@ -105,7 +105,7 @@ def mod_img(image):
         pd.errortext = "SQL error"
         return render_template('error.html', pd=pd)
 
-    im=Image.open(upload_dir + escape(image))
+    im=Image.open(upload_dir + '/' + escape(image))
     basewidth = 100
     wpercent = (basewidth/float(im.size[0]))
     hsize = int((float(im.size[1])*float(wpercent))) / 2

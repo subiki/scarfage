@@ -123,7 +123,7 @@ img_cache = dict()
 @app.route('/image/<image>/thumbnail')
 def serve_thumb(image):
     try:
-        img=Image.open(upload_dir + escape(image))
+        img=Image.open(upload_dir + '/' + escape(image))
         img = resize(img, 800.0, 200.0)
         return serve_pil_image(img)
     except IOError:
@@ -132,7 +132,7 @@ def serve_thumb(image):
 @app.route('/image/<image>/preview')
 def serve_preview(image):
     try:
-        img=Image.open(upload_dir + escape(image))
+        img=Image.open(upload_dir + '/' + escape(image))
         img = resize(img, 800.0, 800.0)
         return serve_pil_image(img)
     except IOError:

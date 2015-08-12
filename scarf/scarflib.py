@@ -329,7 +329,7 @@ class siteimage:
         result = doquery(sql)
 
         try:
-            os.remove(upload_dir + self.filename)
+            os.remove(upload_dir + '/' + self.filename)
         except Exception as e:
             raise
 
@@ -447,11 +447,11 @@ class siteitem(__siteitem__):
             fuuid = uuid.uuid4().get_hex()
             try:
                 newname = fuuid + os.path.splitext(f.filename)[1]
-                f.save(upload_dir + newname)
+                f.save(upload_dir + '/' + newname)
             except Exception as e:
                 raise
 
-            if imghdr.what(upload_dir + newname):
+            if imghdr.what(upload_dir + '/' + newname):
                 sql = upsert("images", \
                              uid=0, \
                              filename=newname, \
@@ -477,9 +477,9 @@ class siteitem(__siteitem__):
                 return True
             else:
                 try:
-                    os.remove(upload_dir + newname)
+                    os.remove(upload_dir + '/' + newname)
                 except:
-                    app.logger.error("Error removing failed image upload: " + upload_dir + newname)
+                    app.logger.error("Error removing failed image upload: " + upload_dir + '/' + newname)
 
                 flash(f.filename + " is not an image.")
                 return False
