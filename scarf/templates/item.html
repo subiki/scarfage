@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+
+<p>
+<div id="itemname">
+<h1>{{ pd.item.name }}</h1><br />
+</div>
+
+{% if pd.authuser is defined %}
+    <div id="itemactions">
+    {% if pd.iteminfo is defined and pd.iteminfo.have == 0 %}
+        <a href="/item/{{ pd.item.name }}/have">I own this</a></br>
+
+    {% else %}
+        This is in your collection. <a href="/item/{{ pd.item.name }}/donthave">Remove it</a>.<br />
+
+        {% if pd.iteminfo is defined and pd.iteminfo.willtrade == 0 %}
+        <a href="/item/{{ pd.item.name }}/willtrade">I'll trade this</a><br />
+        {% else %}
+        This is up for trade. <a href="/item/{{ pd.item.name }}/wonttrade">Nevermind</a>.<br />
+        {% endif %}
+
+    {% endif %}
+
+    {% if pd.iteminfo is defined and pd.iteminfo.want == 0 %}
+    <a href="/item/{{ pd.item.name }}/want">I want this</a></br>
+    {% else %}
+    You want this. <a href="/item/{{ pd.item.name }}/dontwant">Nevermind.</a><br />
+    {% endif %}
+
+{% else %}
+
+<a href="/item/{{ pd.item.name }}/have">I own this</a><br />
+<a href="/item/{{ pd.item.name }}/willtrade">I'll trade this</a><br />
+<a href="/item/{{ pd.item.name }}/want">I want this</a><br />
+
+{% endif %}
+
+{% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
+<a href="/item/{{ pd.item.name }}/delete">Delete item</a><br />
+{% endif %}
+
+</div>
+
+<div id="description">
+{{ pd.item.description }}<br />
+</div>
+
+<br>
+<div id="itemimg">
+{% for image in pd.item.images %}
+    <a href="/image/{{ image.uid }}"><img src="/image/{{ image.filename }}/thumbnail" alt="{{ image.tag }}"></a><br />
+
+{% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
+<a class=small href="/image/{{ image.uid }}/delete">Delete image</a><br />
+{% endif %}
+<a class=small href="/image/{{ image.uid }}/flag">Flag image for review</a><br />
+{% endfor %}
+
+{% if pd.authuser is not undefined %}
+    Add an image:<br />
+    <form action="/image/upload" method="post" enctype="multipart/form-data">
+        Tag: <input type=text name=tag><br />
+        <input type="file" name="image" accept="image/*"><br />
+        <input type="hidden" name="itemname" value="{{ pd.item.name }}">
+        <input type=submit value=Submit>
+    </form>
+{% endif %}
+</p>
+</div>
+
+<div class="havecount">
+{% if pd.item.have == 1 %}
+1 person has this<br />
+{% else %}
+{{ pd.item.have }} people have this<br />
+{% endif %}
+
+{% for user in pd.item.haveusers %}
+<a href="/user/{{ user.username }}">{{ user.username }}</a><br />
+{% endfor %}
+</div>
+
+<div class="willtradecount">
+{% if pd.item.willtrade == 1 %}
+1 person is willing to trade this <br />
+{% else %}
+{{ pd.item.willtrade }} people are willing to trade this <br />
+{% endif %}
+
+{% for user in pd.item.willtradeusers %}
+<a href="/user/{{ user.username }}/trade/{{pd.item.name}}">{{ user.username }}</a><br />
+{% endfor %}
+
+</div>
+
+<div class="wantscount">
+{% if pd.item.want == 1 %}
+1 person wants to trade for this <br />
+{% else %}
+{{ pd.item.want }} people want to trade for this <br />
+{% endif %}
+
+{% for user in pd.item.wantusers %}
+<a href="/user/{{ user.username }}/trade/{{pd.item.name}}">{{ user.username }}</a><br />
+{% endfor %}
+</div>
+
+</div>
+
+{% endblock %}

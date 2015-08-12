@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div id="content">
+<div id="signupform">
+    <center>
+    <h1>Sign Up</h1>
+    <form role="form" action="/newuser" method="post">
+      <div class="form-group">
+        <label class="newuser-label" for="username">Username:</label>
+        <input type=text name=username value="{{ pd.username }}" required><br />
+      <div>
+
+      <div class="form-group">
+        <label class="newuser-label" for="password">Password:</label>
+        <input type=password name=password required><br />
+      <div>
+
+      <div class="form-group">
+        <label class="newuser-label" for="password2">Confirm password:</label>
+        <input type=password name=password2 required><br />
+      <div>
+
+      <div class="form-group">
+        <label class="newuser-label" for="email">Email address:</label>
+        <input type=text name=email value="{{ pd.email }}" required><br />
+      <div>
+
+      <div class="form-group">
+        <input class="button" type=submit value=Submit>
+      <div>
+    </form>
+      </center>
+</div>
+</div>
+
+{% endblock %}
+{% block login %}
+
+<div id="login">
+</div>
+
+{% endblock %}

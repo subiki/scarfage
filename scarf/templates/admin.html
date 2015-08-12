@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+
+<table>
+<tr>
+<th>username</td>
+<th>email</td>
+<th>joined</td>
+<th>last seen</td>
+<th>user type</td>
+<th></td>
+</tr>
+{% for user in pd.users %}
+    <tr>
+    <td><a href="/user/{{ user.username }}">{{ user.username }}</a></td>
+    <td>{{user.email}}</td>
+    <td>{{ user.joined }}</td>
+    <td>{{ user.lastseen }}</td>
+    <td>{{ pd.accesslevels[user.accesslevel] }}</td>
+    <td> 
+    {% if user.uid == pd.authuser.uid %}
+    you
+    {% else %}
+
+    {% if user.accesslevel == 0 %}
+    <a href="/admin/users/{{ user.username }}/accesslevel/1">Unban</a>
+    {% else %}
+
+        <a href="/admin/users/{{ user.username }}/accesslevel/0">Ban</a>
+
+        {% if user.accesslevel < 10 %}
+        <a href="/admin/users/{{ user.username }}/accesslevel/10">Promote to moderator</a>
+        {% endif %}
+
+        {% if user.accesslevel == 10 %}
+        <a href="/admin/users/{{ user.username }}/accesslevel/1">Demote</a><br>
+        <a href="/admin/users/{{ user.username }}/accesslevel/255">Promote to admin</a>
+        {% endif %}
+
+        {% if user.accesslevel == 255 %}
+        <a href="/admin/users/{{ user.username }}/accesslevel/1">Demote</a>
+        {% endif %}
+
+    {% endif %}
+    </td>
+    </tr>
+
+    {% endif %}
+    
+    </li>
+{% endfor %}
+</table>
+
+</div>
+
+{% endblock %}
