@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+
+<p>
+<div id="itemname">
+<h2>Request trade of "{{ pd.item.name }}" with user {{pd.tradeuser.username}} </h2><br />
+</div>
+
+
+{% if pd.authuser is defined and pd.authuser.uid == pd.tradeuser.uid %}
+Trading with yourself would get awful lonely...
+{% elif pd.authuser is defined %}
+
+
+    {% if pd.tradeuser.ownwant.want == 1 %}
+
+        {% if pd.authuser.ownwant.have == 1 %}
+            <form action="/user/{{ pd.tradeuser.username }}/trade/{{ pd.item.name }}" method="post" enctype="multipart/form-data">
+            This user has the following items available for trade, what do you want in return for this item?<br />
+            {% for item in pd.tradeuser.collection %}
+                {% if item.willtrade == 1 %}
+                <input type="checkbox" name="item" value="{{ item.uid }}"><a href="/item/{{ item.name }}">{{ item.name }}</a><br>
+                {% endif %}
+            {% endfor %}
+                <br />
+
+                Subject: <input type=text name=subject value="{{ pd.item.name }}" required></br>
+                <textarea name=body rows="4" cols="50">I would like to trade {{ pd.item.name }}</textarea><br />
+                <input type=submit value=Submit>
+            </form>
+
+        {% else %}
+            {% if pd.tradeuser.ownwant.willtrade != 1 %}
+                You don't seem to have this item in your collection, did you forget to <a href="/item/{{ pd.item.name }}/have">add it</a>?
+            {% endif %}
+        {% endif %}
+
+    {% endif %}
+
+    <!-- both trade types should be available if someone has an item and wants more -->
+
+    {% if pd.tradeuser.ownwant.willtrade == 1 %}
+        {{ pd.tradeuser.username }} has {{ pd.item.name }} available for trade, make an offer:
+
+        <form action="/user/{{ pd.tradeuser.username }}/trade/{{ pd.item.name }}" method="post" enctype="multipart/form-data">
+        {% for item in pd.authuser.collection %}
+            {% if item.have == 1 %}
+            <input type="checkbox" name="item" value="{{ item.uid }}">{{ item.name }}<br>
+            {% endif %}
+        {% endfor %}
+            <br />
+            Subject: <input type=text name=subject value="{{ pd.item.name }}" required></br>
+            <textarea name=body rows="4" cols="50">I would like to trade {{ pd.item.name }}</textarea><br />
+            <input type=submit value=Submit>
+        </form>
+    {% endif %}
+
+
+{% else %}
+
+You must be logged in to trade.
+
+{% endif %}
+</p>
+</div>
+
+</div>
+
+{% endblock %}

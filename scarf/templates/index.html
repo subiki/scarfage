@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+ 
+<ul id="itemlist">
+{% for item in pd.items %}
+    <li>{{ item.added }} - <a href="/item/{{ item.name }}">{{ item.name }}</a> - {{ item.description }}</li>
+{% endfor %}
+</ul><br />
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+
+<h3>Uploaded by {{ pd.moduser }}</h3>
+
+{% if pd.moduser != "anon" %}
+<a href="/mod/ban/{{ pd.moduser }}">Ban this user</a>
+{% endif %}
+
+<a href="/image/{{ pd.image.uid }}/delete">Delete image</a>
+<a href="/mod/image/{{ pd.image.uid }}/approve">Approve image</a>
+
+<pre>
+{{ pd.ascii }}
+</pre>
+
+<a href="/static/uploads/{{ pd.image.filename }}"><img src="/image/{{ pd.image.filename }}/preview" alt="{{ pd.image.filename }}"><br />
+</div>
+
+{% endblock %}

@@ -1,0 +1,299 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+    <h1>{{ pd.profileuser.username }}'s profile</h1>
+    {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
+        <h2>User info:</h2>
+        <ul>
+            <li>Member since: {{ pd.profileuser.joined }}</li>
+            <li>Last seen: {{ pd.profileuser.lastseen }}</li>
+            <li>Items added: {{ pd.profileuser.numadds }}</li>
+            <li><a href="/user/{{ pd.profileuser.username }}/pm">Send Private Message</a></li>
+        </ul>
+ 
+    {% else %}
+        <h3>Trade requests:</h3><br/>
+
+        <table border=1>
+        <tr>
+        <th>Trade status</th>
+        <th>Subject</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Sent</th>
+        <th></th>
+        </tr>
+
+        {% for pm in pd.profileuser.messages %}
+        {% if pm.status <= pm.messagestatus['rejected_trade'] and pm.parentid == 0 %}
+            <tr>
+
+            <td>
+            {% if pm.status == pm.messagestatus['unread_trade'] and pm.from_user != pd.authuser.username %}
+            <b>New</b>
+            {% elif pm.status < pm.messagestatus['settled_trade'] %}
+            Open
+            {% elif pm.status == pm.messagestatus['settled_trade'] or pm.status == pm.messagestatus['rejected_trade'] %}
+            Closed
+            {% endif %}
+            </td>
+
+            <td>{{ pm.subject }}</td>
+
+            <td>
+            <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a>
+            </td>
+
+            <td>
+            <a href="/user/{{ pm.to_user }}">{{ pm.to_user }}</a><br />
+            </td>
+
+            <td>{{ pm.sent }}</td>
+
+            <td>
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View</a></br>
+            </td>
+
+            </tr>
+
+            {% if pm.replies|length > 0 %}
+            {% for reply in pm.replies %}
+                <tr>
+
+                <td>\-</td>
+
+                <td>
+                {% if reply.status == pm.messagestatus['unread_reply'] %}
+                <b>{{ reply.subject }}</b>
+                {% else %}
+                {{ reply.subject }}
+                {% endif %}
+                </td>
+
+                <td>
+                <a href="/user/{{ reply.from_user }}">{{ reply.from_user }}</a>
+                </td>
+
+                <td>
+                <a href="/user/{{ reply.to_user }}">{{ reply.to_user }}</a>
+                </td>
+
+                <td>{{ reply.sent }}</td>
+
+                <td>
+                <a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid }}">View</a></br>
+                </td>
+
+                </tr>
+            {% endfor %}
+            {% endif %}
+
+        {% endif %}
+        {% endfor %}
+        </table>
+        </div>
+
+
+        <h3>Received private messages:</h3><br/>
+
+        <table border=1>
+        <tr>
+        <th></th>
+        <th>Subject</th>
+        <th>From</th>
+        <th>Sent</th>
+        <th></th>
+        </tr>
+
+        {% for pm in pd.profileuser.messages %}
+        {% if pm.from_user != pd.authuser.username and pm.status >= pm.messagestatus['unread_pm'] and pm.parentid == 0 %}
+            <tr>
+
+            <td></td>
+            <td>
+            {% if pm.status == pm.messagestatus['unread_pm'] %}
+            <b>{{ pm.subject }}</b>
+            {% else %}
+            {{ pm.subject }}
+            {% endif %}
+            </td>
+
+            <td>
+            <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a>
+            </td>
+
+            <td>{{ pm.sent }}</td>
+
+            <td>
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View</a></br>
+            </td>
+
+            </tr>
+
+            {% if pm.replies|length > 0 %}
+            {% for reply in pm.replies %}
+            {% if reply.to_uid == pd.authuser.uid and pm.status >= pm.messagestatus['unread_pm'] %}
+                <tr>
+
+                <td>\-</td>
+
+                <td>
+                {% if reply.status == pm.messagestatus['unread_reply'] %}
+                <b>{{ reply.subject }}</b>
+                {% else %}
+                {{ reply.subject }}
+                {% endif %}
+                </td>
+
+                <td>
+                <a href="/user/{{ reply.from_user }}">{{ reply.from_user }}</a>
+                </td>
+
+                <td>{{ reply.sent }}</td>
+
+                <td>
+                <a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid }}">View</a></br>
+                </td>
+
+                </tr>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+
+        {% endif %}
+        {% endfor %}
+
+        </table>
+
+        <h3>Sent private messages:</h3><br/>
+
+        <table border=1>
+        <tr>
+        <th>Subject</th>
+        <th>To</th>
+        <th>Sent</th>
+        <th></th>
+        </tr>
+
+        {% for pm in pd.profileuser.messages %}
+        {% if pm.from_uid == pd.authuser.uid and pm.status >= pm.messagestatus['unread_pm'] %}
+            <tr>
+
+            <td>
+            {{ pm.subject }}
+            </td>
+
+            <td>
+            <a href="/user/{{ pm.to_user }}">{{ pm.to_user }}</a><br />
+            </td>
+
+            <td>{{ pm.sent }}</td>
+
+            <td>
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View</a></br>
+            </td>
+
+            </tr>
+        {% endif %}
+        {% endfor %}
+
+        </table>
+
+
+        <h3>User info:</h3>
+        <ul>
+            <li>Email: {{ pd.profileuser.email }}</li>
+            <li>Member since: {{ pd.profileuser.joined }}</li>
+            <li>Items added: {{ pd.profileuser.numadds }}</li>
+            <li>Access level: {{ pd.accesslevels[pd.profileuser.accesslevel] }}</li>
+        </ul>
+
+        <a href="/userupdate">Reset Password or Update Email Address</a>
+    {% endif %}
+
+    <h1>{{ pd.profileuser.username }}'s collection</h1>
+    {% for item in pd.profileuser.collection %}
+    <div id="item">
+      {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
+        {% if item.have == 1 %}
+         <h4><a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
+         {% if item.images[0] is defined %}
+         <img src="/image/{{ item.images[0].filename }}/thumbnail" alt="{{ item.images[0].tag }}"> <br />
+         {% else %}
+         No thumbnail.<br />
+         {% endif %}
+
+        {% if item.hidden == 0 %}
+            <a href="/item/{{ item.name }}/hide">Hide</a>
+        {% else %}
+            - <a href="/item/{{ item.name }}/show">Show</a>
+        {% endif %}
+
+        {% if item.willtrade == 1 %}
+           - <a href="/item/{{ item.name }}/wonttrade">Don't trade</a>
+        {% else %}
+           - <a href="/item/{{ item.name }}/willtrade">Trade</a>
+        {% endif %}
+
+        - <a href="/item/{{ item.name }}/donthave">Don't have</a>
+        {% endif %}
+
+      {% else %}
+
+        {% if item.hidden == 0 and item.have == 1 %}
+        <h4>
+            {% if item.willtrade == 1 %}
+               up for trade - 
+            {% endif %}
+         <a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
+         {% if item.images[0] is defined %}
+         <img src="/image/{{ item.images[0].filename }}/thumbnail" alt="{{ item.images[0].tag }}"> <br />
+         {% else %}
+         No thumbnail.<br />
+         {% endif %}
+
+         {% if item.willtrade == 1 %}
+         <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a>
+         {% endif %}
+
+        {% endif %}
+
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <h1>{{ pd.profileuser.username }}'s wanted list</h1>
+    <div id="items">
+    {% for item in pd.profileuser.collection %}
+     {% if item.want == 1 %}
+         <h4><a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
+         {% if item.images[0] is defined %}
+         <img src="/image/{{ item.images[0].filename }}/thumbnail" alt="{{ item.images[0].tag }}"> <br />
+         {% else %}
+         No thumbnail.<br />
+         {% endif %}
+       {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
+       <a href="/item/{{ item.name }}/dontwant">Nevermind.</a>
+       {%else%}
+         <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a>
+       {% endif %}
+     {% endif %}
+    {% endfor %}
+    </div>
+
+    <h1>{{ pd.profileuser.username }}'s contributions</h1>
+    <div id="items">
+    {% for item in pd.profileuser.contribs %}
+         <h4><a href="/item/{{ item }}">{{ item }}</a></h4><br />
+    {% endfor %}
+    </div>
+
+
+</div>
+
+{% endblock %}
