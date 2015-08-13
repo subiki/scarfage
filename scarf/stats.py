@@ -1,5 +1,5 @@
 from scarf import app
-from flask import redirect, url_for, render_template, session, escape, request, flash
+from flask import render_template
 from scarflib import pagedata, get_whores_table, get_contribs_table
 
 @app.route('/stats')
