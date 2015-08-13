@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+
+<ul id="userlist">
+{% for mod in pd.mods %}
+    <li>{{ mod.user }} - {{ mod.tag }} - <a href="/mod/image/{{ mod.filename }}">{{ mod.filename }}</a> - {% if mod.flag == 1 %}flagged{% else %}not flagged{% endif %} </a></li>
+{% endfor %}
+</ul><br />
+
+</div>
+
+{% endblock %}

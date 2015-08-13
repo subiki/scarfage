@@ -1,0 +1,5 @@
+# for pip install
+
+Flask
+MySQL-python
+Pillow

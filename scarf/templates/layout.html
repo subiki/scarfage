@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <link rel="icon" type="image/png" href="/static/favicon.png" />
+    <link rel="stylesheet" href="/static/main.css" />
+    <title>{{ pd.title }}</title>
+    {% endblock %}
+</head>
+<body>
+    <div id="header">
+        <h1>Something goes here</h1><br />
+        <div class=nav>
+        <a href="/">Home</a>
+        </div>
+
+        <div class=nav>
+        <a href="/new">Upload</a>
+        </div>
+
+        <div class=nav>
+        <a href="/stats">User stats</a>
+        </div>
+
+
+        {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
+        <div class=nav>
+        <a href="/mod">Moderate</a>
+        </div>
+        {% endif %}
+
+        {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
+        <div class=nav>
+        <a href="/admin">Admin</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div id="flashes">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    </div>
+
+    {% block body %}{% endblock %}
+
+    <div id="footer">
+        {% block footer %}
+        {% endblock %}
+    </div>
+</body>
+</html>

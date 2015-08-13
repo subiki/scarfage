@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+    <form action="/new" method="post" enctype="multipart/form-data">
+        Name: <input type=text name=name><br />
+        <input type="file" name="img" accept="image/*"><br />
+        Image tag: <input type=text name=imgtag><br />
+        <textarea name=desc rows="4" cols="50">Description</textarea><br />
+        <input type=submit value=Submit>
+    </form>
+</div>
+
+{% endblock %}
+{% block login %}
+
+<div id="login">
+</div>
+
+{% endblock %}
