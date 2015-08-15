@@ -9,7 +9,7 @@ import base64
 from scarf import app
 from flask import request, redirect, session, flash, url_for
 from urlparse import urlparse, urljoin
-from sql import upsert, doupsert, read, doquery, delete, sql_escape, rinsert
+from sql import upsert, doupsert, read, doquery, delete, sql_escape 
 
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 
