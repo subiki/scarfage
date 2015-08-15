@@ -73,8 +73,8 @@ def rejecttrade(username, messageid):
     return redirect_back('index')
 
 
-@app.route('/user/<username>/trade/<itemid>', methods=['GET', 'POST'], defaults={'debug': False})
 @app.route('/user/<username>/trade/<itemid>/debug', methods=['GET'], defaults={'debug': True})
+@app.route('/user/<username>/trade/<itemid>', methods=['GET', 'POST'], defaults={'debug': False})
 def trade(username, itemid, debug):
     pd = pagedata()
 

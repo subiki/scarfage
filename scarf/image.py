@@ -10,8 +10,8 @@ import cStringIO
 
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 
-@app.route('/newimg', methods=['GET', 'POST'], defaults={'debug': False})
 @app.route('/newimg/debug', methods=['GET'], defaults={'debug': True})
+@app.route('/newimg', methods=['GET', 'POST'], defaults={'debug': False})
 def newimg(debug):
     pd = pagedata()
     if request.method == 'POST':
@@ -50,10 +50,9 @@ def reallydelete_image(img_id):
     delimg = siteimage.create(img_id)
     delimg.delete()
 
-    app.logger.info(delimg.filename + " has been deleted by " + pd.authuser.username)
-    pd.title = delimg.filename + " has been deleted"
+    pd.title = delimg.tag + " has been deleted"
     pd.accessreq = 10
-    pd.conftext = delimg.filename + " has been deleted. I hope you meant to do that."
+    pd.conftext = delimg.tag + " has been deleted. I hope you meant to do that."
     pd.conftarget = ""
     pd.conflinktext = ""
     return render_template('confirm.html', pd=pd)
@@ -67,10 +66,10 @@ def delete_image(img_id):
 
     delimg = siteimage.create(img_id)
 
-    pd.title=delimg.filename
+    pd.title=delimg.tag
 
     pd.accessreq = 10
-    pd.conftext = "Deleting image " + delimg.filename
+    pd.conftext = "Deleting image " + delimg.tag
     pd.conftarget = "/image/" + img_id + "/reallydelete"
     pd.conflinktext = "Yup, I'm sure"
 
@@ -163,8 +162,8 @@ def serve_preview(img_id):
     except IOError:
         return page_not_found(404)
 
-@app.route('/image/<img_id>', defaults={'debug': False})
 @app.route('/image/<img_id>/debug', defaults={'debug': True})
+@app.route('/image/<img_id>', defaults={'debug': False})
 def show_image(img_id, debug):
     pd = pagedata()
 

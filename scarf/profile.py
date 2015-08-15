@@ -84,8 +84,8 @@ def pwreset():
 
     return redirect(url_for('index'))
 
-@app.route('/user/<username>', defaults={'debug': False})
 @app.route('/user/<username>/debug', defaults={'debug': True})
+@app.route('/user/<username>', defaults={'debug': False})
 def show_user_profile(username, debug):
     pd = pagedata()
     pd.title = "Profile for " + username

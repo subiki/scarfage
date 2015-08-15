@@ -1,7 +1,7 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
 from scarflib import redirect_back, pagedata, siteimage, NoImage
-from sql import doupsert, upsert, doquery, read, delete
+from sql import doupsert, upsert, doquery, read, delete, sql_escape
 from main import page_not_found
 from debug import dbg
  
@@ -21,8 +21,8 @@ greyscale = [
             "#%$"
             ]
 
-@app.route('/mod', defaults={'debug': False})
 @app.route('/mod/debug', defaults={'debug': True})
+@app.route('/mod', defaults={'debug': False})
 def moderate(debug):
     pd = pagedata()
 
@@ -47,8 +47,8 @@ def moderate(debug):
                     pass
 
                 if img:
-                    mod.filename = img[0][1]
-                    mod.tag = img[0][2]
+                    mod.uid = imgid
+                    mod.tag = img[0][1]
                     mod.user = user
                     mod.flag = flag
                     pd.mods.append(mod)
@@ -90,10 +90,9 @@ def mod_img(image):
     if 'username' not in session or pd.authuser.accesslevel < 10:
         return redirect(url_for('accessdenied'))
 
+    modimg = siteimage.create(sql_escape(image))
     try:
-        sql = read('images', **{"filename": image})
-        result = doquery(sql)
-        modimg = siteimage.create(result[0][0])
+        modimg = siteimage.create(sql_escape(image))
     except NoImage:
         return page_not_found(404)
 
@@ -110,6 +109,7 @@ def mod_img(image):
         return render_template('error.html', pd=pd)
 
     # FIXME: this is broken
+    """
     im=Image.open(image)
     basewidth = 100
     wpercent = (basewidth/float(im.size[0]))
@@ -127,6 +127,8 @@ def mod_img(image):
         ascii=ascii+"\n"
 
     pd.ascii = ascii
+    """
+    pd.ascii = ""
 
     return render_template('mod_img.html', pd=pd)
 

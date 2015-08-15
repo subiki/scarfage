@@ -5,8 +5,8 @@ from main import page_not_found
 from debug import dbg
 
 
-@app.route('/user/<username>/pm/<messageid>', defaults={'debug': False})
 @app.route('/user/<username>/pm/<messageid>/debug', defaults={'debug': True})
+@app.route('/user/<username>/pm/<messageid>', defaults={'debug': False})
 def viewpm(username, messageid, debug):
     pd = pagedata()
 
@@ -29,8 +29,8 @@ def viewpm(username, messageid, debug):
 
         return render_template('pm.html', pd=pd)
  
-@app.route('/user/<username>/pm', methods=['GET', 'POST'], defaults={'debug': False})
 @app.route('/user/<username>/pm/debug', methods=['GET'], defaults={'debug': True})
+@app.route('/user/<username>/pm', methods=['GET', 'POST'], defaults={'debug': False})
 def pm(username, debug):
     pd = pagedata()
 

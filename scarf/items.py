@@ -64,8 +64,8 @@ def delete_item(item_id):
 
     return render_template('confirm.html', pd=pd)
 
-@app.route('/item/<item_id>', defaults={'debug': False})
 @app.route('/item/<item_id>/debug', defaults={'debug': True})
+@app.route('/item/<item_id>', defaults={'debug': False})
 @nocache
 def show_item(item_id, debug):
     pd = pagedata()
@@ -94,8 +94,8 @@ def show_item(item_id, debug):
 
     return render_template('item.html', pd=pd)
 
-@app.route('/item/<item_id>/edit', methods=['GET', 'POST'], defaults={'debug': False})
 @app.route('/item/<item_id>/edit/debug', methods=['GET', 'POST'], defaults={'debug': True})
+@app.route('/item/<item_id>/edit', methods=['GET', 'POST'], defaults={'debug': False})
 @nocache
 def edititem(item_id, debug):
     pd = pagedata()

@@ -311,9 +311,8 @@ class siteimage:
 
         try: 
             self.uid = result[0][0]
-            self.filename = result[0][1]
-            self.tag = result[0][2]
-            self.image = result[0][3]
+            self.tag = result[0][1]
+            self.image = result[0][2]
         except IndexError:
             raise NoImage(uid)
 
@@ -467,7 +466,6 @@ def new_img(f, title):
     
     sql = upsert("images", \
                  uid=0, \
-                 filename='none', \
                  tag=title, \
                  image=image)
 

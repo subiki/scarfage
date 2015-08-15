@@ -14,8 +14,9 @@ def get_users():
         users.append(siteuser.create(user[1]))
 
     return users
-@app.route('/admin', defaults={'debug': False})
+
 @app.route('/admin/debug', defaults={'debug': True})
+@app.route('/admin', defaults={'debug': False})
 def admin_users(debug):
     pd = pagedata()
 
