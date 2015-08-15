@@ -66,7 +66,7 @@ def get_contribs_table():
 
 @memoize_with_expiry(stats_cache, long_cache_persist)
 def user_by_uid(uid):
-    sql = read('users', **{"uid": uid})
+    sql = read('users', **{"uid": sql_escape(uid)})
     result = doquery(sql)
 
     try:
@@ -76,7 +76,7 @@ def user_by_uid(uid):
 
 @memoize_with_expiry(stats_cache, long_cache_persist)
 def uid_by_user(username):
-    sql = read('users', **{"username": username})
+    sql = read('users', **{"username": sql_escape(username)})
     result = doquery(sql)
 
     try:
@@ -118,7 +118,7 @@ class siteuser(object):
         sql = """select users.uid, users.pwhash, users.pwsalt, users.email, users.joined, userstat_lastseen.date, users.accesslevel 
                  from users
                  join userstat_lastseen on userstat_lastseen.uid=users.uid 
-                 where users.username = "%s"; """ % username
+                 where users.username = "%s"; """ % sql_escape(username)
         result = doquery(sql)
 
         try:
@@ -187,7 +187,7 @@ class siteuser(object):
             sql = """select ownwant.uid, ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden
                      from items
                      join ownwant on ownwant.itemid=items.uid
-                     where items.name='%s' and ownwant.userid='%s'""" % (item, self.uid)
+                     where items.name='%s' and ownwant.userid='%s'""" % (sql_escape(item), self.uid)
             result = doquery(sql)
 
             ret.uid = result[0][0]
@@ -254,7 +254,7 @@ class siteuser(object):
         data = doupsert(sql)
 
     def newemail(self, email):
-        self.email = email
+        self.email = sql_escape(email)
 
         sql = upsert("users", 
                      uid=self.uid, 
@@ -269,10 +269,10 @@ def new_user(username, password, email):
         salt=str(uuid.uuid4().get_hex().upper()[0:6])
         sql = upsert("users", \
                      uid=0, \
-                     username=username, \
+                     username=sql_escape(username), \
                      pwhash=gen_pwhash(password, salt), \
                      pwsalt=salt, \
-                     email=email, \
+                     email=sql_escape(email), \
                      joined=datetime.datetime.now(), \
                      accesslevel=1)
         uid = doupsert(sql)
@@ -307,7 +307,7 @@ class siteimage:
         return cls(username)
 
     def __init__(self, uid):
-        sql = read('images', **{"uid": uid})
+        sql = read('images', **{"uid": sql_escape(uid)})
         result = doquery(sql)
 
         try: 
@@ -343,7 +343,7 @@ class siteimage:
         else:
             username = "anon"
 
-        sql = upsert('imgmods', **{"imgid": self.uid, "username": username, "flag": 1})
+        sql = upsert('imgmods', **{"imgid": self.uid, "username": sql_escape(username), "flag": 1})
         result = doquery(sql)
 
 ######### Item stuff
@@ -352,7 +352,7 @@ item_cache = dict()
 
 @memoize_with_expiry(item_cache, long_cache_persist)
 def item_by_uid(uid):
-    sql = read('items', **{"uid": uid})
+    sql = read('items', **{"uid": sql_escape(uid)})
     result = doquery(sql)
 
     try:
@@ -382,7 +382,7 @@ class siteitem(__siteitem__):
         self.wantusers = []
         self.willtradeusers = []
 
-        sql = read('items', **{"name": name})
+        sql = read('items', **{"name": sql_escape(name)})
         result = doquery(sql)
 
         try:
@@ -562,7 +562,7 @@ class pmessage:
     def __init__(self, messageid):
         self.messagestatus = messagestatus
 
-        sql = read('messages', **{"uid": messageid})
+        sql = read('messages', **{"uid": sql_escape(messageid)})
         result = doquery(sql)
 
         try:
@@ -585,7 +585,6 @@ class pmessage:
 
         except IndexError:
             self.uid = 0
-
 
     def read(self):
         if self.uid > 0 and self.status == messagestatus['unread_pm'] and uid_by_user(session['username']) == self.to_uid:
@@ -660,7 +659,7 @@ class trademessage(pmessage):
         self.messagestatus = messagestatus
         self.tradestatus = tradestatus
 
-        sql = read('messages', **{"uid": messageid})
+        sql = read('messages', **{"uid": sql_escape(messageid)})
         result = doquery(sql)
 
         try:
@@ -686,7 +685,7 @@ class trademessage(pmessage):
 
         self.items = []
 
-        sql = read('tradelist', **{"messageid": messageid})
+        sql = read('tradelist', **{"messageid": sql_escape(messageid)})
         result = doquery(sql)
 
         complete = True
@@ -741,13 +740,13 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
 
         sql = upsert("messages", \
                      uid=0, \
-                     fromuserid=fromuserid, \
-                     touserid=touserid, \
-                     subject=subject, \
-                     message=message, \
-                     parent=parent, \
+                     fromuserid=sql_escape(fromuserid), \
+                     touserid=sql_escape(touserid), \
+                     subject=sql_escape(subject), \
+                     message=sql_escape(message), \
+                     parent=sql_escape(parent), \
                      sent=datetime.datetime.now(), \
-                     status=status)
+                     status=sql_escape(status))
         data = doupsert(sql)
     except Exception as e:
         raise
@@ -758,10 +757,10 @@ def add_tradeitem(itemid, messageid, userid, acceptstatus):
     try:
         sql = upsert("tradelist", \
                      uid=0, \
-                     itemid=itemid, \
-                     messageid=messageid, \
-                     userid=userid, \
-                     acceptstatus=acceptstatus)
+                     itemid=sql_escape(itemid), \
+                     messageid=sql_escape(messageid), \
+                     userid=sql_escape(userid), \
+                     acceptstatus=sql_escape(acceptstatus))
         data = doupsert(sql)
     except Exception as e:
         return False

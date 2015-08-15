@@ -36,8 +36,14 @@ def upsert(table, **kwargs):
     return "".join(sql)
 
 def sql_escape(string):
-    esc = db.escape(string.encode('utf-8').strip())
-    return esc[1:-1]
+    db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
+    db.set_character_set('utf8')
+    esc = db.escape(str(string))
+
+    if esc.startswith("'") and esc.endswith("'"):
+        return esc[1:-1]
+
+    return esc
 
 def delete(table, **kwargs):
     """ deletes rows from table where **kwargs match """

@@ -65,6 +65,7 @@ def show_item(item_id):
 
     try:
         showitem = siteitem(item_id)
+        # todo: http://htmlpurifier.org/
         showitem.description_html = markdown.markdown(showitem.description)
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
@@ -86,7 +87,6 @@ def show_item(item_id):
 def edititem(item_id):
     pd = pagedata()
     if request.method == 'POST':
-            #return redirect("/item/" + item_id + "/edit")
         if 'username' in session:
             uid = pd.authuser.uid
         else:
