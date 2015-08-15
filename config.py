@@ -1,7 +1,5 @@
 # copy to scarf and fill this in, do not change this file
 
-upload_dir = ''
-
 dbHost = 'localhost'
 
 dbName = 'scarfage'
