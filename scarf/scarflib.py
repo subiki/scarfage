@@ -442,48 +442,6 @@ class siteitem(__siteitem__):
         sql = delete('tradelist', **{"itemid": self.uid}) 
         result = doquery(sql) 
 
-    def newimg(self, f, tag):
-        if not f.filename == '':
-            fuuid = uuid.uuid4().get_hex()
-            try:
-                newname = fuuid + os.path.splitext(f.filename)[1]
-                f.save(upload_dir + '/' + newname)
-            except Exception as e:
-                raise
-
-            if imghdr.what(upload_dir + '/' + newname):
-                sql = upsert("images", \
-                             uid=0, \
-                             filename=newname, \
-                             tag=tag)
-                imgid = doupsert(sql)
-
-                sql = upsert("itemimg", \
-                             imgid=imgid, \
-                             itemid=self.uid)
-                data = doupsert(sql)
-
-                try:
-                    username = session['username']
-                except KeyError:
-                    username = "anon"
-
-                sql = upsert("imgmods", \
-                             username=username, \
-                             imgid=imgid)
-                data = doupsert(sql)
-
-                flash('Uploaded ' + f.filename)
-                return True
-            else:
-                try:
-                    os.remove(upload_dir + '/' + newname)
-                except:
-                    app.logger.error("Error removing failed image upload: " + upload_dir + '/' + newname)
-
-                flash(f.filename + " is not an image.")
-                return False
-
     def update(self):
         sql = upsert("items", \
                      uid=self.uid, \
@@ -508,6 +466,44 @@ def new_item(name, description, userid):
                      uid=userid, 
                      itemid=data)
         data = doupsert(sql)
+
+def new_img(f, title):
+    if not f.filename == '':
+        fuuid = uuid.uuid4().get_hex()
+        try:
+            newname = fuuid + os.path.splitext(f.filename)[1]
+            f.save(upload_dir + '/' + newname)
+        except Exception as e:
+            raise
+
+        if imghdr.what(upload_dir + '/' + newname):
+            sql = upsert("images", \
+                         uid=0, \
+                         filename=newname, \
+                         tag=title)
+            imgid = doupsert(sql)
+
+            try:
+                username = session['username']
+            except KeyError:
+                username = "anon"
+
+            sql = upsert("imgmods", \
+                         username=username, \
+                         imgid=imgid)
+            data = doupsert(sql)
+
+            flash('Uploaded ' + f.filename)
+            return imgid 
+        else:
+            try:
+                os.remove(upload_dir + '/' + newname)
+            except:
+                app.logger.error("Error removing failed image upload: " + upload_dir + '/' + newname)
+
+            flash(f.filename + " is not an image.")
+            return None
+
 
 
 @memoize_with_expiry(item_cache, long_cache_persist)

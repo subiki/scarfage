@@ -2,11 +2,36 @@ from StringIO import StringIO
 from PIL import Image
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, flash, send_file
-from scarflib import redirect_back, pagedata, siteimage, siteitem, NoItem, NoImage
+from scarflib import redirect_back, pagedata, siteimage, siteitem, NoItem, NoImage, new_img
 from main import page_not_found
 
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 from config import upload_dir
+
+@app.route('/newimg', methods=['GET', 'POST'])
+def newimg():
+    pd = pagedata()
+    if request.method == 'POST':
+        if request.form['title'] == '':
+            # todo: re fill form
+            flash('No name?')
+            return redirect(url_for('newimg'))
+
+        if 'username' in session:
+            uid = pd.authuser.uid
+        else:
+            uid = 0 
+
+        if 'img' in request.files:
+            img = new_img(request.files['img'], request.form['title'])
+
+            if img:
+                flash('Uploaded image!')
+                return redirect('/image/' + str(img))
+
+    pd.title="Add New Item"
+
+    return render_template('newimg.html', pd=pd)
 
 @app.route('/image/<img_id>/reallydelete')
 def reallydelete_image(img_id):
@@ -55,30 +80,6 @@ def flag_image(img_id):
 
     return redirect_back('index') 
 
-@app.route('/image/upload', methods=['POST'])
-def imageupload():
-    try:
-        item = siteitem(request.form['itemname'])
-    except NoItem:
-        flash('Error uploading image')
-        return redirect_back('/index')
-
-    if request.method == 'POST':
-        if request.form['tag'] == '':
-            flash('Please add a tag for this picture.')
-            return redirect_back('/index')
-
-        if request.files['image'].filename == '':
-            flash('Please upload something.')
-            return redirect_back('/index')
-
-        # TODO support upload from URL
-
-        if item.newimg(request.files['image'], request.form['tag']):
-            flash('Image added to ' + request.form['itemname'])
-
-    return redirect_back('/index')
-
 def serve_pil_image(pil_img):
     img_io = StringIO()
 
@@ -118,21 +119,37 @@ def resize(img, maxwidth, maxheight):
 
     return img.resize((int(hsize * factor), int(vsize * factor)), Image.ANTIALIAS)
 
-# TODO: vvv
+# TODO: add to db, get off of local FS
+# todo: caching
 img_cache = dict()
-@app.route('/image/<image>/thumbnail')
-def serve_thumb(image):
+
+@app.route('/image/<img_id>/full')
+def serve_full(img_id):
     try:
-        img=Image.open(upload_dir + '/' + image)
+        simg = siteimage.create(img_id)
+
+        img=Image.open(upload_dir + '/' + simg.filename)
+        return serve_pil_image(img)
+    except IOError:
+        return page_not_found(404)
+
+@app.route('/image/<img_id>/thumbnail')
+def serve_thumb(img_id):
+    try:
+        simg = siteimage.create(img_id)
+
+        img=Image.open(upload_dir + '/' + simg.filename)
         img = resize(img, 800.0, 200.0)
         return serve_pil_image(img)
     except IOError:
         return page_not_found(404)
 
-@app.route('/image/<image>/preview')
-def serve_preview(image):
+@app.route('/image/<img_id>/preview')
+def serve_preview(img_id):
     try:
-        img=Image.open(upload_dir + '/' + image)
+        simg = siteimage.create(img_id)
+
+        img=Image.open(upload_dir + '/' + simg.filename)
         img = resize(img, 800.0, 800.0)
         return serve_pil_image(img)
     except IOError:

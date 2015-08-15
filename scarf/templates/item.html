@@ -6,9 +6,12 @@
 
 <div id="content">
 
-<p>
 <div id="itemname">
 <h1>{{ pd.item.name }}</h1> <a href="/item/{{ pd.item.name }}/edit">Edit</a><br />
+</div>
+
+<div id="description">
+{{ pd.item.description_html|safe }}
 </div>
 
 <div id="itemactions">
@@ -46,34 +49,6 @@
 {% endif %}
 
 </div>
-
-<div id="description">
-{{ pd.item.description_html|safe }}
-</div>
-
-<br>
-<div id="itemimg">
-{% for image in pd.item.images %}
-    <a href="/image/{{ image.uid }}"><img src="/image/{{ image.filename }}/thumbnail" alt="{{ image.tag }}"></a><br />
-
-{% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
-<a class=small href="/image/{{ image.uid }}/delete">Delete image</a><br />
-{% endif %}
-<a class=small href="/image/{{ image.uid }}/flag">Flag image for review</a><br />
-{% endfor %}
-
-{% if pd.authuser is not undefined %}
-    Add an image:<br />
-    <form action="/image/upload" method="post" enctype="multipart/form-data">
-        Tag: <input type=text name=tag><br />
-        <input type="file" name="image" accept="image/*"><br />
-        <input type="hidden" name="itemname" value="{{ pd.item.name }}">
-        <input type=submit value=Submit>
-    </form>
-{% endif %}
-</p>
-</div>
-
 <div class="havecount">
 {% if pd.item.have == 1 %}
 1 person has this<br />

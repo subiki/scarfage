@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<form>Create a new item: <input name="name" type="text" value="Title of item"><input name="theneedful" type="button" value="Edit" onclick="location.href='/item/' + this.form.elements['name'].value"> 
+</form>
+Clicking 'Edit' will redirect you to a page to add the item's description and any links to images you want.
+
+{% endblock %}
+{% block login %}
+
+<div id="login">
+</div>
+
+{% endblock %}

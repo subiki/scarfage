@@ -13,7 +13,12 @@ sys.setdefaultencoding('utf8')
 
 @app.route('/item/')
 def itemroot():
-    return redirect(url_for('index'))
+    return redirect(url_for('newitem'))
+
+@app.route('/newitem')
+def newitem():
+    pd = pagedata()
+    return render_template('contribute.html', pd=pd)
 
 @app.route('/item/<item_id>/reallydelete')
 def reallydelete_item(item_id):
@@ -66,6 +71,7 @@ def show_item(item_id):
     try:
         showitem = siteitem(item_id)
         # todo: http://htmlpurifier.org/
+        # todo: memoize
         showitem.description_html = markdown.markdown(showitem.description)
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
@@ -113,51 +119,3 @@ def edititem(item_id):
     return render_template('edititem.html', pd=pd)
 
 
-@app.route('/new', methods=['GET', 'POST'])
-def newitem():
-    pd = pagedata()
-    if request.method == 'POST':
-        if request.form['name'] == '':
-            flash('No name?')
-            return redirect(url_for('newitem'))
-
-        invalid = '[]{}\'"<>;/\\'
-        for c in invalid:
-            if c in request.form['name']:
-                flash("Invalid character in name: " + c)
-                return redirect(url_for('newitem'))
-
-        if 'username' in session:
-            uid = pd.authuser.uid
-        else:
-            uid = 0 
-
-        if request.form['imgtag'] == '':
-            flash('Please add a tag for this picture.')
-# TODO: re fill form
-            return redirect(url_for('newitem'))
-
-        try:
-            newitem = siteitem(request.form['name'])
-            flash('An item with that name already exists')
-            return redirect(url_for('newitem'))
-        except NoItem:
-            new_item(request.form['name'], request.form['desc'], uid)
-
-        try:
-            newitem = siteitem(request.form['name'])
-
-            file = request.files['img']
-            if file:
-                newitem.newimg(request.files['img'], request.form['imgtag'])
-
-        except NoItem:
-            flash('Error adding item!')
-            return redirect(url_for('newitem'))
-
-        flash('Added item!')
-        return redirect('/item/' + request.form['name'])
-
-    pd.title="Add New Item"
-
-    return render_template('upload.html', pd=pd)

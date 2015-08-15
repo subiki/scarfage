@@ -4,6 +4,8 @@
 
 {% include "login.html" %}
 
+Scarfage supports <a href="https://daringfireball.net/projects/markdown/syntax">markdown</a>.<br />
+
 <div id="content">
     <form action="/item/{{ pd.item_name }}/edit" method="post" enctype="multipart/form-data">
         <h3>Editing: "{{ pd.item_name }}" {% if not pd.item %}(new item){% endif %} </h3><br />

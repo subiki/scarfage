@@ -5,11 +5,12 @@
 {% include "login.html" %}
 
 <div id="content">
-    <form action="/new" method="post" enctype="multipart/form-data">
-        Name: <input type=text name=name><br />
+    <form action="/newimg" method="post" enctype="multipart/form-data">
+        Image title:<br />
+        <input type=text name=title><br />
+        Image description:<br />
+        <textarea name=desc rows="4" cols="50"></textarea><br />
         <input type="file" name="img" accept="image/*"><br />
-        Image tag: <input type=text name=imgtag><br />
-        <textarea name=desc rows="4" cols="50">Description</textarea><br />
         <input type=submit value=Submit>
     </form>
 </div>
