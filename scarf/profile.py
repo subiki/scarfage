@@ -1,6 +1,6 @@
 import re
 from scarf import app
-from flask import redirect, url_for, render_template, session, escape, request, flash
+from flask import redirect, url_for, render_template, session, request, flash
 from scarflib import redirect_back, pagedata, siteuser, NoUser
 from main import page_not_found
 
@@ -31,9 +31,9 @@ def emailupdate():
                 flash("Please check your current password and try again")
                 return redirect(url_for('userupdate'))
 
-            email = escape(request.form['email'])
+            email = request.form['email']
 
-            if not re.match("[^@]+@[^@]+\.[^@]+", escape(request.form['email'])):
+            if not re.match("[^@]+@[^@]+\.[^@]+", request.form['email']):
                 flash("Invalid email address")
                 return redirect(url_for('userupdate'))
 
@@ -62,8 +62,8 @@ def pwreset():
                 flash("Please check your current password and try again")
                 return redirect(url_for('userupdate'))
 
-            pass1 = escape(request.form['newpassword'])
-            pass2 = escape(request.form['newpassword2'])
+            pass1 = request.form['newpassword']
+            pass2 = request.form['newpassword2']
 
             if pass1 != pass2:
                 flash("The passwords entered don't match.")
@@ -76,7 +76,7 @@ def pwreset():
             if ret:
                 return redirect_back(url_for('userupdate'))
 
-            user.newpassword(escape(request.form['newpassword']))
+            user.newpassword(request.form['newpassword'])
 
             flash("Your password has been reset.")
             return redirect(url_for('userupdate'))
@@ -86,10 +86,10 @@ def pwreset():
 @app.route('/user/<username>')
 def show_user_profile(username):
     pd = pagedata()
-    pd.title = "Profile for " + escape(username)
+    pd.title = "Profile for " + username
 
     try:
-        pd.profileuser = siteuser.create(escape(username))
+        pd.profileuser = siteuser.create(username)
         pd.profileuser.pop_collection()
         pd.profileuser.pop_messages()
     except NoUser:

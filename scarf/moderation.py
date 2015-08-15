@@ -1,5 +1,5 @@
 from scarf import app
-from flask import redirect, url_for, render_template, session, escape, request, flash
+from flask import redirect, url_for, render_template, session, request, flash
 from scarflib import redirect_back, pagedata, siteimage, NoImage
 from sql import doupsert, upsert, doquery, read, delete
 from main import page_not_found
@@ -70,11 +70,11 @@ def mod_ban_user(user):
     if 'username' not in session or pd.authuser.accesslevel < 255:
         return redirect(url_for('accessdenied'))
 
-    pd.title="Banning user " + escape(user)
+    pd.title="Banning user " + user
 
     pd.accessreq = 10 
-    pd.conftext = "Banning user " + escape(user)
-    pd.conftarget = "/admin/users/" + escape(user) + "/accesslevel/0"
+    pd.conftext = "Banning user " + user
+    pd.conftarget = "/admin/users/" + user + "/accesslevel/0"
     pd.conflinktext = "Yup, I'm sure."
 
     return render_template('confirm.html', pd=pd)
@@ -87,7 +87,7 @@ def mod_img(image):
         return redirect(url_for('accessdenied'))
 
     try:
-        sql = read('images', **{"filename": escape(image)})
+        sql = read('images', **{"filename": image})
         result = doquery(sql)
         modimg = siteimage.create(result[0][0])
     except NoImage:
@@ -105,7 +105,7 @@ def mod_img(image):
         pd.errortext = "SQL error"
         return render_template('error.html', pd=pd)
 
-    im=Image.open(upload_dir + '/' + escape(image))
+    im=Image.open(upload_dir + '/' + image)
     basewidth = 100
     wpercent = (basewidth/float(im.size[0]))
     hsize = int((float(im.size[1])*float(wpercent))) / 2
@@ -130,7 +130,7 @@ def mod_img_approve(imageid):
     pd = pagedata()
 
     try:
-        modimg = siteimage.create(escape(imageid))
+        modimg = siteimage.create(imageid)
     except:
         flash('Error during moderation')
         return redirect(url_for('moderate'))

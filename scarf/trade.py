@@ -1,5 +1,5 @@
 from scarf import app
-from flask import escape, flash, render_template, session, request, redirect
+from flask import flash, render_template, session, request, redirect
 from scarflib import pagedata, NoItem, NoUser, siteuser, siteitem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, pmessage, trademessage, messagestatus, tradeitem, tradestatus
 from main import page_not_found
 
@@ -13,12 +13,12 @@ def accepttradeitem(username, messageid, item):
 
     if 'username' in session:
         try:
-            ti = tradeitem(escape(item))
+            ti = tradeitem(item)
         except:
             return page_not_found(404)
 
         try:
-            t = trademessage.create(escape(messageid))
+            t = trademessage.create(messageid)
         except:
             return page_not_found(404)
 
@@ -35,7 +35,7 @@ def rejecttradeitem(username, messageid, item):
 
     if 'username' in session:
         try:
-            t = tradeitem(escape(item))
+            t = tradeitem(item)
             t.reject()
         except:
             return page_not_found(404)
@@ -50,7 +50,7 @@ def settletrade(username, messageid):
         return page_not_found(404)
 
     if 'username' in session:
-        t = trademessage.create(escape(messageid))
+        t = trademessage.create(messageid)
         t.settle()
             #return page_not_found(404)
 
@@ -65,7 +65,7 @@ def rejecttrade(username, messageid):
 
     if 'username' in session:
         try:
-            t = trademessage.create(escape(messageid))
+            t = trademessage.create(messageid)
             t.reject()
         except:
             return page_not_found(404)
@@ -77,7 +77,7 @@ def trade(username, itemid):
     pd = pagedata()
 
     try:
-        pd.tradeuser = siteuser.create(escape(username))
+        pd.tradeuser = siteuser.create(username)
     except (NoItem, NoUser):
         return page_not_found(404)
 
@@ -110,14 +110,14 @@ def trade(username, itemid):
 
     try:
         pd.authuser.pop_collection()
-        pd.authuser.ownwant = pd.authuser.query_collection(escape(itemid))
+        pd.authuser.ownwant = pd.authuser.query_collection(itemid)
     except AttributeError:
         pass
 
     try:
         pd.tradeuser.pop_collection()
-        pd.tradeuser.ownwant = pd.tradeuser.query_collection(escape(itemid))
-        pd.item = siteitem(escape(itemid))
+        pd.tradeuser.ownwant = pd.tradeuser.query_collection(itemid)
+        pd.item = siteitem(itemid)
     except (NoItem, NoUser):
         return page_not_found(404)
 

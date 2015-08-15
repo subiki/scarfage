@@ -8,11 +8,11 @@
 
 <p>
 <div id="itemname">
-<h1>{{ pd.item.name }}</h1><br />
+<h1>{{ pd.item.name }}</h1> <a href="/item/{{ pd.item.name }}/edit">Edit</a><br />
 </div>
 
+<div id="itemactions">
 {% if pd.authuser is defined %}
-    <div id="itemactions">
     {% if pd.iteminfo is defined and pd.iteminfo.have == 0 %}
         <a href="/item/{{ pd.item.name }}/have">I own this</a></br>
 
@@ -48,7 +48,7 @@
 </div>
 
 <div id="description">
-{{ pd.item.description }}<br />
+{{ pd.item.description_html|safe }}
 </div>
 
 <br>

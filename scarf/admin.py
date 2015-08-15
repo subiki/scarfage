@@ -1,5 +1,5 @@
 from scarf import app
-from flask import redirect, url_for, render_template, session, escape, request, flash
+from flask import redirect, url_for, render_template, session, request, flash
 from scarflib import redirect_back, pagedata, NoUser, siteuser
 from sql import read, doquery
 
@@ -44,7 +44,7 @@ def admin_set_accesslevel(user, level):
         return redirect_back('index')
 
     try:
-        moduser = siteuser.create(escape(user))
+        moduser = siteuser.create(user)
 
     except NoUser:
         app.logger.error('Accesslevel change attempted for invalid user by: ' + pd.authuser.username)
@@ -56,7 +56,7 @@ def admin_set_accesslevel(user, level):
         flash("Please contact an admin to modify this user's account.")
         return redirect_back('index')
 
-    moduser.newaccesslevel(escape(level))
+    moduser.newaccesslevel(level)
     app.logger.info('Accesslevel change for ' + user)
     flash('User ' + user + '\'s accesslevel has been set to ' + level)
 

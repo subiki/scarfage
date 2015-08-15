@@ -1,5 +1,5 @@
 from scarf import app
-from flask import render_template, session, escape, request, flash
+from flask import render_template, session, request, flash
 from sql import doquery, read
 from scarflib import pagedata, all_items
 

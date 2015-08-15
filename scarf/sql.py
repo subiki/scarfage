@@ -7,6 +7,8 @@ import datetime
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 from config import dbHost, dbName, dbUser, dbPass
 
+#TODO redo escaping
+
 db = None
 
 def read(table, **kwargs):
@@ -33,6 +35,10 @@ def upsert(table, **kwargs):
     sql.append(";")
     return "".join(sql)
 
+def sql_escape(string):
+    esc = db.escape(string.encode('utf-8').strip())
+    return esc[1:-1]
+
 def delete(table, **kwargs):
     """ deletes rows from table where **kwargs match """
     sql = list()
@@ -53,7 +59,13 @@ def doupsert(query):
             app.logger.info("Connecting to db host")
             db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
 
+            db.set_character_set('utf8')
+
         cursor = db.cursor()
+        cursor.execute('SET NAMES utf8;')
+        cursor.execute('SET CHARACTER SET utf8;')
+        cursor.execute('SET character_set_connection=utf8;')
+
         cursor.execute(query)
         db.commit()
         cursor.close()
@@ -76,6 +88,14 @@ def doquery(query):
         if db is None:
             app.logger.info("Connecting to db host")
             db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
+
+            db.set_character_set('utf8')
+            cursor = db.cursor()
+            cursor.execute('SET NAMES utf8;')
+            cursor.execute('SET CHARACTER SET utf8;')
+            cursor.execute('SET character_set_connection=utf8;')
+            db.commit()
+            cursor.close()
 
         cur = db.cursor()
         cur.execute(query)

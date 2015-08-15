@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+    <form action="/item/{{ pd.item_name }}/edit" method="post" enctype="multipart/form-data">
+        <h3>Editing: "{{ pd.item_name }}" {% if not pd.item %}(new item){% endif %} </h3><br />
+        <textarea name=desc rows="30" cols="120">{% if pd.item %}{{ pd.item.description }}{% endif %}</textarea><br />
+        <input type=submit value=Submit>
+    </form>
+</div>
+
+{% endblock %}
+{% block login %}
+
+<div id="login">
+</div>
+
+{% endblock %}

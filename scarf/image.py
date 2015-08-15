@@ -1,7 +1,7 @@
 from StringIO import StringIO
 from PIL import Image
 from scarf import app
-from flask import redirect, url_for, request, render_template, session, escape, flash, send_file
+from flask import redirect, url_for, request, render_template, session, flash, send_file
 from scarflib import redirect_back, pagedata, siteimage, siteitem, NoItem, NoImage
 from main import page_not_found
 
@@ -15,7 +15,7 @@ def reallydelete_image(img_id):
     if not pd.authuser.accesslevel >= 10:
         return redirect(url_for('accessdenied'))
 
-    delimg = siteimage.create(escape(img_id))
+    delimg = siteimage.create(img_id)
     delimg.delete()
 
     app.logger.info(delimg.filename + " has been deleted by " + pd.authuser.username)
@@ -33,13 +33,13 @@ def delete_image(img_id):
     if not pd.authuser.accesslevel >= 10:
         return redirect(url_for('accessdenied'))
 
-    delimg = siteimage.create(escape(img_id))
+    delimg = siteimage.create(img_id)
 
-    pd.title=escape(delimg.filename)
+    pd.title=delimg.filename
 
     pd.accessreq = 10
     pd.conftext = "Deleting image " + delimg.filename
-    pd.conftarget = "/image/" + escape(img_id) + "/reallydelete"
+    pd.conftarget = "/image/" + img_id + "/reallydelete"
     pd.conflinktext = "Yup, I'm sure"
 
     return render_template('confirm.html', pd=pd)
@@ -48,7 +48,7 @@ def delete_image(img_id):
 def flag_image(img_id):
     pd = pagedata()
 
-    flagimg = siteimage.create(escape(img_id))
+    flagimg = siteimage.create(img_id)
     flagimg.flag()
 
     flash("The image has been flagged and will be reviewed by a moderator.")
@@ -58,7 +58,7 @@ def flag_image(img_id):
 @app.route('/image/upload', methods=['POST'])
 def imageupload():
     try:
-        item = siteitem(escape(request.form['itemname']))
+        item = siteitem(request.form['itemname'])
     except NoItem:
         flash('Error uploading image')
         return redirect_back('/index')
@@ -74,8 +74,8 @@ def imageupload():
 
         # TODO support upload from URL
 
-        if item.newimg(request.files['image'], escape(request.form['tag'])):
-            flash('Image added to ' + escape(request.form['itemname']))
+        if item.newimg(request.files['image'], request.form['tag']):
+            flash('Image added to ' + request.form['itemname'])
 
     return redirect_back('/index')
 
@@ -123,7 +123,7 @@ img_cache = dict()
 @app.route('/image/<image>/thumbnail')
 def serve_thumb(image):
     try:
-        img=Image.open(upload_dir + '/' + escape(image))
+        img=Image.open(upload_dir + '/' + image)
         img = resize(img, 800.0, 200.0)
         return serve_pil_image(img)
     except IOError:
@@ -132,7 +132,7 @@ def serve_thumb(image):
 @app.route('/image/<image>/preview')
 def serve_preview(image):
     try:
-        img=Image.open(upload_dir + '/' + escape(image))
+        img=Image.open(upload_dir + '/' + image)
         img = resize(img, 800.0, 800.0)
         return serve_pil_image(img)
     except IOError:
@@ -143,8 +143,8 @@ def show_image(img_id):
     pd = pagedata()
 
     try:
-        pd.img = siteimage.create(escape(img_id))
-        pd.title=escape(pd.img.tag)
+        pd.img = siteimage.create(img_id)
+        pd.title=pd.img.tag
     except NoImage:
         return page_not_found(404)
 

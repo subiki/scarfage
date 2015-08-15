@@ -21,6 +21,13 @@ html {
     width: 95%;
 }
 
+#description {
+    float:left;
+    position:relative;
+    padding: 10px;
+    width: 95%;
+}
+
 #flashes {
     clear: both;
     padding: 5px 5px;
@@ -34,8 +41,7 @@ html {
 }
 
 #itemactions {
-    position: absolute;
-    right:0;
+    position: relative;
     width:200px;
     margin-right: 20px;
 }

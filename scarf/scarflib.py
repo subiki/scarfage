@@ -6,9 +6,9 @@ import uuid
 import imghdr
 
 from scarf import app
-from flask import request, redirect, session, escape, flash, url_for
+from flask import request, redirect, session, flash, url_for
 from urlparse import urlparse, urljoin
-from sql import upsert, doupsert, read, doquery, delete
+from sql import upsert, doupsert, read, doquery, delete, sql_escape
 
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 
@@ -32,9 +32,9 @@ class pagedata:
 
     def __init__(self):
         if 'username' in session:
-            self.authuser = siteuser.create(escape(session['username']))
+            self.authuser = siteuser.create(session['username'])
             try:
-                self.authuser = siteuser.create(escape(session['username']))
+                self.authuser = siteuser.create(session['username'])
             except:
                 pass
 
@@ -426,7 +426,7 @@ class siteitem(__siteitem__):
 
     def delete(self):
         for i in self.images: 
-            delimg = siteimage.create(escape(i.uid))
+            delimg = siteimage.create(i.uid)
             delimg.delete()
      
         sql = delete('items', **{"uid": self.uid}) 
@@ -455,7 +455,7 @@ class siteitem(__siteitem__):
                 sql = upsert("images", \
                              uid=0, \
                              filename=newname, \
-                             tag=escape(tag))
+                             tag=tag)
                 imgid = doupsert(sql)
 
                 sql = upsert("itemimg", \
@@ -484,11 +484,20 @@ class siteitem(__siteitem__):
                 flash(f.filename + " is not an image.")
                 return False
 
+    def update(self):
+        sql = upsert("items", \
+                     uid=self.uid, \
+                     name=sql_escape(self.name), \
+                     description=sql_escape(self.description), \
+                     modified=datetime.datetime.now())
+
+        data = doupsert(sql)
+
 def new_item(name, description, userid):
     sql = upsert("items", \
                  uid=0, \
-                 name=name, \
-                 description=description, \
+                 name=sql_escape(name), \
+                 description=sql_escape(description), \
                  added=datetime.datetime.now(), \
                  modified=datetime.datetime.now())
 

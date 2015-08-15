@@ -1,5 +1,5 @@
 from scarf import app
-from flask import escape, flash, render_template, session, request, redirect
+from flask import flash, render_template, session, request, redirect
 from scarflib import pagedata, NoItem, NoUser, siteuser, redirect_back, user_by_uid, send_pm, pmessage, messagestatus, trademessage
 from main import page_not_found
 
@@ -11,12 +11,12 @@ def viewpm(username, messageid):
         return page_not_found(404)
 
     if 'username' in session:
-        pm = trademessage.create(escape(messageid))
+        pm = trademessage.create(messageid)
         pm.read()
         pm.load_replies()
 
         if pm.messagestatus < messagestatus['unread_pm']:
-            pm = trademessage.create(escape(messageid))
+            pm = trademessage.create(messageid)
 
         pd.pm = pm
 
@@ -27,7 +27,7 @@ def pm(username):
     pd = pagedata()
 
     try:
-        pd.recipient = siteuser.create(escape(username))
+        pd.recipient = siteuser.create(username)
     except (NoItem, NoUser):
         return page_not_found(404)
 

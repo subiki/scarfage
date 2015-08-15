@@ -3,3 +3,4 @@
 Flask
 MySQL-python
 Pillow
+markdown

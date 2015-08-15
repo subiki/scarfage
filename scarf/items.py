@@ -1,8 +1,14 @@
 from scarf import app
-from flask import redirect, url_for, request, render_template, session, escape, flash
+from flask import redirect, url_for, request, render_template, session, flash
 from werkzeug import secure_filename
 from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back
 from main import page_not_found
+
+import markdown
+
+import sys
+reload(sys)  
+sys.setdefaultencoding('utf8')
 
 @app.route('/item/')
 def itemroot():
@@ -11,7 +17,7 @@ def itemroot():
 @app.route('/item/<item_id>/reallydelete')
 def reallydelete_item(item_id):
     try:
-        delitem = siteitem(escape(item_id))
+        delitem = siteitem(item_id)
     except NoItem: 
         return page_not_found(404)
 
@@ -20,7 +26,7 @@ def reallydelete_item(item_id):
     if not pd.authuser.accesslevel == 255:
         return redirect(url_for('accessdenied'))
 
-    pd.title=escape(item_id) + " has been deleted"
+    pd.title=item_id + " has been deleted"
 
     delitem.delete()
 
@@ -33,7 +39,7 @@ def reallydelete_item(item_id):
 @app.route('/item/<item_id>/delete')
 def delete_item(item_id):
     try:
-        delitem = siteitem(escape(item_id))
+        delitem = siteitem(item_id)
     except NoItem: 
         return page_not_found(404)
 
@@ -42,7 +48,7 @@ def delete_item(item_id):
     if not pd.authuser.accesslevel == 255:
         return redirect(url_for('accessdenied'))
 
-    pd.title=escape(item_id)
+    pd.title=item_id
 
     pd.accessreq = 255
     pd.conftext = "Deleting item " + delitem.name + ". This will also delete all trades but not the associated PMs. If this item has open trades you are going to confuse people. Are you really sure you want to do this?"
@@ -56,9 +62,10 @@ def show_item(item_id):
     pd = pagedata()
 
     try:
-        showitem = siteitem(escape(item_id))
+        showitem = siteitem(item_id)
+        showitem.description_html = markdown.markdown(showitem.description)
     except NoItem:
-        return page_not_found(404)
+        return redirect("/item/" + item_id + "/edit")
 
     if 'username' in session:
         try:
@@ -71,6 +78,37 @@ def show_item(item_id):
     pd.item = showitem
 
     return render_template('item.html', pd=pd)
+
+@app.route('/item/<item_id>/edit', methods=['GET', 'POST'])
+def edititem(item_id):
+    pd = pagedata()
+    if request.method == 'POST':
+            #return redirect("/item/" + item_id + "/edit")
+        if 'username' in session:
+            uid = pd.authuser.uid
+        else:
+            uid = 0 
+
+        if 'desc' in request.form:
+            try:
+                pd.item = siteitem(item_id)
+                pd.item.description = request.form['desc']
+                pd.item.update()
+            except NoItem:
+                new_item(item_id, request.form['desc'], uid)
+
+        flash('Edited item!')
+        return redirect('/item/' + item_id)
+
+    try:
+        pd.item = siteitem(item_id)
+    except:
+        pass
+
+    pd.title="Editing: " + item_id
+    pd.item_name = item_id
+    return render_template('edititem.html', pd=pd)
+
 
 @app.route('/new', methods=['GET', 'POST'])
 def newitem():
@@ -97,26 +135,26 @@ def newitem():
             return redirect(url_for('newitem'))
 
         try:
-            newitem = siteitem(escape(request.form['name']))
+            newitem = siteitem(request.form['name'])
             flash('An item with that name already exists')
             return redirect(url_for('newitem'))
         except NoItem:
-            new_item(escape(request.form['name']), escape(request.form['desc']), uid)
+            new_item(request.form['name'], request.form['desc'], uid)
 
         try:
-            newitem = siteitem(escape(request.form['name']))
+            newitem = siteitem(request.form['name'])
 
             file = request.files['img']
             if file:
-                newitem.newimg(request.files['img'], escape(request.form['imgtag']))
+                newitem.newimg(request.files['img'], request.form['imgtag'])
 
         except NoItem:
             flash('Error adding item!')
             return redirect(url_for('newitem'))
 
         flash('Added item!')
-        return redirect('/item/' + escape(request.form['name']))
+        return redirect('/item/' + request.form['name'])
 
     pd.title="Add New Item"
 
-    return render_template('newitem.html', pd=pd)
+    return render_template('upload.html', pd=pd)
