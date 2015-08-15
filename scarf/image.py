@@ -1,13 +1,14 @@
 from StringIO import StringIO
 from PIL import Image
 from scarf import app
-from flask import redirect, url_for, request, render_template, session, flash, send_file
+from flask import make_response, redirect, url_for, request, render_template, session, flash, send_file
 from scarflib import redirect_back, pagedata, siteimage, siteitem, NoItem, NoImage, new_img
 from main import page_not_found
 from debug import dbg
+import base64
+import cStringIO
 
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
-from config import upload_dir
 
 @app.route('/newimg', methods=['GET', 'POST'], defaults={'debug': False})
 @app.route('/newimg/debug', methods=['GET'], defaults={'debug': True})
@@ -134,8 +135,9 @@ def serve_full(img_id):
     try:
         simg = siteimage.create(img_id)
 
-        img=Image.open(upload_dir + '/' + simg.filename)
-        return serve_pil_image(img)
+        resp = make_response(base64.b64decode(simg.image))
+        resp.content_type = "image/png"
+        return resp
     except IOError:
         return page_not_found(404)
 
@@ -143,8 +145,8 @@ def serve_full(img_id):
 def serve_thumb(img_id):
     try:
         simg = siteimage.create(img_id)
-
-        img=Image.open(upload_dir + '/' + simg.filename)
+        image_string = cStringIO.StringIO(base64.b64decode(simg.image))
+        img = Image.open(image_string)
         img = resize(img, 800.0, 200.0)
         return serve_pil_image(img)
     except IOError:
@@ -154,8 +156,8 @@ def serve_thumb(img_id):
 def serve_preview(img_id):
     try:
         simg = siteimage.create(img_id)
-
-        img=Image.open(upload_dir + '/' + simg.filename)
+        image_string = cStringIO.StringIO(base64.b64decode(simg.image))
+        img = Image.open(image_string)
         img = resize(img, 800.0, 800.0)
         return serve_pil_image(img)
     except IOError:

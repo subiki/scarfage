@@ -4,15 +4,14 @@ import datetime
 import time
 import uuid
 import imghdr
+import base64
 
 from scarf import app
 from flask import request, redirect, session, flash, url_for
 from urlparse import urlparse, urljoin
-from sql import upsert, doupsert, read, doquery, delete, sql_escape
+from sql import upsert, doupsert, read, doquery, delete, sql_escape, rinsert
 
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
-
-from config import upload_dir
 
 ########## Utility stuff
 
@@ -314,6 +313,7 @@ class siteimage:
             self.uid = result[0][0]
             self.filename = result[0][1]
             self.tag = result[0][2]
+            self.image = result[0][3]
         except IndexError:
             raise NoImage(uid)
 
@@ -327,11 +327,6 @@ class siteimage:
 
         sql = delete('imgmods', **{"imgid": self.uid})
         result = doquery(sql)
-
-        try:
-            os.remove(upload_dir + '/' + self.filename)
-        except Exception as e:
-            raise
 
     def approve(self):
         sql = delete('imgmods', **{"imgid": self.uid})
@@ -468,43 +463,28 @@ def new_item(name, description, userid):
         data = doupsert(sql)
 
 def new_img(f, title):
-    if not f.filename == '':
-        fuuid = uuid.uuid4().get_hex()
-        try:
-            newname = fuuid + os.path.splitext(f.filename)[1]
-            f.save(upload_dir + '/' + newname)
-        except Exception as e:
-            raise
+    image = base64.b64encode(f.read())
+    
+    sql = upsert("images", \
+                 uid=0, \
+                 filename='none', \
+                 tag=title, \
+                 image=image)
 
-        if imghdr.what(upload_dir + '/' + newname):
-            sql = upsert("images", \
-                         uid=0, \
-                         filename=newname, \
-                         tag=title)
-            imgid = doupsert(sql)
+    imgid = doupsert(sql)
 
-            try:
-                username = session['username']
-            except KeyError:
-                username = "anon"
+    try:
+        username = session['username']
+    except KeyError:
+        username = "anon"
 
-            sql = upsert("imgmods", \
-                         username=username, \
-                         imgid=imgid)
-            data = doupsert(sql)
+    sql = upsert("imgmods", \
+                 username=username, \
+                 imgid=imgid)
+    data = doupsert(sql)
 
-            flash('Uploaded ' + f.filename)
-            return imgid 
-        else:
-            try:
-                os.remove(upload_dir + '/' + newname)
-            except:
-                app.logger.error("Error removing failed image upload: " + upload_dir + '/' + newname)
-
-            flash(f.filename + " is not an image.")
-            return None
-
-
+    flash('Uploaded ' + f.filename)
+    return imgid 
 
 @memoize_with_expiry(item_cache, long_cache_persist)
 def all_items():

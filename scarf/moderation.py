@@ -5,8 +5,6 @@ from sql import doupsert, upsert, doquery, read, delete
 from main import page_not_found
 from debug import dbg
  
-from config import upload_dir
-
 from PIL import Image
 import random
 from bisect import bisect
@@ -111,7 +109,8 @@ def mod_img(image):
         pd.errortext = "SQL error"
         return render_template('error.html', pd=pd)
 
-    im=Image.open(upload_dir + '/' + image)
+    # FIXME: this is broken
+    im=Image.open(image)
     basewidth = 100
     wpercent = (basewidth/float(im.size[0]))
     hsize = int((float(im.size[1])*float(wpercent))) / 2
