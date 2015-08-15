@@ -51,9 +51,6 @@ Message:</br>
     {%endif%}
     {%endif%}
     {%endif%}
-    {% if ti.item.images[0] is defined %}
-        <img src="/image/{{ ti.item.images[0].filename }}/thumbnail" alt="{{ ti.item.images[0].tag }}"><br />
-    {% endif %}
 {% endfor %}
 
 {% if pd.pm.status == pd.pm.messagestatus['complete_trade'] %}

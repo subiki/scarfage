@@ -3,22 +3,17 @@
 -- Host: localhost    Database: scarfage
 -- ------------------------------------------------------
 -- Server version	5.6.25-2
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Current Database: `scarfage`
---
-
-/*!40000 DROP DATABASE IF EXISTS `scarfage`*/;
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `scarfage` /*!40100 DEFAULT CHARACTER SET utf8 */;
-
-USE `scarfage`;
 
 --
 -- Table structure for table `images`
@@ -29,10 +24,10 @@ DROP TABLE IF EXISTS `images`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `images` (
   `uid` int(32) NOT NULL AUTO_INCREMENT,
-  `filename` varchar(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `tag` varchar(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `image` longblob NOT NULL,
   PRIMARY KEY (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,28 +65,6 @@ LOCK TABLES `imgmods` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `itemimg`
---
-
-DROP TABLE IF EXISTS `itemimg`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `itemimg` (
-  `itemid` int(32) NOT NULL,
-  `imgid` int(32) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `itemimg`
---
-
-LOCK TABLES `itemimg` WRITE;
-/*!40000 ALTER TABLE `itemimg` DISABLE KEYS */;
-/*!40000 ALTER TABLE `itemimg` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `items`
 --
 
@@ -105,7 +78,7 @@ CREATE TABLE `items` (
   `added` date NOT NULL,
   `modified` date NOT NULL,
   PRIMARY KEY (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,7 +107,7 @@ CREATE TABLE `messages` (
   `parent` int(11) NOT NULL,
   `sent` datetime NOT NULL,
   PRIMARY KEY (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=91 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -162,7 +135,7 @@ CREATE TABLE `ownwant` (
   `want` tinyint(1) NOT NULL DEFAULT '0',
   `hidden` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -188,7 +161,7 @@ CREATE TABLE `tradelist` (
   `userid` int(32) NOT NULL,
   `acceptstatus` tinyint(1) NOT NULL,
   PRIMARY KEY (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -217,7 +190,7 @@ CREATE TABLE `users` (
   `accesslevel` int(32) NOT NULL DEFAULT '0',
   PRIMARY KEY (`uid`),
   UNIQUE KEY `uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -226,7 +199,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` (`uid`, `username`, `pwhash`, `pwsalt`, `email`, `joined`, `accesslevel`) VALUES (25,'admin','3f24653f8fa7815ecb2a35f8960e352b49e74f14028b78070e1ce43e','82AA87','email@am.com','2015-04-11',255),(26,'testuser','d09ed5ae1c102a4b3d0608bf6d92f3297d37edf1c49411ddfdeeb8ca','E0197E','email@am.com','2015-05-06',10),(27,'subiki','e996396c29ba1d32e3b79809371b117e116000d3a790c15b1bb5979a','AB3612','karmicj@gmail.com','2015-05-06',255),(28,'Zirra','f576a73aba47eb268c7c4027b6b4565167159973eb4638cd71789439','3B7AE6','thescottzirra@gmail.com','2015-05-07',255);
+INSERT INTO `users` VALUES (25,'admin','3f24653f8fa7815ecb2a35f8960e352b49e74f14028b78070e1ce43e','82AA87','email@am.com','2015-04-11',255),(26,'testuser','d09ed5ae1c102a4b3d0608bf6d92f3297d37edf1c49411ddfdeeb8ca','E0197E','email@am.com','2015-05-06',10),(27,'subiki','e996396c29ba1d32e3b79809371b117e116000d3a790c15b1bb5979a','AB3612','karmicj@gmail.com','2015-05-06',255),(28,'Zirra','f576a73aba47eb268c7c4027b6b4565167159973eb4638cd71789439','3B7AE6','thescottzirra@gmail.com','2015-05-07',255);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -250,36 +223,17 @@ CREATE TABLE `userstat_lastseen` (
 
 LOCK TABLES `userstat_lastseen` WRITE;
 /*!40000 ALTER TABLE `userstat_lastseen` DISABLE KEYS */;
-INSERT INTO `userstat_lastseen` (`uid`, `date`) VALUES (25,'2015-08-15'),(26,'2015-06-12'),(27,'2015-04-11'),(28,'2015-04-11');
+INSERT INTO `userstat_lastseen` VALUES (25,'2015-08-15'),(26,'2015-08-15'),(27,'2015-04-11'),(28,'2015-04-11');
 /*!40000 ALTER TABLE `userstat_lastseen` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `userstat_uploads`
---
-
-DROP TABLE IF EXISTS `userstat_uploads`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `userstat_uploads` (
-  `uid` int(11) NOT NULL,
-  `itemid` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `userstat_uploads`
---
-
-LOCK TABLES `userstat_uploads` WRITE;
-/*!40000 ALTER TABLE `userstat_uploads` DISABLE KEYS */;
-/*!40000 ALTER TABLE `userstat_uploads` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-08-15 10:57:25
+-- Dump completed on 2015-08-15 16:25:07

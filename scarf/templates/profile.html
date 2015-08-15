@@ -222,11 +222,6 @@
       {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
         {% if item.have == 1 %}
          <h4><a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
-         {% if item.images[0] is defined %}
-         <img src="/image/{{ item.images[0].filename }}/thumbnail" alt="{{ item.images[0].tag }}"> <br />
-         {% else %}
-         No thumbnail.<br />
-         {% endif %}
 
         {% if item.hidden == 0 %}
             <a href="/item/{{ item.name }}/hide">Hide</a>
@@ -251,12 +246,6 @@
                up for trade - 
             {% endif %}
          <a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
-         {% if item.images[0] is defined %}
-         <img src="/image/{{ item.images[0].filename }}/thumbnail" alt="{{ item.images[0].tag }}"> <br />
-         {% else %}
-         No thumbnail.<br />
-         {% endif %}
-
          {% if item.willtrade == 1 %}
          <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a>
          {% endif %}
@@ -272,11 +261,6 @@
     {% for item in pd.profileuser.collection %}
      {% if item.want == 1 %}
          <h4><a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
-         {% if item.images[0] is defined %}
-         <img src="/image/{{ item.images[0].filename }}/thumbnail" alt="{{ item.images[0].tag }}"> <br />
-         {% else %}
-         No thumbnail.<br />
-         {% endif %}
        {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
        <a href="/item/{{ item.name }}/dontwant">Nevermind.</a>
        {%else%}

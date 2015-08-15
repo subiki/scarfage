@@ -53,17 +53,6 @@ def get_whores_table():
     return result;
 
 @memoize_with_expiry(stats_cache, long_cache_persist)
-def get_contribs_table():
-    sql = """select count(*), users.username
-             from users 
-             join userstat_uploads on userstat_uploads.uid=users.uid 
-             group by users.uid, userstat_uploads.uid
-             order by count(*) desc limit 50;"""
-    result = doquery(sql)
-
-    return result;
-
-@memoize_with_expiry(stats_cache, long_cache_persist)
 def user_by_uid(uid):
     sql = read('users', **{"uid": sql_escape(uid)})
     result = doquery(sql)
@@ -134,10 +123,8 @@ class siteuser(object):
             pass
 
         sql = """select count(*), users.username
-                 from userstat_uploads 
-                 join users on userstat_uploads.uid=users.uid 
-                 where userstat_uploads.uid = "%s"
-                 group by users.uid, userstat_uploads.uid
+                 from users
+                 where users.uid = "%s"
                  order by count(*) desc limit 50;""" % self.uid
         result = doquery(sql)
 
@@ -153,8 +140,7 @@ class siteuser(object):
 
         sql = """select items.name
                  from items
-                 join userstat_uploads on userstat_uploads.itemid=items.uid
-                 where userstat_uploads.uid=%s""" % self.uid
+                 where uid=%s""" % self.uid
 
         result = doquery(sql)
 
@@ -276,11 +262,6 @@ def new_user(username, password, email):
                      accesslevel=1)
         uid = doupsert(sql)
 
-        sql = upsert("userstat_uploads", \
-                     uid=uid, \
-                     count=0)
-        result = doupsert(sql)
-
         sql = upsert("userstat_lastseen", \
                      uid=uid, \
                      date=datetime.datetime.now())
@@ -318,9 +299,6 @@ class siteimage:
 
     def delete(self):
         #TODO image purgatory
-        sql = delete('itemimg', **{"imgid": self.uid})
-        result = doquery(sql)
-
         sql = delete('images', **{"uid": self.uid})
         result = doquery(sql)
 
@@ -387,16 +365,6 @@ class siteitem(__siteitem__):
         except IndexError:
             raise NoItem(name)
 
-        sql = read('itemimg', **{"itemid": self.uid})
-        result = doquery(sql)
-
-        try:
-            for itemimg in result:
-                image = siteimage.create(itemimg[1])
-                self.images.append(image)
-        except IndexError:
-            pass
-
         sql = read('ownwant', **{"itemid": self.uid})
         res = doquery(sql)
         
@@ -426,9 +394,6 @@ class siteitem(__siteitem__):
         sql = delete('items', **{"uid": self.uid}) 
         result = doquery(sql) 
      
-        sql = delete('itemimg', **{"itemid": self.uid}) 
-        result = doquery(sql) 
-     
         sql = delete('ownwant', **{"itemid": self.uid}) 
         result = doquery(sql) 
 
@@ -454,12 +419,6 @@ def new_item(name, description, userid):
                  modified=datetime.datetime.now())
 
     data = doupsert(sql)
-
-    if userid is not 0:
-        sql = upsert("userstat_uploads", 
-                     uid=userid, 
-                     itemid=data)
-        data = doupsert(sql)
 
 def new_img(f, title):
     image = base64.b64encode(f.read())
