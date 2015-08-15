@@ -3,6 +3,7 @@ from flask import redirect, url_for, request, render_template, session, flash
 from werkzeug import secure_filename
 from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back
 from main import page_not_found
+from nocache import nocache
 
 import markdown
 
@@ -58,6 +59,7 @@ def delete_item(item_id):
     return render_template('confirm.html', pd=pd)
 
 @app.route('/item/<item_id>')
+@nocache
 def show_item(item_id):
     pd = pagedata()
 
@@ -80,6 +82,7 @@ def show_item(item_id):
     return render_template('item.html', pd=pd)
 
 @app.route('/item/<item_id>/edit', methods=['GET', 'POST'])
+@nocache
 def edititem(item_id):
     pd = pagedata()
     if request.method == 'POST':
