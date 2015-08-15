@@ -72,8 +72,10 @@ def rejecttrade(username, messageid):
 
     return redirect_back('index')
 
-@app.route('/user/<username>/trade/<itemid>', methods=['GET', 'POST'])
-def trade(username, itemid):
+
+@app.route('/user/<username>/trade/<itemid>', methods=['GET', 'POST'], defaults={'debug': False})
+@app.route('/user/<username>/trade/<itemid>/debug', methods=['GET'], defaults={'debug': True})
+def trade(username, itemid, debug):
     pd = pagedata()
 
     try:
@@ -120,5 +122,9 @@ def trade(username, itemid):
         pd.item = siteitem(itemid)
     except (NoItem, NoUser):
         return page_not_found(404)
+
+    if debug:
+        if 'username' in session and pd.authuser.accesslevel == 255:
+            pd.debug = dbg(pd)
 
     return render_template('trade.html', pd=pd)

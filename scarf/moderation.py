@@ -3,6 +3,7 @@ from flask import redirect, url_for, render_template, session, request, flash
 from scarflib import redirect_back, pagedata, siteimage, NoImage
 from sql import doupsert, upsert, doquery, read, delete
 from main import page_not_found
+from debug import dbg
  
 from config import upload_dir
 
@@ -22,8 +23,9 @@ greyscale = [
             "#%$"
             ]
 
-@app.route('/mod')
-def moderate():
+@app.route('/mod', defaults={'debug': False})
+@app.route('/mod/debug', defaults={'debug': True})
+def moderate(debug):
     pd = pagedata()
 
     if 'username' not in session or pd.authuser.accesslevel < 10:
@@ -60,6 +62,10 @@ def moderate():
             return render_template('error.html', pd=pd)
 
     pd.title = "Unmoderated images" 
+
+    if debug:
+        if 'username' in session and pd.authuser.accesslevel == 255:
+            pd.debug = dbg(pd)
 
     return render_template('moderation.html', pd=pd)
 

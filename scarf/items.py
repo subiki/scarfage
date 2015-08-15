@@ -4,6 +4,7 @@ from werkzeug import secure_filename
 from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back
 from main import page_not_found
 from nocache import nocache
+from debug import dbg
 
 import markdown
 
@@ -63,9 +64,10 @@ def delete_item(item_id):
 
     return render_template('confirm.html', pd=pd)
 
-@app.route('/item/<item_id>')
+@app.route('/item/<item_id>', defaults={'debug': False})
+@app.route('/item/<item_id>/debug', defaults={'debug': True})
 @nocache
-def show_item(item_id):
+def show_item(item_id, debug):
     pd = pagedata()
 
     try:
@@ -86,11 +88,16 @@ def show_item(item_id):
     pd.title = item_id
     pd.item = showitem
 
+    if debug:
+        if 'username' in session and pd.authuser.accesslevel == 255:
+            pd.debug = dbg(pd)
+
     return render_template('item.html', pd=pd)
 
-@app.route('/item/<item_id>/edit', methods=['GET', 'POST'])
+@app.route('/item/<item_id>/edit', methods=['GET', 'POST'], defaults={'debug': False})
+@app.route('/item/<item_id>/edit/debug', methods=['GET', 'POST'], defaults={'debug': True})
 @nocache
-def edititem(item_id):
+def edititem(item_id, debug):
     pd = pagedata()
     if request.method == 'POST':
         if 'username' in session:
@@ -116,6 +123,9 @@ def edititem(item_id):
 
     pd.title="Editing: " + item_id
     pd.item_name = item_id
+
+    if debug:
+        if 'username' in session and pd.authuser.accesslevel == 255:
+            pd.debug = dbg(pd)
+
     return render_template('edititem.html', pd=pd)
-
-

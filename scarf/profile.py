@@ -3,6 +3,7 @@ from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
 from scarflib import redirect_back, pagedata, siteuser, NoUser
 from main import page_not_found
+from debug import dbg
 
 #TODO /user/<user>/<whatever>
 @app.route('/userupdate')
@@ -83,8 +84,9 @@ def pwreset():
 
     return redirect(url_for('index'))
 
-@app.route('/user/<username>')
-def show_user_profile(username):
+@app.route('/user/<username>', defaults={'debug': False})
+@app.route('/user/<username>/debug', defaults={'debug': True})
+def show_user_profile(username, debug):
     pd = pagedata()
     pd.title = "Profile for " + username
 
@@ -94,5 +96,9 @@ def show_user_profile(username):
         pd.profileuser.pop_messages()
     except NoUser:
         return page_not_found(404)
+
+    if debug:
+        if 'username' in session and pd.authuser.accesslevel == 255:
+            pd.debug = dbg(pd)
 
     return render_template('profile.html', pd=pd)

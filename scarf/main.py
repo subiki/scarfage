@@ -2,6 +2,7 @@ from scarf import app
 from flask import render_template, session, request, flash
 from sql import doquery, read
 from scarflib import pagedata, all_items
+from nocache import nocache
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -26,6 +27,7 @@ def accessdenied():
     return render_template('error.html', pd=pd), 403
 
 @app.route('/')
+@nocache
 def index():
     pd = pagedata()
     pd.title = "Scarfage"

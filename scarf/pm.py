@@ -2,9 +2,12 @@ from scarf import app
 from flask import flash, render_template, session, request, redirect
 from scarflib import pagedata, NoItem, NoUser, siteuser, redirect_back, user_by_uid, send_pm, pmessage, messagestatus, trademessage
 from main import page_not_found
+from debug import dbg
 
-@app.route('/user/<username>/pm/<messageid>')
-def viewpm(username, messageid):
+
+@app.route('/user/<username>/pm/<messageid>', defaults={'debug': False})
+@app.route('/user/<username>/pm/<messageid>/debug', defaults={'debug': True})
+def viewpm(username, messageid, debug):
     pd = pagedata()
 
     if not 'username' in session or pd.authuser.username != username:
@@ -20,10 +23,15 @@ def viewpm(username, messageid):
 
         pd.pm = pm
 
+        if debug:
+            if 'username' in session and pd.authuser.accesslevel == 255:
+                pd.debug = dbg(pd)
+
         return render_template('pm.html', pd=pd)
  
-@app.route('/user/<username>/pm', methods=['GET', 'POST'])
-def pm(username):
+@app.route('/user/<username>/pm', methods=['GET', 'POST'], defaults={'debug': False})
+@app.route('/user/<username>/pm/debug', methods=['GET'], defaults={'debug': True})
+def pm(username, debug):
     pd = pagedata()
 
     try:
@@ -51,5 +59,9 @@ def pm(username):
 # TODO re-fill form
                 flash('No message or subject')
                 return redirect_back('/user/' + username + '/pm')
+
+    if debug:
+        if 'username' in session and pd.authuser.accesslevel == 255:
+            pd.debug = dbg(pd)
 
     return render_template('sendpm.html', pd=pd)

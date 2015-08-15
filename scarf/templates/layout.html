@@ -7,6 +7,17 @@
     <title>{{ pd.title }}</title>
     {% endblock %}
 </head>
+
+{% if pd.debug %}
+
+<div id="debug">
+<pre>
+{{pd.debug}}
+</pre>
+</div>
+
+{% endif %}
+
 <body>
     <div id="header">
         <h1>Scarfage</h1><br />

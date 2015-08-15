@@ -2,6 +2,7 @@ from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
 from scarflib import redirect_back, pagedata, NoUser, siteuser
 from sql import read, doquery
+from debug import dbg
 
 def get_users():
     sql = read('users')
@@ -13,8 +14,9 @@ def get_users():
         users.append(siteuser.create(user[1]))
 
     return users
-@app.route('/admin')
-def admin_users():
+@app.route('/admin', defaults={'debug': False})
+@app.route('/admin/debug', defaults={'debug': True})
+def admin_users(debug):
     pd = pagedata()
 
     if 'username' not in session or pd.authuser.accesslevel < 255:
@@ -23,6 +25,9 @@ def admin_users():
     pd.title = "Admin" 
 
     pd.users = get_users()
+
+    if debug:
+        pd.debug = dbg(pd)
 
     return render_template('admin.html', pd=pd)
 

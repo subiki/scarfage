@@ -4,12 +4,14 @@ from scarf import app
 from flask import redirect, url_for, request, render_template, session, flash, send_file
 from scarflib import redirect_back, pagedata, siteimage, siteitem, NoItem, NoImage, new_img
 from main import page_not_found
+from debug import dbg
 
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 from config import upload_dir
 
-@app.route('/newimg', methods=['GET', 'POST'])
-def newimg():
+@app.route('/newimg', methods=['GET', 'POST'], defaults={'debug': False})
+@app.route('/newimg/debug', methods=['GET'], defaults={'debug': True})
+def newimg(debug):
     pd = pagedata()
     if request.method == 'POST':
         if request.form['title'] == '':
@@ -30,6 +32,10 @@ def newimg():
                 return redirect('/image/' + str(img))
 
     pd.title="Add New Item"
+
+    if debug:
+        if 'username' in session and pd.authuser.accesslevel == 255:
+            pd.debug = dbg(pd)
 
     return render_template('newimg.html', pd=pd)
 
@@ -155,8 +161,9 @@ def serve_preview(img_id):
     except IOError:
         return page_not_found(404)
 
-@app.route('/image/<img_id>')
-def show_image(img_id):
+@app.route('/image/<img_id>', defaults={'debug': False})
+@app.route('/image/<img_id>/debug', defaults={'debug': True})
+def show_image(img_id, debug):
     pd = pagedata()
 
     try:
@@ -164,5 +171,9 @@ def show_image(img_id):
         pd.title=pd.img.tag
     except NoImage:
         return page_not_found(404)
+
+    if debug:
+        if 'username' in session and pd.authuser.accesslevel == 255:
+            pd.debug = dbg(pd)
 
     return render_template('image.html', pd=pd)
