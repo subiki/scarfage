@@ -445,6 +445,7 @@ class siteitem(__siteitem__):
         ret = list()
         for edit in edits:
             editobject = itemhist(edit[0])
+            editobject.uid = str(editobject.uid).zfill(8)
             editobject.itemid = edit[1]
             editobject.date = edit[2]
             editobject.userid = edit[3]

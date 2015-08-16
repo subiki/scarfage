@@ -3,6 +3,7 @@ from flask import redirect, url_for, render_template, session, request, flash
 from scarflib import redirect_back, pagedata, NoUser, siteuser
 from sql import read, doquery
 from debug import dbg
+import os.path, time
 
 def get_users():
     sql = read('users')
@@ -26,6 +27,10 @@ def admin_users(debug):
     pd.title = "Admin" 
 
     pd.users = get_users()
+    try:
+        pd.lastdep = str(time.ctime(os.path.getmtime('/srv/data/web/vhosts/default/run.py')))
+    except OSError:
+        pd.lastdep = "dev"
 
     if debug:
         pd.debug = dbg(pd)
