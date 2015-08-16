@@ -298,6 +298,7 @@ class siteimage:
             raise NoImage(uid)
 
     def delete(self):
+        siteimage_cache = dict()
         #TODO image purgatory
         sql = delete('images', **{"uid": self.uid})
         result = doquery(sql)
@@ -321,7 +322,6 @@ class siteimage:
 ######### Item stuff
 
 item_cache = dict()
-
 @memoize_with_expiry(item_cache, long_cache_persist)
 def item_by_uid(uid):
     sql = read('items', **{"uid": sql_escape(uid)})
@@ -331,6 +331,20 @@ def item_by_uid(uid):
         return result[0][1]
     except IndexError:
         return
+
+@memoize_with_expiry(item_cache, long_cache_persist)
+def uid_by_item(item):
+    sql = read('items', **{"name": sql_escape(item)})
+    result = doquery(sql)
+
+    try:
+        return result[0][0]
+    except IndexError:
+        return
+
+class itemhist():
+    def __init__(self, uid):
+        self.uid = uid
 
 class NoItem(Exception):
     def __init__(self, item):
@@ -387,6 +401,7 @@ class siteitem(__siteitem__):
                     self.wantusers.append(userinfo)
 
     def delete(self):
+        item_cache = dict()
         for i in self.images: 
             delimg = siteimage.create(i.uid)
             delimg.delete()
@@ -410,15 +425,59 @@ class siteitem(__siteitem__):
 
         data = doupsert(sql)
 
+        return data
+
+    def history(self):
+        sql = "SELECT uid, itemid, date, userid, ip FROM itemedits WHERE itemid = '%s';" % self.uid
+        edits = doquery(sql)
+
+        ret = list()
+        for edit in edits:
+            editobject = itemhist(edit[0])
+            editobject.itemid = edit[1]
+            editobject.date = edit[2]
+            editobject.userid = edit[3]
+            editobject.ip = edit[4]
+
+            editobject.user = user_by_uid(editobject.userid)
+
+            ret.append(editobject)
+
+        return ret
+            
+
+def new_edit(itemid, description, userid):
+    sql = upsert("itemedits", \
+                 uid=0, \
+                 date=datetime.datetime.now(), \
+                 itemid=sql_escape(itemid), \
+                 userid=sql_escape(userid), \
+                 ip=sql_escape(""), \
+                 body=sql_escape(description))
+
+    edit = doupsert(sql)
+
+    sql = upsert("items", \
+                 uid=sql_escape(itemid), \
+                 description=edit, \
+                 modified=datetime.datetime.now())
+    doupsert(sql)
+
+    return edit 
+
 def new_item(name, description, userid):
     sql = upsert("items", \
                  uid=0, \
                  name=sql_escape(name), \
-                 description=sql_escape(description), \
+                 description=0, \
                  added=datetime.datetime.now(), \
                  modified=datetime.datetime.now())
 
-    data = doupsert(sql)
+    itemid = doupsert(sql)
+
+    new_edit(itemid, description, userid)
+
+    return itemid 
 
 def new_img(f, title):
     image = base64.b64encode(f.read())
@@ -435,6 +494,7 @@ def new_img(f, title):
     except KeyError:
         username = "anon"
 
+    # todo: add ip address
     sql = upsert("imgmods", \
                  username=username, \
                  imgid=imgid)
@@ -481,6 +541,22 @@ def redirect_back(endpoint, **values):
 
 
 # Trade and message stuff
+
+"""
+status = status | (1 << messagestatus[unread_receiver])
+
+unread_receiver_status = (status & (1 << messagestatus[unread_receiver])
+if unread_receiver_status != 0:
+    return False
+
+"""
+
+messagestatus = {'unread_receiver': 0,
+                 "unread_sender": 1,
+                 "active_trae": 2,
+                 "complete_trade": 3,
+                 "settled_trade": 4,
+                 "rejected_trade": 5}
 
 messagestatus = {'unread_trade': 0, 'active_trade': 1, 'complete_trade': 2, 'settled_trade': 3, 'rejected_trade': 4, 'unread_pm': 10, 'read_pm': 11}
 tradestatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}

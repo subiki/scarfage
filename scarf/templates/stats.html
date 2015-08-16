@@ -21,22 +21,6 @@
 {% endfor %}
 </table><br/>
 
-<h2> Top Contributors </h2><br/>
- 
-<table>
-  <tr>
-  <th># items</th>
-  <th>user</th>
-  </tr>
-{% for user in pd.topcontributors %}
-  <tr>
-  <td>{{ user[0] }}</td>
-  <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
-  </tr>
-{% endfor %}
-</table>
-
-
 </div>
 
 {% endblock %}

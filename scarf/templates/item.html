@@ -7,14 +7,30 @@
 <div id="content">
 
 <div id="itemname">
-<h1>{{ pd.item.name }}</h1> <a href="/item/{{ pd.item.name }}/edit">Edit</a><br />
+<h1>{{ pd.item.name }}</h1>
+<a href="/item/{{ pd.item.name }}/edit">Edit</a><br />
+<a href="/item/{{ pd.item.name }}/history">History</a><br />
 </div>
+
+{% if pd.item.old %}
+<a href="/item/{{ pd.item.name }}/revert/{{ pd.item.editid }}">Revert to this version</a>
+<div id="warning">
+You are viewing a historical version of this item's description, click <a href="/item/{{ pd.item.name }}">here</a> for the latest version. 
+</div>
+{% endif %}
+
 
 <div id="description">
 {{ pd.item.description_html|safe }}
 </div>
 
 <div id="itemactions">
+
+{% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
+<a href="/item/{{ pd.item.name }}/delete">Delete item</a><br />
+{% endif %}
+
+
 {% if pd.authuser is defined %}
     {% if pd.iteminfo is defined and pd.iteminfo.have == 0 %}
         <a href="/item/{{ pd.item.name }}/have">I own this</a></br>
@@ -43,11 +59,6 @@
 <a href="/item/{{ pd.item.name }}/want">I want this</a><br />
 
 {% endif %}
-
-{% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
-<a href="/item/{{ pd.item.name }}/delete">Delete item</a><br />
-{% endif %}
-
 </div>
 <div class="havecount">
 {% if pd.item.have == 1 %}

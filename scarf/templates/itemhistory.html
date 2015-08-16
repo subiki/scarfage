@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% include "login.html" %}
+
+<div id="content">
+
+<div id="itemname">
+<h1>{{ pd.item.name }}</h1>
+</div>
+
+<div id="itemactions">
+
+<a href="/item/{{ pd.item.name }}">Go back</a><br />
+
+{% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
+<a href="/item/{{ pd.item.name }}/delete">Delete item</a><br />
+{% endif %}
+
+</div>
+
+<table>
+<tr>
+<th></th>
+<th>Edit ID</th>
+<th>Date</th>
+<th>User</th>
+<th>IP</th>
+</tr>
+{% for ent in pd.item.history() %}
+<tr>
+<td><a href="/item/{{ pd.item.name }}/revert/{{ ent.uid }}">Revert to this</a></td>
+<td><a href="/item/{{ pd.item.name }}/history/{{ ent.uid }}">{{ ent.uid }}</a></td>
+<td>{{ ent.date }}</td>
+<td><a href="/user/{{ ent.user }}">{{ ent.user }}</a></td>
+<td>{{ ent.ip }}</td>
+</tr>
+{% endfor%}
+</table>
+
+</div>
+
+{% endblock %}

@@ -1,10 +1,11 @@
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, flash
 from werkzeug import secure_filename
-from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back
+from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back, new_edit, uid_by_item
 from main import page_not_found
 from nocache import nocache
 from debug import dbg
+from sql import read, doquery, sql_escape
 
 import markdown
 
@@ -74,7 +75,11 @@ def show_item(item_id, debug):
         showitem = siteitem(item_id)
         # todo: http://htmlpurifier.org/
         # todo: memoize
-        showitem.description_html = markdown.markdown(showitem.description)
+
+        sql = "SELECT body FROM itemedits WHERE uid = '%s';" % showitem.description 
+        showitem.description = doquery(sql)[0][0]
+
+        showitem.description_html = markdown.markdown(str(showitem.description))
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 
@@ -94,6 +99,83 @@ def show_item(item_id, debug):
 
     return render_template('item.html', pd=pd)
 
+@app.route('/item/<item_id>/revert/<edit>', defaults={'debug': False})
+@nocache
+def revert_item_edit(item_id, edit, debug):
+    pd = pagedata()
+
+    try:
+        showitem = siteitem(item_id)
+        # todo: http://htmlpurifier.org/
+        sql = "SELECT body FROM itemedits WHERE uid = '%s' and itemid = '%s';" % (sql_escape(edit), showitem.uid)
+
+        if 'username' in session:
+            userid = pd.authuser.uid
+        else:
+            userid = 0 
+
+        new_edit(uid_by_item(item_id), doquery(sql)[0][0], userid)
+
+        flash('Reverted to previous version')
+    except NoItem:
+        return redirect("/item/" + item_id + "/edit")
+
+    return redirect("/item/" + item_id)
+
+@app.route('/item/<item_id>/history/<edit>/debug', defaults={'debug': True})
+@app.route('/item/<item_id>/history/<edit>', defaults={'debug': False})
+@nocache
+def show_item_edit(item_id, edit, debug):
+    pd = pagedata()
+
+    try:
+        showitem = siteitem(item_id)
+        # todo: http://htmlpurifier.org/
+        sql = "SELECT body FROM itemedits WHERE uid = '%s' and itemid = '%s';" % (sql_escape(edit), showitem.uid)
+        showitem.description = doquery(sql)[0][0]
+        showitem.old = True
+        showitem.editid = edit
+
+        showitem.description_html = markdown.markdown(str(showitem.description))
+    except NoItem:
+        return redirect("/item/" + item_id + "/edit")
+
+    if 'username' in session:
+        try:
+            user = siteuser.create(session['username'])
+            pd.iteminfo = user.query_collection(showitem.name)
+        except (NoUser, NoItem):
+            pass
+
+    pd.title = item_id
+    pd.item = showitem
+
+    if debug:
+        if 'username' in session and pd.authuser.accesslevel == 255:
+            pd.debug = dbg(pd)
+
+    return render_template('item.html', pd=pd)
+
+@app.route('/item/<item_id>/history/debug', defaults={'debug': True})
+@app.route('/item/<item_id>/history', defaults={'debug': False})
+@nocache
+def show_item_history(item_id, debug):
+    pd = pagedata()
+
+    try:
+        showitem = siteitem(item_id)
+    except NoItem:
+        return redirect("/item/" + item_id + "/edit")
+
+    pd.title = item_id
+    pd.item = showitem
+
+    if debug:
+        if 'username' in session and pd.authuser.accesslevel == 255:
+            pd.debug = dbg(pd)
+
+    return render_template('itemhistory.html', pd=pd)
+
 @app.route('/item/<item_id>/edit/debug', methods=['GET', 'POST'], defaults={'debug': True})
 @app.route('/item/<item_id>/edit', methods=['GET', 'POST'], defaults={'debug': False})
 @nocache
@@ -107,9 +189,12 @@ def edititem(item_id, debug):
 
         if 'desc' in request.form:
             try:
-                pd.item = siteitem(item_id)
-                pd.item.description = request.form['desc']
-                pd.item.update()
+                item = siteitem(item_id)
+                item.description = request.form['desc']
+                item.update()
+
+                # todo: check for null edits
+                new_edit(uid_by_item(item_id), request.form['desc'], uid)
             except NoItem:
                 new_item(item_id, request.form['desc'], uid)
 
@@ -118,6 +203,9 @@ def edititem(item_id, debug):
 
     try:
         pd.item = siteitem(item_id)
+
+        sql = "SELECT body FROM itemedits WHERE uid = '%s';" % pd.item.description 
+        pd.item.description = doquery(sql)[0][0]
     except:
         pass
 
