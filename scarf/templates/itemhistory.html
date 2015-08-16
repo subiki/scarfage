@@ -26,17 +26,21 @@
 <th>Edit ID</th>
 <th>Date</th>
 <th>User</th>
-<th>IP</th>
 </tr>
 {% for ent in pd.item.history() %}
 <tr>
 <td><a href="/item/{{ pd.item.name }}/revert/{{ ent.uid }}">Revert to this</a></td>
 <td><a href="/item/{{ pd.item.name }}/history/{{ ent.uid }}">{{ ent.uid }}</a></td>
 <td>{{ ent.date }}</td>
-<td><a href="/user/{{ ent.user }}">{{ ent.user }}</a></td>
-<td>{{ ent.ip }}</td>
+<td>
+{% if not ent.user %}
+Anonymous ({{ ent.ip }})
+{% else %}
+<a href="/user/{{ ent.user }}">{{ ent.user }}</a>
+{% endif %}
+</td>
 </tr>
-{% endfor%}
+{% endfor %}
 </table>
 
 </div>
