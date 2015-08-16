@@ -36,6 +36,37 @@
 {% endfor %}
 </table><br/>
 
+<h2> Most Needy </h2><br/>
+ 
+<table>
+  <tr>
+  <th># items</th>
+  <th>user</th>
+  </tr>
+{% for user in pd.topneedy %}
+  <tr>
+  <td>{{ user[0] }}</td>
+  <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+  </tr>
+{% endfor %}
+</table><br/>
+
+
+<h2> Most items available for trade </h2><br/>
+ 
+<table>
+  <tr>
+  <th># items</th>
+  <th>user</th>
+  </tr>
+{% for user in pd.topwilltrade %}
+  <tr>
+  <td>{{ user[0] }}</td>
+  <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+  </tr>
+{% endfor %}
+</table><br/>
+
 </div>
 
 {% endblock %}
