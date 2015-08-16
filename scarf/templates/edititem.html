@@ -4,8 +4,10 @@
 
 {% include "login.html" %}
 
+{% if pd.item %}
 <a href="/item/{{ pd.item.name }}">Go back</a><br />
 <a href="/item/{{ pd.item.name }}/history">History</a><br />
+{% endif %}
 
 Scarfage supports <a href="https://daringfireball.net/projects/markdown/syntax">markdown</a>.<br />
 
