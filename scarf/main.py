@@ -12,6 +12,14 @@ def page_not_found(error):
     pd.errortext="File not found."
     return render_template('error.html', pd=pd), 404
 
+@app.errorhandler(500)
+def page_not_found(error):
+    pd = pagedata()
+    pd.title = "Oh noes!"
+    pd.errorcode="500"
+    pd.errortext="Oh noes!"
+    return render_template('error.html', pd=pd), 500
+
 @app.route('/error')
 def error():
     pd = pagedata()
