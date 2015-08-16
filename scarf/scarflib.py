@@ -58,7 +58,7 @@ def get_willtrade_table():
              from users 
              join ownwant on ownwant.userid=users.uid 
              where ownwant.willtrade = 1 
-             group by users.uid, ownwant.own 
+             group by users.uid, ownwant.willtrade
              order by count(*) desc limit 50;"""
     result = doquery(sql)
 
@@ -71,7 +71,7 @@ def get_needy_table():
              from users 
              join ownwant on ownwant.userid=users.uid 
              where ownwant.want = 1 
-             group by users.uid, ownwant.own 
+             group by users.uid, ownwant.want
              order by count(*) desc limit 50;"""
     result = doquery(sql)
 
