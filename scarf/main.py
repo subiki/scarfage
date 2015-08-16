@@ -1,7 +1,7 @@
 from scarf import app
 from flask import render_template, session, request, flash
 from sql import doquery, read
-from scarflib import pagedata, all_items
+from scarflib import pagedata, latest_items
 from nocache import nocache
 
 @app.errorhandler(404)
@@ -32,9 +32,6 @@ def index():
     pd = pagedata()
     pd.title = "Scarfage"
 
-    sql = read('items')
-    result = doquery(sql)
-
-    pd.items = all_items()
+    pd.items = latest_items()
 
     return render_template('index.html', pd=pd)

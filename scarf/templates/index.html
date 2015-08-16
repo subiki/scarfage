@@ -6,6 +6,7 @@
 
 <div id="content">
  
+<h3>Recently aded items:</h3>
 <ul id="itemlist">
 {% for item in pd.items %}
     <li>{{ item.added }} - <a href="/item/{{ item.name }}">{{ item.name }}</a></li>

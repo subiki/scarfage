@@ -39,7 +39,6 @@ class pagedata:
 
 ######### User stuff
 stats_cache = dict()
-
 @memoize_with_expiry(stats_cache, long_cache_persist)
 def get_whores_table():
     sql = """select count(*), users.username
@@ -47,6 +46,18 @@ def get_whores_table():
              join ownwant on ownwant.userid=users.uid 
              where ownwant.own = 1 
              group by users.uid, ownwant.own 
+             order by count(*) desc limit 50;"""
+    result = doquery(sql)
+
+    return result;
+
+contribs_cache = dict()
+@memoize_with_expiry(contribs_cache, long_cache_persist)
+def get_contribs_table():
+    sql = """select count(*), users.username
+             from users 
+             join itemedits on itemedits.userid=users.uid 
+             group by users.uid, itemedits.userid
              order by count(*) desc limit 50;"""
     result = doquery(sql)
 
@@ -428,7 +439,7 @@ class siteitem(__siteitem__):
         return data
 
     def history(self):
-        sql = "SELECT uid, itemid, date, userid, ip FROM itemedits WHERE itemid = '%s';" % self.uid
+        sql = "SELECT uid, itemid, date, userid, ip FROM itemedits WHERE itemid = '%s' order by uid desc;" % self.uid
         edits = doquery(sql)
 
         ret = list()
@@ -452,7 +463,7 @@ def new_edit(itemid, description, userid):
                  date=datetime.datetime.now(), \
                  itemid=sql_escape(itemid), \
                  userid=sql_escape(userid), \
-                 ip=sql_escape(""), \
+                 ip=request.remote_addr, \
                  body=sql_escape(description))
 
     edit = doupsert(sql)
@@ -504,11 +515,11 @@ def new_img(f, title):
     return imgid 
 
 @memoize_with_expiry(item_cache, long_cache_persist)
-def all_items():
+def latest_items():
     items = []
 
     try:
-        sql = read('items')
+        sql = "SELECT * FROM items order by added desc limit 50;"
         result = doquery(sql)
 
         for item in result:
