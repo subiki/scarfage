@@ -137,7 +137,7 @@ class siteuser(object):
         self.auth = False
         self.username = username
 
-        sql = """select users.uid, users.pwhash, users.pwsalt, users.email, users.joined, userstat_lastseen.date, users.accesslevel 
+        sql = """select users.uid, users.email, users.joined, userstat_lastseen.date, users.accesslevel 
                  from users
                  join userstat_lastseen on userstat_lastseen.uid=users.uid 
                  where users.username = "%s"; """ % sql_escape(username)
@@ -145,12 +145,10 @@ class siteuser(object):
 
         try:
             self.uid = result[0][0]
-            self.pwhash = result[0][1]
-            self.pwsalt = result[0][2]
-            self.email = result[0][3]
-            self.joined = result[0][4]
-            self.lastseen = result[0][5]
-            self.accesslevel = result[0][6]
+            self.email = result[0][1]
+            self.joined = result[0][2]
+            self.lastseen = result[0][3]
+            self.accesslevel = result[0][4]
         except IndexError:
             raise NoUser(username)
         except TypeError:
@@ -202,6 +200,7 @@ class siteuser(object):
 
         return ret
 
+    @memoize_with_expiry(collection_cache, cache_persist)
     def query_collection(self, item):
         ret = ownwant()
 
@@ -250,12 +249,24 @@ class siteuser(object):
         result = doupsert(sql)
 
     def authenticate(self, password):
+        sql = """select users.pwhash, users.pwsalt
+                 from users
+                 where users.uid = "%s"; """ % self.uid
+        result = doquery(sql)
+
+        try:
+            pwhash = result[0][0]
+            pwsalt = result[0][1]
+        except IndexError:
+            raise AuthFail(self.username)
+ 
         if self.accesslevel == 0:
             flash('Your account has been banned')
         else:
-            checkhash = gen_pwhash(password, self.pwsalt)
+            checkhash = gen_pwhash(password, pwsalt)
+            del password # meh
         
-            if checkhash == self.pwhash:
+            if checkhash == pwhash:
                 session['username'] = self.username
             else:
                 raise AuthFail(self.username)
@@ -269,13 +280,14 @@ class siteuser(object):
         data = doupsert(sql)
 
     def newpassword(self, password):
-        self.pwsalt = str(uuid.uuid4().get_hex().upper()[0:6])
-        self.pwhash = gen_pwhash(password, self.pwsalt)
+        pwsalt = str(uuid.uuid4().get_hex().upper()[0:6])
+        pwhash = gen_pwhash(password, self.pwsalt)
+        del password
 
         sql = upsert("users", 
                      uid=self.uid, 
-                     pwsalt=self.pwsalt,
-                     pwhash=self.pwhash)
+                     pwsalt=pwsalt,
+                     pwhash=pwhash)
         data = doupsert(sql)
 
     def newemail(self, email):
