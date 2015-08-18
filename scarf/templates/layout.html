@@ -34,8 +34,14 @@
         </div>
 
         <div class=nav>
-        <a href="/stats">User stats</a>
+        <a href="/stats">Site Stats</a>
         </div>
+
+        {% if pd.authuser is defined %}
+        <div class=nav>
+        <a href="/user/{{ pd.authuser.username }}">User Profile</a>
+        </div>
+        {% endif %}
 
         {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
         <div class=nav>

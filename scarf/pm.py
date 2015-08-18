@@ -1,6 +1,6 @@
 from scarf import app
 from flask import flash, render_template, session, request, redirect
-from scarflib import pagedata, NoItem, NoUser, siteuser, redirect_back, user_by_uid, send_pm, pmessage, messagestatus, trademessage
+from scarflib import pagedata, NoItem, NoUser, siteuser, redirect_back, user_by_uid, send_pm, pmessage, messagestatus, trademessage, deobfuscate, obfuscate
 from main import page_not_found
 from debug import dbg
 
@@ -14,8 +14,9 @@ def viewpm(username, messageid, debug):
         return page_not_found(404)
 
     if 'username' in session:
-        pm = trademessage.create(messageid)
+        pm = trademessage.create(deobfuscate(messageid))
         pm.read()
+        # TODO: move this into the template
         pm.load_replies()
 
         if pm.messagestatus < messagestatus['unread_pm']:
@@ -54,7 +55,7 @@ def pm(username, debug):
 
                 if messageid:
                     flash('Message sent!')
-                    return redirect('/user/' + pd.authuser.username + '/pm/' + str(messageid))
+                    return redirect('/user/' + pd.authuser.username + '/pm/' + obfuscate((messageid)))
             else:
 # TODO re-fill form
                 flash('No message or subject')

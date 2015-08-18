@@ -54,7 +54,7 @@
             <td>{{ pm.sent }}</td>
 
             <td>
-            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View</a></br>
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">View</a></br>
             </td>
 
             </tr>
@@ -128,7 +128,7 @@
             <td>{{ pm.sent }}</td>
 
             <td>
-            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View</a></br>
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">View</a></br>
             </td>
 
             </tr>
@@ -194,7 +194,7 @@
             <td>{{ pm.sent }}</td>
 
             <td>
-            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid }}">View</a></br>
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">View</a></br>
             </td>
 
             </tr>
@@ -262,6 +262,7 @@
        {%else%}
          / <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a>
        {% endif %}
+        <br />
      {% endif %}
     {% endfor %}
     </div>

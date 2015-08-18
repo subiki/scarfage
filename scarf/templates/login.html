@@ -21,7 +21,8 @@
     <a class=small href="/newuser">New user</a>
     </center>
     {% else %}
-        Logged in as: <a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a>. <a href="/logout">Logout</a> 
+        Logged in as: {{ pd.authuser.username }}<br />
+        <a href="/logout">Logout</a> 
     {% endif %}
 </div>
 

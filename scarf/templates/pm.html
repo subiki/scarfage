@@ -22,12 +22,12 @@ Message:</br>
     ----]] your trade: {{ ti.item.name }}<br/>
     {% if ti.user.uid == pd.authuser.uid %}
     {% if ti.acceptstatus < pd.pm.tradestatus['accepted'] %}
-        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/accept/{{ ti.uid }}">Accept item</a><br />
+        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/accept/{{ ti.uid }}">Accept item</a><br />
 
         {% if ti.acceptstatus == pd.pm.tradestatus['rejected'] %}
         Rejected<br />
         {% else %}
-        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/reject/{{ ti.uid }}">Reject item</a> 
+        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject/{{ ti.uid }}">Reject item</a> 
         {% endif %}
     {% else %}
         Accepted<br />
@@ -39,12 +39,12 @@ Message:</br>
 
     {% if ti.user.uid == pd.authuser.uid %}
     {% if ti.acceptstatus < pd.pm.tradestatus['accepted'] %}
-        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/accept/{{ ti.uid }}">Accept item</a><br />
+        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/accept/{{ ti.uid }}">Accept item</a><br />
 
         {% if ti.acceptstatus == pd.pm.tradestatus['rejected'] %}
         Rejected<br />
         {% else %}
-        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/reject/{{ ti.uid }}">Reject item</a> 
+        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject/{{ ti.uid }}">Reject item</a> 
         {% endif %}
     {% else %}
         Accepted<br />
@@ -55,9 +55,9 @@ Message:</br>
 
 {% if pd.pm.status == pd.pm.messagestatus['complete_trade'] %}
 All parties have accepted, please coordinate with {{ pd.pm.from_user }} to complete your trade!<br />
-<a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/settle">Mark as settled!</a><br />
+<a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/settle">Mark as settled!</a><br />
 {% elif pd.pm.status == pd.pm.messagestatus['active_trade'] %}
-<a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid }}/reject">Reject trade</a><br />
+<a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject">Reject trade</a><br />
 {% elif pd.pm.status == pd.pm.messagestatus['rejected_trade'] %}
 This trade has been closed as rejected!<br/>
 {% elif pd.pm.status == pd.pm.messagestatus['settled_trade'] %}
@@ -84,7 +84,7 @@ Trade has been closed as settled!<br/>
         Subject: <input type=text name=subject value="re: {{ pd.pm.subject }}" required></br>
         Message: </br>
         <textarea name=body rows="4" cols="50"></textarea><br />
-        <input type="hidden" name="parent" value="{{ pd.pm.uid }}">
+        <input type="hidden" name="parent" value="{{ pd.pm.uid_obfuscated }}">
         <input type=submit value=Submit>
     </form>
 

@@ -22,8 +22,22 @@ from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 def test_icc_profile_images(h, f):
     if h.startswith('\xff\xd8') and h[6:17] == b'ICC_PROFILE':
         return "jpeg"
-
 imghdr.tests.append(test_icc_profile_images)
+
+def xor_strings(s,t):
+    return "".join(chr(ord(a)^ord(b)) for a,b in zip(s,t))
+
+def obfuscate(string):
+    try:
+        return base64.b16encode(xor_strings('\xaa\x99\x95\x167\xd3\xe1A\xec\x92\xff\x9eR\xb8\xd9\xa85\xc8\xe2\x92$\xaf\xd7\x16', str(string))).lower()
+    except TypeError:
+        return None
+
+def deobfuscate(string):
+    try:
+        return xor_strings('\xaa\x99\x95\x167\xd3\xe1A\xec\x92\xff\x9eR\xb8\xd9\xa85\xc8\xe2\x92$\xaf\xd7\x16', base64.b16decode(str(string.upper())))
+    except TypeError:
+        return None
 
 class pagedata:
     accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
@@ -608,6 +622,7 @@ class pmessage:
 
         try:
             self.uid = result[0][0]
+            self.uid_obfuscated = obfuscate(result[0][0])
             self.from_uid = result[0][1]
             self.to_uid = result[0][2]
             self.subject = result[0][3]
@@ -705,6 +720,7 @@ class trademessage(pmessage):
 
         try:
             self.uid = result[0][0]
+            self.uid_obfuscated = obfuscate(result[0][0])
             self.from_uid = result[0][1]
             self.to_uid = result[0][2]
             self.subject = result[0][3]
