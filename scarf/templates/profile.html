@@ -220,34 +220,31 @@
     <div id="item">
       {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
         {% if item.have == 1 %}
-         <h4><a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
+         <a href="/item/{{ item.name }}">{{ item.name }}</a>
 
         {% if item.hidden == 0 %}
-            <a href="/item/{{ item.name }}/hide">Hide</a>
+            / <a href="/item/{{ item.name }}/hide">Hide</a>
         {% else %}
-            - <a href="/item/{{ item.name }}/show">Show</a>
+            / <a href="/item/{{ item.name }}/show">Show</a>
         {% endif %}
 
         {% if item.willtrade == 1 %}
-           - <a href="/item/{{ item.name }}/wonttrade">Don't trade</a>
+           / <a href="/item/{{ item.name }}/wonttrade">Mark as unavailable for trade</a>
         {% else %}
-           - <a href="/item/{{ item.name }}/willtrade">Trade</a>
+           / <a href="/item/{{ item.name }}/willtrade">Mark as available for trade</a>
         {% endif %}
 
-        - <a href="/item/{{ item.name }}/donthave">Don't have</a>
+        / <a href="/item/{{ item.name }}/donthave">Remove from collection</a>
         {% endif %}
 
       {% else %}
 
         {% if item.hidden == 0 and item.have == 1 %}
-        <h4>
-            {% if item.willtrade == 1 %}
-               up for trade - 
-            {% endif %}
-         <a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
-         {% if item.willtrade == 1 %}
-         <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a>
-         {% endif %}
+         <a href="/item/{{ item.name }}">{{ item.name }}</a> 
+
+        {% if item.willtrade == 1 %}
+         / available for trade / <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a>
+        {% endif %}
 
         {% endif %}
 
@@ -259,11 +256,11 @@
     <div id="items">
     {% for item in pd.profileuser.collection() %}
      {% if item.want == 1 %}
-         <h4><a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
+         <a href="/item/{{ item.name }}">{{ item.name }}</a>
        {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
-       <a href="/item/{{ item.name }}/dontwant">Nevermind.</a>
+         / <a href="/item/{{ item.name }}/dontwant">Nevermind.</a>
        {%else%}
-         <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a>
+         / <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a>
        {% endif %}
      {% endif %}
     {% endfor %}

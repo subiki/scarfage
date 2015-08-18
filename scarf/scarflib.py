@@ -263,7 +263,7 @@ class siteuser(object):
 
     def newpassword(self, password):
         pwsalt = str(uuid.uuid4().get_hex().upper()[0:6])
-        pwhash = gen_pwhash(password, self.pwsalt)
+        pwhash = gen_pwhash(password, pwsalt)
         del password
 
         sql = upsert("users", 

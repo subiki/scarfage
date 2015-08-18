@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from scarf import app
 from flask import render_template, session, request, flash
 from sql import doquery, read
@@ -17,7 +18,7 @@ def page_not_found(error):
     pd = pagedata()
     pd.title = "Oh noes!"
     pd.errorcode="500"
-    pd.errortext="Oh noes!"
+    pd.errortext="(╯°□°）╯︵ ┻━┻"
     return render_template('error.html', pd=pd), 500
 
 @app.route('/error')
