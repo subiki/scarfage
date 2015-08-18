@@ -99,28 +99,30 @@ def show_item(item_id, debug):
 
     return render_template('item.html', pd=pd)
 
+@app.route('/item/<item_id>/revert/<edit>/debug', defaults={'debug': True})
 @app.route('/item/<item_id>/revert/<edit>', defaults={'debug': False})
 @nocache
 def revert_item_edit(item_id, edit, debug):
     pd = pagedata()
 
     try:
-        showitem = siteitem(item_id)
-        # todo: http://htmlpurifier.org/
-        sql = "SELECT body FROM itemedits WHERE uid = '%s' and itemid = '%s';" % (sql_escape(edit), showitem.uid)
+        pd.item = siteitem(item_id)
 
-        if 'username' in session:
-            userid = pd.authuser.uid
-        else:
-            userid = 0 
+        sql = "SELECT body FROM itemedits WHERE itemid = '%s' and uid = '%s';" % (pd.item.uid, sql_escape(edit))
+        pd.item.description = doquery(sql)[0][0]
+        showitem.old = True
+        showitem.editid = edit
+    except:
+        pass
 
-        new_edit(uid_by_item(item_id), doquery(sql)[0][0], userid)
+    pd.title="Reverting: " + item_id
+    pd.item_name = item_id
 
-        flash('Reverted to previous version')
-    except NoItem:
-        return redirect("/item/" + item_id + "/edit")
+    if debug:
+        if 'username' in session and pd.authuser.accesslevel == 255:
+            pd.debug = dbg(pd)
 
-    return redirect("/item/" + item_id)
+    return render_template('edititem.html', pd=pd)
 
 @app.route('/item/<item_id>/history/<edit>/debug', defaults={'debug': True})
 @app.route('/item/<item_id>/history/<edit>', defaults={'debug': False})
@@ -139,13 +141,6 @@ def show_item_edit(item_id, edit, debug):
         showitem.description_html = markdown.markdown(str(showitem.description))
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
-
-    if 'username' in session:
-        try:
-            user = siteuser.create(session['username'])
-            pd.iteminfo = user.query_collection(showitem.name)
-        except (NoUser, NoItem):
-            pass
 
     pd.title = item_id
     pd.item = showitem

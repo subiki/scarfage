@@ -92,8 +92,6 @@ def show_user_profile(username, debug):
 
     try:
         pd.profileuser = siteuser.create(username)
-        pd.profileuser.pop_collection()
-        pd.profileuser.pop_messages()
     except NoUser:
         return page_not_found(404)
 

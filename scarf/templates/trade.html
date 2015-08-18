@@ -22,7 +22,7 @@ Trading with yourself would get awful lonely...
         {% if pd.authuser.ownwant.have == 1 %}
             <form action="/user/{{ pd.tradeuser.username }}/trade/{{ pd.item.name }}" method="post" enctype="multipart/form-data">
             This user has the following items available for trade, what do you want in return for this item?<br />
-            {% for item in pd.tradeuser.collection %}
+            {% for item in pd.tradeuser.collection() %}
                 {% if item.willtrade == 1 %}
                 <input type="checkbox" name="item" value="{{ item.uid }}"><a href="/item/{{ item.name }}">{{ item.name }}</a><br>
                 {% endif %}
@@ -48,7 +48,7 @@ Trading with yourself would get awful lonely...
         {{ pd.tradeuser.username }} has {{ pd.item.name }} available for trade, make an offer:
 
         <form action="/user/{{ pd.tradeuser.username }}/trade/{{ pd.item.name }}" method="post" enctype="multipart/form-data">
-        {% for item in pd.authuser.collection %}
+        {% for item in pd.authuser.collection() %}
             {% if item.have == 1 %}
             <input type="checkbox" name="item" value="{{ item.uid }}">{{ item.name }}<br>
             {% endif %}

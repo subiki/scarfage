@@ -46,7 +46,7 @@ def get_whores_table():
              join ownwant on ownwant.userid=users.uid 
              where ownwant.own = 1 
              group by users.uid, ownwant.own 
-             order by count(*) desc limit 50;"""
+             order by count(*) desc limit 10;"""
     result = doquery(sql)
 
     return result;
@@ -59,7 +59,7 @@ def get_willtrade_table():
              join ownwant on ownwant.userid=users.uid 
              where ownwant.willtrade = 1 
              group by users.uid, ownwant.willtrade
-             order by count(*) desc limit 50;"""
+             order by count(*) desc limit 10;"""
     result = doquery(sql)
 
     return result;
@@ -72,7 +72,7 @@ def get_needy_table():
              join ownwant on ownwant.userid=users.uid 
              where ownwant.want = 1 
              group by users.uid, ownwant.want
-             order by count(*) desc limit 50;"""
+             order by count(*) desc limit 10;"""
     result = doquery(sql)
 
     return result;
@@ -84,7 +84,7 @@ def get_contribs_table():
              from users 
              join itemedits on itemedits.userid=users.uid 
              group by users.uid, itemedits.userid
-             order by count(*) desc limit 50;"""
+             order by count(*) desc limit 10;"""
     result = doquery(sql)
 
     return result;
@@ -125,18 +125,15 @@ class ownwant(object):
         self.hidden = 0
 
 siteuser_cache = dict()
+collection_cache = dict()
+message_cache = dict()
 class siteuser(object):
-
     @classmethod
     @memoize_with_expiry(siteuser_cache, cache_persist)
     def create(cls, username):
         return cls(username)
 
     def __init__(self, username):
-        self.collection = []
-        self.messages = []
-        self.contribs = []
-
         self.auth = False
         self.username = username
 
@@ -184,23 +181,26 @@ class siteuser(object):
         for item in result:
             self.contribs.append(item[0])
 
-    def pop_collection(self):
-        if not self.collection:
-            sql = """select ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden, items.name
-                     from ownwant
-                     join items on items.uid=ownwant.itemid
-                     where ownwant.userid=%s""" % self.uid
+    @memoize_with_expiry(collection_cache, cache_persist)
+    def collection(self):
+        ret = list()
+        sql = """select ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden, items.name
+                 from ownwant
+                 join items on items.uid=ownwant.itemid
+                 where ownwant.userid=%s""" % self.uid
 
-            result = doquery(sql)
+        result = doquery(sql)
 
-            for item in result:
-                sitem = siteitem(item[4])
-                sitem.have = item[0]
-                sitem.willtrade = item[1]
-                sitem.want = item[2]
-                sitem.hidden = item[3]
+        for item in result:
+            sitem = siteitem(item[4])
+            sitem.have = item[0]
+            sitem.willtrade = item[1]
+            sitem.want = item[2]
+            sitem.hidden = item[3]
 
-                self.collection.append(sitem)
+            ret.append(sitem)
+
+        return ret
 
     def query_collection(self, item):
         ret = ownwant()
@@ -222,21 +222,24 @@ class siteuser(object):
 
         return ret
 
-    def pop_messages(self):
-        if not self.messages:
-            sql = """select * from messages
-                     where fromuserid = '%s' or touserid = '%s'""" % (self.uid, self.uid)
+    @memoize_with_expiry(message_cache, cache_persist)
+    def messages(self):
+        ret = list()
+        sql = """select * from messages
+                 where fromuserid = '%s' or touserid = '%s'""" % (self.uid, self.uid)
 
-            result = doquery(sql)
+        result = doquery(sql)
 
-            for item in result:
-                if item[4] >= messagestatus['unread_pm']:
-                    pm = pmessage.create(item[0])
-                else:
-                    pm = trademessage.create(item[0])
+        for item in result:
+            if item[4] >= messagestatus['unread_pm']:
+                pm = pmessage.create(item[0])
+            else:
+                pm = trademessage.create(item[0])
 
-                pm.load_replies()
-                self.messages.append(pm)
+            pm.load_replies()
+            ret.append(pm)
+
+        return ret
 
     def seen(self):
         self.lastseen=datetime.datetime.now()

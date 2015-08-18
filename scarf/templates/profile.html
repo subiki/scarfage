@@ -28,7 +28,7 @@
         <th></th>
         </tr>
 
-        {% for pm in pd.profileuser.messages %}
+        {% for pm in pd.profileuser.messages() %}
         {% if pm.status <= pm.messagestatus['rejected_trade'] and pm.parentid == 0 %}
             <tr>
 
@@ -109,7 +109,7 @@
         <th></th>
         </tr>
 
-        {% for pm in pd.profileuser.messages %}
+        {% for pm in pd.profileuser.messages() %}
         {% if pm.from_user != pd.authuser.username and pm.status >= pm.messagestatus['unread_pm'] and pm.parentid == 0 %}
             <tr>
 
@@ -180,7 +180,7 @@
         <th></th>
         </tr>
 
-        {% for pm in pd.profileuser.messages %}
+        {% for pm in pd.profileuser.messages() %}
         {% if pm.from_uid == pd.authuser.uid and pm.status >= pm.messagestatus['unread_pm'] %}
             <tr>
 
@@ -217,7 +217,7 @@
     {% endif %}
 
     <h1>{{ pd.profileuser.username }}'s collection</h1>
-    {% for item in pd.profileuser.collection %}
+    {% for item in pd.profileuser.collection() %}
     <div id="item">
       {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
         {% if item.have == 1 %}
@@ -258,7 +258,7 @@
 
     <h1>{{ pd.profileuser.username }}'s wanted list</h1>
     <div id="items">
-    {% for item in pd.profileuser.collection %}
+    {% for item in pd.profileuser.collection() %}
      {% if item.want == 1 %}
          <h4><a href="/item/{{ item.name }}">{{ item.name }}</a></h4><br />
        {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
