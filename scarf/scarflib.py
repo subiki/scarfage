@@ -154,30 +154,12 @@ class siteuser(object):
         except TypeError:
             pass
 
-        sql = """select count(*), users.username
-                 from users
-                 where users.uid = "%s"
-                 order by count(*) desc limit 50;""" % self.uid
-        result = doquery(sql)
-
-        try:
-            self.numadds = result[0][0]
-        except IndexError:
-            self.numadds = 0
-
         if 'username' in session:
             if session['username'] is username:
                 self.seen()
                 self.auth = True
-
-        sql = """select items.name
-                 from items
-                 where uid=%s""" % self.uid
-
-        result = doquery(sql)
-
-        for item in result:
-            self.contribs.append(item[0])
+            else:
+                self.auth = False
 
     @memoize_with_expiry(collection_cache, cache_persist)
     def collection(self):
@@ -345,7 +327,9 @@ class siteimage:
         try: 
             self.uid = result[0][0]
             self.tag = result[0][1]
-            self.image = result[0][2]
+            self.userid = result[0][2]
+            self.ip = result[0][3]
+            self.image = result[0][4]
         except IndexError:
             raise NoImage(uid)
 
@@ -363,12 +347,12 @@ class siteimage:
         result = doquery(sql)
 
     def flag(self):
-        if 'username' in session:
-            username = session['username']
-        else:
-            username = "anon"
+        try:
+            userid = uid_by_user(session['username'])
+        except KeyError:
+            userid = 0
 
-        sql = upsert('imgmods', **{"imgid": self.uid, "username": sql_escape(username), "flag": 1})
+        sql = upsert('imgmods', **{"imgid": self.uid, "userid": userid, "flag": 1})
         result = doquery(sql)
 
 ######### Item stuff
@@ -402,23 +386,9 @@ class NoItem(Exception):
     def __init__(self, item):
         Exception.__init__(self, item)
 
-class __siteitem__:
-    def __init__(self):
-        self.name = ""
-        self.have = 0
-        self.want = 0
-        self.willtrade = 0
-
-class siteitem(__siteitem__):
+class siteitem():
     def __init__(self, name):
         self.name = name
-        self.images = []
-        self.have = 0
-        self.want = 0
-        self.willtrade = 0
-        self.haveusers = []
-        self.wantusers = []
-        self.willtradeusers = []
 
         sql = read('items', **{"name": sql_escape(name)})
         result = doquery(sql)
@@ -431,40 +401,15 @@ class siteitem(__siteitem__):
         except IndexError:
             raise NoItem(name)
 
-        sql = read('ownwant', **{"itemid": self.uid})
-        res = doquery(sql)
-        
-        for user in res:
-            userinfo = siteuser.create(user_by_uid(user[1]))
-
-            if (user[3] == 1):
-                self.have = self.have + 1
-                if(user[6] == 0):
-                    self.haveusers.append(userinfo)
-
-            if (user[4] == 1):
-                self.willtrade = self.willtrade + 1
-                if(user[6] == 0):
-                    self.willtradeusers.append(userinfo)
-
-            if (user[5] == 1):
-                self.want = self.want + 1
-                if(user[6] == 0):
-                    self.wantusers.append(userinfo)
-
     def delete(self):
         item_cache = dict()
-        for i in self.images: 
-            delimg = siteimage.create(i.uid)
-            delimg.delete()
-     
+
         sql = delete('items', **{"uid": self.uid}) 
         result = doquery(sql) 
      
         sql = delete('ownwant', **{"itemid": self.uid}) 
         result = doquery(sql) 
 
-        # Instead of deleting maybe we should replace the item id with something to point to an "unknown item" page
         sql = delete('tradelist', **{"itemid": self.uid}) 
         result = doquery(sql) 
 
@@ -480,7 +425,10 @@ class siteitem(__siteitem__):
         return data
 
     def history(self):
-        sql = "SELECT uid, itemid, date, userid, ip FROM itemedits WHERE itemid = '%s' order by uid desc;" % self.uid
+        sql = """select uid, itemid, date, userid, ip
+                 from itemedits
+                 where itemid = '%s'
+                 order by uid desc;""" % self.uid
         edits = doquery(sql)
 
         ret = list()
@@ -497,7 +445,60 @@ class siteitem(__siteitem__):
             ret.append(editobject)
 
         return ret
-            
+
+    have_cache = dict()
+    @memoize_with_expiry(have_cache, cache_persist)
+    def haveusers(self):
+        haveusers = list()
+        have = 0
+
+        sql = read('ownwant', **{"itemid": self.uid})
+        res = doquery(sql)
+        
+        for user in res:
+            if (user[3] == 1):
+                have = have + 1
+                if(user[6] == 0):
+                    userinfo = siteuser.create(user_by_uid(user[1]))
+                    haveusers.append(userinfo)
+
+        return (have, haveusers)
+
+    willtrade_cache = dict()
+    @memoize_with_expiry(willtrade_cache, cache_persist)
+    def willtradeusers(self):
+        willtradeusers = list()
+        willtrade = 0
+
+        sql = read('ownwant', **{"itemid": self.uid})
+        res = doquery(sql)
+        
+        for user in res:
+            if (user[4] == 1):
+                willtrade = willtrade + 1
+                if(user[6] == 0):
+                    userinfo = siteuser.create(user_by_uid(user[1]))
+                    willtradeusers.append(userinfo)
+
+        return (willtrade, willtradeusers)
+
+    want_cache = dict()
+    @memoize_with_expiry(want_cache, cache_persist)
+    def wantusers(self):
+        wantusers = list()
+        want = 0
+
+        sql = read('ownwant', **{"itemid": self.uid})
+        res = doquery(sql)
+        
+        for user in res:
+            if (user[5] == 1):
+                want = want + 1
+                if(user[6] == 0):
+                    userinfo = siteuser.create(user_by_uid(user[1]))
+                    wantusers.append(userinfo)
+
+        return (want, wantusers)
 
 def new_edit(itemid, description, userid):
     sql = upsert("itemedits", \
@@ -534,22 +535,23 @@ def new_item(name, description, userid):
 
 def new_img(f, title):
     image = base64.b64encode(f.read())
+
+    try:
+        userid = uid_by_user(session['username'])
+    except KeyError:
+        userid = 0
     
     sql = upsert("images", \
                  uid=0, \
                  tag=title, \
+                 userid=userid, \
+                 ip=request.remote_addr, \
                  image=image)
 
     imgid = doupsert(sql)
 
-    try:
-        username = session['username']
-    except KeyError:
-        username = "anon"
-
-    # todo: add ip address
     sql = upsert("imgmods", \
-                 username=username, \
+                 userid=userid, \
                  imgid=imgid)
     data = doupsert(sql)
 
@@ -558,21 +560,13 @@ def new_img(f, title):
 
 @memoize_with_expiry(item_cache, long_cache_persist)
 def latest_items():
-    items = []
+    items = list()
 
     try:
-        sql = "SELECT * FROM items order by added desc limit 50;"
+        sql = "SELECT uid FROM items order by added desc limit 50;"
         result = doquery(sql)
-
         for item in result:
-            newitem = __siteitem__()
-            newitem.uid = item[0]
-            newitem.name = item[1]
-            newitem.description = item[2]
-            newitem.added = item[3]
-            newitem.modified = item[4]
-
-            items.append(newitem)
+            items.append(siteitem(item_by_uid(item[0])))
     except TypeError:
         pass
 
@@ -595,22 +589,7 @@ def redirect_back(endpoint, **values):
 
 # Trade and message stuff
 
-"""
-status = status | (1 << messagestatus[unread_receiver])
-
-unread_receiver_status = (status & (1 << messagestatus[unread_receiver])
-if unread_receiver_status != 0:
-    return False
-
-"""
-
-messagestatus = {'unread_receiver': 0,
-                 "unread_sender": 1,
-                 "active_trae": 2,
-                 "complete_trade": 3,
-                 "settled_trade": 4,
-                 "rejected_trade": 5}
-
+#FIXME
 messagestatus = {'unread_trade': 0, 'active_trade': 1, 'complete_trade': 2, 'settled_trade': 3, 'rejected_trade': 4, 'unread_pm': 10, 'read_pm': 11}
 tradestatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
 
