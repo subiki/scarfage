@@ -110,20 +110,17 @@ def trade(username, itemid, debug):
 
     pd.title = "Trade for " + itemid
 
-    """
     try:
-        pd.authuser.pop_collection()
         pd.authuser.ownwant = pd.authuser.query_collection(itemid)
     except AttributeError:
         pass
 
     try:
-        pd.tradeuser.pop_collection()
         pd.tradeuser.ownwant = pd.tradeuser.query_collection(itemid)
         pd.item = siteitem(itemid)
     except (NoItem, NoUser):
         return page_not_found(404)
-    """
+
     if debug:
         if 'username' in session and pd.authuser.accesslevel == 255:
             pd.debug = dbg(pd)

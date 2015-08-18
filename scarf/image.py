@@ -137,7 +137,7 @@ def serve_full(img_id):
         resp = make_response(base64.b64decode(simg.image))
         resp.content_type = "image/png"
         return resp
-    except IOError:
+    except (IOError, NoImage):
         return page_not_found(404)
 
 @app.route('/image/<img_id>/thumbnail')
@@ -148,7 +148,7 @@ def serve_thumb(img_id):
         img = Image.open(image_string)
         img = resize(img, 800.0, 200.0)
         return serve_pil_image(img)
-    except IOError:
+    except (IOError, NoImage):
         return page_not_found(404)
 
 @app.route('/image/<img_id>/preview')
@@ -159,7 +159,7 @@ def serve_preview(img_id):
         img = Image.open(image_string)
         img = resize(img, 800.0, 800.0)
         return serve_pil_image(img)
-    except IOError:
+    except (IOError, NoImage):
         return page_not_found(404)
 
 @app.route('/image/<img_id>/debug', defaults={'debug': True})
