@@ -12,9 +12,9 @@
 
 <table>
 <tr><th>Link</th><th><a href="https://daringfireball.net/projects/markdown/syntax">markdown syntax</a></th></tr>
-<tr><td><a href="/image/{{ pd.img.uid }}/preview">Preview</a></td><td>![preview](/image/{{ pd.img.uid }}/preview)</td></tr>
-<tr><td><a href="/image/{{ pd.img.uid }}/thumbnail">Thumbnail</a></td><td>![thumbnail](/image/{{ pd.img.uid }}/thumbnail)</td></tr>
-<tr><td><a href="/image/{{ pd.img.uid }}/full">Full</a></td><td>![full](/image/{{ pd.img.uid }}/full)</td></tr>
+<tr><td><a href="/image/{{ pd.img.uid }}/preview">Preview</a></td><td>![preview](/image/{{ pd.img.uid }}/preview "{{ pd.img.tag }}")</td></tr>
+<tr><td><a href="/image/{{ pd.img.uid }}/thumbnail">Thumbnail</a></td><td>![thumbnail](/image/{{ pd.img.uid }}/thumbnail "{{ pd.img.tag }}")</td></tr>
+<tr><td><a href="/image/{{ pd.img.uid }}/full">Full</a></td><td>![full](/image/{{ pd.img.uid }}/full "{{ pd.img.tag }}")</td></tr>
 </table>
 
 <form>Create a new item: <input name="name" type="text" value="Title of item"><input name="theneedful" type="button" value="Edit" onclick="location.href='/item/' + this.form.elements['name'].value"> 

@@ -8,6 +8,7 @@ from debug import dbg
 from sql import read, doquery, sql_escape
 
 import markdown
+md_extensions = ['markdown.extensions.extra', 'markdown.extensions.admonition', 'markdown.extensions.wikilinks', 'markdown.extensions.sane_lists']
 
 import sys
 reload(sys)  
@@ -21,6 +22,11 @@ def itemroot():
 def newitem():
     pd = pagedata()
     return render_template('contribute.html', pd=pd)
+
+@app.route('/editinghelp')
+def editinghelp():
+    pd = pagedata()
+    return render_template('editinghelp.html', pd=pd)
 
 @app.route('/item/<item_id>/reallydelete')
 def reallydelete_item(item_id):
@@ -79,7 +85,7 @@ def show_item(item_id, debug):
         sql = "SELECT body FROM itemedits WHERE uid = '%s';" % showitem.description 
         showitem.description = doquery(sql)[0][0]
 
-        showitem.description_html = markdown.markdown(str(showitem.description))
+        showitem.description_html = markdown.markdown(str(showitem.description), md_extensions)
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 
@@ -138,7 +144,7 @@ def show_item_edit(item_id, edit, debug):
         showitem.old = True
         showitem.editid = edit
 
-        showitem.description_html = markdown.markdown(str(showitem.description))
+        showitem.description_html = markdown.markdown(str(showitem.description), md_extensions)
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 
