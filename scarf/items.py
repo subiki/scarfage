@@ -8,7 +8,8 @@ from debug import dbg
 from sql import read, doquery, sql_escape
 
 import markdown
-md_extensions = ['markdown.extensions.extra', 'markdown.extensions.admonition', 'markdown.extensions.wikilinks', 'markdown.extensions.sane_lists']
+from markdown.extensions.wikilinks import WikiLinkExtension
+md_extensions = ['markdown.extensions.extra', 'markdown.extensions.admonition', WikiLinkExtension(base_url='/item/', end_url=''), 'markdown.extensions.sane_lists']
 
 import sys
 reload(sys)  
