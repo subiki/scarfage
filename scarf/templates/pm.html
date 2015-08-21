@@ -7,7 +7,7 @@
 <div id="content">
 
 {% if pd.pm.parentid > 0 %}
-In reply to: <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.parent.uid }}">{{ pd.pm.parent.subject }}</a></br>
+<a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.parentid_obfuscated }}">Previous message in thread</a></br>
 {% endif %}
 
 Subject {{ pd.pm.subject }}</br>
@@ -65,12 +65,12 @@ Trade has been closed as settled!<br/>
 {% endif %}
 
 <h3>Replies:</h3><br>
-{% for reply in pd.pm.replies %}
- - <a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid }}"> {{ reply.subject }}</a></br>
-{% for reply2 in reply.replies %}
- \- <a href="/user/{{ pd.authuser.username }}/pm/{{ reply2.uid }}"> {{ reply2.subject }}</a></br>
-{% for reply3 in reply2.replies %}
-   \\- <a href="/user/{{ pd.authuser.username }}/pm/{{ reply3.uid }}"> {{ reply3.subject }}</a></br>
+{% for reply in pd.pm.replies() %}
+ - <a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid_obfuscated }}"> {{ reply.subject }}</a></br>
+{% for reply2 in reply.replies() %}
+ \- <a href="/user/{{ pd.authuser.username }}/pm/{{ reply2.uid_obfuscated }}"> {{ reply2.subject }}</a></br>
+{% for reply3 in reply2.replies() %}
+   \\- <a href="/user/{{ pd.authuser.username }}/pm/{{ reply3.uid_obfuscated }}"> {{ reply3.subject }}</a></br>
 {% endfor %}
 {% endfor %}
 {% endfor %}

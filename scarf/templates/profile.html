@@ -59,8 +59,8 @@
 
             </tr>
 
-            {% if pm.replies|length > 0 %}
-            {% for reply in pm.replies %}
+            {% if pm.replies()|length > 0 %}
+            {% for reply in pm.replies() %}
                 <tr>
 
                 <td>\-</td>
@@ -84,7 +84,7 @@
                 <td>{{ reply.sent }}</td>
 
                 <td>
-                <a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid }}">View</a></br>
+                <a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid_obfuscated }}">View</a></br>
                 </td>
 
                 </tr>
@@ -109,7 +109,7 @@
         </tr>
 
         {% for pm in pd.profileuser.messages() %}
-        {% if pm.from_user != pd.authuser.username and pm.status >= pm.messagestatus['unread_pm'] and pm.parentid == 0 %}
+        {% if pm.from_user != pd.authuser.username and pm.status >= pm.messagestatus['unread_pm'] %}
             <tr>
 
             <td></td>
@@ -133,8 +133,8 @@
 
             </tr>
 
-            {% if pm.replies|length > 0 %}
-            {% for reply in pm.replies %}
+            {% if pm.replies()|length > 0 %}
+            {% for reply in pm.replies() %}
             {% if reply.to_uid == pd.authuser.uid and pm.status >= pm.messagestatus['unread_pm'] %}
                 <tr>
 
@@ -155,7 +155,7 @@
                 <td>{{ reply.sent }}</td>
 
                 <td>
-                <a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid }}">View</a></br>
+                <a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid_obfuscated }}">View</a></br>
                 </td>
 
                 </tr>

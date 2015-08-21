@@ -46,7 +46,7 @@ def reallydelete_item(item_id):
     delitem.delete()
 
     pd.accessreq = 255
-    pd.conftext = delitem.name + " and its images have been deleted. I hope you meant to do that."
+    pd.conftext = delitem.name + " has been deleted. I hope you meant to do that."
     pd.conftarget = ""
     pd.conflinktext = ""
     return render_template('confirm.html', pd=pd)

@@ -231,7 +231,6 @@ class siteuser(object):
             else:
                 pm = trademessage.create(item[0])
 
-            pm.load_replies()
             ret.append(pm)
 
         return ret
@@ -610,7 +609,7 @@ tradestatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
 pmessage_cache = dict()
 class pmessage:
     @classmethod
-    @memoize_with_expiry(pmessage_cache, long_cache_persist)
+    @memoize_with_expiry(pmessage_cache, cache_persist)
     def create(cls, messageid):
         return cls(messageid)
 
@@ -620,27 +619,23 @@ class pmessage:
         sql = read('messages', **{"uid": sql_escape(messageid)})
         result = doquery(sql)
 
-        try:
-            self.uid = result[0][0]
-            self.uid_obfuscated = obfuscate(result[0][0])
-            self.from_uid = result[0][1]
-            self.to_uid = result[0][2]
-            self.subject = result[0][3]
-            self.message = result[0][4]
-            self.status = result[0][5]
-            self.parentid = result[0][6]
-            self.sent = result[0][7]
+        self.uid = result[0][0]
+        self.uid_obfuscated = obfuscate(result[0][0])
+        self.from_uid = result[0][1]
+        self.to_uid = result[0][2]
+        self.subject = result[0][3]
+        self.message = result[0][4]
+        self.status = result[0][5]
+        self.parentid = result[0][6]
+        self.parentid_obfuscated = obfuscate(result[0][6])
+        self.sent = result[0][7]
 
-            self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
-            self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
+        self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
+        self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
 
-            if self.parentid > 0:
-                self.parent = pmessage.create(self.parentid)
-
-            self.replies = []
-
-        except IndexError:
-            self.uid = 0
+    def parent(self):
+        if self.parentid > 0:
+            return pmessage.create(self.parentid)
 
     def read(self):
         if self.uid > 0 and self.status == messagestatus['unread_pm'] and uid_by_user(session['username']) == self.to_uid:
@@ -661,15 +656,17 @@ class pmessage:
             return
 
     @memoize_with_expiry(pmessage_cache, cache_persist)
-    def load_replies(self):
-        if not self.replies:
-            sql = read('messages', **{"parent": self.uid})
-            result = doquery(sql)
+    def replies(self):
+        ret = list()
 
-            for reply in result:
-                pm = pmessage.create(reply[0])
-                pm.load_replies()
-                self.replies.append(pm)
+        sql = read('messages', **{"parent": self.uid})
+        result = doquery(sql)
+
+        for reply in result:
+            pm = pmessage.create(reply[0])
+            ret.append(pm)
+
+        return ret
 
 class tradeitem:
     def __init__(self, itemid):
@@ -718,27 +715,19 @@ class trademessage(pmessage):
         sql = read('messages', **{"uid": sql_escape(messageid)})
         result = doquery(sql)
 
-        try:
-            self.uid = result[0][0]
-            self.uid_obfuscated = obfuscate(result[0][0])
-            self.from_uid = result[0][1]
-            self.to_uid = result[0][2]
-            self.subject = result[0][3]
-            self.message = result[0][4]
-            self.status = result[0][5]
-            self.parentid = result[0][6]
-            self.sent = result[0][7]
+        self.uid = result[0][0]
+        self.uid_obfuscated = obfuscate(result[0][0])
+        self.from_uid = result[0][1]
+        self.to_uid = result[0][2]
+        self.subject = result[0][3]
+        self.message = result[0][4]
+        self.status = result[0][5]
+        self.parentid = result[0][6]
+        self.parentid_obfuscated = obfuscate(result[0][6])
+        self.sent = result[0][7]
 
-            self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
-            self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
-
-            if self.parentid > 0:
-                self.parent = pmessage.create(self.parentid)
-
-            self.replies = []
-
-        except IndexError:
-            self.uid = 0
+        self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
+        self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
 
         self.items = []
 
@@ -787,13 +776,7 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
         return
 
     try:
-        # make sure the parent message is to us and that someone didn't fuck with the form
-        # if they want to screw up their index then thats on them
-        if parent:
-            p = pmessage.create(parent)
-
-            if p.to_user is not session['username'] and p.from_user is not session['username']:
-                return
+        # todo: fix parent id validation
 
         sql = upsert("messages", \
                      uid=0, \

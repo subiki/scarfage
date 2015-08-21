@@ -16,8 +16,6 @@ def viewpm(username, messageid, debug):
     if 'username' in session:
         pm = trademessage.create(deobfuscate(messageid))
         pm.read()
-        # TODO: move this into the template
-        pm.load_replies()
 
         if pm.messagestatus < messagestatus['unread_pm']:
             pm = trademessage.create(messageid)
@@ -46,7 +44,7 @@ def pm(username, debug):
             subject = request.form['subject']
 
             try:
-                parent = request.form['parent']
+                parent = deobfuscate(request.form['parent'])
             except:
                 parent = 0
 
