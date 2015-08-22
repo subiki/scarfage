@@ -39,6 +39,20 @@ def deobfuscate(string):
     except TypeError:
         return None
 
+def ip_uid(ip):
+    try:
+        sql = read('ip', **{"ip": sql_escape(ip)})
+        result = doquery(sql)
+        app.logger.debug(result)
+        return result[0][0]
+    except:
+        sql = upsert("ip", \
+                     ip=sql_escape(ip))
+        result = doupsert(sql)
+
+        app.logger.debug(result)
+        return result
+
 class pagedata:
     accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
     pass
@@ -300,7 +314,6 @@ def new_user(username, password, email):
     try:
         salt=str(uuid.uuid4().get_hex().upper()[0:6])
         sql = upsert("users", \
-                     uid=0, \
                      username=sql_escape(username), \
                      pwhash=gen_pwhash(password, salt), \
                      pwsalt=salt, \
@@ -341,7 +354,7 @@ class siteimage:
             self.uid = result[0][0]
             self.tag = result[0][1]
             self.userid = result[0][2]
-            self.ip = result[0][3]
+            self.ip = result[0][3] #FIXME: needs join on ip, nothing uses this yet tho
             self.image = result[0][4]
         except IndexError:
             raise NoImage(uid)
@@ -362,10 +375,10 @@ class siteimage:
     def flag(self):
         try:
             userid = uid_by_user(session['username'])
+            sql = upsert('imgmods', **{"imgid": self.uid, "userid": userid, "flag": 1})
         except KeyError:
-            userid = 0
+            sql = upsert('imgmods', **{"imgid": self.uid, "flag": 1})
 
-        sql = upsert('imgmods', **{"imgid": self.uid, "userid": userid, "flag": 1})
         result = doquery(sql)
 
 ######### Item stuff
@@ -438,8 +451,9 @@ class siteitem():
         return data
 
     def history(self):
-        sql = """select uid, itemid, date, userid, ip
+        sql = """select itemedits.uid, itemedits.itemid, itemedits.date, itemedits.userid, ip.ip
                  from itemedits
+                 join ip on itemedits.ip=ip.uid
                  where itemid = '%s'
                  order by uid desc;""" % self.uid
         edits = doquery(sql)
@@ -514,15 +528,22 @@ class siteitem():
         return (want, wantusers)
 
 def new_edit(itemid, description, userid):
-    sql = upsert("itemedits", \
-                 uid=0, \
-                 date=datetime.datetime.now(), \
-                 itemid=sql_escape(itemid), \
-                 userid=sql_escape(userid), \
-                 ip=request.remote_addr, \
-                 body=sql_escape(description))
+    if userid > 0:
+        sql = upsert("itemedits", \
+                     date=datetime.datetime.now(), \
+                     itemid=sql_escape(itemid), \
+                     userid=sql_escape(userid), \
+                     ip=ip_uid(request.remote_addr), \
+                     body=sql_escape(description))
+    else:
+        sql = upsert("itemedits", \
+                     date=datetime.datetime.now(), \
+                     itemid=sql_escape(itemid), \
+                     ip=ip_uid(request.remote_addr), \
+                     body=sql_escape(description))
 
     edit = doupsert(sql)
+    app.logger.debug(edit)
 
     sql = upsert("items", \
                  uid=sql_escape(itemid), \
@@ -534,7 +555,6 @@ def new_edit(itemid, description, userid):
 
 def new_item(name, description, userid):
     sql = upsert("items", \
-                 uid=0, \
                  name=sql_escape(name), \
                  description=0, \
                  added=datetime.datetime.now(), \
@@ -549,24 +569,35 @@ def new_item(name, description, userid):
 def new_img(f, title):
     image = base64.b64encode(f.read())
 
-    try:
+    userid = 0
+    if 'username' in session:
         userid = uid_by_user(session['username'])
-    except KeyError:
-        userid = 0
-    
-    sql = upsert("images", \
-                 uid=0, \
-                 tag=title, \
-                 userid=userid, \
-                 ip=request.remote_addr, \
-                 image=image)
 
-    imgid = doupsert(sql)
+    if userid > 0:
+        sql = upsert("images", \
+                         tag=title, \
+                         userid=userid, \
+                         ip=ip_uid(request.remote_addr), \
+                         image=image)
 
-    sql = upsert("imgmods", \
-                 userid=userid, \
-                 imgid=imgid)
-    data = doupsert(sql)
+        imgid = doupsert(sql)
+
+        sql = upsert("imgmods", \
+                     userid=userid, \
+                     imgid=imgid)
+        data = doupsert(sql)
+
+    else:
+        sql = upsert("images", \
+                         tag=title, \
+                         ip=ip_uid(request.remote_addr), \
+                         image=image)
+
+        imgid = doupsert(sql)
+
+        sql = upsert("imgmods", \
+                     imgid=imgid)
+        data = doupsert(sql)
 
     flash('Uploaded ' + f.filename)
     return imgid 
@@ -779,7 +810,6 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
         # todo: fix parent id validation
 
         sql = upsert("messages", \
-                     uid=0, \
                      fromuserid=sql_escape(fromuserid), \
                      touserid=sql_escape(touserid), \
                      subject=sql_escape(subject), \
@@ -796,7 +826,6 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
 def add_tradeitem(itemid, messageid, userid, acceptstatus):
     try:
         sql = upsert("tradelist", \
-                     uid=0, \
                      itemid=sql_escape(itemid), \
                      messageid=sql_escape(messageid), \
                      userid=sql_escape(userid), \
