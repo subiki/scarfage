@@ -9,10 +9,10 @@
 <p>
 {% if pd.deployment %}
 Prod<br />
-Deployment date: {{ deployment.date }}<br />
-Branch: {{ deployment.branch }}<br />
-Commit: {{ deployment.commit }}<br />
-User: {{ deployment.user }}<br />
+Deployment date: {{ pd.deployment.date }}<br />
+Branch: {{ pd.deployment.branch }}<br />
+Commit: {{ pd.deployment.commit }}<br />
+User: {{ pd.deployment.user }}<br />
 {% else %}
 Dev<br />
 {% endif %}
