@@ -1,12 +1,14 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from scarflib import redirect_back, pagedata, siteimage, NoImage
+from scarflib import redirect_back, pagedata, siteimage, NoImage, user_by_uid
 from sql import doupsert, upsert, doquery, read, delete, sql_escape
 from main import page_not_found
 from debug import dbg
  
 from PIL import Image
+import cStringIO
 import random
+import base64
 from bisect import bisect
 
 zonebounds=[36,72,108,144,180,216,252]
@@ -42,6 +44,8 @@ def moderate(debug):
 
             if user is None:
                 user = 'Anonymous'
+            else:
+                user = user_by_uid(user)
 
             if mod[1] == 0 or flag == 1:
                 sql = read('images', **{"uid": imgid})
@@ -105,16 +109,21 @@ def mod_img(image):
     try:
         sql = read('imgmods', **{"imgid": modimg.uid})
         result = doquery(sql)
+
+        if result[0][3] is None:
+            user = 'Anonymous'
+        else:
+            user = user_by_uid(result[0][3])
         
-        pd.moduser = result[0][3]
+        pd.moduser = user
     except IndexError:
         pd.title = "SQL error"
         pd.errortext = "SQL error"
         return render_template('error.html', pd=pd)
 
-    # FIXME: this is broken
-    """
-    im=Image.open(image)
+    simg = siteimage.create(modimg.uid)
+    image_string = cStringIO.StringIO(base64.b64decode(simg.image))
+    im = Image.open(image_string)
     basewidth = 100
     wpercent = (basewidth/float(im.size[0]))
     hsize = int((float(im.size[1])*float(wpercent))) / 2
@@ -131,8 +140,6 @@ def mod_img(image):
         ascii=ascii+"\n"
 
     pd.ascii = ascii
-    """
-    pd.ascii = ""
 
     return render_template('mod_img.html', pd=pd)
 
