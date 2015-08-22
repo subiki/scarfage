@@ -39,6 +39,10 @@ def moderate(debug):
             imgid = mod[0]
             flag = mod[2]
             user = mod[3]
+
+            if user is None:
+                user = 'Anonymous'
+
             if mod[1] == 0 or flag == 1:
                 sql = read('images', **{"uid": imgid})
                 img = doquery(sql)
