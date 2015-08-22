@@ -7,7 +7,15 @@
 <div id="content">
 
 <p>
-Last deployment: {{ pd.lastdep }}<br />
+{% if pd.deployment %}
+Prod<br />
+Deployment date: {{ deployment.date }}<br />
+Branch: {{ deployment.branch }}<br />
+Commit: {{ deployment.commit }}<br />
+User: {{ deployment.user }}<br />
+{% else %}
+Dev<br />
+{% endif %}
 </p>
 
 <table>

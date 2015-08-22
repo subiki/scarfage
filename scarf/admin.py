@@ -4,6 +4,7 @@ from scarflib import redirect_back, pagedata, NoUser, siteuser
 from sql import read, doquery
 from debug import dbg
 import os.path, time
+import jsonpickle
 
 def get_users():
     sql = read('users')
@@ -28,9 +29,12 @@ def admin_users(debug):
 
     pd.users = get_users()
     try:
-        pd.lastdep = str(time.ctime(os.path.getmtime('/srv/data/web/vhosts/default/run.py')))
-    except OSError:
-        pd.lastdep = "dev"
+        with open('/srv/data/web/vhosts/default/deployment', 'r') as depfile:
+            frozen = depfile.read()
+        pd.deployment = jsonpickle.decode(frozen)
+        pd.mode = 'prod'
+    except (OSError, IOError):
+        pd.mode = "dev"
 
     if debug:
         pd.debug = dbg(pd)
