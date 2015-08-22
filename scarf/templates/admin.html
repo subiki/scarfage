@@ -8,7 +8,7 @@
 
 <p>
 {% if pd.deployment %}
-Prod<br />
+Instance: {{ pd.deployment.instance }}<br />
 Deployment date: {{ pd.deployment.date }}<br />
 Branch: <a href="https://github.com/cmazuc/scarfage/tree/{{ pd.deployment.branch }}">{{ pd.deployment.branch }}</a><br />
 Commit: <a href="https://github.com/cmazuc/scarfage/commit/{{ pd.deployment.commit }}">{{ pd.deployment.commit|truncate(10, True, '') }}<br />
