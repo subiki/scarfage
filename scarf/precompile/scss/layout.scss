@@ -1,5 +1,6 @@
 body,
 html {
+    /* WE NEED FONTS ... */
     font: 14px/1.4 "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin:0;
     padding:0;
@@ -12,23 +13,37 @@ html {
     height: 100px;
     background-color: #2e823c;
 
-
-    #logo {
+    /* WE NEED A LOGO */
+    .logo {
       display: inline-block;
     }
 
     #nav {
       display: inline-block;
-      width: 100%;
+      width: auto;
+      color: #fff;
+      vertical-align: middle;
 
-
+      /* NAV LINKS - use jeet or stylus to create the columns. will allow for responsive */
       li {
         display: inline-block;
+        vertical-align: middle;
+        margin-right: 80px;
       }
 
     }
-
 }
+
+#scarf {
+  width: auto;
+  margin: auto 10px;
+
+  img {
+    width: 100%;
+    align-items: center;
+  }
+}
+
 
 #footer {
     width: 100%;
