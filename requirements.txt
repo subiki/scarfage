@@ -5,3 +5,15 @@ MySQL-python
 Pillow
 markdown
 jsonpickle
+
+
+# npm, Gulp, SCSS
+
+To install npm:
+https://docs.npmjs.com/getting-started/installing-node
+
+To install gulp using npm:
+https://www.npmjs.com/package/gulp
+
+To install gulp-sass using npm:
+https://www.npmjs.com/package/gulp-sass
