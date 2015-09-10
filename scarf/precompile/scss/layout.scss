@@ -8,51 +8,92 @@ html {
     background:#ffffff;
 }
 
-#header {
+header {
     width: 100%;
     height: 100px;
-    background-color: #2e823c;
+    background-color: #96C09E;
 
     /* WE NEED A LOGO */
     .logo {
       display: inline-block;
+      margin: 10px;
+      vertical-align: middle;
     }
 
     #nav {
       display: inline-block;
-      width: auto;
+      width: 40%;
       color: #fff;
       vertical-align: middle;
 
-      /* NAV LINKS - use jeet or stylus to create the columns. will allow for responsive */
-      li {
+      /* NAV LINKS - use jeet or stylus to create the columns. will allow for better responsive control */
+      li  {
         display: inline-block;
-        vertical-align: middle;
-        margin-right: 80px;
+        margin-right: 5%;
       }
 
     }
 }
 
-#scarf {
-  width: auto;
-  margin: auto 10px;
 
-  img {
-    width: 100%;
-    align-items: center;
+
+article {
+  margin: 10px auto;
+
+  .row {
+    clear: both;
+
+    label {
+      /* include red meta tag font */
+      color: #900;
+      font-weight: bold;
+      display: inline-block;
+      margin-right: 1%;
+    }
+
+    .value {
+      display: inline-block;
+
+    }
+
+  }
+
+  &.scarf-entry {
+    width: auto;
+
+    .scarfImg {
+      width: auto;
+      margin: 10px auto;
+      text-align: center;
+
+      img {
+        width: 80%;
+        height: auto;
+      }
+    }
+
+    .tag-heirarchy {
+      width: 80%;
+      margin: 10px auto;
+
+      .value {
+        font-weight: bold;
+        font-size: 12px;
+      }
+
+    }
+
+
+    table {
+      margin: 10px auto;
+      width: 80%;
+    }
+
   }
 }
 
-
 #footer {
     width: 100%;
-}
-
-#content {
-    float:left;
-    padding: 10px;
-    width: 95%;
 }
 
 #flashes {

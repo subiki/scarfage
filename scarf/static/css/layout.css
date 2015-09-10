@@ -7,38 +7,58 @@ html {
   color: #000;
   background: #ffffff; }
 
-#header {
+header {
   width: 100%;
   height: 100px;
-  background-color: #2e823c;
+  background-color: #96C09E;
   /* WE NEED A LOGO */ }
-  #header .logo {
-    display: inline-block; }
-  #header #nav {
+  header .logo {
     display: inline-block;
-    width: auto;
+    margin: 10px;
+    vertical-align: middle; }
+  header #nav {
+    display: inline-block;
+    width: 40%;
     color: #fff;
     vertical-align: middle;
-    /* NAV LINKS - use jeet or stylus to create the columns. will allow for responsive */ }
-    #header #nav li {
+    /* NAV LINKS - use jeet or stylus to create the columns. will allow for better responsive control */ }
+    header #nav li {
       display: inline-block;
-      vertical-align: middle;
-      margin-right: 80px; }
+      margin-right: 5%; }
 
-#scarf {
-  width: auto;
-  margin: auto 10px; }
-  #scarf img {
-    width: 100%;
-    align-items: center; }
+article {
+  margin: 10px auto; }
+  article .row {
+    clear: both; }
+    article .row label {
+      /* include red meta tag font */
+      color: #900;
+      font-weight: bold;
+      display: inline-block;
+      margin-right: 1%; }
+    article .row .value {
+      display: inline-block; }
+  article.scarf-entry {
+    width: auto; }
+    article.scarf-entry .scarfImg {
+      width: auto;
+      margin: 10px auto;
+      text-align: center; }
+      article.scarf-entry .scarfImg img {
+        width: 80%;
+        height: auto; }
+    article.scarf-entry .tag-heirarchy {
+      width: 80%;
+      margin: 10px auto; }
+      article.scarf-entry .tag-heirarchy .value {
+        font-weight: bold;
+        font-size: 12px; }
+    article.scarf-entry table {
+      margin: 10px auto;
+      width: 80%; }
 
 #footer {
   width: 100%; }
-
-#content {
-  float: left;
-  padding: 10px;
-  width: 95%; }
 
 #flashes {
   clear: both;
