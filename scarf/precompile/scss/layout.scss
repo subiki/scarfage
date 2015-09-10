@@ -92,10 +92,14 @@ article {
     /* include red meta tag font */
     display: inline-block;
     margin-right: 1%;
+    vertical-align: top;
+    color: #900;
+    font-weight: bold;
   }
 
   span.value {
     display: inline-block;
+    word-break: break-word;
   }
 
   .row {

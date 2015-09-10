@@ -68,10 +68,14 @@ header {
 article label {
   /* include red meta tag font */
   display: inline-block;
-  margin-right: 1%; }
+  margin-right: 1%;
+  vertical-align: top;
+  color: #900;
+  font-weight: bold; }
 
 article span.value {
-  display: inline-block; }
+  display: inline-block;
+  word-break: break-word; }
 
 article .row {
   clear: both; }
