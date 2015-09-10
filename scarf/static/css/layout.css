@@ -6,6 +6,41 @@ html {
   padding: 0;
   color: #000;
   background: #ffffff; }
+  body ul,
+  html ul {
+    margin: 0;
+    padding: 0; }
+    body ul li,
+    html ul li {
+      list-style: none;
+      margin: 0;
+      padding: 0; }
+  body dl,
+  html dl {
+    display: block; }
+  body dt,
+  html dt {
+    vertical-align: top;
+    color: #900;
+    font-weight: bold; }
+  body dt,
+  body dd,
+  html dt, html dd {
+    display: inline-block;
+    margin: 0;
+    word-break: break-word; }
+  body dd.value,
+  html dd.value {
+    width: auto; }
+  body a,
+  html a {
+    color: #75A3FF;
+    text-decoration: none; }
+  body h1,
+  html h1 {
+    font-weight: bold;
+    font-size: 2em;
+    margin: .2em 0; }
 
 header {
   width: 100%;
@@ -26,36 +61,51 @@ header {
       display: inline-block;
       margin-right: 5%; }
 
-article {
+.wrapper {
+  width: 90%;
   margin: 10px auto; }
-  article .row {
-    clear: both; }
-    article .row label {
-      /* include red meta tag font */
-      color: #900;
-      font-weight: bold;
-      display: inline-block;
-      margin-right: 1%; }
-    article .row .value {
-      display: inline-block; }
-  article.scarf-entry {
-    width: auto; }
-    article.scarf-entry .scarfImg {
-      width: auto;
-      margin: 10px auto;
-      text-align: center; }
-      article.scarf-entry .scarfImg img {
-        width: 80%;
-        height: auto; }
-    article.scarf-entry .tag-heirarchy {
-      width: 80%;
-      margin: 10px auto; }
-      article.scarf-entry .tag-heirarchy .value {
-        font-weight: bold;
-        font-size: 12px; }
-    article.scarf-entry table {
-      margin: 10px auto;
-      width: 80%; }
+
+article label {
+  /* include red meta tag font */
+  display: inline-block;
+  margin-right: 1%; }
+
+article span.value {
+  display: inline-block; }
+
+article .row {
+  clear: both; }
+
+article .col {
+  display: inline-block;
+  margin-right: 1%; }
+
+article.scarf-entry .scarfImg {
+  width: auto;
+  margin: 10px auto;
+  text-align: center; }
+  article.scarf-entry .scarfImg img {
+    width: 100%;
+    height: auto; }
+
+article.scarf-entry .tag-heirarchy {
+  margin: 10px auto; }
+  article.scarf-entry .tag-heirarchy .value {
+    font-weight: bold;
+    font-size: 12px; }
+
+article.scarf-entry .product-info-panel {
+  padding: 10px;
+  background-color: #eee;
+  width: 320px; }
+  article.scarf-entry .product-info-panel dt {
+    min-width: 80px; }
+  article.scarf-entry .product-info-panel dd {
+    max-width: 235px; }
+
+article.scarf-entry table {
+  margin: 10px auto;
+  width: 100%; }
 
 #footer {
   width: 100%; }

@@ -6,6 +6,52 @@ html {
     padding:0;
     color:#000;
     background:#ffffff;
+
+    ul {
+      margin: 0;
+      padding:0;
+      li{
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+    }
+
+
+
+    dl {
+      display: block;
+    }
+
+    dt {
+      vertical-align: top;
+      color: #900;
+      font-weight: bold;
+    }
+
+    dt, dd {
+      display: inline-block;
+      margin: 0;
+      word-break: break-word;
+    }
+
+    dd {
+      &.value {
+        width: auto;
+      }
+    }
+
+    a {
+      color: #75A3FF;
+      text-decoration: none;
+    }
+
+    h1 {
+      font-weight: bold;
+      font-size: 2em;
+      margin: .2em 0;
+    }
+
 }
 
 header {
@@ -35,31 +81,33 @@ header {
     }
 }
 
-
+.wrapper {
+  width: 90%;
+  margin: 10px auto;
+}
 
 article {
-  margin: 10px auto;
+
+  label {
+    /* include red meta tag font */
+    display: inline-block;
+    margin-right: 1%;
+  }
+
+  span.value {
+    display: inline-block;
+  }
 
   .row {
     clear: both;
+  }
 
-    label {
-      /* include red meta tag font */
-      color: #900;
-      font-weight: bold;
-      display: inline-block;
-      margin-right: 1%;
-    }
-
-    .value {
-      display: inline-block;
-
-    }
-
+  .col {
+    display: inline-block;
+    margin-right: 1%;
   }
 
   &.scarf-entry {
-    width: auto;
 
     .scarfImg {
       width: auto;
@@ -67,13 +115,12 @@ article {
       text-align: center;
 
       img {
-        width: 80%;
+        width: 100%;
         height: auto;
       }
     }
 
     .tag-heirarchy {
-      width: 80%;
       margin: 10px auto;
 
       .value {
@@ -83,10 +130,22 @@ article {
 
     }
 
+    .product-info-panel {
+      padding: 10px;
+      background-color: #eee;
+      width: 320px;
+
+      dt {
+        min-width: 80px;
+      }
+      dd {
+        max-width: 235px;
+      }
+    }
 
     table {
       margin: 10px auto;
-      width: 80%;
+      width: 100%;
     }
 
   }
