@@ -17,7 +17,8 @@ html {
       padding: 0; }
   body dl,
   html dl {
-    display: block; }
+    display: inline-block;
+    margin: 0; }
   body dt,
   html dt {
     vertical-align: top;
@@ -26,9 +27,11 @@ html {
   body dt,
   body dd,
   html dt, html dd {
-    display: inline-block;
+    display: block;
     margin: 0;
-    word-break: break-word; }
+    word-break: break-word;
+    vertical-align: top;
+    margin-right: 1%; }
   body dd.value,
   html dd.value {
     width: auto; }
@@ -73,7 +76,16 @@ article label {
   color: #900;
   font-weight: bold; }
 
-article span.value {
+article .meta {
+  color: #900; }
+
+article .tag {
+  color: #00f; }
+
+article .color-tag {
+  color: #090; }
+
+article .value {
   display: inline-block;
   word-break: break-word; }
 
@@ -84,32 +96,58 @@ article .col {
   display: inline-block;
   margin-right: 1%; }
 
-article.scarf-entry .scarfImg {
-  width: auto;
-  margin: 10px auto;
-  text-align: center; }
-  article.scarf-entry .scarfImg img {
+article.scarf-entry {
+  /* GLOSSARY */
+  /* PRODUCT INFO PANEL */ }
+  article.scarf-entry .scarfImg {
+    width: auto;
+    margin: 10px auto;
+    text-align: center; }
+    article.scarf-entry .scarfImg img {
+      width: 100%;
+      height: auto; }
+  article.scarf-entry .tag-heirarchy {
+    margin: 10px auto; }
+    article.scarf-entry .tag-heirarchy .value {
+      font-weight: bold;
+      font-size: 12px; }
+  article.scarf-entry .col1 {
+    vertical-align: top;
+    display: inline-block;
     width: 100%;
-    height: auto; }
-
-article.scarf-entry .tag-heirarchy {
-  margin: 10px auto; }
-  article.scarf-entry .tag-heirarchy .value {
-    font-weight: bold;
-    font-size: 12px; }
-
-article.scarf-entry .product-info-panel {
-  padding: 10px;
-  background-color: #eee;
-  width: 320px; }
-  article.scarf-entry .product-info-panel dt {
-    min-width: 80px; }
-  article.scarf-entry .product-info-panel dd {
-    max-width: 235px; }
-
-article.scarf-entry table {
-  margin: 10px auto;
-  width: 100%; }
+    margin-right: 10px; }
+  article.scarf-entry .col2 {
+    vertical-align: top;
+    display: inline-block;
+    width: 30%; }
+  article.scarf-entry .glossary {
+    width: auto; }
+    article.scarf-entry .glossary .entry {
+      clear: both;
+      display: block;
+      margin: 10px 0; }
+    article.scarf-entry .glossary dd {
+      display: inline-block; }
+      article.scarf-entry .glossary dd.value .description {
+        float: left;
+        max-width: 520px;
+        display: inline-block;
+        margin-right: 20px; }
+    article.scarf-entry .glossary dl.related-tags {
+      display: inline-block;
+      float: right;
+      width: 320px; }
+  article.scarf-entry .product-info-panel {
+    padding: 10px;
+    background-color: #eee;
+    width: 100%; }
+    article.scarf-entry .product-info-panel dt {
+      min-width: 140px; }
+    article.scarf-entry .product-info-panel dd {
+      max-width: 235px; }
+  article.scarf-entry table {
+    margin: 10px auto;
+    width: 100%; }
 
 #footer {
   width: 100%; }

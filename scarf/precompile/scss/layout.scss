@@ -17,10 +17,9 @@ html {
       }
     }
 
-
-
     dl {
-      display: block;
+      display: inline-block;
+      margin: 0;
     }
 
     dt {
@@ -30,9 +29,12 @@ html {
     }
 
     dt, dd {
-      display: inline-block;
+      display: block;
       margin: 0;
       word-break: break-word;
+      vertical-align: top;
+      margin-right: 1%;
+
     }
 
     dd {
@@ -97,7 +99,19 @@ article {
     font-weight: bold;
   }
 
-  span.value {
+  .meta {
+    color: #900;
+  }
+
+  .tag {
+    color: #00f;
+  }
+
+  .color-tag {
+    color: #090;
+  }
+
+  .value {
     display: inline-block;
     word-break: break-word;
   }
@@ -134,13 +148,61 @@ article {
 
     }
 
+    .col1 {
+      vertical-align: top;
+      display: inline-block;
+      width: 100%;
+      margin-right: 10px;
+    }
+
+    .col2 {
+      vertical-align: top;
+      display: inline-block;
+      width: 30%
+    }
+
+    /* GLOSSARY */
+    .glossary {
+      width: auto;
+
+      .entry {
+        clear: both;
+        display: block;
+        margin: 10px 0;
+      }
+
+      dd {
+        display: inline-block;
+
+        &.value {
+          .description {
+            float: left;
+            max-width: 520px;
+            display: inline-block;
+            margin-right: 20px;
+          }
+        }
+      }
+
+      dl {
+        &.related-tags {
+          display: inline-block;
+          float: right;
+          width: 320px;
+        }
+      }
+
+    }
+
+
+    /* PRODUCT INFO PANEL */
     .product-info-panel {
       padding: 10px;
       background-color: #eee;
-      width: 320px;
+      width: 100%;
 
       dt {
-        min-width: 80px;
+        min-width: 140px;
       }
       dd {
         max-width: 235px;
