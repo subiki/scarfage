@@ -2,7 +2,7 @@ from StringIO import StringIO
 from PIL import Image
 from scarf import app
 from flask import make_response, redirect, url_for, request, render_template, session, flash, send_file
-from scarflib import redirect_back, pagedata, siteimage, siteitem, NoItem, NoImage, new_img
+from scarflib import redirect_back, pagedata, siteimage, siteitem, NoItem, NoImage, new_img, latest_items
 from main import page_not_found
 from debug import dbg
 import base64
@@ -32,12 +32,13 @@ def newimg(debug):
                 flash('Uploaded image!')
                 return redirect('/image/' + str(img))
 
-    pd.title="Add New Item"
+    pd.title="Add New Image"
 
     if debug:
         if 'username' in session and pd.authuser.accesslevel == 255:
             pd.debug = dbg(pd)
 
+    pd.items = latest_items()
     return render_template('newimg.html', pd=pd)
 
 @app.route('/image/<img_id>/reallydelete')

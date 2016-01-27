@@ -430,6 +430,7 @@ class siteitem():
     def delete(self):
         item_cache = dict()
 
+        # TODO: + item edits
         sql = delete('items', **{"uid": self.uid}) 
         result = doquery(sql) 
      
@@ -603,11 +604,14 @@ def new_img(f, title):
     return imgid 
 
 @memoize_with_expiry(item_cache, long_cache_persist)
-def latest_items():
+def latest_items(limit=0):
     items = list()
 
     try:
-        sql = "SELECT uid FROM items order by added desc limit 50;"
+        if limit > 0:
+            sql = "SELECT uid FROM items order by added desc limit " + sql_escape(limit) + ";"
+        else:
+            sql = "SELECT uid FROM items;"
         result = doquery(sql)
         for item in result:
             items.append(siteitem(item_by_uid(item[0])))

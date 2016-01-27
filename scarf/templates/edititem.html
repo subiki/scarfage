@@ -14,7 +14,10 @@
 <div id="content">
     <form action="/item/{{ pd.item_name }}/edit" method="post" enctype="multipart/form-data">
         <h3>Editing: "{{ pd.item_name }}" {% if not pd.item %}(new item){% endif %} </h3><br />
-        <textarea name=desc rows="30" cols="120">{% if pd.item %}{{ pd.item.description }}{% endif %}</textarea><br />
+        <p>Description of item:</p>
+        <textarea name=desc rows="5" cols="80">{% if pd.item %}{{ pd.item.description }}{% endif %}</textarea><br />
+        <p>Tags:</p>
+        <input type=text name=tags><br />
         <input type=submit value=Submit>
     </form>
 </div>

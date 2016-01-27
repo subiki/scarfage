@@ -1,7 +1,7 @@
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, flash
 from werkzeug import secure_filename
-from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back, new_edit, uid_by_item
+from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items
 from main import page_not_found
 from nocache import nocache
 from debug import dbg

@@ -6,6 +6,10 @@
 
 <div id="content">
     <form action="/newimg" method="post" enctype="multipart/form-data">
+        Parent object:<br />
+        {% for item in pd.items %}
+        {{ item.name }} </br>
+        {% endfor %}
         Image title:<br />
         <input type=text name=title><br />
         Image description:<br />
