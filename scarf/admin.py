@@ -29,7 +29,7 @@ def admin_users(debug):
 
     pd.users = get_users()
     try:
-        with open('/srv/data/web/vhosts/default/deployment', 'r') as depfile:
+        with open('/var/www/scarfage/deployment', 'r') as depfile:
             frozen = depfile.read()
         pd.deployment = jsonpickle.decode(frozen)
         pd.mode = 'prod'
