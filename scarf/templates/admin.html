@@ -9,7 +9,6 @@
 
 <p>
 {% if pd.deployment %}
-Instance: {{ pd.deployment.instance }}<br />
 Deployment date: {{ pd.deployment.date }}<br />
 Branch: <a href="https://github.com/cmazuc/scarfage/tree/{{ pd.deployment.branch }}">{{ pd.deployment.branch }}</a><br />
 Commit: <a href="https://github.com/cmazuc/scarfage/commit/{{ pd.deployment.commit }}">{{ pd.deployment.commit|truncate(10, True, '') }}</a><br />
@@ -17,7 +16,7 @@ User: {{ pd.deployment.user }}<br />
 {% else %}
 Dev<br />
 {% endif %}
-<a href="https://sfadm.tripodgnomes.com/">Admin Site</a><br/>
+<a href="https://siteadmin.scarfage.com/">Admin Site</a><br/>
 </p>
 
 <div class="page-header"><h4>Site users</h4></div>
