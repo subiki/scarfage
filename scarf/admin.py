@@ -6,6 +6,8 @@ from debug import dbg
 import os.path, time
 import jsonpickle
 
+from config import dep_file
+
 def get_users():
     sql = read('users')
     result = doquery(sql)
@@ -29,7 +31,7 @@ def admin_users(debug):
 
     pd.users = get_users()
     try:
-        with open('/var/www/scarfage/deployment', 'r') as depfile:
+        with open(dep_file, 'r') as depfile:
             frozen = depfile.read()
         pd.deployment = jsonpickle.decode(frozen)
         pd.mode = 'prod'
