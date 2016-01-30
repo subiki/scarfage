@@ -9,7 +9,7 @@ from sql import read, doquery, sql_escape
 
 import markdown
 from markdown.extensions.wikilinks import WikiLinkExtension
-md_extensions = ['markdown.extensions.extra', 'markdown.extensions.admonition', WikiLinkExtension(base_url='/item/', end_url=''), 'markdown.extensions.sane_lists']
+md_extensions = ['markdown.extensions.extra', 'markdown.extensions.admonition']
 
 import sys
 reload(sys)  
