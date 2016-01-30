@@ -95,9 +95,9 @@ def trade(username, itemid, debug):
             try:
                 parent = request.form['parent']
             except:
-                parent = 0
+                parent = None
 
-            if items and message and subject:
+            if message and subject:
                 messageid = send_pm(pd.authuser.uid, pd.tradeuser.uid, subject, message, messagestatus['unread_trade'], parent)
 
                 for item in items:

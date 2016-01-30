@@ -46,7 +46,7 @@ def pm(username, debug):
             try:
                 parent = deobfuscate(request.form['parent'])
             except:
-                parent = 0
+                parent = None
 
             if message and subject:
                 messageid = send_pm(pd.authuser.uid, pd.recipient.uid, subject, message, messagestatus['unread_pm'], parent)

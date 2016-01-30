@@ -2,7 +2,7 @@
 
 {% block body %}
 
-{% include "login.html" %}
+
 
 <div id="content">
 
@@ -15,10 +15,7 @@
 {% if pd.authuser is defined and pd.authuser.uid == pd.tradeuser.uid %}
 Trading with yourself would get awful lonely...
 {% elif pd.authuser is defined %}
-
-
     {% if pd.tradeuser.ownwant.want == 1 %}
-
         {% if pd.authuser.ownwant.have == 1 %}
             <form action="/user/{{ pd.tradeuser.username }}/trade/{{ pd.item.name }}" method="post" enctype="multipart/form-data">
             This user has the following items available for trade, what do you want in return for this item?<br />
@@ -33,7 +30,6 @@ Trading with yourself would get awful lonely...
                 <textarea name=body rows="4" cols="50">I would like to trade {{ pd.item.name }}</textarea><br />
                 <input type=submit value=Submit>
             </form>
-
         {% else %}
             {% if pd.tradeuser.ownwant.willtrade != 1 %}
                 You don't seem to have this item in your collection, did you forget to <a href="/item/{{ pd.item.name }}/have">add it</a>?

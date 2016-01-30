@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
     {% block head %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="icon" type="image/png" href="/static/favicon.png" />
-    <link rel="stylesheet" href="/static/main.css" />
     <title>{{ pd.title }}</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/static/main.css">
     {% endblock %}
 </head>
 
@@ -19,60 +27,77 @@
 {% endif %}
 
 <body>
-    <div id="header">
-        <h1>Scarfage</h1><br />
-        <div class=nav>
-        <a href="/">Home</a>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Scarfage</a>
         </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/newitem">Contribute</a></li>
+            <li><a href="/newimg">Pic upload</a></li>
+            <li><a href="/stats">Site stats</a></li>
+            {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
+            <li><a href="/mod">Moderate</a></li>
+            {% endif %}
+            {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
+            <li><a href="/admin">Admin</a></li>
+            {% endif %}
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+          {% if pd.authuser is defined %}
+            <li><a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a></li>
+            <li><a href="/logout">Logout</a></li>
+          {% else %}
+            <li><form class="navbar-form navbar-right" role="form" action="/login" method="post">
+            <div class="form-group">
+                <input type="text" placeholder="Username" class="form-control" name="username">
+            </div>
+            <div class="form-group">
+                <input type="password" placeholder="Password" class="form-control" name="password">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+            </form></li>
+            <li><a href="/newuser">Sign up</a></li>
+          {% endif %}
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
 
-        <div class=nav>
-        <a href="/newitem">Contribute!</a>
-        </div>
-
-        <div class=nav>
-        <a href="/newimg">Upload a pic</a>
-        </div>
-
-        <div class=nav>
-        <a href="/stats">Site Stats</a>
-        </div>
-
-        {% if pd.authuser is defined %}
-        <div class=nav>
-        <a href="/user/{{ pd.authuser.username }}">User Profile</a>
-        </div>
-        {% endif %}
-
-        {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
-        <div class=nav>
-        <a href="/mod">Moderate</a>
-        </div>
-        {% endif %}
-
-        {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
-        <div class=nav>
-        <a href="/admin">Admin</a>
-        </div>
-        {% endif %}
-    </div>
-
-    <div id="flashes">
+    <div class="container">
     {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class=flashes>
+    {% if messages %}
+      <div class="row">
         {% for message in messages %}
-          <li>{{ message }}</li>
+          <div class="alert alert-info page-header">{{ message }}</div>
         {% endfor %}
-        </ul>
-      {% endif %}
+      </div>
+    {% endif %}
     {% endwith %}
     </div>
 
-    {% block body %}{% endblock %}
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <p>
+          {% block body %}{% endblock %}
+        </p>
+      </div>
+    </div>
 
-    <div id="footer">
+    <footer class="footer">
         {% block footer %}
         {% endblock %}
-    </div>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 </body>
 </html>

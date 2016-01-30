@@ -2,12 +2,11 @@
 
 {% block body %}
 
-{% include "login.html" %}
 
-<div id="content">
 
-<div id="itemname">
-<h1>{{ pd.item.name }}</h1>
+<div class="page-header"> <h1>{{ pd.item.name }}</h1> </div>
+
+<div>
 <a href="/item/{{ pd.item.name }}/edit">Edit</a><br />
 <a href="/item/{{ pd.item.name }}/history">History</a><br />
 </div>

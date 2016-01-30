@@ -2,17 +2,27 @@
 
 {% block body %}
 
-{% include "login.html" %}
+<div class="jumbotron">
+    <div class="container">
+    Welcome to the site, blah blah blah
+    </div>
+</div>
 
-<div id="content">
- 
-<h3>Recently aded items:</h3>
-<ul id="itemlist">
-{% for item in pd.items %}
-    <li>{{ item.added }} - <a href="/item/{{ item.name }}">{{ item.name }}</a></li>
-{% endfor %}
-</ul><br />
-
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+        <div class="page-header"><h4>Recently aded items:</h4></div>
+        {% for item in pd.items %}
+        {{ item.added }} - <a href="/item/{{ item.name }}">{{ item.name }}</a><br />
+        {% endfor %}
+    </div>
+    <div class="col-md-4">
+    Something else cool
+    </div>
+    <div class="col-md-4">
+    Some more cool stuff
+    </div>
+  </div>
 </div>
 
 {% endblock %}

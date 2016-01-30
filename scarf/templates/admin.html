@@ -2,9 +2,10 @@
 
 {% block body %}
 
-{% include "login.html" %}
 
-<div id="content">
+
+<div class="row">
+<div class="page-header"><h4>Deployment Status</h4></div>
 
 <p>
 {% if pd.deployment %}
@@ -19,44 +20,42 @@ Dev<br />
 <a href="https://sfadm.tripodgnomes.com/">Admin Site</a><br/>
 </p>
 
-<table>
+<div class="page-header"><h4>Site users</h4></div>
+<table class="table table-condensed">
 <tr>
-<th>username</td>
-<th>email</td>
-<th>joined</td>
-<th>last seen</td>
-<th>user type</td>
-<th></td>
+<th>Username</td>
+<th>e-mail</td>
+<th>Joined</td>
+<th>Last Seen</td>
+<th>User Type</td>
+<th>Actions</td>
 </tr>
 {% for user in pd.users %}
     <tr>
     <td><a href="/user/{{ user.username }}">{{ user.username }}</a></td>
-    <td>{{user.email}}</td>
+    <td>{{ user.email }}</td>
     <td>{{ user.joined }}</td>
     <td>{{ user.lastseen }}</td>
     <td>{{ pd.accesslevels[user.accesslevel] }}</td>
     <td> 
-    {% if user.uid == pd.authuser.uid %}
-    you
-    {% else %}
-
+    {% if user.uid != pd.authuser.uid %}
     {% if user.accesslevel == 0 %}
-    <a href="/admin/users/{{ user.username }}/accesslevel/1">Unban</a>
+    <a href="/admin/users/{{ user.username }}/accesslevel/1"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
     {% else %}
 
-        <a href="/admin/users/{{ user.username }}/accesslevel/0">Ban</a>
+        <a href="/admin/users/{{ user.username }}/accesslevel/0"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span></a>
 
         {% if user.accesslevel < 10 %}
-        <a href="/admin/users/{{ user.username }}/accesslevel/10">Promote to moderator</a>
+        <a href="/admin/users/{{ user.username }}/accesslevel/10"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
         {% endif %}
 
         {% if user.accesslevel == 10 %}
-        <a href="/admin/users/{{ user.username }}/accesslevel/1">Demote</a><br>
-        <a href="/admin/users/{{ user.username }}/accesslevel/255">Promote to admin</a>
+        <a href="/admin/users/{{ user.username }}/accesslevel/1"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+        <a href="/admin/users/{{ user.username }}/accesslevel/255"><span class="glyphicon glyphicon-tower" aria-hidden="true"></span></a>
         {% endif %}
 
         {% if user.accesslevel == 255 %}
-        <a href="/admin/users/{{ user.username }}/accesslevel/1">Demote</a>
+        <a href="/admin/users/{{ user.username }}/accesslevel/1"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
         {% endif %}
 
     {% endif %}

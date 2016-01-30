@@ -234,13 +234,14 @@ class siteuser(object):
     @memoize_with_expiry(message_cache, cache_persist)
     def messages(self):
         ret = list()
-        sql = """select * from messages
+        sql = """select uid,status from messages
                  where fromuserid = '%s' or touserid = '%s'""" % (self.uid, self.uid)
 
         result = doquery(sql)
 
         for item in result:
-            if item[4] >= messagestatus['unread_pm']:
+            app.logger.debug(item[1])
+            if item[1] >= messagestatus['unread_pm']:
                 pm = pmessage.create(item[0])
             else:
                 pm = trademessage.create(item[0])
@@ -812,17 +813,26 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
 
     try:
         # todo: fix parent id validation
-
-        sql = upsert("messages", \
-                     fromuserid=sql_escape(fromuserid), \
-                     touserid=sql_escape(touserid), \
-                     subject=sql_escape(subject), \
-                     message=sql_escape(message), \
-                     parent=sql_escape(parent), \
-                     sent=datetime.datetime.now(), \
-                     status=sql_escape(status))
+        if parent:
+            sql = upsert("messages", \
+                         fromuserid=sql_escape(fromuserid), \
+                         touserid=sql_escape(touserid), \
+                         subject=sql_escape(subject), \
+                         message=sql_escape(message), \
+                         parent=sql_escape(parent), \
+                         sent=datetime.datetime.now(), \
+                         status=sql_escape(status))
+        else:
+            sql = upsert("messages", \
+                         fromuserid=sql_escape(fromuserid), \
+                         touserid=sql_escape(touserid), \
+                         subject=sql_escape(subject), \
+                         message=sql_escape(message), \
+                         sent=datetime.datetime.now(), \
+                         status=sql_escape(status))
         data = doupsert(sql)
     except Exception as e:
+        app.logger.error(e)
         raise
 
     return data
@@ -836,7 +846,4 @@ def add_tradeitem(itemid, messageid, userid, acceptstatus):
                      acceptstatus=sql_escape(acceptstatus))
         data = doupsert(sql)
     except Exception as e:
-        return False
-
-    return True
-
+        app.logger.error(e)
