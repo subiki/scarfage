@@ -24,11 +24,6 @@ def newitem():
     pd = pagedata()
     return render_template('contribute.html', pd=pd)
 
-@app.route('/editinghelp')
-def editinghelp():
-    pd = pagedata()
-    return render_template('editinghelp.html', pd=pd)
-
 @app.route('/item/<item_id>/reallydelete')
 def reallydelete_item(item_id):
     try:

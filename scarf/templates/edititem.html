@@ -5,21 +5,28 @@
 
 
 {% if pd.item %}
-<a href="/item/{{ pd.item.name }}">Go back</a><br />
-<a href="/item/{{ pd.item.name }}/history">History</a><br />
 {% endif %}
 
-<a href="/editinghelp">Click here for help with editing.</a><br />
 
-<div id="content">
-    <form action="/item/{{ pd.item_name }}/edit" method="post" enctype="multipart/form-data">
-        <h3>Editing: "{{ pd.item_name }}" {% if not pd.item %}(new item){% endif %} </h3><br />
-        <p>Description of item:</p>
-        <textarea name=desc rows="5" cols="80">{% if pd.item %}{{ pd.item.description }}{% endif %}</textarea><br />
-        <p>Tags:</p>
-        <input type=text name=tags><br />
-        <input type=submit value=Submit>
-    </form>
+<div class="container">
+    <div class="col-md-8">
+        <div class="page-header"><h3>{% if pd.item %}Editing: "{{ pd.item_name }}" <small><a href="/item/{{ pd.item.name }}/history">History</a></small>{% else %}Editing: "{{pd.item_name}}" (new item){% endif %} </h3></div>
+        <form action="/item/{{ pd.item_name }}/edit" method="post" enctype="multipart/form-data">
+            <div class="page-header"><h4>Description</h4></div>
+            <textarea name=desc cols="50" rows="2" value="{% if pd.item %}{{ pd.item.description }}{% endif %}" placeholder="Stuff about your item here"></textarea><br />
+
+            <div class="page-header"><h4>Tags</h4></div>
+            <input type=text name=tags placeholder="Add more tags"><br />
+    </div>
+
+    <div class="col-md-3">
+            <button class="btn btn-sm btn-default" type=submit>Save</button>
+            {% if pd.item %}
+            <a class="btn btn-sm btn-primary" href="/item/{{ pd.item.name }}">Cancel</a>
+            {% endif %}
+        </form>
+    </div>
+       
 </div>
 
 {% endblock %}

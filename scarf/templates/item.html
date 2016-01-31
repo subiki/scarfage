@@ -3,33 +3,60 @@
 {% block body %}
 
 
+<div class="container">
 
-<div class="page-header"> <h1>{{ pd.item.name }}</h1> </div>
+<div class="col-md-8">
 
-<div>
-<a href="/item/{{ pd.item.name }}/edit">Edit</a><br />
-<a href="/item/{{ pd.item.name }}/history">History</a><br />
+{% if pd.item %}
+<div class="page-header"> <h3>{{ pd.item.name }}
+
+<small><a href="/item/{{ pd.item.name }}/edit"> Edit </a></small>
+<small><a href="/item/{{ pd.item.name }}/history"> History </a></small>
+
+{% if pd.item.old %}
+<small><a href="/item/{{ pd.item.name }}/revert/{{ pd.item.editid }}"> Revert </a></small>
+{% endif %}
+
+{% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
+<small><a href="/item/{{ pd.item.name }}/delete"> Delete </a></small>
+{% endif %}
+{% endif %}
+</h3>
+
 </div>
 
 {% if pd.item.old %}
-<a href="/item/{{ pd.item.name }}/revert/{{ pd.item.editid }}">Revert to this version</a>
 <div id="warning">
 You are viewing a historical version of this item's description, click <a href="/item/{{ pd.item.name }}">here</a> for the latest version. 
 </div>
 {% endif %}
 
-
 <div id="description">
 {{ pd.item.description_html|safe }}
 </div>
 
-<div id="itemactions">
+{% for image in pd.item.images() %}
+<p>
+<a href="/image/{{ image.uid }}"> <img class="img-rounded" src="/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+</p>
+{% endfor %}
 
-{% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
-<a href="/item/{{ pd.item.name }}/delete">Delete item</a><br />
-{% endif %}
+<div class="col-md-3">
+    <div class="page-header"><h4>Image upload</h4></div>
+    <form action="/newimg" method="post" enctype="multipart/form-data">
+        <input type=text name=title placeholder="Image title" size="50"><br /> 
+        <input type=text name=desc placeholder="Image description" size="50"></input><br />
+        <input class="btn btn-sm btn-file" type="file" name="img" accept="image/*">
+        <input type="hidden" name="parent" value="{{ pd.item.uid }}">
+        <button type=submit class="btn btn-sm btn-default"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload</button>
+    </form>
+</div>
 
+</div>
 
+<div class="col-md-3">
+
+<div class="page-header"><h3>Item actions</h3></div>
 {% if pd.authuser is defined %}
     {% if pd.iteminfo is defined and pd.iteminfo.have == 0 %}
         <a href="/item/{{ pd.item.name }}/have">I own this</a></br>
@@ -58,7 +85,9 @@ You are viewing a historical version of this item's description, click <a href="
 <a href="/item/{{ pd.item.name }}/want">I want this</a><br />
 
 {% endif %}
-</div>
+
+<div class="page-header"><h3>Item stats</h3></div>
+
 <div class="havecount">
 {% if pd.item.haveusers()[0] == 1 %}
 1 person has this<br />
@@ -94,6 +123,9 @@ You are viewing a historical version of this item's description, click <a href="
 {% for user in pd.item.wantusers()[1] %}
 <a href="/user/{{ user.username }}/trade/{{pd.item.name}}">{{ user.username }}</a><br />
 {% endfor %}
+</div>
+
+</div>
 </div>
 
 </div>

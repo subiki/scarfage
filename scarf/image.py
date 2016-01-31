@@ -26,10 +26,9 @@ def newimg(debug):
             uid = 0 
 
         if 'img' in request.files:
-            img = new_img(request.files['img'], request.form['title'])
+            img = new_img(request.files['img'], request.form['title'], request.form['parent'])
 
             if img:
-                flash('Uploaded image!')
                 return redirect('/image/' + str(img))
 
     pd.title="Add New Image"

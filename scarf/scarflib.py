@@ -357,6 +357,7 @@ class siteimage:
             self.userid = result[0][2]
             self.ip = result[0][3] #FIXME: needs join on ip, nothing uses this yet tho
             self.image = result[0][4]
+            self.parent = result[0][5]
         except IndexError:
             raise NoImage(uid)
 
@@ -475,6 +476,18 @@ class siteitem():
 
         return ret
 
+    imglist_cache = dict()
+    @memoize_with_expiry(imglist_cache, cache_persist)
+    def images(self):
+        ret = list()
+        sql = """select uid
+                 from images
+                 where parent = '%s'""" % self.uid
+        for row in doquery(sql):
+            ret.append(siteimage(row[0]))
+
+        return ret
+
     have_cache = dict()
     @memoize_with_expiry(have_cache, cache_persist)
     def haveusers(self):
@@ -568,7 +581,7 @@ def new_item(name, description, userid):
 
     return itemid 
 
-def new_img(f, title):
+def new_img(f, title, parent):
     image = base64.b64encode(f.read())
 
     userid = 0
@@ -580,6 +593,7 @@ def new_img(f, title):
                          tag=title, \
                          userid=userid, \
                          ip=ip_uid(request.remote_addr), \
+                         parent=parent, \
                          image=image)
 
         imgid = doupsert(sql)
@@ -593,6 +607,7 @@ def new_img(f, title):
         sql = upsert("images", \
                          tag=title, \
                          ip=ip_uid(request.remote_addr), \
+                         parent=parent, \
                          image=image)
 
         imgid = doupsert(sql)
