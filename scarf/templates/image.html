@@ -7,19 +7,8 @@
 <div id="content">
 <h1> {{ pd.img.tag }}</h1><br/>
 
-<img src="/image/{{ pd.img.uid }}/preview" alt="{{ pd.img.tag }}"><br />
+<a href="/image/{{ pd.img.uid }}/full"><img style="max-width:100%;" src="/image/{{ pd.img.uid }}/preview" alt="{{ pd.img.tag }}"></a><br />
 <a class=small href="/image/{{ pd.img.uid }}/flag">Flag image for review</a><br />
-
-<table>
-<tr><th>Link</th><th><a href="https://daringfireball.net/projects/markdown/syntax">markdown syntax</a></th></tr>
-<tr><td><a href="/image/{{ pd.img.uid }}/preview">Preview</a></td><td>![preview](/image/{{ pd.img.uid }}/preview "{{ pd.img.tag }}")</td></tr>
-<tr><td><a href="/image/{{ pd.img.uid }}/thumbnail">Thumbnail</a></td><td>![thumbnail](/image/{{ pd.img.uid }}/thumbnail "{{ pd.img.tag }}")</td></tr>
-<tr><td><a href="/image/{{ pd.img.uid }}/full">Full</a></td><td>![full](/image/{{ pd.img.uid }}/full "{{ pd.img.tag }}")</td></tr>
-</table>
-
-<form>Create a new item: <input name="name" type="text" value="Title of item"><input name="theneedful" type="button" value="Edit" onclick="location.href='/item/' + this.form.elements['name'].value"> 
-</form>
-Clicking 'Edit' will redirect you to a page to add the item's description and any links to images you want.
 
 </div>
 
