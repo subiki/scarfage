@@ -215,6 +215,13 @@
     <tr>
       {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
         {% if item.have == 1 %}
+           <td>
+               {% for image in item.images()[:1] %}
+                   <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+               {% endfor %}
+           </td>
+
+
             <td><a href="/item/{{ item.name }}">{{ item.name }}</a></td>
             {% if item.hidden == 0 %}
                 <td><a href="/item/{{ item.name }}/hide">Hide</a></td>
@@ -247,6 +254,13 @@
      <div class="col-md-4">
        <div align="center">
            <a href="/item/{{ item.name }}">{{ item.name }}</a><br \>
+
+           {% for image in item.images()[:1] %}
+           <p>
+           <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+           </p>
+           {% endfor %}
+
            {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
              <small><a href="/item/{{ item.name }}/dontwant"><span class="glyphicon glyphicon-trash"></span> Remove from list</a></small>
            {%else%}

@@ -6,11 +6,23 @@
 
 <div id="content">
 
-<ul id="userlist">
+<div class="page-heading"><h3>Image Moderation</h3></div>
+
+<table class="table">
+<tr>
+    <th>Uploaded by</th>
+    <th>Title</th>
+    <th>Flagged by user</th>
+</tr>
 {% for mod in pd.mods %}
-    <li>{{ mod.user }} - <a href="/mod/image/{{ mod.uid }}">{{ mod.tag }}</a> - {% if mod.flag == 1 %}flagged{% else %}not flagged{% endif %} </a></li>
+<tr>
+    <td><a href="/user/{{ mod.user }}">{{ mod.user }}</a></td>
+    <td>{{ mod.tag }}</td>
+    <td>{% if mod.flag == 1 %}<b>yes</b>{% else %}no{% endif %}</a></td>
+    <td><a href="/mod/image/{{ mod.uid }}">View</a></td>
+</tr>
 {% endfor %}
-</ul><br />
+</table>
 
 </div>
 

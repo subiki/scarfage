@@ -4,22 +4,45 @@
 
 
 
-<div id="content">
+<div class="container">
 
-<h3>Uploaded by {{ pd.moduser }}</h3>
+<div class="col-md-8">
 
-{% if pd.moduser != "anon" %}
-<a href="/mod/ban/{{ pd.moduser }}">Ban this user</a>
-{% endif %}
+    <div class="page-header"><h3> {{ pd.image.tag }} </h3></div>
 
-<a href="/image/{{ pd.image.uid }}/delete">Delete image</a>
-<a href="/mod/image/{{ pd.image.uid }}/approve">Approve image</a>
+    <ul class="nav nav-pills">
+      <li class="active"><a data-toggle="pill" href="#ascii">Ascii</a></li>
+      <li><a data-toggle="pill" href="#image">Image</a></li>
+    </ul>
 
-<pre>
-{{ pd.ascii }}
-</pre>
+    <div class="tab-content">
 
-<a href="/image/{{ pd.image.uid }}/full"><img src="/image/{{ pd.image.uid }}/preview" alt="{{ pd.image.tag }}"><br />
+    <div id="ascii" class="tab-pane fade in active">
+
+
+    <pre style="font-size: xx-small;">
+
+
+    {{ pd.ascii }}
+    </pre>
+    </div>
+
+    <div id="image" class="tab-pane fade">
+    <a href="/image/{{ pd.image.uid }}/full"><img style="max-width:100%;" src="/image/{{ pd.image.uid }}/preview" alt="{{ pd.image.tag }}"></a><br />
+    </div>
+    </div>
 </div>
 
+
+<div class="col-md-3">
+    <div class="page-header"><h3>Uploaded by <a href="/users/{{ pd.moduser }}">{{ pd.moduser }}</a></h3></div>
+
+    {% if pd.moduser != "anon" %}
+    <p> <a class="btn btn-danger" href="/mod/ban/{{ pd.moduser }}"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Ban user</a></p>
+    {% endif %}
+
+    <p><a class="btn btn-danger" href="/image/{{ pd.image.uid }}/delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></p>
+
+    <p><a class="btn btn-success" href="/mod/image/{{ pd.image.uid }}/approve"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Approve</a></p>
+</div>
 {% endblock %}
