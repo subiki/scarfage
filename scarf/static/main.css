@@ -19,3 +19,7 @@ body { padding-top: 70px; }
     cursor: inherit;
     display: block;
 }
+
+.well-ff {
+    background: rgb(255, 255, 255);
+}
