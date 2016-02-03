@@ -44,6 +44,7 @@
             <li><a href="/stats">Site stats</a></li>
             {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
             <li><a href="/mod">Moderate</a></li>
+            <li><a href="/user/{{ pd.authuser.username }}#messages">Messages</a></li>
             {% endif %}
             {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
             <li><a href="/admin">Admin</a></li>
