@@ -15,10 +15,12 @@ from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 
 ########## Utility stuff
 
-# Workaround for the issue identified here:
-# https://bugs.python.org/issue16512
-# Credit to:
-# https://coderwall.com/p/btbwlq/fix-imghdr-what-being-unable-to-detect-jpegs-with-icc_profile
+"""
+Workaround for the issue identified here:
+https://bugs.python.org/issue16512
+Credit to:
+https://coderwall.com/p/btbwlq/fix-imghdr-what-being-unable-to-detect-jpegs-with-icc_profile
+"""
 def test_icc_profile_images(h, f):
     if h.startswith('\xff\xd8') and h[6:17] == b'ICC_PROFILE':
         return "jpeg"
@@ -41,16 +43,12 @@ def deobfuscate(string):
 
 def ip_uid(ip):
     try:
-        sql = read('ip', **{"ip": sql_escape(ip)})
-        result = doquery(sql)
-        app.logger.debug(result)
+        sql = "select uid from ip where ip = %(ip)s;"
+        result = doquery(sql, { 'ip': ip })
         return result[0][0]
-    except:
-        sql = upsert("ip", \
-                     ip=sql_escape(ip))
+    except IndexError:
+        sql = upsert("ip", ip=sql_escape(ip))
         result = doupsert(sql)
-
-        app.logger.debug(result)
         return result
 
 class pagedata:
@@ -119,18 +117,17 @@ def get_contribs_table():
 
 @memoize_with_expiry(stats_cache, long_cache_persist)
 def user_by_uid(uid):
-    sql = read('users', **{"uid": sql_escape(uid)})
-    result = doquery(sql)
-
+    sql = "select username from users where uid = %(uid)s;"
+    result = doquery(sql, { 'uid': uid })
     try:
-        return result[0][1]
+        return result[0][0]
     except IndexError:
         return
 
 @memoize_with_expiry(stats_cache, long_cache_persist)
 def uid_by_user(username):
-    sql = read('users', **{"username": sql_escape(username)})
-    result = doquery(sql)
+    sql = "select uid from users where username = %(username)s;"
+    result = doquery(sql, { 'username': username })
 
     try:
         return result[0][0]
@@ -168,8 +165,9 @@ class siteuser(object):
         sql = """select users.uid, users.email, users.joined, userstat_lastseen.date, users.accesslevel 
                  from users
                  join userstat_lastseen on userstat_lastseen.uid=users.uid 
-                 where users.username = "%s"; """ % sql_escape(username)
-        result = doquery(sql)
+                 where users.username = %(username)s; """
+
+        result = doquery(sql, { 'username': username })
 
         try:
             self.uid = result[0][0]
@@ -195,9 +193,9 @@ class siteuser(object):
         sql = """select ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden, items.name
                  from ownwant
                  join items on items.uid=ownwant.itemid
-                 where ownwant.userid=%s""" % self.uid
+                 where ownwant.userid = %(uid)s"""
 
-        result = doquery(sql)
+        result = doquery(sql, { 'uid': self.uid })
 
         for item in result:
             sitem = siteitem(item[4])
@@ -210,6 +208,8 @@ class siteuser(object):
 
         return ret
 
+
+
     @memoize_with_expiry(collection_cache, cache_persist)
     def query_collection(self, item):
         ret = ownwant()
@@ -218,8 +218,8 @@ class siteuser(object):
             sql = """select ownwant.uid, ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden
                      from items
                      join ownwant on ownwant.itemid=items.uid
-                     where items.name='%s' and ownwant.userid='%s'""" % (sql_escape(item), self.uid)
-            result = doquery(sql)
+                     where items.name = %(name)s and ownwant.userid = %(uid)s"""
+            result = doquery(sql, { 'name': item, 'uid': self.uid })
 
             ret.uid = result[0][0]
             ret.have = result[0][1]
@@ -235,12 +235,11 @@ class siteuser(object):
     def messages(self):
         ret = list()
         sql = """select uid,status from messages
-                 where fromuserid = '%s' or touserid = '%s'""" % (self.uid, self.uid)
+                 where fromuserid = %(fromuid)s or touserid = %(touid)s"""
 
-        result = doquery(sql)
+        result = doquery(sql, { 'fromuid': self.uid, 'touid': self.uid })
 
         for item in result:
-            app.logger.debug(item[1])
             if item[1] >= messagestatus['unread_pm']:
                 pm = pmessage.create(item[0])
             else:
@@ -261,8 +260,8 @@ class siteuser(object):
     def authenticate(self, password):
         sql = """select users.pwhash, users.pwsalt
                  from users
-                 where users.uid = "%s"; """ % self.uid
-        result = doquery(sql)
+                 where users.uid = %(uid)s;"""
+        result = doquery(sql, { 'uid': self.uid })
 
         try:
             pwhash = result[0][0]
@@ -348,8 +347,8 @@ class siteimage:
         return cls(username)
 
     def __init__(self, uid):
-        sql = read('images', **{"uid": sql_escape(uid)})
-        result = doquery(sql)
+        sql = 'select * from images where uid = %(uid)s;'
+        result = doquery(sql, { 'uid': uid })
 
         try: 
             self.uid = result[0][0]
@@ -364,15 +363,15 @@ class siteimage:
     def delete(self):
         siteimage_cache = dict()
         #TODO image purgatory
-        sql = delete('images', **{"uid": self.uid})
-        result = doquery(sql)
+        sql = 'delete from images where uid = $(uid)s;'
+        result = doquery(sql, { 'uid': self.uid })
 
-        sql = delete('imgmods', **{"imgid": self.uid})
-        result = doquery(sql)
+        sql = 'delete from imgmods where imgid = $(uid)s;'
+        result = doquery(sql, { 'uid': self.uid })
 
     def approve(self):
-        sql = delete('imgmods', **{"imgid": self.uid})
-        result = doquery(sql)
+        sql = 'delete from imgmods where imgid = $(uid)s;'
+        result = doquery(sql, { 'uid': self.uid })
 
     def flag(self):
         try:
@@ -388,18 +387,18 @@ class siteimage:
 item_cache = dict()
 @memoize_with_expiry(item_cache, long_cache_persist)
 def item_by_uid(uid):
-    sql = read('items', **{"uid": sql_escape(uid)})
-    result = doquery(sql)
+    sql = 'select name from items where uid = %(uid)s;'
+    result = doquery(sql, { 'uid': uid })
 
     try:
-        return result[0][1]
+        return result[0][0]
     except IndexError:
         return
 
 @memoize_with_expiry(item_cache, long_cache_persist)
 def uid_by_item(item):
-    sql = read('items', **{"name": sql_escape(item)})
-    result = doquery(sql)
+    sql = 'select uid from items where name = %(name)s;'
+    result = doquery(sql, { 'name': item })
 
     try:
         return result[0][0]
@@ -418,8 +417,8 @@ class siteitem():
     def __init__(self, name):
         self.name = name
 
-        sql = read('items', **{"name": sql_escape(name)})
-        result = doquery(sql)
+        sql = 'select * from items where name = %(name)s;'
+        result = doquery(sql, { 'name': name })
 
         try:
             self.uid = result[0][0]
@@ -432,15 +431,17 @@ class siteitem():
     def delete(self):
         item_cache = dict()
 
-        # TODO: + item edits
-        sql = delete('items', **{"uid": self.uid}) 
-        result = doquery(sql) 
-     
-        sql = delete('ownwant', **{"itemid": self.uid}) 
-        result = doquery(sql) 
+        sql = 'delete from items where uid = %(uid)s;'
+        result = doquery(sql, {"uid": self.uid}) 
 
-        sql = delete('tradelist', **{"itemid": self.uid}) 
-        result = doquery(sql) 
+        sql = 'delete from itemedits where itemid = %(uid)s;'
+        result = doquery(sql, {"uid": self.uid}) 
+     
+        sql = 'delete from ownwant where uid = %(uid)s;'
+        result = doquery(sql, {"itemid": self.uid}) 
+
+        sql = 'delete from tradelist where uid = %(uid)s;'
+        result = doquery(sql, {"itemid": self.uid}) 
 
     def update(self):
         sql = upsert("items", \
@@ -457,9 +458,9 @@ class siteitem():
         sql = """select itemedits.uid, itemedits.itemid, itemedits.date, itemedits.userid, ip.ip
                  from itemedits
                  join ip on itemedits.ip=ip.uid
-                 where itemid = '%s'
-                 order by uid desc;""" % self.uid
-        edits = doquery(sql)
+                 where itemid = %(uid)s
+                 order by uid desc;"""
+        edits = doquery(sql, { 'uid': self.uid })
 
         ret = list()
         for edit in edits:
@@ -482,11 +483,17 @@ class siteitem():
         ret = list()
         sql = """select uid
                  from images
-                 where parent = '%s'""" % self.uid
-        for row in doquery(sql):
+                 where parent = %(uid)s"""
+        for row in doquery(sql, { 'uid': self.uid }):
             ret.append(siteimage(row[0]))
 
         return ret
+
+    body_cache = dict()
+    @memoize_with_expiry(body_cache, cache_persist)
+    def body(self):
+        sql = "SELECT body FROM itemedits WHERE uid = '%(uid)s';"
+        return doquery(sql, {'uid': self.description })[0][0]
 
     have_cache = dict()
     @memoize_with_expiry(have_cache, cache_persist)
@@ -494,8 +501,8 @@ class siteitem():
         haveusers = list()
         have = 0
 
-        sql = read('ownwant', **{"itemid": self.uid})
-        res = doquery(sql)
+        sql = "select * from ownwant where itemid = %(uid)s"
+        res = doquery(sql, {"uid": self.uid})
         
         for user in res:
             if (user[3] == 1):
@@ -512,8 +519,9 @@ class siteitem():
         willtradeusers = list()
         willtrade = 0
 
-        sql = read('ownwant', **{"itemid": self.uid})
-        res = doquery(sql)
+        sql = "select * from ownwant where itemid = %(uid)s"
+        res = doquery(sql, {"uid": self.uid})
+ 
         
         for user in res:
             if (user[4] == 1):
@@ -530,8 +538,8 @@ class siteitem():
         wantusers = list()
         want = 0
 
-        sql = read('ownwant', **{"itemid": self.uid})
-        res = doquery(sql)
+        sql = "select * from ownwant where itemid = %(uid)s"
+        res = doquery(sql, {"uid": self.uid})
         
         for user in res:
             if (user[5] == 1):
@@ -625,10 +633,11 @@ def latest_items(limit=0):
 
     try:
         if limit > 0:
-            sql = "SELECT uid FROM items order by added desc limit " + sql_escape(limit) + ";"
+            sql = "SELECT uid FROM items order by added desc limit %(limit)s;"
         else:
             sql = "SELECT uid FROM items;"
-        result = doquery(sql)
+        result = doquery(sql, { 'limit': limit })
+        app.logger.debug(result)
         for item in result:
             items.append(siteitem(item_by_uid(item[0])))
     except TypeError:
@@ -667,8 +676,8 @@ class pmessage:
     def __init__(self, messageid):
         self.messagestatus = messagestatus
 
-        sql = read('messages', **{"uid": sql_escape(messageid)})
-        result = doquery(sql)
+        sql = 'select * from messages where uid = %(uid)s;'
+        result = doquery(sql, {'uid': messageid})
 
         self.uid = result[0][0]
         self.uid_obfuscated = obfuscate(result[0][0])
@@ -710,8 +719,8 @@ class pmessage:
     def replies(self):
         ret = list()
 
-        sql = read('messages', **{"parent": self.uid})
-        result = doquery(sql)
+        sql = 'select * from messages where parent = %(uid)s;'
+        result = doquery(sql, {"uid": self.uid})
 
         for reply in result:
             pm = pmessage.create(reply[0])
@@ -763,8 +772,8 @@ class trademessage(pmessage):
         self.messagestatus = messagestatus
         self.tradestatus = tradestatus
 
-        sql = read('messages', **{"uid": sql_escape(messageid)})
-        result = doquery(sql)
+        sql = 'select * from messages where uid = %(uid)s;'
+        result = doquery(sql, {"uid": messageid})
 
         self.uid = result[0][0]
         self.uid_obfuscated = obfuscate(result[0][0])
@@ -782,8 +791,8 @@ class trademessage(pmessage):
 
         self.items = []
 
-        sql = read('tradelist', **{"messageid": sql_escape(messageid)})
-        result = doquery(sql)
+        sql = 'select * from tradelist where uid = %(uid)s;'
+        result = doquery(sql, {"uid": messageid})
 
         complete = True
         for item in result:

@@ -48,8 +48,8 @@ def moderate(debug):
                 user = user_by_uid(user)
 
             if mod[1] == 0 or flag == 1:
-                sql = read('images', **{"uid": imgid})
-                img = doquery(sql)
+                sql = 'select * from images where uid = %(uid)s;'
+                img = doquery(sql, {"uid": imgid})
                 
                 class mod:
                     pass
@@ -107,8 +107,8 @@ def mod_img(image):
     pd.image = modimg
 
     try:
-        sql = read('imgmods', **{"imgid": modimg.uid})
-        result = doquery(sql)
+        sql = 'select * from imgmods where imgid = %(uid)s;'
+        result = doquery(sql, {"uid": modimg.uid})
 
         if result[0][3] is None:
             user = 'Anonymous'
