@@ -13,7 +13,7 @@
         <div class="page-header"><h3>{% if pd.item %}Editing: "{{ pd.item_name }}" <small><a href="/item/{{ pd.item.name }}/history">History</a></small>{% else %}Editing: "{{pd.item_name}}" (new item){% endif %} </h3></div>
         <form action="/item/{{ pd.item_name }}/edit" method="post" enctype="multipart/form-data">
             <div class="page-header"><h4>Description</h4></div>
-            <textarea name=desc cols="50" rows="2" value="{% if pd.item %}{{ pd.item.description }}{% endif %}" placeholder="Stuff about your item here"></textarea><br />
+            <textarea name=desc cols="50" rows="2" placeholder="Stuff about your item here">{% if pd.item %}{{ pd.item.body() }}{% endif %}</textarea><br />
 
             <div class="page-header"><h4>Tags</h4></div>
             <input type=text name=tags placeholder="Add more tags"><br />

@@ -3,8 +3,8 @@ from scarf import app
 import socket
 from time import time
 import datetime
+import inspect
 
-from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 from config import dbHost, dbName, dbUser, dbPass
 
 #TODO redo sql, lots of injection vulns...
@@ -204,6 +204,10 @@ def upsert(table, **kwargs):
     return "".join(sql)
 
 def sql_escape(string):
+    curframe = inspect.currentframe()
+    calframe = inspect.getouterframes(curframe, 2)
+    app.logger.debug("WARNING! deprecated function sql_escape called by " + calframe[1][3])
+
     db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
     db.set_character_set('utf8')
     esc = db.escape(str(string))
@@ -222,9 +226,6 @@ def delete(table, **kwargs):
     return "".join(sql)
 
 def doupsert(query):
-    # dump the cache since we're writing to the db
-    query_cache.clear()
-
     app.logger.debug(query)
     global db
 
@@ -252,10 +253,13 @@ def doupsert(query):
         app.logger.error("Cannot connect to database. MySQL error: " + str(e))
         raise
 
-query_cache = dict()
-@memoize_with_expiry(query_cache, cache_persist)
-def doquery(query):
-    app.logger.debug(query)
+def doquery(query, data=None):
+    if not data:
+        curframe = inspect.currentframe()
+        calframe = inspect.getouterframes(curframe, 2)
+        app.logger.debug('caller name: ' + calframe[1][3])
+        app.logger.debug(("doquery: ", query, data))
+
     global db
 
     try:
@@ -272,7 +276,7 @@ def doquery(query):
             cursor.close()
 
         cur = db.cursor()
-        cur.execute(query)
+        cur.execute(query, data)
 
         data = cur.fetchall()
 

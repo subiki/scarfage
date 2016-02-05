@@ -6,88 +6,119 @@
 
 <div id="content">
 
-{% if pd.pm.parentid > 0 %}
-<a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.parentid_obfuscated }}">Previous message in thread</a></br>
-{% endif %}
+{% if pd.pm.items %}
 
-Subject {{ pd.pm.subject }}</br>
+<div class="page-header"><h3>Trade Request</h3></div>
+
+<p>
 From: <a href="/user/{{ pd.pm.from_user }}">{{ pd.pm.from_user }}</a><br />
 To: <a href="/user/{{ pd.pm.to_user}}">{{ pd.pm.to_user }}</a><br />
-Sent: {{ pd.pm.sent }}</br>
-Message:</br>
-{{ pd.pm.message }}<br/>
 
+<table class="table">
+<tr>
+<th></th>
+<th>Owner</th>
+<th>Item</th>
+<th>Status</th>
+</tr>
 {% for ti in pd.pm.items %}
-    {% if ti.user.uid == pd.authuser.uid %}
-    ----]] your trade: {{ ti.item.name }}<br/>
-    {% if ti.user.uid == pd.authuser.uid %}
+<tr>
+
+    <td>
+    {% for image in ti.item.images()[:1] %}
+        <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+    {% endfor %}
+    </td>
+    <td>{{ti.user.username }}</td>
+
+    <td>{{ ti.item.name }}</td>
+
+    <td>
     {% if ti.acceptstatus < pd.pm.tradestatus['accepted'] %}
-        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/accept/{{ ti.uid }}">Accept item</a><br />
+        {% if ti.user.uid == pd.authuser.uid %}
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/accept/{{ ti.uid }}">Accept item</a><br />
 
-        {% if ti.acceptstatus == pd.pm.tradestatus['rejected'] %}
-        Rejected<br />
+            {% if ti.acceptstatus == pd.pm.tradestatus['rejected'] %}
+            Rejected
+            {% else %}
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject/{{ ti.uid }}">Reject item</a> 
+            {% endif %}
         {% else %}
-        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject/{{ ti.uid }}">Reject item</a> 
-        {% endif %}
+            {% if ti.acceptstatus == pd.pm.tradestatus['rejected'] %}
+                Rejected
+            {% else %}
+                Pending
+            {%endif%}
+        {%endif%}
     {% else %}
-        Accepted<br />
+        Accepted
     {%endif%}
-    {%endif%}
- 
-    {% else %}
-    [[---- {{ti.user.username }}'s trade: {{ ti.item.name }} - <br />
-
-    {% if ti.user.uid == pd.authuser.uid %}
-    {% if ti.acceptstatus < pd.pm.tradestatus['accepted'] %}
-        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/accept/{{ ti.uid }}">Accept item</a><br />
-
-        {% if ti.acceptstatus == pd.pm.tradestatus['rejected'] %}
-        Rejected<br />
-        {% else %}
-        <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject/{{ ti.uid }}">Reject item</a> 
-        {% endif %}
-    {% else %}
-        Accepted<br />
-    {%endif%}
-    {%endif%}
-    {%endif%}
+    </td>
+</tr>
 {% endfor %}
-
-{% if pd.pm.status == pd.pm.messagestatus['complete_trade'] %}
-All parties have accepted, please coordinate with {{ pd.pm.from_user }} to complete your trade!<br />
-<a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/settle">Mark as settled!</a><br />
-{% elif pd.pm.status == pd.pm.messagestatus['active_trade'] %}
-<a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject">Reject trade</a><br />
-{% elif pd.pm.status == pd.pm.messagestatus['rejected_trade'] %}
-This trade has been closed as rejected!<br/>
-{% elif pd.pm.status == pd.pm.messagestatus['settled_trade'] %}
-Trade has been closed as settled!<br/>
+</table>
+{% else %}
+    <div class="page-header"><h3>Private Message</h3></div>
 {% endif %}
 
-<h3>Replies:</h3><br>
+
+<p>
+{% if pd.pm.parentid > 0 %}
+<a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.parentid_obfuscated }}">Previous message</a></br>
+{% endif %}
+</p>
+
+<div class="well well-sm">
+    <p>
+    <b>{{ pd.pm.subject }}</b></br>
+    From: {{ pd.pm.from_user }}</br>
+    <div class="well well-ff">{{ pd.pm.message }}<br/></div>
+    <small>{{ pd.pm.sent }}</small></br>
+    </p>
+
+    <p>
+    <h4> Reply: </h4>
+        {% if pd.pm.from_user == pd.authuser.username %}
+        <form action="/user/{{ pd.pm.to_user }}/pm" method="post" enctype="multipart/form-data">
+        {% else %}
+        <form action="/user/{{ pd.pm.from_user }}/pm" method="post" enctype="multipart/form-data">
+        {% endif %}
+            Subject: <input type=text name=subject value="re: {{ pd.pm.subject }}" required></br>
+            <textarea name=body rows="4" cols="50"></textarea><br />
+            <input type="hidden" name="parent" value="{{ pd.pm.uid_obfuscated }}">
+            <input type=submit value=Submit>
+        </form>
+    </p>
+
 {% for reply in pd.pm.replies() %}
- - <a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid_obfuscated }}"> {{ reply.subject }}</a></br>
-{% for reply2 in reply.replies() %}
- \- <a href="/user/{{ pd.authuser.username }}/pm/{{ reply2.uid_obfuscated }}"> {{ reply2.subject }}</a></br>
-{% for reply3 in reply2.replies() %}
-   \\- <a href="/user/{{ pd.authuser.username }}/pm/{{ reply3.uid_obfuscated }}"> {{ reply3.subject }}</a></br>
-{% endfor %}
-{% endfor %}
+    <div class="well well-sm">
+    <p>
+    <b><a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid_obfuscated }}">{{ reply.subject }}</a></b></br>
+    From: {{ reply.from_user }}</b></br>
+    <div class="well well-ff">{{ reply.message }}<br/></div>
+    <small>{{ reply.sent }}</small></br>
+    </p>
+
+    {% for reply2 in reply.replies() %}
+     <div class="well well-sm">
+        <p>
+        <b><a href="/user/{{ pd.authuser.username }}/pm/{{ reply2.uid_obfuscated }}">{{ reply2.subject }}</a></b></br>
+        From: {{ reply2.from_user }}</b></br>
+        <div class="well well-ff">{{ reply2.message }}<br/></div>
+        <small>{{ reply2.sent }}</small>
+        </p>
+
+            {% for reply3 in reply2.replies()[:1] %}
+             <div class="well">
+               <b><a href="/user/{{ pd.authuser.username }}/pm/{{ reply3.uid_obfuscated }}">{{ reply2.subject }}</a></b></br>
+             </div>
+            {% endfor %}
+     </div>
+    {% endfor %}
+    </div>
 {% endfor %}
 
-<h3> Reply: </h3>
-    {% if pd.pm.from_user == pd.authuser.username %}
-    <form action="/user/{{ pd.pm.to_user }}/pm" method="post" enctype="multipart/form-data">
-    {% else %}
-    <form action="/user/{{ pd.pm.from_user }}/pm" method="post" enctype="multipart/form-data">
-    {% endif %}
-        Subject: <input type=text name=subject value="re: {{ pd.pm.subject }}" required></br>
-        Message: </br>
-        <textarea name=body rows="4" cols="50"></textarea><br />
-        <input type="hidden" name="parent" value="{{ pd.pm.uid_obfuscated }}">
-        <input type=submit value=Submit>
-    </form>
-
+</div>
 
 </div>
 

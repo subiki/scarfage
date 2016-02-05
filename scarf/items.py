@@ -78,10 +78,7 @@ def show_item(item_id, debug):
         # todo: http://htmlpurifier.org/
         # todo: memoize
 
-        sql = "SELECT body FROM itemedits WHERE uid = '%s';" % showitem.description 
-        showitem.description = doquery(sql)[0][0]
-
-        showitem.description_html = markdown.markdown(str(showitem.description), md_extensions)
+        showitem.description_html = markdown.markdown(str(showitem.body()), md_extensions)
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 
@@ -110,8 +107,6 @@ def revert_item_edit(item_id, edit, debug):
     try:
         pd.item = siteitem(item_id)
 
-        sql = "SELECT body FROM itemedits WHERE itemid = '%s' and uid = '%s';" % (pd.item.uid, sql_escape(edit))
-        pd.item.description = doquery(sql)[0][0]
         showitem.old = True
         showitem.editid = edit
     except:
@@ -135,12 +130,10 @@ def show_item_edit(item_id, edit, debug):
     try:
         showitem = siteitem(item_id)
         # todo: http://htmlpurifier.org/
-        sql = "SELECT body FROM itemedits WHERE uid = '%s' and itemid = '%s';" % (sql_escape(edit), showitem.uid)
-        showitem.description = doquery(sql)[0][0]
         showitem.old = True
         showitem.editid = edit
 
-        showitem.description_html = markdown.markdown(str(showitem.description), md_extensions)
+        showitem.description_html = markdown.markdown(str(showitem.body()), md_extensions)
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 
@@ -200,9 +193,6 @@ def edititem(item_id, debug):
 
     try:
         pd.item = siteitem(item_id)
-
-        sql = "SELECT body FROM itemedits WHERE uid = '%s';" % pd.item.description 
-        pd.item.description = doquery(sql)[0][0]
     except:
         pass
 
