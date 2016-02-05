@@ -437,10 +437,10 @@ class siteitem():
         sql = 'delete from itemedits where itemid = %(uid)s;'
         result = doquery(sql, {"uid": self.uid}) 
      
-        sql = 'delete from ownwant where uid = %(uid)s;'
+        sql = 'delete from ownwant where itemid = %(uid)s;'
         result = doquery(sql, {"itemid": self.uid}) 
 
-        sql = 'delete from tradelist where uid = %(uid)s;'
+        sql = 'delete from tradelist where itemid = %(uid)s;'
         result = doquery(sql, {"itemid": self.uid}) 
 
     def update(self):
@@ -791,7 +791,7 @@ class trademessage(pmessage):
 
         self.items = []
 
-        sql = 'select * from tradelist where uid = %(uid)s;'
+        sql = 'select * from tradelist where messageid = %(uid)s;'
         result = doquery(sql, {"uid": messageid})
 
         complete = True
