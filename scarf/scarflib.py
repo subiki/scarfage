@@ -431,17 +431,17 @@ class siteitem():
     def delete(self):
         item_cache = dict()
 
-        sql = 'delete from items where uid = %(uid)s;'
-        result = doquery(sql, {"uid": self.uid}) 
-
         sql = 'delete from itemedits where itemid = %(uid)s;'
         result = doquery(sql, {"uid": self.uid}) 
      
-        sql = 'delete from ownwant where uid = %(uid)s;'
+        sql = 'delete from ownwant where itemid = %(itemid)s;'
         result = doquery(sql, {"itemid": self.uid}) 
 
-        sql = 'delete from tradelist where uid = %(uid)s;'
+        sql = 'delete from tradelist where itemid = %(itemid)s;'
         result = doquery(sql, {"itemid": self.uid}) 
+
+        sql = 'delete from items where uid = %(uid)s;'
+        result = doquery(sql, {"uid": self.uid}) 
 
     def update(self):
         sql = upsert("items", \
