@@ -226,7 +226,6 @@ def delete(table, **kwargs):
     return "".join(sql)
 
 def doupsert(query):
-    app.logger.debug(query)
     global db
 
     try:
