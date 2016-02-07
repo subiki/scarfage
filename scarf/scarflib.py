@@ -415,7 +415,7 @@ class NoItem(Exception):
 
 class siteitem():
     def __init__(self, name):
-        self.name = name
+        self.name = name[:64]
 
         sql = 'select * from items where name = %(name)s;'
         result = doquery(sql, { 'name': name })
