@@ -363,14 +363,14 @@ class siteimage:
     def delete(self):
         siteimage_cache = dict()
         #TODO image purgatory
-        sql = 'delete from images where uid = $(uid)s;'
+        sql = 'delete from imgmods where imgid = %(uid)s;'
         result = doquery(sql, { 'uid': self.uid })
 
-        sql = 'delete from imgmods where imgid = $(uid)s;'
+        sql = 'delete from images where uid = %(uid)s;'
         result = doquery(sql, { 'uid': self.uid })
 
     def approve(self):
-        sql = 'delete from imgmods where imgid = $(uid)s;'
+        sql = 'delete from imgmods where imgid = %(uid)s;'
         result = doquery(sql, { 'uid': self.uid })
 
     def flag(self):
