@@ -8,13 +8,14 @@ from nocache import nocache
 @app.errorhandler(404)
 def page_not_found(error):
     pd = pagedata()
+    app.logger.debug('404!')
     pd.title = "File not found"
     pd.errorcode="404"
     pd.errortext="File not found."
     return render_template('error.html', pd=pd), 404
 
 @app.errorhandler(500)
-def page_not_found(error):
+def own_goal(error):
     pd = pagedata()
     pd.title = "Oh noes!"
     pd.errorcode="500"
