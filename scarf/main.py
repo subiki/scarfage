@@ -2,7 +2,7 @@
 from scarf import app
 from flask import render_template, session, request, flash
 from sql import doquery, read
-from scarflib import pagedata, latest_items
+from scarflib import pagedata, latest_items, redirect_back
 from nocache import nocache
 
 @app.errorhandler(404)
@@ -21,6 +21,11 @@ def own_goal(error):
     pd.errorcode="500"
     pd.errortext="(╯°□°）╯︵ ┻━┻"
     return render_template('error.html', pd=pd), 500
+
+@app.route('/upload_error')
+def upload_error():
+    flash('Your image is too large, please resize it to be smaller than 10 MB and try again.')
+    return redirect_back('error')
 
 @app.route('/error')
 def error():
