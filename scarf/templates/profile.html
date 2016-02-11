@@ -232,9 +232,9 @@
 
             <td><a href="/item/{{ item.name }}">{{ item.name }}</a></td>
             {% if item.hidden == 0 %}
-                <td><a href="/item/{{ item.name }}/hide">Hide</a></td>
+                <td><a href="/item/{{ item.name }}/hide">Don't show to others</a></td>
             {% else %}
-                <td><a href="/item/{{ item.name }}/show">Show</a></td>
+                <td><a href="/item/{{ item.name }}/show">Show to others</a></td>
             {% endif %}
 
             {% if item.willtrade == 1 %}
@@ -246,6 +246,12 @@
         {% endif %}
       {% else %}
         {% if item.hidden == 0 and item.have == 1 %}
+           <td>
+               {% for image in item.images()[:1] %}
+                   <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+               {% endfor %}
+           </td>
+
             <td> <a href="/item/{{ item.name }}">{{ item.name }}</a> </td>
             {% if item.willtrade == 1 %}
                 <td>available for trade / <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a></td>

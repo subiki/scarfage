@@ -13,7 +13,7 @@ def donthave(item_id):
 
 @app.route('/item/<item_id>/have')
 def have(item_id):
-    update = dict(own=1)
+    update = dict(own=1, hidden=1)
     ownwant(item_id, update)
     return redirect_back('/item/' + item_id)
 
