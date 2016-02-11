@@ -170,6 +170,9 @@ def show_item_history(item_id, debug):
 @app.route('/item/<item_id>/edit', methods=['GET', 'POST'], defaults={'debug': False})
 @nocache
 def edititem(item_id, debug):
+    if len(item_id) > 64:
+        return redirect('/item/' + item_id[:64] + '/edit')
+
     pd = pagedata()
     if request.method == 'POST':
         if 'username' in session:
@@ -192,7 +195,7 @@ def edititem(item_id, debug):
         return redirect('/item/' + item_id)
 
     try:
-        pd.item = siteitem(item_id)
+        pd.item = siteitem(item_id[:64])
     except:
         pass
 

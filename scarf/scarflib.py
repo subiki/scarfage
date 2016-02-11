@@ -363,14 +363,14 @@ class siteimage:
     def delete(self):
         siteimage_cache = dict()
         #TODO image purgatory
-        sql = 'delete from images where uid = $(uid)s;'
+        sql = 'delete from imgmods where imgid = %(uid)s;'
         result = doquery(sql, { 'uid': self.uid })
 
-        sql = 'delete from imgmods where imgid = $(uid)s;'
+        sql = 'delete from images where uid = %(uid)s;'
         result = doquery(sql, { 'uid': self.uid })
 
     def approve(self):
-        sql = 'delete from imgmods where imgid = $(uid)s;'
+        sql = 'delete from imgmods where imgid = %(uid)s;'
         result = doquery(sql, { 'uid': self.uid })
 
     def flag(self):
@@ -415,7 +415,7 @@ class NoItem(Exception):
 
 class siteitem():
     def __init__(self, name):
-        self.name = name
+        self.name = name[:64]
 
         sql = 'select * from items where name = %(name)s;'
         result = doquery(sql, { 'name': name })
@@ -431,17 +431,17 @@ class siteitem():
     def delete(self):
         item_cache = dict()
 
-        sql = 'delete from items where uid = %(uid)s;'
-        result = doquery(sql, {"uid": self.uid}) 
-
         sql = 'delete from itemedits where itemid = %(uid)s;'
         result = doquery(sql, {"uid": self.uid}) 
      
-        sql = 'delete from ownwant where itemid = %(uid)s;'
+        sql = 'delete from ownwant where itemid = %(itemid)s;'
         result = doquery(sql, {"itemid": self.uid}) 
 
-        sql = 'delete from tradelist where itemid = %(uid)s;'
+        sql = 'delete from tradelist where itemid = %(itemid)s;'
         result = doquery(sql, {"itemid": self.uid}) 
+
+        sql = 'delete from items where uid = %(uid)s;'
+        result = doquery(sql, {"uid": self.uid}) 
 
     def update(self):
         sql = upsert("items", \
@@ -791,7 +791,7 @@ class trademessage(pmessage):
 
         self.items = []
 
-        sql = 'select * from tradelist where messageid = %(uid)s;'
+        sql = 'select * from tradelist where uid = %(uid)s;'
         result = doquery(sql, {"uid": messageid})
 
         complete = True
