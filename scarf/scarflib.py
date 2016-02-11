@@ -7,9 +7,10 @@ import imghdr
 import base64
 
 from scarf import app
-from flask import request, redirect, session, flash, url_for
+from flask import request, redirect, session, flash, url_for, render_template
 from urlparse import urlparse, urljoin
 from sql import upsert, doupsert, read, doquery, delete, sql_escape 
+from mail import send_mail
 
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 
@@ -208,8 +209,6 @@ class siteuser(object):
 
         return ret
 
-
-
     @memoize_with_expiry(collection_cache, cache_persist)
     def query_collection(self, item):
         ret = ownwant()
@@ -310,25 +309,39 @@ class siteuser(object):
 def gen_pwhash(password, salt):
     return hashlib.sha224(password + salt).hexdigest()
 
+def check_email(email):
+    sql = "select username from users where email = %(email)s;"
+    result = doquery(sql, { 'email': email })
+
+    try: 
+        return siteuser.create(result[0][0])
+    except IndexError:
+        return None
+
 def new_user(username, password, email):
     try:
+        joined = datetime.datetime.now()
         salt=str(uuid.uuid4().get_hex().upper()[0:6])
         sql = upsert("users", \
                      username=sql_escape(username), \
                      pwhash=gen_pwhash(password, salt), \
                      pwsalt=salt, \
                      email=sql_escape(email), \
-                     joined=datetime.datetime.now(), \
+                     joined=joined, \
                      accesslevel=1)
         uid = doupsert(sql)
 
         sql = upsert("userstat_lastseen", \
                      uid=uid, \
-                     date=datetime.datetime.now())
+                     date=joined)
         result = doupsert(sql)
  
     except Exception as e:
         return False
+
+    # todo: add ip
+    message = render_template('email/new_user.html', username=username, email=email, joined=joined)
+    send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
 
     return True
 

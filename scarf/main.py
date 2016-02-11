@@ -24,7 +24,7 @@ def own_goal(error):
 
 @app.route('/upload_error')
 def upload_error():
-    flash('Your image is too large, please resize it to be smaller than 10 MB and try again.')
+    flash('Your upload is too large, please resize it to be smaller than 10 MB and try again.')
     return redirect_back('error')
 
 @app.route('/error')
