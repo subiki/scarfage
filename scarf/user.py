@@ -1,7 +1,7 @@
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from scarflib import redirect_back, pagedata, siteuser, NoUser, new_user, AuthFail
+from scarflib import redirect_back, pagedata, siteuser, NoUser, new_user, AuthFail, check_email
 
 from config import secret_key
 app.secret_key = secret_key
@@ -10,9 +10,13 @@ def check_new_user(request):
     ret = True
     try:
         user = siteuser.create(request.form['username'])
-        flash("User already exists")
+        flash("User already exists!")
         ret = False
     except NoUser:
+        if check_email(request.form['email']):
+            flash("You may not create multiple users with the same email address.")
+            return False
+
         invalid = '[]{}\'"<>;/\\'
         for c in invalid:
             if c in request.form['username']:

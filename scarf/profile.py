@@ -27,7 +27,8 @@ def userupdate():
             if email_user:
                 forgot_pw_reset(email_user)
 
-    flash('A new password has been sent.')
+        flash('A new password has been sent.')
+
     return render_template('forgotpw.html', pd=pd)
 
 #TODO /user/<user>/<whatever>
