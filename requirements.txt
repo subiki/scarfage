@@ -5,3 +5,4 @@ MySQL-python
 Pillow
 markdown
 jsonpickle
+html2text

@@ -1,19 +1,35 @@
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from scarflib import redirect_back, pagedata, siteuser, NoUser
+from scarflib import redirect_back, pagedata, siteuser, NoUser, check_email
 from main import page_not_found
 from debug import dbg
+from string import ascii_letters, digits
+from mail import send_mail
+import random
 
-#TODO /user/<user>/<whatever>
-@app.route('/userupdate')
+@app.route('/forgotpw', methods=['GET', 'POST'])
 def userupdate():
-    pd = pagedata()
-    if 'username' in session:
-        pd.title = title="Update User Account"
-        return render_template('userupdate.html', pd=pd)
+    def forgot_pw_reset(userobj):
+        newpw = ''.join([random.choice(ascii_letters + digits) for _ in range(12)])
+        userobj.newpassword(newpw)
 
-    return redirect(url_for('index'))
+        message = render_template('email/pwreset.html', username=userobj.username, email=userobj.email, newpw=newpw, ip=request.environ['REMOTE_ADDR'])
+        send_mail(recipient=userobj.email, subject='Password Reset', message=message)
+
+    pd = pagedata()
+    if request.method == 'POST':
+        try:
+            user = siteuser.create(request.form['username'])
+            forgot_pw_reset(user)
+        except NoUser:
+            email_user = check_email(request.form['email'])
+            if email_user:
+                forgot_pw_reset(email_user)
+
+        flash('A new password has been sent.')
+
+    return render_template('forgotpw.html', pd=pd)
 
 #TODO /user/<user>/<whatever>
 @app.route('/emailupdate', methods=['GET', 'POST'])
@@ -30,18 +46,18 @@ def emailupdate():
                 user.authenticate(request.form['password'])
             except AuthFail:
                 flash("Please check your current password and try again")
-                return redirect(url_for('userupdate'))
+                return redirect('/user/' + user.username)
 
             email = request.form['email']
 
             if not re.match("[^@]+@[^@]+\.[^@]+", request.form['email']):
                 flash("Invalid email address")
-                return redirect(url_for('userupdate'))
+                return redirect('/user/' + user.username)
 
             user.newemail(email)
 
             flash("Your email address has been changed.")
-            return redirect(url_for('userupdate'))
+            return redirect('/user/' + user.username)
 
     return redirect(url_for('index'))
  
@@ -61,7 +77,7 @@ def pwreset():
                 user.authenticate(request.form['password'])
             except AuthFail:
                 flash("Please check your current password and try again")
-                return redirect(url_for('userupdate'))
+                return redirect('/user/' + user.username)
 
             pass1 = request.form['newpassword']
             pass2 = request.form['newpassword2']
@@ -75,12 +91,12 @@ def pwreset():
                 ret = True
 
             if ret:
-                return redirect_back(url_for('userupdate'))
+                return redirect('/user/' + user.username)
 
             user.newpassword(request.form['newpassword'])
 
             flash("Your password has been reset.")
-            return redirect(url_for('userupdate'))
+            return redirect('/user/' + user.username)
 
     return redirect(url_for('index'))
 

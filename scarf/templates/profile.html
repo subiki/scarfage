@@ -23,7 +23,7 @@
             <li>Last seen: {{ pd.profileuser.lastseen }}</li>
         </ul>
     {% else %}
-        <h3>User info:</h3>
+        <div class="page-header"><h4>User info:</h4></div>
         <ul>
             <li>Email: {{ pd.profileuser.email }}</li>
             <li>Member since: {{ pd.profileuser.joined }}</li>
@@ -31,7 +31,48 @@
             <li>Access level: {{ pd.accesslevels[pd.profileuser.accesslevel] }}</li>
         </ul>
 
-        <a href="/userupdate">Reset Password or Update Email Address</a>
+        <div>
+        <div class="page-header"><h4>Reset Password</h4></div>
+        <form role="form" action="/pwreset" method="post">
+          <div class="form-group">
+            <label class="newuser-label" for="password">Current Password:</label>
+            <input type=password name=password required><br />
+          </div>
+
+          <div class="form-group">
+            <label class="newuser-label" for="newpassword">New Password:</label>
+            <input type=password name=newpassword required><br />
+          </div>
+
+          <div class="form-group">
+            <label class="newuser-label" for="newpassword2">Confirm password:</label>
+            <input type=password name=newpassword2 required><br />
+          </div>
+
+          <div class="form-group">
+            <input class="button" type=submit value=Submit>
+          </div>
+        </form>
+        </div>
+
+        <div>
+        <div class="page-header"><h4>New Email</h4></div>
+        <form role="form" action="/emailupdate" method="post">
+          <div class="form-group">
+            <label class="newuser-label" for="password">Password:</label>
+            <input type=password name=password required><br />
+          </div>
+
+          <div class="form-group">
+            <label class="newuser-label" for="email">New email address:</label>
+            <input type=text name=email required><br />
+          </div>
+
+          <div class="form-group">
+            <input class="button" type=submit value=Submit>
+          </div>
+        </form>
+        </div>
     {% endif %}
   </div>
 
@@ -82,39 +123,6 @@
             </td>
 
             </tr>
-
-            {% if pm.replies()|length > 0 %}
-            {% for reply in pm.replies() %}
-                <tr>
-
-                <td>\-</td>
-
-                <td>
-                {% if reply.status == pm.messagestatus['unread_reply'] %}
-                <b>{{ reply.subject }}</b>
-                {% else %}
-                {{ reply.subject }}
-                {% endif %}
-                </td>
-
-                <td>
-                <a href="/user/{{ reply.from_user }}">{{ reply.from_user }}</a>
-                </td>
-
-                <td>
-                <a href="/user/{{ reply.to_user }}">{{ reply.to_user }}</a>
-                </td>
-
-                <td>{{ reply.sent }}</td>
-
-                <td>
-                <a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid_obfuscated }}">View</a></br>
-                </td>
-
-                </tr>
-            {% endfor %}
-            {% endif %}
-
         {% endif %}
         {% endfor %}
         </table>
@@ -224,9 +232,9 @@
 
             <td><a href="/item/{{ item.name }}">{{ item.name }}</a></td>
             {% if item.hidden == 0 %}
-                <td><a href="/item/{{ item.name }}/hide">Hide</a></td>
+                <td><a href="/item/{{ item.name }}/hide">Don't show to others</a></td>
             {% else %}
-                <td><a href="/item/{{ item.name }}/show">Show</a></td>
+                <td><a href="/item/{{ item.name }}/show">Show to others</a></td>
             {% endif %}
 
             {% if item.willtrade == 1 %}
@@ -238,6 +246,12 @@
         {% endif %}
       {% else %}
         {% if item.hidden == 0 and item.have == 1 %}
+           <td>
+               {% for image in item.images()[:1] %}
+                   <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+               {% endfor %}
+           </td>
+
             <td> <a href="/item/{{ item.name }}">{{ item.name }}</a> </td>
             {% if item.willtrade == 1 %}
                 <td>available for trade / <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a></td>

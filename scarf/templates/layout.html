@@ -52,7 +52,7 @@
           <ul class="nav navbar-nav navbar-right">
           {% if pd.authuser is defined %}
             <li><a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a></li>
-            <li><a href="/logout">Logout</a></li>
+            <li><a href="/logout"><small>Logout</small></a></li>
           {% else %}
             <li><form class="navbar-form navbar-right" role="form" action="/login" method="post">
             <div class="form-group">
@@ -63,7 +63,8 @@
             </div>
             <button type="submit" class="btn btn-success">Sign in</button>
             </form></li>
-            <li><a href="/newuser">Sign up</a></li>
+            <li><a href="/newuser"><small>Sign up</small></a></li>
+            <li><a href="/forgotpw"><small>Forgot Password</small></a></li>
           {% endif %}
           </ul>
         </div><!--/.nav-collapse -->
