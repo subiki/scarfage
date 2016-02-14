@@ -1,0 +1,27 @@
+{
+  "name": "scarfage",
+  "version": "1.0.0",
+  "description": "Scarf trading platform Find all the documentation on the wiki. https://github.com/cmazuc/scarfage/wiki Submit bug reports and feature requests through the Issues tab. https://github.com/cmazuc/scarfage/issues",
+  "main": "index.js",
+  "dependencies": {
+    "gulp-sass": "^2.2.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-cssnano": "^2.1.1",
+    "gulp-sass": "^2.2.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmazuc/scarfage.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cmazuc/scarfage/issues"
+  },
+  "homepage": "https://github.com/cmazuc/scarfage#readme"
+}
