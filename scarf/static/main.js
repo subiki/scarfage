@@ -1,7 +1,7 @@
 $(document).ready(function(){
     //Manage hash in URL to open the right pill
     var hash = window.location.hash;
-    // If a hash is provided 
+    // If a hash is provided
     if(hash && hash.length>0)
     {
         // Manage Pill titles
@@ -21,4 +21,22 @@ $(document).ready(function(){
                 $(this).removeClass('active');
         });
     }
+
+    var menu = $('#nav');
+    var origOffsetY = menu.offset().top;
+
+    function scroll() {
+        if ($(window).scrollTop() >= origOffsetY) {
+            $('#nav').addClass('navbar-fixed-top');
+            $('#wrapper').addClass('nav-padding');
+        } else {
+            $('#nav').removeClass('navbar-fixed-top');
+            $('#wrapper').removeClass('nav-padding');
+        }
+
+
+       }
+
+      document.onscroll = scroll;
+
 });

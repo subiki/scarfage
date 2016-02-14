@@ -9,8 +9,8 @@
     <link rel="icon" type="image/png" href="/static/favicon.png" />
     <title>{{ pd.title }}</title>
 
-    <link rel="stylesheet" href="/static/main.css">
-    <link rel="stylesheet" href="/static/min/styles.css">
+    <link rel="stylesheet" href="/static/style.min.css" />
+
     {% endblock %}
 </head>
 
@@ -25,7 +25,21 @@
 {% endif %}
 
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+<header>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="container">
+      <div class="row">
+        {% for message in messages %}
+          <div class="alert alert-info page-header">{{ message }}</div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <nav id="nav" class="navbar nav-padding navbar-inverse">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -68,19 +82,9 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
+</header>
 
-    <div class="container">
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <div class="row">
-        {% for message in messages %}
-          <div class="alert alert-info page-header">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-    {% endwith %}
-    </div>
-
+<div id="wrapper">
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
@@ -89,6 +93,8 @@
         </p>
       </div>
     </div>
+</div>
+
 
     <footer class="footer">
         {% block footer %}

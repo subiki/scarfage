@@ -1,4 +1,4 @@
-@charset "UTF-8";body{color:#929211!important}nav{background-color:#041;height:100px;padding:10px;color:red}
+@charset "UTF-8";body{color:#000}#nav{background-color:#041;height:100px;padding:10px;color:red;width:100%;display:block}.nav-padding{padding-top:100px}#wrapper{margin-top:10px}.stat{border:1px solid #ccc;margin-right:10px;margin-bottom:10px}
 
 /*!
  * Bootstrap v3.3.6 (http://getbootstrap.com)
