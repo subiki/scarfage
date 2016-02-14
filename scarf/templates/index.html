@@ -2,96 +2,85 @@
 
 {% block body %}
 
-<div class="jumbotron">
-    <div class="container">
-    Welcome to the site, blah blah blah
-    </div>
-</div>
-
-
-<div id="top-collectors" class="stat">
-  <div class="page-heading"><h3> Top Collectors </h3></div>
-
-  <table class="table">
-    <tr>
-    <th># items</th>
-    <th>user</th>
-    </tr>
-  {% for user in pd.topcollectors %}
-    <tr>
-    <td>{{ user[0] }}</td>
-    <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
-    </tr>
-  {% endfor %}
-  </table><br/>
-</div>
-
-<div id="top-contributors" class="stat">
-  <div class="page-heading"><h3> Top Contributors </h3></div>
-
-  <table class="table">
-    <tr>
-    <th># of edits</th>
-    <th>user</th>
-    </tr>
-  {% for user in pd.topcontributors %}
-    <tr>
-    <td>{{ user[0] }}</td>
-    <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
-    </tr>
-  {% endfor %}
-  </table><br/>
-</div>
-
-<div id="most-needy" class="stat">
-  <div class="page-heading"><h3> Most Needy </h3></div>
-
-  <table class="table">
-    <tr>
-    <th># items</th>
-    <th>user</th>
-    </tr>
-  {% for user in pd.topneedy %}
-    <tr>
-    <td>{{ user[0] }}</td>
-    <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
-    </tr>
-  {% endfor %}
-  </table><br/>
-</div>
-
-<div id="most-available" class="stat">
-  <div class="page-heading"><h3> Most items available for trade </h3></div>
-
-  <table class="table">
-    <tr>
-    <th># items</th>
-    <th>user</th>
-    </tr>
-  {% for user in pd.topwilltrade %}
-    <tr>
-    <td>{{ user[0] }}</td>
-    <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
-    </tr>
-  {% endfor %}
-  </table><br/>
-</div>
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-4">
-        <div class="page-header"><h4>Recently aded items:</h4></div>
+  <div id="top-collectors" class="col-md-5 stat">
+    <div class="page-heading"><h3> Top Collectors </h3></div>
+
+    <table class="table">
+      <tr>
+      <th># items</th>
+      <th>user</th>
+      </tr>
+    {% for user in pd.topcollectors %}
+      <tr>
+      <td>{{ user[0] }}</td>
+      <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+      </tr>
+    {% endfor %}
+    </table><br/>
+  </div>
+
+  <div id="top-contributors" class="col-md-5 stat">
+    <div class="page-heading"><h3> Top Contributors </h3></div>
+
+    <table class="table">
+      <tr>
+      <th># of edits</th>
+      <th>user</th>
+      </tr>
+    {% for user in pd.topcontributors %}
+      <tr>
+      <td>{{ user[0] }}</td>
+      <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+      </tr>
+    {% endfor %}
+    </table><br/>
+  </div>
+
+  <div id="most-needy" class="col-md-5 stat">
+    <div class="page-heading"><h3> Most Needy </h3></div>
+
+    <table class="table">
+      <tr>
+      <th># items</th>
+      <th>user</th>
+      </tr>
+    {% for user in pd.topneedy %}
+      <tr>
+      <td>{{ user[0] }}</td>
+      <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+      </tr>
+    {% endfor %}
+    </table><br/>
+  </div>
+
+  <div id="most-available" class="col-md-5 stat">
+    <div class="page-heading"><h3> Most items available for trade </h3></div>
+
+    <table class="table">
+      <tr>
+      <th># items</th>
+      <th>user</th>
+      </tr>
+    {% for user in pd.topwilltrade %}
+      <tr>
+      <td>{{ user[0] }}</td>
+      <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+      </tr>
+    {% endfor %}
+    </table><br/>
+  </div>
+</div>
+
+
+<div class="container">
+    <div class="col-md-5 stat">
+          <div class="page-heading"><h3>Recently aded items:</h3></div>
         {% for item in pd.items %}
         {{ item.added }} - <a href="/item/{{ item.name }}">{{ item.name }}</a><br />
         {% endfor %}
     </div>
-    <div class="col-md-4">
-    Something else cool
-    </div>
-    <div class="col-md-4">
-    Some more cool stuff
-    </div>
-  </div>
 </div>
 
 {% endblock %}
