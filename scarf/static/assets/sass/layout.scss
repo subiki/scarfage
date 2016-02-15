@@ -5,6 +5,15 @@
   color: red;
   width:100%;
   display: block;
+
+  a {
+    color: #fff;
+  }
+
+  .forgotpw {
+    text-align: right;
+  }
+
 }
 
 .nav-padding {
@@ -19,4 +28,10 @@
   border: 1px solid #ccc;
   margin-right: 10px;
   margin-bottom: 10px;
+
+  th {
+    font-weight: bold;
+
+  }
+
 }

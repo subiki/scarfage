@@ -9,13 +9,13 @@
 
     <table class="table">
       <tr>
-      <th># items</th>
-      <th>user</th>
+        <th>User</th>
+        <th>Trades</th>
       </tr>
     {% for user in pd.topcollectors %}
       <tr>
-      <td>{{ user[0] }}</td>
-      <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+        <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+        <td>{{ user[0] }}</td>
       </tr>
     {% endfor %}
     </table><br/>
@@ -26,13 +26,13 @@
 
     <table class="table">
       <tr>
-      <th># of edits</th>
-      <th>user</th>
+        <th>User</th>
+        <th>Edits</th>
       </tr>
     {% for user in pd.topcontributors %}
       <tr>
-      <td>{{ user[0] }}</td>
-      <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+        <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+        <td>{{ user[0] }}</td>
       </tr>
     {% endfor %}
     </table><br/>
@@ -43,13 +43,13 @@
 
     <table class="table">
       <tr>
-      <th># items</th>
-      <th>user</th>
+        <th>User</th>
+        <th>Wanted</th>
       </tr>
     {% for user in pd.topneedy %}
       <tr>
-      <td>{{ user[0] }}</td>
-      <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+        <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+        <td>{{ user[0] }}</td>
       </tr>
     {% endfor %}
     </table><br/>
@@ -60,13 +60,14 @@
 
     <table class="table">
       <tr>
-      <th># items</th>
-      <th>user</th>
+        <th>User</th>
+        <th>Items</th>
+
       </tr>
     {% for user in pd.topwilltrade %}
       <tr>
-      <td>{{ user[0] }}</td>
-      <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+        <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
+        <td>{{ user[0] }}</td>
       </tr>
     {% endfor %}
     </table><br/>
@@ -76,7 +77,7 @@
 
 <div class="container">
     <div class="col-md-5 stat">
-          <div class="page-heading"><h3>Recently aded items:</h3></div>
+          <div class="page-heading"><h3>Recently Added:</h3></div>
         {% for item in pd.items %}
         {{ item.added }} - <a href="/item/{{ item.name }}">{{ item.name }}</a><br />
         {% endfor %}
