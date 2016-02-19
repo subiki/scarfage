@@ -78,3 +78,29 @@ def admin_set_accesslevel(user, level):
     flash('User ' + user + '\'s accesslevel has been set to ' + level)
 
     return redirect_back('/admin')
+
+@app.route('/admin/users/<user>/resetpw')
+def admin_reset_pw(user):
+    pd = pagedata()
+
+    if 'username' not in session or pd.authuser.accesslevel < 10:
+        return redirect(url_for('accessdenied'))
+
+    if session['username'] == user:
+        app.logger.error('Admin access was denied for user: ' + pd.authuser.username)
+        return redirect_back('index')
+
+    if pd.authuser.accesslevel != 255 and pd.authuser.accesslevel <= level:
+        app.logger.error('Admin password reset was denied for user: ' + pd.authuser.username)
+        flash("No.")
+        return redirect_back('index')
+
+    try:
+        user = siteuser.create(user)
+        user.forgot_pw_reset(admin=True)
+    except NoUser:
+        return page_not_found(404)
+
+    flash('A new password has been e-mailed to ' + user.username + '.')
+
+    return redirect_back('/admin')

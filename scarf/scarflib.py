@@ -1,10 +1,14 @@
-import hashlib
 import os
 import datetime
 import time
 import uuid
 import imghdr
 import base64
+import bcrypt
+import hashlib
+#import hmac
+import random
+from string import ascii_letters, digits
 
 from scarf import app
 from flask import request, redirect, session, flash, url_for, render_template
@@ -257,24 +261,20 @@ class siteuser(object):
         result = doupsert(sql)
 
     def authenticate(self, password):
-        sql = """select users.pwhash, users.pwsalt
+        sql = """select users.pwhash
                  from users
                  where users.uid = %(uid)s;"""
         result = doquery(sql, { 'uid': self.uid })
 
         try:
             pwhash = result[0][0]
-            pwsalt = result[0][1]
         except IndexError:
             raise AuthFail(self.username)
  
         if self.accesslevel == 0:
             flash('Your account has been banned')
         else:
-            checkhash = gen_pwhash(password, pwsalt)
-            del password # meh
-        
-            if checkhash == pwhash:
+            if verify_pw(password, pwhash):
                 session['username'] = self.username
             else:
                 raise AuthFail(self.username)
@@ -288,13 +288,11 @@ class siteuser(object):
         data = doupsert(sql)
 
     def newpassword(self, password):
-        pwsalt = str(uuid.uuid4().get_hex().upper()[0:6])
-        pwhash = gen_pwhash(password, pwsalt)
+        pwhash = gen_pwhash(password)
         del password
 
         sql = upsert("users", 
                      uid=self.uid, 
-                     pwsalt=pwsalt,
                      pwhash=pwhash)
         data = doupsert(sql)
 
@@ -306,8 +304,35 @@ class siteuser(object):
                      email=self.email)
         data = doupsert(sql)
 
-def gen_pwhash(password, salt):
-    return hashlib.sha224(password + salt).hexdigest()
+    def forgot_pw_reset(self, admin=False):
+        newpw = ''.join([random.choice(ascii_letters + digits) for _ in range(12)])
+        self.newpassword(newpw)
+
+        message = render_template('email/pwreset.html', username=self.username, email=self.email, newpw=newpw, admin=admin, ip=request.environ['REMOTE_ADDR'])
+        send_mail(recipient=self.email, subject='Password Reset', message=message)
+
+def hashize(string):
+    return base64.b64encode(hashlib.sha384(string).digest())
+
+def gen_pwhash(password):
+    return bcrypt.hashpw(hashize(password), bcrypt.gensalt(13))
+
+def verify_pw(password, pwhash):
+    if (bcrypt.hashpw(hashize(password), pwhash) == pwhash):
+        return True
+
+    return False
+
+"""
+python 2.7.7+ only
+
+def verify_pw(password, pwhash):
+    if (hmac.compare_digest(bcrypt.hashpw(hashize(password), pwhash), pwhash)):
+        return True
+
+    return False
+
+"""
 
 def check_email(email):
     sql = "select username from users where email = %(email)s;"
@@ -321,11 +346,9 @@ def check_email(email):
 def new_user(username, password, email):
     try:
         joined = datetime.datetime.now()
-        salt=str(uuid.uuid4().get_hex().upper()[0:6])
         sql = upsert("users", \
                      username=sql_escape(username), \
-                     pwhash=gen_pwhash(password, salt), \
-                     pwsalt=salt, \
+                     pwhash=gen_pwhash(password), \
                      email=sql_escape(email), \
                      joined=joined, \
                      accesslevel=1)
@@ -344,6 +367,8 @@ def new_user(username, password, email):
     send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
 
     return True
+
+
 
 ######### Image stuff
 
