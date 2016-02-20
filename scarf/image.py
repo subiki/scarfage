@@ -125,10 +125,6 @@ def resize(img, maxwidth, maxheight):
 
     return img.resize((int(hsize * factor), int(vsize * factor)), Image.ANTIALIAS)
 
-# TODO: add to db, get off of local FS
-# todo: caching
-img_cache = dict()
-
 @app.route('/image/<img_id>/full')
 def serve_full(img_id):
     try:

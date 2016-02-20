@@ -8,6 +8,8 @@ import bcrypt
 import hashlib
 #import hmac
 import random
+
+from config import *
 from string import ascii_letters, digits
 
 from scarf import app
@@ -61,6 +63,11 @@ class pagedata:
     pass
 
     def __init__(self):
+        try:
+            self.img_prefix = config.img_prefix
+        except NameError:
+            self.img_prefix = ''
+
         if 'username' in session:
             self.authuser = siteuser.create(session['username'])
             try:
