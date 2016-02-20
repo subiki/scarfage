@@ -64,7 +64,7 @@ class pagedata:
 
     def __init__(self):
         try:
-            self.img_prefix = config.img_prefix
+            self.img_prefix = img_prefix
         except NameError:
             self.img_prefix = ''
 
