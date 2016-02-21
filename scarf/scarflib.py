@@ -64,9 +64,9 @@ class pagedata:
 
     def __init__(self):
         try:
-            self.img_prefix = img_prefix
+            self.prefix = prefix
         except NameError:
-            self.img_prefix = ''
+            self.prefix = ''
 
         if 'username' in session:
             self.authuser = siteuser.create(session['username'])

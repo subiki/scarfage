@@ -225,7 +225,7 @@
         {% if item.have == 1 %}
            <td>
                {% for image in item.images()[:1] %}
-                   <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="{{pd.img_prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+                   <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
                {% endfor %}
            </td>
 
@@ -248,7 +248,7 @@
         {% if item.hidden == 0 and item.have == 1 %}
            <td>
                {% for image in item.images()[:1] %}
-                   <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="{{pd.img_prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+                   <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
                {% endfor %}
            </td>
 
@@ -271,7 +271,7 @@
 
            {% for image in item.images()[:1] %}
            <p>
-           <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="{{pd.img_prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+           <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
            </p>
            {% endfor %}
 
