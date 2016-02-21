@@ -1,0 +1,19 @@
+{% extends "email/layout.html" %}
+
+{% block body %}
+
+{% if status >= 10  %}
+<p> You have a <a href="https://www.scarfage.com/user/{{username}}/pm/{{messageid}}">new private message</a> from <b>{{from_user.username}}</b>:</p>
+{% else %}
+<p> You have a new trade request from <b>{{from_user.username}}</b>:</p>
+{% endif %}
+
+<p> 
+{{ message }}
+</p>
+
+<p>
+<a href="https://www.scarfage.com/user/{{username}}">Your Profile</a><br />
+</p>
+
+{% endblock %}
