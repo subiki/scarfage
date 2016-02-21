@@ -882,7 +882,7 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
 
     email_user = siteuser.create(user_by_uid(touserid))
     from_user = siteuser.create(user_by_uid(fromuserid))
-    message = render_template('email/pm_notify.html', username=email_user.username, email=email_user.email, from_user=from_user, message=message, status=status, parent=parent, messageid=obfuscate(messageid))
+    message = render_template('email/pm_notify.html', to_user=email_user, email=email_user.email, from_user=from_user, message=message, status=status, parent=parent, messageid=obfuscate(messageid))
     send_mail(recipient=email_user.email, subject='[Scarfage PM] ' + subject, message=message)
 
     return messageid 

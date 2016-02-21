@@ -3,9 +3,9 @@
 {% block body %}
 
 {% if status >= 10  %}
-<p> You have a <a href="https://www.scarfage.com/user/{{username}}/pm/{{messageid}}">new private message</a> from <b>{{from_user.username}}</b>:</p>
+<p> You have a <a href="https://www.scarfage.com/user/{{to_user.username}}/pm/{{messageid}}">new private message</a> from <a href="https://www.scarfage.com/user/{{from_user.username}}"> <b>{{from_user.username}}</b>:</p> </a><br />
 {% else %}
-<p> You have a new trade request from <b>{{from_user.username}}</b>:</p>
+<p> You have a <a href="https://www.scarfage.com/user/{{to_user.username}}/pm/{{messageid}}">new trade request</a> from <a href="https://www.scarfage.com/user/{{from_user.username}}"> <b>{{from_user.username}}</b>:</p> </a><br />
 {% endif %}
 
 <p> 
@@ -13,7 +13,7 @@
 </p>
 
 <p>
-<a href="https://www.scarfage.com/user/{{username}}">Your Profile</a><br />
+<a href="https://www.scarfage.com/user/{{to_user.username}}">Your Profile</a><br />
 </p>
 
 {% endblock %}
