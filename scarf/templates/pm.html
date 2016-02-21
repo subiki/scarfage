@@ -77,7 +77,7 @@ Open<br />
 
     <td>
     {% for image in ti.item.images()[:1] %}
-        <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /></a>
+        <a href="/image/{{ image.uid }}"><img style="max-height:100px; max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /></a>
     {% endfor %}
     </td>
 

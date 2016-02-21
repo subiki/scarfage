@@ -220,7 +220,8 @@ class siteuser(object):
 
         return ret
 
-    @memoize_with_expiry(collection_cache, cache_persist)
+    #@memoize_with_expiry(collection_cache, cache_persist)
+    # ^^^ causes a bug with ownwant updates
     def query_collection(self, item):
         ret = ownwant()
 

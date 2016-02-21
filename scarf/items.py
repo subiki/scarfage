@@ -76,7 +76,6 @@ def show_item(item_id, debug):
     try:
         showitem = siteitem(item_id)
         # todo: http://htmlpurifier.org/
-        # todo: memoize
 
         showitem.description_html = markdown.markdown(str(showitem.body()), md_extensions)
     except NoItem:
