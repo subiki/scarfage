@@ -742,6 +742,7 @@ class pmessage(object):
         if self.uid > 0:
             self.status = status
             sql = "update messages set status = %(status)s where uid = %(uid)s;"
+            result = doquery(sql, {"uid": self.uid, "status": status})
         else:
             return None
 
