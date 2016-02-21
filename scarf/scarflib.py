@@ -721,19 +721,22 @@ class pmessage(object):
         sql = 'select * from messages where uid = %(uid)s;'
         result = doquery(sql, {'uid': messageid})
 
-        self.uid = result[0][0]
-        self.uid_obfuscated = obfuscate(result[0][0])
-        self.from_uid = result[0][1]
-        self.to_uid = result[0][2]
-        self.subject = result[0][3]
-        self.message = result[0][4]
-        self.status = result[0][5]
-        self.parentid = result[0][6]
-        self.parentid_obfuscated = obfuscate(result[0][6])
-        self.sent = result[0][7]
+        try:
+            self.uid = result[0][0]
+            self.uid_obfuscated = obfuscate(result[0][0])
+            self.from_uid = result[0][1]
+            self.to_uid = result[0][2]
+            self.subject = result[0][3]
+            self.message = result[0][4]
+            self.status = result[0][5]
+            self.parentid = result[0][6]
+            self.parentid_obfuscated = obfuscate(result[0][6])
+            self.sent = result[0][7]
 
-        self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
-        self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
+            self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
+            self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
+        except IndexError:
+            raise NoItem(messageid)
 
     def parent(self):
         if self.parentid > 0:
