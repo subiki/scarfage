@@ -38,7 +38,10 @@ Open<br />
         <a class="btn btn-primary" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reopen">Reopen this trade</a>
     {% endif %}
 {% else %}
-    <a class="btn btn-default" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/settle">Close this trade</a>
+    {% if pd.pm.status == pd.pm.messagestatus['complete_trade'] %}
+        <a class="btn btn-default" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/settle">Close this trade</a>
+    {% endif %}
+
     {% if pd.pm.to_user == pd.authuser.username %}
         <a class="btn btn-danger" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject">Reject this trade</a><br />
     {% else %}
@@ -49,43 +52,60 @@ Open<br />
 </div>
 <table class="table">
 <tr>
+<th>From</th>
 <th></th>
-<th>Owner</th>
+<th>To</th>
 <th>Item</th>
+<th></th>
 <th>Status</th>
 <th>Actions</th>
 </tr>
 {% for ti in pd.pm.items %}
 <tr>
 
+    {% if ti.user.uid != pd.authuser.uid %}
+    <td>{{ ti.user.username }}</td><td><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></td><td>{{pd.authuser.username}}</td>
+    {% else %}
+        {% if ti.user.username == pd.pm.from_user %}
+            <td>{{ pd.authuser.username }}</td><td><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></td><td>{{pd.pm.to_user}}</td>
+        {% else %}
+            <td>{{ pd.authuser.username }}</td><td><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></td><td>{{pd.pm.from_user}}</td>
+        {% endif %}
+    {% endif %}
+
+    <td>{{ ti.item.name }}</td>
+
     <td>
     {% for image in ti.item.images()[:1] %}
         <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /></a>
     {% endfor %}
     </td>
-    <td>{{ti.user.username }}</td>
-
-    <td>{{ ti.item.name }}</td>
 
     {% if ti.acceptstatus < pd.pm.tradeitemstatus['accepted'] %}
         {% if ti.user.uid == pd.authuser.uid %}
-
             {% if ti.acceptstatus == pd.pm.tradeitemstatus['rejected'] %}
             <td><b><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span><b></td>
-            {% else %}
+            {% elif pd.pm.status < pd.pm.messagestatus['complete_trade'] %}
             <td><a class="btn btn-default" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject/{{ ti.uid }}">Reject</a> </td>
             {% endif %}
+            {% if pd.pm.status < pd.pm.messagestatus['complete_trade'] %}
             <td><a class="btn btn-default" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/accept/{{ ti.uid }}">Accept</a></td>
+            {% endif %}
         {% else %}
-            {% if ti.acceptstatus == pd.pm.tradeitemstatus['rejected'] %}
+            {% if ti.acceptstatus == pd.pm.tradeitemstatus['rejected']  %}
                 <td><b><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span><b></td><td></td>
             {% else %}
                 <td><b><span class="glyphicon glyphicon-refresh" aria-hidden="true" style="color: blue;"></span><b></td><td></td>
             {%endif%}
         {%endif%}
     {% else %}
-        <td><b><span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: green;"></span><b></td>
-        {% if ti.user.uid == pd.authuser.uid %}
+        {% if pd.pm.status > pd.pm.messagestatus['settled_trade'] and not ti.acceptstatus == pd.pm.tradeitemstatus['accepted'] %}
+            <td><b><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span><b></td><td></td>
+        {% else %}
+            <td><b><span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: green;"></span><b></td>
+        {% endif %}
+
+        {% if ti.user.uid == pd.authuser.uid and pd.pm.status < pd.pm.messagestatus['complete_trade'] %}
         <td> <a class="btn btn-danger" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject/{{ ti.uid }}">Cancel</a> </td>
         {% endif %}
     {%endif%}
