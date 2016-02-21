@@ -189,6 +189,10 @@ def read(table, **kwargs):
     return "".join(sql)
 
 def upsert(table, **kwargs):
+    curframe = inspect.currentframe()
+    calframe = inspect.getouterframes(curframe, 2)
+    app.logger.debug("WARNING! deprecated function sql_escape called by " + calframe[1][3])
+    
     """ update/insert rows into objects table (update if the row already exists)
         given the key-value pairs in kwargs """
     keys = ["%s" % k for k in kwargs]
@@ -252,7 +256,7 @@ def doupsert(query):
         app.logger.error("Cannot connect to database. MySQL error: " + str(e))
         raise
 
-def doquery(query, data=None):
+def doquery(query, data=None, select=True):
     if not data:
         curframe = inspect.currentframe()
         calframe = inspect.getouterframes(curframe, 2)
@@ -277,9 +281,15 @@ def doquery(query, data=None):
         cur = db.cursor()
         cur.execute(query, data)
 
-        data = cur.fetchall()
+        #app.logger.info((query, data, 'rows: ' + str(cur.rowcount)))
+
+        if select:
+            data = cur.fetchall()
+        else:
+            data = cur.lastrowid
 
         db.commit()
+        cur.close()
 
         return data
 

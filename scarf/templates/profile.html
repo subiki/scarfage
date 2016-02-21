@@ -99,10 +99,14 @@
             <td>
             {% if pm.status == pm.messagestatus['unread_trade'] and pm.from_user != pd.authuser.username %}
             <b>New</b>
-            {% elif pm.status < pm.messagestatus['settled_trade'] %}
-            Open
-            {% elif pm.status == pm.messagestatus['settled_trade'] or pm.status == pm.messagestatus['rejected_trade'] %}
+            {% elif pm.status == pm.messagestatus['settled_trade'] %}
             Closed
+            {% elif pm.status == pm.messagestatus['rejected_trade'] %}
+            Rejected
+            {% elif pm.status == pm.messagestatus['cancelled_trade'] %}
+            Cancelled
+            {% else %}
+            Open
             {% endif %}
             </td>
 

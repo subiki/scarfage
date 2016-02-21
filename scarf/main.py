@@ -8,6 +8,7 @@ from nocache import nocache
 @app.errorhandler(404)
 def page_not_found(error):
     pd = pagedata()
+    # TODO: log referrer
     app.logger.debug('404!')
     pd.title = "File not found"
     pd.errorcode="404"

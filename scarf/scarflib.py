@@ -58,7 +58,7 @@ def ip_uid(ip):
         result = doupsert(sql)
         return result
 
-class pagedata:
+class pagedata(object):
     accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
     pass
 
@@ -384,8 +384,7 @@ class NoImage(Exception):
         Exception.__init__(self, item)
 
 siteimage_cache = dict()
-class siteimage:
-
+class siteimage(object):
     @classmethod
     @memoize_with_expiry(siteimage_cache, long_cache_persist)
     def create(cls, username):
@@ -450,7 +449,7 @@ def uid_by_item(item):
     except IndexError:
         return
 
-class itemhist():
+class itemhist(object):
     def __init__(self, uid):
         self.uid = uid
 
@@ -458,7 +457,7 @@ class NoItem(Exception):
     def __init__(self, item):
         Exception.__init__(self, item)
 
-class siteitem():
+class siteitem(object):
     def __init__(self, name):
         self.name = name[:64]
 
@@ -611,7 +610,6 @@ def new_edit(itemid, description, userid):
                      body=sql_escape(description))
 
     edit = doupsert(sql)
-    app.logger.debug(edit)
 
     sql = upsert("items", \
                  uid=sql_escape(itemid), \
@@ -682,7 +680,6 @@ def latest_items(limit=0):
         else:
             sql = "SELECT uid FROM items;"
         result = doquery(sql, { 'limit': limit })
-        app.logger.debug(result)
         for item in result:
             items.append(siteitem(item_by_uid(item[0])))
     except TypeError:
@@ -707,12 +704,11 @@ def redirect_back(endpoint, **values):
 
 # Trade and message stuff
 
-#FIXME
-messagestatus = {'unread_trade': 0, 'active_trade': 1, 'complete_trade': 2, 'settled_trade': 3, 'rejected_trade': 4, 'unread_pm': 10, 'read_pm': 11}
-tradestatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
+messagestatus = {'unread_trade': 0, 'active_trade': 1, 'complete_trade': 2, 'settled_trade': 3, 'rejected_trade': 4, 'cancelled_trade': 5, 'unread_pm': 10, 'read_pm': 11}
+tradeitemstatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
 
 pmessage_cache = dict()
-class pmessage:
+class pmessage(object):
     @classmethod
     @memoize_with_expiry(pmessage_cache, cache_persist)
     def create(cls, messageid):
@@ -742,23 +738,32 @@ class pmessage:
         if self.parentid > 0:
             return pmessage.create(self.parentid)
 
-    def read(self):
-        if self.uid > 0 and self.status == messagestatus['unread_pm'] and uid_by_user(session['username']) == self.to_uid:
-            sql = upsert("messages", \
-                         uid=self.uid, \
-                         status=messagestatus['read_pm'])
-            data = doupsert(sql)
+    def setstatus(self, status):
+        if self.uid > 0:
+            self.status = status
+            sql = "update messages set status = %(status)s where uid = %(uid)s;"
         else:
-            return
+            return None
+
+    def read(self):
+        if self.uid > 0 and uid_by_user(session['username']) == self.to_uid:
+            status = None
+            if self.status == messagestatus['unread_pm']:
+                status = messagestatus['read_pm']
+            elif self.status == messagestatus['unread_trade']:
+                status = messagestatus['active_trade']
+
+            if status:
+                return self.setstatus(status)
+
+        return
 
     def unread(self):
-        if self.uid > 0 and self.status == messagestatus['read_pm'] and uid_by_user(session['username']) == self.to_uid:
-            sql = upsert("messages", \
-                         uid=self.uid, \
-                         status=messagestatus['unread_pm'])
-            data = doupsert(sql)
-        else:
-            return
+        if self.status == messagestatus['read_pm']:
+            return self.setstatus(messagestatus['unread_pm'])
+        elif self.status >= messagestatus['unread_trade']:
+            return self.setstatus(messagestatus['unread_trade'])
+        return
 
     @memoize_with_expiry(pmessage_cache, cache_persist)
     def replies(self):
@@ -773,7 +778,7 @@ class pmessage:
 
         return ret
 
-class tradeitem:
+class tradeitem(object):
     def __init__(self, itemid):
         self.uid = itemid 
         self.itemid = 0
@@ -783,60 +788,38 @@ class tradeitem:
 
     def accept(self):
         if self.uid > 0:
+            self.acceptstatus = tradeitemstatus['accepted']
             sql = upsert("tradelist", \
                          uid=self.uid, \
-                         acceptstatus=tradestatus['accepted'])
+                         acceptstatus=tradeitemstatus['accepted'])
             data = doupsert(sql)
         else:
             return
 
     def reject(self):
         if self.uid > 0:
+            self.acceptstatus = tradeitemstatus['rejected']
             sql = upsert("tradelist", \
                          uid=self.uid, \
-                         acceptstatus=tradestatus['rejected'])
+                         acceptstatus=tradeitemstatus['rejected'])
             data = doupsert(sql)
         else:
             return
 
-#FIXME inheritance
+trademessage_cache = dict()
 class trademessage(pmessage):
-    cache = []
-
     @classmethod
+    @memoize_with_expiry(trademessage_cache, cache_persist)
     def create(cls, messageid):
-        for o in trademessage.cache:
-            if o.uid == messageid:
-                return o
-
-        o = cls(messageid)
-        cls.cache.append(o)
-        return o
+        return cls(messageid)
 
     def __init__(self, messageid):
-        self.messagestatus = messagestatus
-        self.tradestatus = tradestatus
-
-        sql = 'select * from messages where uid = %(uid)s;'
-        result = doquery(sql, {"uid": messageid})
-
-        self.uid = result[0][0]
-        self.uid_obfuscated = obfuscate(result[0][0])
-        self.from_uid = result[0][1]
-        self.to_uid = result[0][2]
-        self.subject = result[0][3]
-        self.message = result[0][4]
-        self.status = result[0][5]
-        self.parentid = result[0][6]
-        self.parentid_obfuscated = obfuscate(result[0][6])
-        self.sent = result[0][7]
-
-        self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
-        self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
+        super(self.__class__, self).__init__(messageid)
+        self.tradeitemstatus = tradeitemstatus
 
         self.items = []
 
-        sql = 'select * from tradelist where uid = %(uid)s;'
+        sql = 'select * from tradelist where messageid = %(uid)s;'
         result = doquery(sql, {"uid": messageid})
 
         complete = True
@@ -851,29 +834,20 @@ class trademessage(pmessage):
 
             self.items.append(ti)
 
-            if (ti.acceptstatus != tradestatus['accepted']):
+            if (ti.acceptstatus != tradeitemstatus['accepted']):
                 complete = False
 
         if complete == True and self.status < messagestatus['settled_trade']:
             self.status = messagestatus['complete_trade']
 
     def settle(self):
-        if self.uid > 0:
-            sql = upsert("messages", \
-                         uid=self.uid, \
-                         status=messagestatus['settled_trade'])
-            data = doupsert(sql)
-        else:
-            return
+        return self.setstatus(messagestatus['settled_trade'])
 
     def reject(self):
-        if self.uid > 0:
-            sql = upsert("messages", \
-                         uid=self.uid, \
-                         status=messagestatus['rejected_trade'])
-            data = doupsert(sql)
-        else:
-            return
+        return self.setstatus(messagestatus['rejected_trade'])
+
+    def cancel(self):
+        return self.setstatus(messagestatus['cancelled_trade'])
 
 def send_pm(fromuserid, touserid, subject, message, status, parent):
     if 'username' not in session:
