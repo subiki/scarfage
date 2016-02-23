@@ -2,27 +2,27 @@
 
 {% block body %}
 
-
-
 {% if pd.item %}
 {% endif %}
 
-
 <div class="container">
     <div class="col-md-8">
-        <div class="page-header"><h3>{% if pd.item %}Editing: "{{ pd.item_name }}" <small><a href="/item/{{ pd.item.name }}/history">History</a></small>{% else %}Editing: "{{pd.item_name}}" (new item){% endif %} </h3></div>
-        <form action="/item/{{ pd.item_name }}/edit" method="post" enctype="multipart/form-data">
+        <div class="page-header"><h3>Editing: {% if pd.item %}"{{ pd.item.name }}" <small><a href="/item/{{ pd.item.uid }}/history">History</a></small>{% else %}(new item){% endif %} </h3></div>
+        <form action="/item/edit" method="post" enctype="multipart/form-data">
+            <div class="page-header"><h4>Name</h4></div>
+            <input type=text name=name value="{% if pd.item %}{{ pd.item.name }}{%endif%}"><br />
             <div class="page-header"><h4>Description</h4></div>
             <textarea name=desc cols="50" rows="2" placeholder="Stuff about your item here">{% if pd.item %}{{ pd.item.body() }}{% endif %}</textarea><br />
 
             <div class="page-header"><h4>Tags</h4></div>
             <input type=text name=tags placeholder="Add more tags"><br />
+            <input type=hidden name=uid value={% if pd.item %}{{ pd.item.uid }}{%else%}0{%endif%}>
     </div>
 
     <div class="col-md-3">
             <button class="btn btn-sm btn-default" type=submit>Save</button>
             {% if pd.item %}
-            <a class="btn btn-sm btn-primary" href="/item/{{ pd.item.name }}">Cancel</a>
+            <a class="btn btn-sm btn-primary" href="/item/{{ pd.item.uid }}">Cancel</a>
             {% endif %}
         </form>
     </div>

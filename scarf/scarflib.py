@@ -1,15 +1,21 @@
-import hashlib
 import os
 import datetime
 import time
 import uuid
 import imghdr
 import base64
+import bcrypt
+import hashlib
+#import hmac
+import random
+
+from config import *
+from string import ascii_letters, digits
 
 from scarf import app
 from flask import request, redirect, session, flash, url_for, render_template
 from urlparse import urlparse, urljoin
-from sql import upsert, doupsert, read, doquery, delete, sql_escape 
+from sql import upsert, doupsert, doquery
 from mail import send_mail
 
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
@@ -42,21 +48,29 @@ def deobfuscate(string):
     except TypeError:
         return None
 
-def ip_uid(ip):
+def ip_uid(ip, r=False):
     try:
         sql = "select uid from ip where ip = %(ip)s;"
         result = doquery(sql, { 'ip': ip })
         return result[0][0]
     except IndexError:
-        sql = upsert("ip", ip=sql_escape(ip))
-        result = doupsert(sql)
-        return result
+        if r:
+            return None
+        sql = "insert into ip (ip) values ( %(ip)s );"
+        result = doquery(sql, { 'ip': ip })
+        app.logger.info(result)
+        return ip_uid(ip, True)
 
-class pagedata:
+class pagedata(object):
     accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
     pass
 
     def __init__(self):
+        try:
+            self.prefix = prefix
+        except NameError:
+            self.prefix = ''
+
         if 'username' in session:
             self.authuser = siteuser.create(session['username'])
             try:
@@ -191,7 +205,7 @@ class siteuser(object):
     @memoize_with_expiry(collection_cache, cache_persist)
     def collection(self):
         ret = list()
-        sql = """select ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden, items.name
+        sql = """select ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden, items.uid
                  from ownwant
                  join items on items.uid=ownwant.itemid
                  where ownwant.userid = %(uid)s"""
@@ -209,7 +223,8 @@ class siteuser(object):
 
         return ret
 
-    @memoize_with_expiry(collection_cache, cache_persist)
+    #@memoize_with_expiry(collection_cache, cache_persist)
+    # ^^^ causes a bug with ownwant updates
     def query_collection(self, item):
         ret = ownwant()
 
@@ -251,30 +266,25 @@ class siteuser(object):
     def seen(self):
         self.lastseen=datetime.datetime.now()
 
-        sql = upsert("userstat_lastseen", \
-                     uid=self.uid, \
-                     date=self.lastseen)
-        result = doupsert(sql)
+        # FIXME: update, not insert
+        sql = "INSERT INTO userstat_lastseen (date, uid) VALUES (%(lastseen)s, %(uid)s) ON DUPLICATE KEY UPDATE date = %(lastseen)s, uid = %(uid)s;"
+        result = doquery(sql, { 'uid': self.uid, 'lastseen': self.lastseen })
 
     def authenticate(self, password):
-        sql = """select users.pwhash, users.pwsalt
+        sql = """select users.pwhash
                  from users
                  where users.uid = %(uid)s;"""
         result = doquery(sql, { 'uid': self.uid })
 
         try:
             pwhash = result[0][0]
-            pwsalt = result[0][1]
         except IndexError:
             raise AuthFail(self.username)
  
         if self.accesslevel == 0:
             flash('Your account has been banned')
         else:
-            checkhash = gen_pwhash(password, pwsalt)
-            del password # meh
-        
-            if checkhash == pwhash:
+            if verify_pw(password, pwhash):
                 session['username'] = self.username
             else:
                 raise AuthFail(self.username)
@@ -282,32 +292,51 @@ class siteuser(object):
     def newaccesslevel(self, accesslevel):
         self.accesslevel = int(accesslevel)
 
-        sql = upsert("users", 
-                     uid=self.uid, 
-                     accesslevel=self.accesslevel)
-        data = doupsert(sql)
+        sql = "update users set accesslevel = %(level)s where uid = %(uid)s;"
+        return doquery(sql, {"uid": self.uid, "level": self.accesslevel})
 
     def newpassword(self, password):
-        pwsalt = str(uuid.uuid4().get_hex().upper()[0:6])
-        pwhash = gen_pwhash(password, pwsalt)
+        pwhash = gen_pwhash(password)
         del password
 
-        sql = upsert("users", 
-                     uid=self.uid, 
-                     pwsalt=pwsalt,
-                     pwhash=pwhash)
-        data = doupsert(sql)
+        sql = "update users set pwhash = %(pwhash)s where uid = %(uid)s;"
+        return doquery(sql, {"uid": self.uid, "pwhash": pwhash})
 
     def newemail(self, email):
-        self.email = sql_escape(email)
+        self.email = email
 
-        sql = upsert("users", 
-                     uid=self.uid, 
-                     email=self.email)
-        data = doupsert(sql)
+        sql = "update users set email = %(email)s where uid = %(uid)s;"
+        return doquery(sql, {"uid": self.uid, "email": email})
 
-def gen_pwhash(password, salt):
-    return hashlib.sha224(password + salt).hexdigest()
+    def forgot_pw_reset(self, admin=False):
+        newpw = ''.join([random.choice(ascii_letters + digits) for _ in range(12)])
+        self.newpassword(newpw)
+
+        message = render_template('email/pwreset.html', username=self.username, email=self.email, newpw=newpw, admin=admin, ip=request.environ['REMOTE_ADDR'])
+        send_mail(recipient=self.email, subject='Password Reset', message=message)
+
+def hashize(string):
+    return base64.b64encode(hashlib.sha384(string).digest())
+
+def gen_pwhash(password):
+    return bcrypt.hashpw(hashize(password), bcrypt.gensalt(13))
+
+def verify_pw(password, pwhash):
+    if (bcrypt.hashpw(hashize(password), pwhash) == pwhash):
+        return True
+
+    return False
+
+"""
+python 2.7.7+ only
+
+def verify_pw(password, pwhash):
+    if (hmac.compare_digest(bcrypt.hashpw(hashize(password), pwhash), pwhash)):
+        return True
+
+    return False
+
+"""
 
 def check_email(email):
     sql = "select username from users where email = %(email)s;"
@@ -321,26 +350,16 @@ def check_email(email):
 def new_user(username, password, email):
     try:
         joined = datetime.datetime.now()
-        salt=str(uuid.uuid4().get_hex().upper()[0:6])
-        sql = upsert("users", \
-                     username=sql_escape(username), \
-                     pwhash=gen_pwhash(password, salt), \
-                     pwsalt=salt, \
-                     email=sql_escape(email), \
-                     joined=joined, \
-                     accesslevel=1)
-        uid = doupsert(sql)
 
-        sql = upsert("userstat_lastseen", \
-                     uid=uid, \
-                     date=joined)
-        result = doupsert(sql)
- 
+        sql = "insert into users (username, pwhash, email, joined, accesslevel) values (%(username)s, %(pwhash)s, %(email)s, %(joined)s, '1');"
+        result = doquery(sql, { 'username': username, 'pwhash': gen_pwhash(password), 'email': email, 'joined': joined })
+
+        sql = "insert into userstat_lastseen (date, uid) values (%(lastseen)s, %(uid)s);"
+        result = doquery(sql, { 'uid': uid_by_user(username), 'lastseen': joined })
     except Exception as e:
         return False
 
-    # todo: add ip
-    message = render_template('email/new_user.html', username=username, email=email, joined=joined)
+    message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=request.environ['REMOTE_ADDR'])
     send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
 
     return True
@@ -352,8 +371,7 @@ class NoImage(Exception):
         Exception.__init__(self, item)
 
 siteimage_cache = dict()
-class siteimage:
-
+class siteimage(object):
     @classmethod
     @memoize_with_expiry(siteimage_cache, long_cache_persist)
     def create(cls, username):
@@ -418,7 +436,7 @@ def uid_by_item(item):
     except IndexError:
         return
 
-class itemhist():
+class itemhist(object):
     def __init__(self, uid):
         self.uid = uid
 
@@ -426,20 +444,19 @@ class NoItem(Exception):
     def __init__(self, item):
         Exception.__init__(self, item)
 
-class siteitem():
-    def __init__(self, name):
-        self.name = name[:64]
-
-        sql = 'select * from items where name = %(name)s;'
-        result = doquery(sql, { 'name': name })
+class siteitem(object):
+    def __init__(self, uid):
+        sql = 'select * from items where uid = %(uid)s;'
+        result = doquery(sql, { 'uid': uid })
 
         try:
             self.uid = result[0][0]
+            self.name = result[0][1]
             self.description = result[0][2]
             self.added = result[0][3]
             self.modified = result[0][4]
         except IndexError:
-            raise NoItem(name)
+            raise NoItem(uid)
 
     def delete(self):
         item_cache = dict()
@@ -457,15 +474,8 @@ class siteitem():
         result = doquery(sql, {"uid": self.uid}) 
 
     def update(self):
-        sql = upsert("items", \
-                     uid=self.uid, \
-                     name=sql_escape(self.name), \
-                     description=sql_escape(self.description), \
-                     modified=datetime.datetime.now())
-
-        data = doupsert(sql)
-
-        return data
+        sql = "update items set name = %(name)s, description = %(desc)s, modified = %(modified)s where uid = %(uid)s;"
+        return doquery(sql, {"uid": self.uid, "desc": self.description, "name": self.name, "modified": datetime.datetime.now() })
 
     def history(self):
         sql = """select itemedits.uid, itemedits.itemid, itemedits.date, itemedits.userid, ip.ip
@@ -505,7 +515,7 @@ class siteitem():
     body_cache = dict()
     @memoize_with_expiry(body_cache, cache_persist)
     def body(self):
-        sql = "SELECT body FROM itemedits WHERE uid = '%(uid)s';"
+        sql = "select body from itemedits where uid = '%(uid)s';"
         return doquery(sql, {'uid': self.description })[0][0]
 
     have_cache = dict()
@@ -564,39 +574,25 @@ class siteitem():
         return (want, wantusers)
 
 def new_edit(itemid, description, userid):
-    if userid > 0:
-        sql = upsert("itemedits", \
-                     date=datetime.datetime.now(), \
-                     itemid=sql_escape(itemid), \
-                     userid=sql_escape(userid), \
-                     ip=ip_uid(request.remote_addr), \
-                     body=sql_escape(description))
-    else:
-        sql = upsert("itemedits", \
-                     date=datetime.datetime.now(), \
-                     itemid=sql_escape(itemid), \
-                     ip=ip_uid(request.remote_addr), \
-                     body=sql_escape(description))
+    if userid == 0:
+        userid = None
 
-    edit = doupsert(sql)
-    app.logger.debug(edit)
+    sql = "insert into itemedits (date, itemid, userid, ip, body) values (%(date)s, %(itemid)s, %(userid)s, %(ip)s, %(body)s);"
+    doquery(sql, { 'date': datetime.datetime.now(), 'itemid': itemid, 'userid': userid, 'ip': ip_uid(request.remote_addr), 'body': description })
 
-    sql = upsert("items", \
-                 uid=sql_escape(itemid), \
-                 description=edit, \
-                 modified=datetime.datetime.now())
-    doupsert(sql)
+    edit = doquery("select last_insert_id();")[0][0]
+    app.logger.info(edit)
+
+    sql = "update items set description = %(edit)s, modified = %(modified)s where uid = %(uid)s;"
+    doquery(sql, {"uid": itemid, "edit": edit, "modified": datetime.datetime.now() })
 
     return edit 
 
 def new_item(name, description, userid):
-    sql = upsert("items", \
-                 name=sql_escape(name), \
-                 description=0, \
-                 added=datetime.datetime.now(), \
-                 modified=datetime.datetime.now())
+    sql = "insert into items (name, description, added, modified) values (%(name)s, 0, %(now)s, %(now)s);"
+    doquery(sql, { 'now': datetime.datetime.now(), 'name': name })
 
-    itemid = doupsert(sql)
+    itemid = doquery("select last_insert_id();")[0][0]
 
     new_edit(itemid, description, userid)
 
@@ -605,37 +601,17 @@ def new_item(name, description, userid):
 def new_img(f, title, parent):
     image = base64.b64encode(f.read())
 
-    userid = 0
+    userid = None
     if 'username' in session:
         userid = uid_by_user(session['username'])
 
-    if userid > 0:
-        sql = upsert("images", \
-                         tag=title, \
-                         userid=userid, \
-                         ip=ip_uid(request.remote_addr), \
-                         parent=parent, \
-                         image=image)
+    sql = "insert into images (tag, parent, userid, image, ip) values (%(tag)s, %(parent)s, %(userid)s, %(image)s, %(ip)s);"
+    doquery(sql, { 'tag': title, 'userid': userid, 'ip': ip_uid(request.remote_addr), 'parent': parent, 'image': image})
 
-        imgid = doupsert(sql)
+    imgid = doquery("select last_insert_id();")[0][0]
 
-        sql = upsert("imgmods", \
-                     userid=userid, \
-                     imgid=imgid)
-        data = doupsert(sql)
-
-    else:
-        sql = upsert("images", \
-                         tag=title, \
-                         ip=ip_uid(request.remote_addr), \
-                         parent=parent, \
-                         image=image)
-
-        imgid = doupsert(sql)
-
-        sql = upsert("imgmods", \
-                     imgid=imgid)
-        data = doupsert(sql)
+    sql = "insert into imgmods (userid, imgid) values (%(userid)s, %(imgid)s);"
+    doquery(sql, { 'userid': userid, 'imgid': imgid })
 
     flash('Uploaded ' + f.filename)
     return imgid 
@@ -650,9 +626,8 @@ def latest_items(limit=0):
         else:
             sql = "SELECT uid FROM items;"
         result = doquery(sql, { 'limit': limit })
-        app.logger.debug(result)
         for item in result:
-            items.append(siteitem(item_by_uid(item[0])))
+            items.append(siteitem(item[0]))
     except TypeError:
         pass
 
@@ -675,12 +650,11 @@ def redirect_back(endpoint, **values):
 
 # Trade and message stuff
 
-#FIXME
-messagestatus = {'unread_trade': 0, 'active_trade': 1, 'complete_trade': 2, 'settled_trade': 3, 'rejected_trade': 4, 'unread_pm': 10, 'read_pm': 11}
-tradestatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
+messagestatus = {'unread_trade': 0, 'active_trade': 1, 'complete_trade': 2, 'settled_trade': 3, 'rejected_trade': 4, 'cancelled_trade': 5, 'unread_pm': 10, 'read_pm': 11}
+tradeitemstatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
 
 pmessage_cache = dict()
-class pmessage:
+class pmessage(object):
     @classmethod
     @memoize_with_expiry(pmessage_cache, cache_persist)
     def create(cls, messageid):
@@ -692,41 +666,54 @@ class pmessage:
         sql = 'select * from messages where uid = %(uid)s;'
         result = doquery(sql, {'uid': messageid})
 
-        self.uid = result[0][0]
-        self.uid_obfuscated = obfuscate(result[0][0])
-        self.from_uid = result[0][1]
-        self.to_uid = result[0][2]
-        self.subject = result[0][3]
-        self.message = result[0][4]
-        self.status = result[0][5]
-        self.parentid = result[0][6]
-        self.parentid_obfuscated = obfuscate(result[0][6])
-        self.sent = result[0][7]
+        try:
+            self.uid = result[0][0]
+            self.uid_obfuscated = obfuscate(result[0][0])
+            self.from_uid = result[0][1]
+            self.to_uid = result[0][2]
+            self.subject = result[0][3]
+            self.message = result[0][4]
+            self.status = result[0][5]
+            self.parentid = result[0][6]
+            self.parentid_obfuscated = obfuscate(result[0][6])
+            self.sent = result[0][7]
 
-        self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
-        self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
+            self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
+            self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
+        except IndexError:
+            raise NoItem(messageid)
 
     def parent(self):
         if self.parentid > 0:
             return pmessage.create(self.parentid)
 
-    def read(self):
-        if self.uid > 0 and self.status == messagestatus['unread_pm'] and uid_by_user(session['username']) == self.to_uid:
-            sql = upsert("messages", \
-                         uid=self.uid, \
-                         status=messagestatus['read_pm'])
-            data = doupsert(sql)
+    def setstatus(self, status):
+        if self.uid > 0:
+            self.status = status
+            sql = "update messages set status = %(status)s where uid = %(uid)s;"
+            result = doquery(sql, {"uid": self.uid, "status": status})
         else:
-            return
+            return None
+
+    def read(self):
+        if self.uid > 0 and uid_by_user(session['username']) == self.to_uid:
+            status = None
+            if self.status == messagestatus['unread_pm']:
+                status = messagestatus['read_pm']
+            elif self.status == messagestatus['unread_trade']:
+                status = messagestatus['active_trade']
+
+            if status:
+                return self.setstatus(status)
+
+        return
 
     def unread(self):
-        if self.uid > 0 and self.status == messagestatus['read_pm'] and uid_by_user(session['username']) == self.to_uid:
-            sql = upsert("messages", \
-                         uid=self.uid, \
-                         status=messagestatus['unread_pm'])
-            data = doupsert(sql)
-        else:
-            return
+        if self.status == messagestatus['read_pm']:
+            return self.setstatus(messagestatus['unread_pm'])
+        elif self.status >= messagestatus['unread_trade']:
+            return self.setstatus(messagestatus['unread_trade'])
+        return
 
     @memoize_with_expiry(pmessage_cache, cache_persist)
     def replies(self):
@@ -741,7 +728,7 @@ class pmessage:
 
         return ret
 
-class tradeitem:
+class tradeitem(object):
     def __init__(self, itemid):
         self.uid = itemid 
         self.itemid = 0
@@ -749,62 +736,33 @@ class tradeitem:
         self.userid = 0
         self.acceptstatus = 0
 
-    def accept(self):
+    def setstatus(self, status):
         if self.uid > 0:
-            sql = upsert("tradelist", \
-                         uid=self.uid, \
-                         acceptstatus=tradestatus['accepted'])
-            data = doupsert(sql)
-        else:
-            return
+            self.acceptstatus = status
+
+            sql = "update tradelist set acceptstatus = %(status)s where uid = %(uid)s;"
+            return doquery(sql, { "uid": self.uid, "status": status })
+
+    def accept(self):
+        return self.setstatus(tradeitemstatus['accepted'])
 
     def reject(self):
-        if self.uid > 0:
-            sql = upsert("tradelist", \
-                         uid=self.uid, \
-                         acceptstatus=tradestatus['rejected'])
-            data = doupsert(sql)
-        else:
-            return
+        return self.setstatus(tradeitemstatus['rejected'])
 
-#FIXME inheritance
+trademessage_cache = dict()
 class trademessage(pmessage):
-    cache = []
-
     @classmethod
+    @memoize_with_expiry(trademessage_cache, cache_persist)
     def create(cls, messageid):
-        for o in trademessage.cache:
-            if o.uid == messageid:
-                return o
-
-        o = cls(messageid)
-        cls.cache.append(o)
-        return o
+        return cls(messageid)
 
     def __init__(self, messageid):
-        self.messagestatus = messagestatus
-        self.tradestatus = tradestatus
-
-        sql = 'select * from messages where uid = %(uid)s;'
-        result = doquery(sql, {"uid": messageid})
-
-        self.uid = result[0][0]
-        self.uid_obfuscated = obfuscate(result[0][0])
-        self.from_uid = result[0][1]
-        self.to_uid = result[0][2]
-        self.subject = result[0][3]
-        self.message = result[0][4]
-        self.status = result[0][5]
-        self.parentid = result[0][6]
-        self.parentid_obfuscated = obfuscate(result[0][6])
-        self.sent = result[0][7]
-
-        self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
-        self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
+        super(self.__class__, self).__init__(messageid)
+        self.tradeitemstatus = tradeitemstatus
 
         self.items = []
 
-        sql = 'select * from tradelist where uid = %(uid)s;'
+        sql = 'select * from tradelist where messageid = %(uid)s;'
         result = doquery(sql, {"uid": messageid})
 
         complete = True
@@ -814,73 +772,51 @@ class trademessage(pmessage):
             ti.messageid = item[2]
             ti.userid = item[3]
             ti.acceptstatus = item[4]
-            ti.item = siteitem(item_by_uid(ti.itemid))
+            ti.item = siteitem(ti.itemid)
             ti.user = siteuser.create(user_by_uid(ti.userid))
 
             self.items.append(ti)
 
-            if (ti.acceptstatus != tradestatus['accepted']):
+            if (ti.acceptstatus != tradeitemstatus['accepted']):
                 complete = False
 
         if complete == True and self.status < messagestatus['settled_trade']:
             self.status = messagestatus['complete_trade']
 
     def settle(self):
-        if self.uid > 0:
-            sql = upsert("messages", \
-                         uid=self.uid, \
-                         status=messagestatus['settled_trade'])
-            data = doupsert(sql)
-        else:
-            return
+        return self.setstatus(messagestatus['settled_trade'])
 
     def reject(self):
-        if self.uid > 0:
-            sql = upsert("messages", \
-                         uid=self.uid, \
-                         status=messagestatus['rejected_trade'])
-            data = doupsert(sql)
-        else:
-            return
+        return self.setstatus(messagestatus['rejected_trade'])
+
+    def cancel(self):
+        return self.setstatus(messagestatus['cancelled_trade'])
 
 def send_pm(fromuserid, touserid, subject, message, status, parent):
     if 'username' not in session:
         flash('You must be logged in to send a message or trade request!')
         return
 
-    try:
-        # todo: fix parent id validation
-        if parent:
-            sql = upsert("messages", \
-                         fromuserid=sql_escape(fromuserid), \
-                         touserid=sql_escape(touserid), \
-                         subject=sql_escape(subject), \
-                         message=sql_escape(message), \
-                         parent=sql_escape(parent), \
-                         sent=datetime.datetime.now(), \
-                         status=sql_escape(status))
-        else:
-            sql = upsert("messages", \
-                         fromuserid=sql_escape(fromuserid), \
-                         touserid=sql_escape(touserid), \
-                         subject=sql_escape(subject), \
-                         message=sql_escape(message), \
-                         sent=datetime.datetime.now(), \
-                         status=sql_escape(status))
-        data = doupsert(sql)
-    except Exception as e:
-        app.logger.error(e)
-        raise
+    # FIXME: parent id validation
+    sql = "insert into messages (fromuserid, touserid, subject, message, parent, sent, status) values (%(fromuserid)s, %(touserid)s, %(subject)s, %(message)s, %(parent)s, %(sent)s, %(status)s);"
+    doquery(sql, { 'fromuserid': fromuserid, 'touserid': touserid, 'subject': subject, 'message': message, 'parent': parent, 'sent': datetime.datetime.now(), 'status': status })
 
-    return data
+    messageid = doquery("select last_insert_id();")[0][0]
+
+    email_user = siteuser.create(user_by_uid(touserid))
+    from_user = siteuser.create(user_by_uid(fromuserid))
+
+    message = render_template('email/pm_notify.html', to_user=email_user, email=email_user.email, from_user=from_user, message=message, status=status, parent=parent, messageid=obfuscate(messageid))
+
+    if status >= 10:
+        subject = '[Scarfage] (PM) '
+    else:
+        subject = '[Scarfage] (Trade) '
+
+    send_mail(recipient=email_user.email, subject=subject + subject, message=message)
+
+    return messageid 
 
 def add_tradeitem(itemid, messageid, userid, acceptstatus):
-    try:
-        sql = upsert("tradelist", \
-                     itemid=sql_escape(itemid), \
-                     messageid=sql_escape(messageid), \
-                     userid=sql_escape(userid), \
-                     acceptstatus=sql_escape(acceptstatus))
-        data = doupsert(sql)
-    except Exception as e:
-        app.logger.error(e)
+    sql = "insert into tradelist (itemid, messageid, userid, acceptstatus) values (%(itemid)s, %(messageid)s, %(userid)s, %(acceptstatus)s);"
+    doquery(sql, { 'itemid': itemid, 'messageid': messageid, 'userid': userid, 'acceptstatus': acceptstatus })

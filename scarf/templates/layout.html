@@ -6,11 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="icon" type="image/png" href="/static/favicon.png" />
+    <link rel="icon" type="image/png" href="{{pd.prefix}}/static/favicon.png" />
     <title>{{ pd.title }}</title>
 
-    <link rel="stylesheet" href="/static/style.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="{{pd.prefix}}/static/main.css">
     {% endblock %}
 </head>
 
@@ -25,21 +27,7 @@
 {% endif %}
 
 <body>
-<header>
-
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <div class="container">
-      <div class="row">
-        {% for message in messages %}
-          <div class="alert alert-info page-header">{{ message }}</div>
-        {% endfor %}
-      </div>
-    </div>
-    {% endif %}
-    {% endwith %}
-
-    <nav id="nav" class="navbar nav-padding navbar-inverse">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -52,11 +40,10 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/newitem">Add Item</a></li>
-            <li><a href="/stats">Site Stats</a></li>
+            <li><a href="/item/edit">New item</a></li>
+            <li><a href="/stats">Site stats</a></li>
             {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
             <li><a href="/mod">Moderate</a></li>
-            <li><a href="/user/{{ pd.authuser.username }}#messages">Messages</a></li>
             {% endif %}
             {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
             <li><a href="/admin">Admin</a></li>
@@ -67,31 +54,35 @@
             <li><a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a></li>
             <li><a href="/logout"><small>Logout</small></a></li>
           {% else %}
-            <li>
-              <form class="navbar-form navbar-right" role="form" action="/login" method="post">
-                <div class="form-group" style="vertical-align: top;">
-                    <input type="text" placeholder="Username" class="form-control" name="username">
-                </div>
-                <div class="form-group" style="vertical-align: top;">
-                    <input type="password" placeholder="Password" class="form-control" name="password">
-                    <div class="forgotpw">
-                      <a href="/forgotpw"><small>Forgot Password</small></a>
-                    </div>
-                </div>
-                <div class="form-group" style="vertical-align: top;">
-                  <button type="submit" class="btn btn-success">Sign in</button>
-                </div>
-              </form>
-            </li>
+            <li><form class="navbar-form navbar-right" role="form" action="/login" method="post">
+            <div class="form-group">
+                <input type="text" placeholder="Username" class="form-control" name="username">
+            </div>
+            <div class="form-group">
+                <input type="password" placeholder="Password" class="form-control" name="password">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+            </form></li>
             <li><a href="/newuser"><small>Sign up</small></a></li>
+            <li><a href="/forgotpw"><small>Forgot Password</small></a></li>
           {% endif %}
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-</header>
 
-<div id="wrapper">
+    <div class="container">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="row">
+        {% for message in messages %}
+          <div class="alert alert-info page-header">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% endwith %}
+    </div>
+
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
@@ -100,8 +91,6 @@
         </p>
       </div>
     </div>
-</div>
-
 
     <footer class="footer">
         {% block footer %}
@@ -111,6 +100,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
-    <script src="/static/main.js"></script>
+    <script src="{{pd.prefix}}/static/main.js"></script>
 </body>
 </html>

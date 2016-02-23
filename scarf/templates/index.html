@@ -79,7 +79,7 @@
     <div class="col-md-5 stat">
           <div class="page-heading"><h3>Recently Added:</h3></div>
         {% for item in pd.items %}
-        {{ item.added }} - <a href="/item/{{ item.name }}">{{ item.name }}</a><br />
+        {{ item.added }} - <a href="/item/{{ item.uid }}">{{ item.name }}</a><br />
         {% endfor %}
     </div>
 </div>
