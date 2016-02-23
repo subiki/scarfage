@@ -258,7 +258,7 @@
 
             <td> <a href="/item/{{ item.name }}">{{ item.name }}</a> </td>
             {% if item.willtrade == 1 %}
-                <td>available for trade / <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a></td>
+                <td>available for trade / <a href="/user/{{ pd.profileuser.username }}/trade/{{ item.uid }}">Make trade request</a></td>
             {% endif %}
         {% endif %}
       {% endif %}
@@ -282,7 +282,7 @@
            {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
              <small><a href="/item/{{ item.name }}/dontwant"><span class="glyphicon glyphicon-trash"></span> Remove from list</a></small>
            {%else%}
-             <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a>
+             <a href="/user/{{ pd.profileuser.username }}/trade/{{ item.uid }}">Make trade request</a>
            {% endif %}
            </div>
        </div>

@@ -62,7 +62,7 @@ def delete_item(item_id):
 
     pd.accessreq = 255
     pd.conftext = "Deleting item " + delitem.name + ". This will also delete all trades but not the associated PMs. If this item has open trades you are going to confuse people. Are you really sure you want to do this?"
-    pd.conftarget = "/item/" + delitem.name + "/reallydelete"
+    pd.conftarget = "/item/" + str(delitem.uid) + "/reallydelete"
     pd.conflinktext = "Yup, I'm sure"
 
     return render_template('confirm.html', pd=pd)
@@ -165,41 +165,50 @@ def show_item_history(item_id, debug):
 
     return render_template('itemhistory.html', pd=pd)
 
-@app.route('/item/<item_id>/edit/debug', methods=['GET', 'POST'], defaults={'debug': True})
+@app.route('/item/edit/debug', methods=['GET', 'POST'], defaults={'debug': True})
 @app.route('/item/<item_id>/edit', methods=['GET', 'POST'], defaults={'debug': False})
+@app.route('/item/edit', methods=['GET', 'POST'], defaults={'debug': False})
 @nocache
-def edititem(item_id, debug):
-    if len(item_id) > 64:
-        return redirect('/item/' + item_id[:64] + '/edit')
-
+def edititem(debug, item_id=None):
     pd = pagedata()
     if request.method == 'POST':
         if 'username' in session:
-            uid = pd.authuser.uid
+            userid = pd.authuser.uid
         else:
-            uid = 0 
+            userid = 0 
 
         if 'desc' in request.form:
             try:
-                item = siteitem(item_id)
-                item.description = request.form['desc']
-                item.update()
+                item = siteitem(request.form['uid'])
 
-                # todo: check for null edits
-                new_edit(uid_by_item(item_id), request.form['desc'], uid)
+                item_id = uid_by_item(request.form['name'])
+                if not item_id or item_id == int(request.form['uid']):
+                    item.name = request.form['name']
+                    item.update()
+
+                    # todo: check for null edits
+                    new_edit(request.form['uid'], request.form['desc'], userid)
+
+                    uid = request.form['uid']
+                    flash('Edited item!')
+                    return redirect('/item/' + str(uid))
+                else:
+                    flash(request.form['name'] + " already exists!")
+                    item_id = request.form['uid']
+
             except NoItem:
-                new_item(item_id, request.form['desc'], uid)
+                uid = new_item(request.form['name'], request.form['desc'], userid)
+                return redirect('/item/' + str(uid))
 
-        flash('Edited item!')
-        return redirect('/item/' + item_id)
-
-    try:
-        pd.item = siteitem(item_id[:64])
-    except:
-        pass
-
-    pd.title="Editing: " + item_id
-    pd.item_name = item_id
+    if item_id:
+        try:
+            pd.item = siteitem(item_id)
+        except:
+            return page_not_found(404)
+     
+        pd.title="Editing: " + str(item_id)
+    else:
+        pd.title="Editing: New Item"
 
     if debug:
         if 'username' in session and pd.authuser.accesslevel == 255:

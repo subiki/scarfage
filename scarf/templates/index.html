@@ -13,7 +13,7 @@
     <div class="col-md-4">
         <div class="page-header"><h4>Recently aded items:</h4></div>
         {% for item in pd.items %}
-        {{ item.added }} - <a href="/item/{{ item.name }}">{{ item.name }}</a><br />
+        {{ item.added }} - <a href="/item/{{ item.uid }}">{{ item.name }}</a><br />
         {% endfor %}
     </div>
     <div class="col-md-4">

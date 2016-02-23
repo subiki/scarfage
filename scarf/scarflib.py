@@ -205,7 +205,7 @@ class siteuser(object):
     @memoize_with_expiry(collection_cache, cache_persist)
     def collection(self):
         ret = list()
-        sql = """select ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden, items.name
+        sql = """select ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden, items.uid
                  from ownwant
                  join items on items.uid=ownwant.itemid
                  where ownwant.userid = %(uid)s"""
@@ -445,19 +445,18 @@ class NoItem(Exception):
         Exception.__init__(self, item)
 
 class siteitem(object):
-    def __init__(self, name):
-        self.name = name[:64]
-
-        sql = 'select * from items where name = %(name)s;'
-        result = doquery(sql, { 'name': name })
+    def __init__(self, uid):
+        sql = 'select * from items where uid = %(uid)s;'
+        result = doquery(sql, { 'uid': uid })
 
         try:
             self.uid = result[0][0]
+            self.name = result[0][1]
             self.description = result[0][2]
             self.added = result[0][3]
             self.modified = result[0][4]
         except IndexError:
-            raise NoItem(name)
+            raise NoItem(uid)
 
     def delete(self):
         item_cache = dict()
@@ -628,7 +627,7 @@ def latest_items(limit=0):
             sql = "SELECT uid FROM items;"
         result = doquery(sql, { 'limit': limit })
         for item in result:
-            items.append(siteitem(item_by_uid(item[0])))
+            items.append(siteitem(item[0]))
     except TypeError:
         pass
 
@@ -773,7 +772,7 @@ class trademessage(pmessage):
             ti.messageid = item[2]
             ti.userid = item[3]
             ti.acceptstatus = item[4]
-            ti.item = siteitem(item_by_uid(ti.itemid))
+            ti.item = siteitem(ti.itemid)
             ti.user = siteuser.create(user_by_uid(ti.userid))
 
             self.items.append(ti)

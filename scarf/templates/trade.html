@@ -17,7 +17,7 @@ Trading with yourself would get awful lonely...
 {% elif pd.authuser is defined %}
     {% if pd.tradeuser.ownwant.want == 1 %}
         {% if pd.authuser.ownwant.have == 1 %}
-            <form action="/user/{{ pd.tradeuser.username }}/trade/{{ pd.item.name }}" method="post" enctype="multipart/form-data">
+            <form action="/user/{{ pd.tradeuser.username }}/trade/{{ pd.item.uid }}" method="post" enctype="multipart/form-data">
             This user has the following items available for trade, what do you want in return for this item?<br />
             {% for item in pd.tradeuser.collection() %}
                 {% if item.willtrade == 1 %}
@@ -32,7 +32,7 @@ Trading with yourself would get awful lonely...
             </form>
         {% else %}
             {% if pd.tradeuser.ownwant.willtrade != 1 %}
-                You don't seem to have this item in your collection, did you forget to <a href="/item/{{ pd.item.name }}/have">add it</a>?
+                You don't seem to have this item in your collection, did you forget to <a href="/item/{{ pd.item.uid }}/have">add it</a>?
             {% endif %}
         {% endif %}
 
@@ -43,7 +43,7 @@ Trading with yourself would get awful lonely...
     {% if pd.tradeuser.ownwant.willtrade == 1 %}
         {{ pd.tradeuser.username }} has {{ pd.item.name }} available for trade, make an offer:
 
-        <form action="/user/{{ pd.tradeuser.username }}/trade/{{ pd.item.name }}" method="post" enctype="multipart/form-data">
+        <form action="/user/{{ pd.tradeuser.username }}/trade/{{ pd.item.uid }}" method="post" enctype="multipart/form-data">
         {% for item in pd.authuser.collection() %}
             {% if item.have == 1 %}
             <input type="checkbox" name="item" value="{{ item.uid }}">{{ item.name }}<br>

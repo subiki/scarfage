@@ -10,15 +10,15 @@
 {% if pd.item %}
 <div class="page-header"> <h3>{{ pd.item.name }}
 
-<small><a href="/item/{{ pd.item.name }}/edit"> Edit </a></small>
-<small><a href="/item/{{ pd.item.name }}/history"> History </a></small>
+<small><a href="/item/{{ pd.item.uid }}/edit"> Edit </a></small>
+<small><a href="/item/{{ pd.item.uid }}/history"> History </a></small>
 
 {% if pd.item.old %}
-<small><a href="/item/{{ pd.item.name }}/revert/{{ pd.item.editid }}"> Revert </a></small>
+<small><a href="/item/{{ pd.item.uid }}/revert/{{ pd.item.editid }}"> Revert </a></small>
 {% endif %}
 
 {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
-<small><a href="/item/{{ pd.item.name }}/delete"> Delete </a></small>
+<small><a href="/item/{{ pd.item.uid }}/delete"> Delete </a></small>
 {% endif %}
 {% endif %}
 </h3>
@@ -27,7 +27,7 @@
 
 {% if pd.item.old %}
 <div id="warning">
-You are viewing a historical version of this item's description, click <a href="/item/{{ pd.item.name }}">here</a> for the latest version. 
+You are viewing a historical version of this item's description, click <a href="/item/{{ pd.item.uid }}">here</a> for the latest version. 
 </div>
 {% endif %}
 
@@ -59,30 +59,30 @@ You are viewing a historical version of this item's description, click <a href="
 <div class="page-header"><h3>Item actions</h3></div>
 {% if pd.authuser is defined %}
     {% if pd.iteminfo is defined and pd.iteminfo.have == 0 %}
-        <a href="/item/{{ pd.item.name }}/have">I own this</a></br>
+        <a href="/item/{{ pd.item.uid }}/have">I own this</a></br>
 
     {% else %}
-        This is in your collection. <a href="/item/{{ pd.item.name }}/donthave">Remove it</a>.<br />
+        This is in your collection. <a href="/item/{{ pd.item.uid }}/donthave">Remove it</a>.<br />
 
         {% if pd.iteminfo is defined and pd.iteminfo.willtrade == 0 %}
-        <a href="/item/{{ pd.item.name }}/willtrade">I'll trade this</a><br />
+        <a href="/item/{{ pd.item.uid }}/willtrade">I'll trade this</a><br />
         {% else %}
-        This is up for trade. <a href="/item/{{ pd.item.name }}/wonttrade">Nevermind</a>.<br />
+        This is up for trade. <a href="/item/{{ pd.item.uid }}/wonttrade">Nevermind</a>.<br />
         {% endif %}
 
     {% endif %}
 
     {% if pd.iteminfo is defined and pd.iteminfo.want == 0 %}
-    <a href="/item/{{ pd.item.name }}/want">I want this</a></br>
+    <a href="/item/{{ pd.item.uid }}/want">I want this</a></br>
     {% else %}
-    You want this. <a href="/item/{{ pd.item.name }}/dontwant">Nevermind.</a><br />
+    You want this. <a href="/item/{{ pd.item.uid }}/dontwant">Nevermind.</a><br />
     {% endif %}
 
 {% else %}
 
-<a href="/item/{{ pd.item.name }}/have">I own this</a><br />
-<a href="/item/{{ pd.item.name }}/willtrade">I'll trade this</a><br />
-<a href="/item/{{ pd.item.name }}/want">I want this</a><br />
+<a href="/item/{{ pd.item.uid }}/have">I own this</a><br />
+<a href="/item/{{ pd.item.uid }}/willtrade">I'll trade this</a><br />
+<a href="/item/{{ pd.item.uid }}/want">I want this</a><br />
 
 {% endif %}
 
@@ -108,7 +108,7 @@ You are viewing a historical version of this item's description, click <a href="
 {% endif %}
 
 {% for user in pd.item.willtradeusers()[1] %}
-<a href="/user/{{ user.username }}/trade/{{pd.item.name}}">{{ user.username }}</a><br />
+<a href="/user/{{ user.username }}/trade/{{ pd.item.uid }}">{{ user.username }}</a><br />
 {% endfor %}
 
 </div>
@@ -121,7 +121,7 @@ You are viewing a historical version of this item's description, click <a href="
 {% endif %}
 
 {% for user in pd.item.wantusers()[1] %}
-<a href="/user/{{ user.username }}/trade/{{pd.item.name}}">{{ user.username }}</a><br />
+<a href="/user/{{ user.username }}/trade/{{ pd.item.uid }}">{{ user.username }}</a><br />
 {% endfor %}
 </div>
 
