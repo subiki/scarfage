@@ -9,7 +9,7 @@ from nocache import nocache
 def page_not_found(error):
     pd = pagedata()
     # TODO: log referrer
-    app.logger.debug('404!')
+    app.logger.error('404! Referrer was: ' + str(request.referrer))
     pd.title = "File not found"
     pd.errorcode="404"
     pd.errortext="File not found."

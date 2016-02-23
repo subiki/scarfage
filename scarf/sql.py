@@ -7,8 +7,6 @@ import inspect
 
 from config import dbHost, dbName, dbUser, dbPass
 
-#TODO redo sql, lots of injection vulns...
-
 # based on 
 # https://code.activestate.com/recipes/280653-efficient-database-trees/
 # PSF License
@@ -149,6 +147,7 @@ def create_tree(tree, children_of, nameprefix = "", recursion_depth = 5):
     for name in names:
         create_tree(tree, name, name, recursion_depth-1)
 
+"""
 if __name__ == "__main__":
     import sys
 
@@ -160,8 +159,8 @@ if __name__ == "__main__":
     except:
         pass
     cur.execute(
-        """CREATE TABLE tree(ref int PRIMARY KEY AUTO_INCREMENT, parent int,
-        lhs int, rhs int, name varchar(255), UNIQUE INDEX(name)) TYPE=InnoDB""")
+        " " "CREATE TABLE tree(ref int PRIMARY KEY AUTO_INCREMENT, parent int,
+        lhs int, rhs int, name varchar(255), UNIQUE INDEX(name)) TYPE=InnoDB" " ")
 
     tree = Tree(conn)
     tree.create_root("root")
@@ -175,11 +174,15 @@ if __name__ == "__main__":
     print "All siblings of 1:", tree.all_siblings_of("1")
     print "Parent of 11:", tree.parent_of("11")
     print "Path to 1220:", tree.path_to("1220")
-
+"""
 
 db = None
 
 def read(table, **kwargs):
+    curframe = inspect.currentframe()
+    calframe = inspect.getouterframes(curframe, 2)
+    app.logger.error("WARNING! deprecated function read called by " + calframe[1][3])
+ 
     """ Generates SQL for a SELECT statement matching the kwargs passed. """
     sql = list()
     sql.append("SELECT * FROM %s " % table)
@@ -191,7 +194,7 @@ def read(table, **kwargs):
 def upsert(table, **kwargs):
     curframe = inspect.currentframe()
     calframe = inspect.getouterframes(curframe, 2)
-    app.logger.debug("WARNING! deprecated function sql_escape called by " + calframe[1][3])
+    app.logger.error("WARNING! deprecated function upsert called by " + calframe[1][3])
     
     """ update/insert rows into objects table (update if the row already exists)
         given the key-value pairs in kwargs """
@@ -207,22 +210,14 @@ def upsert(table, **kwargs):
     sql.append(";")
     return "".join(sql)
 
-def sql_escape(string):
-    curframe = inspect.currentframe()
-    calframe = inspect.getouterframes(curframe, 2)
-    app.logger.debug("WARNING! deprecated function sql_escape called by " + calframe[1][3])
-
-    db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
-    db.set_character_set('utf8')
-    esc = db.escape(str(string))
-
-    if esc.startswith("'") and esc.endswith("'"):
-        return esc[1:-1]
-
-    return esc
-
 def delete(table, **kwargs):
     """ deletes rows from table where **kwargs match """
+
+    curframe = inspect.currentframe()
+    calframe = inspect.getouterframes(curframe, 2)
+    app.logger.error("WARNING! deprecated function delete called by " + calframe[1][3])
+
+
     sql = list()
     sql.append("DELETE FROM %s " % table)
     sql.append("WHERE " + " AND ".join("%s = '%s'" % (k, v) for k, v in kwargs.iteritems()))
@@ -230,6 +225,10 @@ def delete(table, **kwargs):
     return "".join(sql)
 
 def doupsert(query):
+    curframe = inspect.currentframe()
+    calframe = inspect.getouterframes(curframe, 2)
+    app.logger.error("WARNING! deprecated function doupsert called by " + calframe[1][3])
+
     global db
 
     try:
@@ -257,12 +256,6 @@ def doupsert(query):
         raise
 
 def doquery(query, data=None, select=True):
-    if not data:
-        curframe = inspect.currentframe()
-        calframe = inspect.getouterframes(curframe, 2)
-        app.logger.debug('caller name: ' + calframe[1][3])
-        app.logger.debug(("doquery: ", query, data))
-
     global db
 
     try:
