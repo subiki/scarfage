@@ -106,6 +106,9 @@ def mod_img(image):
 
     pd.image = modimg
 
+    sql = 'select name from items where uid = %(uid)s;'
+    pd.parent = doquery(sql, {"uid": modimg.parent})[0][0]
+
     try:
         sql = 'select * from imgmods where imgid = %(uid)s;'
         result = doquery(sql, {"uid": modimg.uid})
