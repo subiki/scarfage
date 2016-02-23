@@ -5,7 +5,7 @@ from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, red
 from main import page_not_found
 from nocache import nocache
 from debug import dbg
-from sql import read, doquery, sql_escape
+from sql import read, doquery
 
 import markdown
 from markdown.extensions.wikilinks import WikiLinkExtension

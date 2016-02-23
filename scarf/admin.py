@@ -5,6 +5,7 @@ from sql import read, doquery
 from debug import dbg
 import os.path, time
 import jsonpickle
+import config as sf_conf
 
 from config import dep_file
 
@@ -23,6 +24,7 @@ def get_users():
 @app.route('/admin', defaults={'debug': False})
 def admin_users(debug):
     pd = pagedata()
+    pd.sf_conf = sf_conf
 
     if 'username' not in session or pd.authuser.accesslevel < 255:
         return redirect(url_for('accessdenied'))
@@ -31,7 +33,7 @@ def admin_users(debug):
 
     pd.users = get_users()
     try:
-        with open(dep_file, 'r') as depfile:
+        with open(sf_conf.dep_file, 'r') as depfile:
             frozen = depfile.read()
         pd.deployment = jsonpickle.decode(frozen)
         pd.mode = 'prod'
