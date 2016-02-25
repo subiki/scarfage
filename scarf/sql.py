@@ -10,11 +10,20 @@ from config import dbHost, dbName, dbUser, dbPass
 # based on 
 # https://code.activestate.com/recipes/280653-efficient-database-trees/
 # PSF License
+
+"""CREATE TABLE tree(ref int PRIMARY KEY AUTO_INCREMENT, parent int,
+lhs int, rhs int, name varchar(255), UNIQUE INDEX(name))"""
 class Tree(object):
     class Anon: pass
     
-    def __init__(self, conn):
-        self.conn = conn
+    def __init__(self, root):
+        get_db()
+        self.conn = db 
+
+        try:
+            self.retrieve(root)
+        except IndexError:
+            self.create_root(root)
     
     def insert_siblings(self, names, siblingname):
         self.conn.begin()
@@ -124,56 +133,16 @@ class Tree(object):
             ORDER BY t1.lhs""", (childname,))
         return [result[0] for result in cur.fetchall()]
     
-################
-# Demo functions
-################
-
-def draw_tree(tree, rootname):
-    root = tree.retrieve(rootname)
-    cur = tree.conn.cursor()
-    cur.execute(
-        """SELECT COUNT(t2.name) AS indentation, t1.name 
-        FROM tree AS t1, tree AS t2
-        WHERE t1.lhs BETWEEN t2.lhs AND t2.rhs
-        AND t2.lhs BETWEEN %s AND %s
-        GROUP BY t1.name
-        ORDER BY t1.lhs""", (root.lhs, root.rhs))
-    for result in cur.fetchall():
-        print " " * (int(result[0])-1) + result[1]
-
-def create_tree(tree, children_of, nameprefix = "", recursion_depth = 5):
-    names = [nameprefix + str(i) for i in xrange(recursion_depth)]
-    tree.insert_children(names, children_of)
-    for name in names:
-        create_tree(tree, name, name, recursion_depth-1)
 
 """
-if __name__ == "__main__":
-    import sys
+draw tree
 
-    conn = MySQLdb.Connect(user = sys.argv[1], passwd = sys.argv[2], db = sys.argv[3])
-    cur = conn.cursor()
-    
-    try:
-        cur.execute("DROP TABLE tree")
-    except:
-        pass
-    cur.execute(
-        " " "CREATE TABLE tree(ref int PRIMARY KEY AUTO_INCREMENT, parent int,
-        lhs int, rhs int, name varchar(255), UNIQUE INDEX(name)) TYPE=InnoDB" " ")
-
-    tree = Tree(conn)
-    tree.create_root("root")
-    create_tree(tree, "root")
-    
-    draw_tree(tree, "root")
-    
-    print "Number of children of root:", len(tree.all_children_of("root"))
-    print "Number of leaves below root:", len(tree.leaves_below("root"))
-    print "Exact children of root:", tree.exact_children_of("root")
-    print "All siblings of 1:", tree.all_siblings_of("1")
-    print "Parent of 11:", tree.parent_of("11")
-    print "Path to 1220:", tree.path_to("1220")
+SELECT COUNT(t2.name) AS indentation, t1.name 
+FROM categories AS t1, AS t2
+WHERE t1.lhs BETWEEN t2.lhs AND t2.rhs
+AND t2.lhs BETWEEN %s AND %s
+GROUP BY t1.name
+ORDER BY t1.lhs, (root.lhs, root.rhs))
 """
 
 db = None
@@ -224,11 +193,7 @@ def delete(table, **kwargs):
     sql.append(";")
     return "".join(sql)
 
-def doupsert(query):
-    curframe = inspect.currentframe()
-    calframe = inspect.getouterframes(curframe, 2)
-    app.logger.error("WARNING! deprecated function doupsert called by " + calframe[1][3])
-
+def get_db():
     global db
 
     try:
@@ -238,22 +203,28 @@ def doupsert(query):
 
             db.set_character_set('utf8')
 
-        cursor = db.cursor()
-        cursor.execute('SET NAMES utf8;')
-        cursor.execute('SET CHARACTER SET utf8;')
-        cursor.execute('SET character_set_connection=utf8;')
-
-        cursor.execute(query)
-        db.commit()
-        cursor.close()
-        data = cursor.lastrowid
-
-        return data
-
     except MySQLdb.MySQLError as e:
         db = None
         app.logger.error("Cannot connect to database. MySQL error: " + str(e))
         raise
+
+def doupsert(query):
+    curframe = inspect.currentframe()
+    calframe = inspect.getouterframes(curframe, 2)
+    app.logger.error("WARNING! deprecated function doupsert called by " + calframe[1][3])
+
+    get_db()
+    cursor = db.cursor()
+    cursor.execute('SET NAMES utf8;')
+    cursor.execute('SET CHARACTER SET utf8;')
+    cursor.execute('SET character_set_connection=utf8;')
+
+    cursor.execute(query)
+    db.commit()
+    cursor.close()
+    data = cursor.lastrowid
+
+    return data
 
 def doquery(query, data=None, select=True):
     global db

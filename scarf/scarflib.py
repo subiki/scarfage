@@ -15,7 +15,7 @@ from string import ascii_letters, digits
 from scarf import app
 from flask import request, redirect, session, flash, url_for, render_template
 from urlparse import urlparse, urljoin
-from sql import upsert, doupsert, doquery
+from sql import upsert, doupsert, doquery, Tree
 from mail import send_mail
 
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
@@ -415,6 +415,10 @@ class siteimage(object):
 
 ######### Item stuff
 
+class Tag(Tree):
+    def __init__(self):
+        super(self.__class__, self).__init__('tags')
+
 item_cache = dict()
 @memoize_with_expiry(item_cache, long_cache_persist)
 def item_by_uid(uid):
@@ -457,6 +461,16 @@ class siteitem(object):
             self.modified = result[0][4]
         except IndexError:
             raise NoItem(uid)
+
+        """
+        sql = 'select tag from itemtags where uid = %(uid)s;'
+        result = doquery(sql, { 'uid': uid })
+
+        try:
+            self.tags = result[0]
+        except IndexError:
+            self.tags = None
+        """
 
     def delete(self):
         item_cache = dict()
@@ -577,14 +591,15 @@ def new_edit(itemid, description, userid):
     if userid == 0:
         userid = None
 
+    date = datetime.datetime.now()
     sql = "insert into itemedits (date, itemid, userid, ip, body) values (%(date)s, %(itemid)s, %(userid)s, %(ip)s, %(body)s);"
-    doquery(sql, { 'date': datetime.datetime.now(), 'itemid': itemid, 'userid': userid, 'ip': ip_uid(request.remote_addr), 'body': description })
+    doquery(sql, { 'date': date, 'itemid': itemid, 'userid': userid, 'ip': ip_uid(request.remote_addr), 'body': description })
 
     sql = "select uid from itemedits where date=%(date)s and itemid=%(itemid)s and ip=%(ip)s;"
-    edit = doquery(sql, { 'date': datetime.datetime.now(), 'itemid': itemid, 'ip': ip_uid(request.remote_addr) })[0][0]
+    edit = doquery(sql, { 'date': date, 'itemid': itemid, 'ip': ip_uid(request.remote_addr) })[0][0]
 
     sql = "update items set description = %(edit)s, modified = %(modified)s where uid = %(uid)s;"
-    doquery(sql, {"uid": itemid, "edit": edit, "modified": datetime.datetime.now() })
+    doquery(sql, {"uid": itemid, "edit": edit, "modified": date })
 
     return edit 
 
