@@ -580,8 +580,8 @@ def new_edit(itemid, description, userid):
     sql = "insert into itemedits (date, itemid, userid, ip, body) values (%(date)s, %(itemid)s, %(userid)s, %(ip)s, %(body)s);"
     doquery(sql, { 'date': datetime.datetime.now(), 'itemid': itemid, 'userid': userid, 'ip': ip_uid(request.remote_addr), 'body': description })
 
-    edit = doquery("select last_insert_id();")[0][0]
-    app.logger.info(edit)
+    sql = "select uid from itemedits where date=%(date)s and itemid=%(itemid)s and ip=%(ip)s;"
+    edit = doquery(sql, { 'date': datetime.datetime.now(), 'itemid': itemid, 'ip': ip_uid(request.remote_addr) })[0][0]
 
     sql = "update items set description = %(edit)s, modified = %(modified)s where uid = %(uid)s;"
     doquery(sql, {"uid": itemid, "edit": edit, "modified": datetime.datetime.now() })
@@ -592,7 +592,8 @@ def new_item(name, description, userid):
     sql = "insert into items (name, description, added, modified) values (%(name)s, 0, %(now)s, %(now)s);"
     doquery(sql, { 'now': datetime.datetime.now(), 'name': name })
 
-    itemid = doquery("select last_insert_id();")[0][0]
+    sql = "select uid from items where name=%(name)s and description=0;"
+    itemid = doquery(sql, { 'name': name })[0][0]
 
     new_edit(itemid, description, userid)
 
@@ -608,7 +609,8 @@ def new_img(f, title, parent):
     sql = "insert into images (tag, parent, userid, image, ip) values (%(tag)s, %(parent)s, %(userid)s, %(image)s, %(ip)s);"
     doquery(sql, { 'tag': title, 'userid': userid, 'ip': ip_uid(request.remote_addr), 'parent': parent, 'image': image})
 
-    imgid = doquery("select last_insert_id();")[0][0]
+    sql = "select uid from images where tag=%(tag)s and parent=%(parent)s and ip=%(ip)s;"
+    imgid = doquery(sql, { 'tag': title, 'ip': ip_uid(request.remote_addr), 'parent': parent })[0][0]
 
     sql = "insert into imgmods (userid, imgid) values (%(userid)s, %(imgid)s);"
     doquery(sql, { 'userid': userid, 'imgid': imgid })
@@ -798,10 +800,12 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
         return
 
     # FIXME: parent id validation
+    sent = datetime.datetime.now()
     sql = "insert into messages (fromuserid, touserid, subject, message, parent, sent, status) values (%(fromuserid)s, %(touserid)s, %(subject)s, %(message)s, %(parent)s, %(sent)s, %(status)s);"
-    doquery(sql, { 'fromuserid': fromuserid, 'touserid': touserid, 'subject': subject, 'message': message, 'parent': parent, 'sent': datetime.datetime.now(), 'status': status })
+    doquery(sql, { 'fromuserid': fromuserid, 'touserid': touserid, 'subject': subject, 'message': message, 'parent': parent, 'sent': sent, 'status': status })
 
-    messageid = doquery("select last_insert_id();")[0][0]
+    sql = "select uid from messages where fromuserid=%(fromuserid)s and touserid=%(touserid)s and sent=%(sent)s;"
+    messageid = doquery(sql, { 'fromuserid': fromuserid, 'touserid': touserid, 'sent': sent })[0][0]
 
     email_user = siteuser.create(user_by_uid(touserid))
     from_user = siteuser.create(user_by_uid(fromuserid))
