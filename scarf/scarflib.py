@@ -264,7 +264,7 @@ class siteuser(object):
         return ret
 
     def seen(self):
-        self.lastseen=datetime.datetime.now()
+        self.lastseen=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         # FIXME: update, not insert
         sql = "INSERT INTO userstat_lastseen (date, uid) VALUES (%(lastseen)s, %(uid)s) ON DUPLICATE KEY UPDATE date = %(lastseen)s, uid = %(uid)s;"
@@ -349,7 +349,7 @@ def check_email(email):
 
 def new_user(username, password, email):
     try:
-        joined = datetime.datetime.now()
+        joined = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         sql = "insert into users (username, pwhash, email, joined, accesslevel) values (%(username)s, %(pwhash)s, %(email)s, %(joined)s, '1');"
         result = doquery(sql, { 'username': username, 'pwhash': gen_pwhash(password), 'email': email, 'joined': joined })
@@ -489,7 +489,7 @@ class siteitem(object):
 
     def update(self):
         sql = "update items set name = %(name)s, description = %(desc)s, modified = %(modified)s where uid = %(uid)s;"
-        return doquery(sql, {"uid": self.uid, "desc": self.description, "name": self.name, "modified": datetime.datetime.now() })
+        return doquery(sql, {"uid": self.uid, "desc": self.description, "name": self.name, "modified": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") })
 
     def history(self):
         sql = """select itemedits.uid, itemedits.itemid, itemedits.date, itemedits.userid, ip.ip
@@ -591,7 +591,7 @@ def new_edit(itemid, description, userid):
     if userid == 0:
         userid = None
 
-    date = datetime.datetime.now()
+    date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sql = "insert into itemedits (date, itemid, userid, ip, body) values (%(date)s, %(itemid)s, %(userid)s, %(ip)s, %(body)s);"
     doquery(sql, { 'date': date, 'itemid': itemid, 'userid': userid, 'ip': ip_uid(request.remote_addr), 'body': description })
 
@@ -605,7 +605,7 @@ def new_edit(itemid, description, userid):
 
 def new_item(name, description, userid):
     sql = "insert into items (name, description, added, modified) values (%(name)s, 0, %(now)s, %(now)s);"
-    doquery(sql, { 'now': datetime.datetime.now(), 'name': name })
+    doquery(sql, { 'now': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 'name': name })
 
     sql = "select uid from items where name=%(name)s and description=0;"
     itemid = doquery(sql, { 'name': name })[0][0]
@@ -815,7 +815,7 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
         return
 
     # FIXME: parent id validation
-    sent = datetime.datetime.now()
+    sent = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sql = "insert into messages (fromuserid, touserid, subject, message, parent, sent, status) values (%(fromuserid)s, %(touserid)s, %(subject)s, %(message)s, %(parent)s, %(sent)s, %(status)s);"
     doquery(sql, { 'fromuserid': fromuserid, 'touserid': touserid, 'subject': subject, 'message': message, 'parent': parent, 'sent': sent, 'status': status })
 
