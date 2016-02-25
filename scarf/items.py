@@ -8,8 +8,7 @@ from debug import dbg
 from sql import read, doquery
 
 import markdown
-from markdown.extensions.wikilinks import WikiLinkExtension
-md_extensions = ['markdown.extensions.extra', 'markdown.extensions.admonition']
+md_extensions = ['markdown.extensions.extra', 'markdown.extensions.nl2br', 'markdown.extensions.sane_lists']
 
 import sys
 reload(sys)  
@@ -17,12 +16,7 @@ sys.setdefaultencoding('utf8')
 
 @app.route('/item/')
 def itemroot():
-    return redirect(url_for('newitem'))
-
-@app.route('/newitem')
-def newitem():
-    pd = pagedata()
-    return render_template('contribute.html', pd=pd)
+    return redirect(url_for('index'))
 
 @app.route('/item/<item_id>/reallydelete')
 def reallydelete_item(item_id):
