@@ -8,6 +8,7 @@ import bcrypt
 import hashlib
 #import hmac
 import random
+import cgi
 
 from config import *
 from string import ascii_letters, digits
@@ -21,6 +22,13 @@ from mail import send_mail
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 
 ########## Utility stuff
+
+def escape_html(text):
+    """escape strings for display in HTML"""
+    return cgi.escape(text, quote=True).\
+           replace(u'\n', u'<br />').\
+           replace(u'\t', u'&emsp;').\
+           replace(u'  ', u' &nbsp;')
 
 """
 Workaround for the issue identified here:
@@ -58,7 +66,6 @@ def ip_uid(ip, r=False):
             return None
         sql = "insert into ip (ip) values ( %(ip)s );"
         result = doquery(sql, { 'ip': ip })
-        app.logger.info(result)
         return ip_uid(ip, True)
 
 class pagedata(object):
@@ -70,6 +77,9 @@ class pagedata(object):
             self.prefix = prefix
         except NameError:
             self.prefix = ''
+
+        self.encode = base64.b32encode
+        self.decode = base64.b32decode
 
         if 'username' in session:
             self.authuser = siteuser.create(session['username'])
@@ -415,10 +425,6 @@ class siteimage(object):
 
 ######### Item stuff
 
-class Tag(Tree):
-    def __init__(self):
-        super(self.__class__, self).__init__('tags')
-
 item_cache = dict()
 @memoize_with_expiry(item_cache, long_cache_persist)
 def item_by_uid(uid):
@@ -461,6 +467,8 @@ class siteitem(object):
             self.modified = result[0][4]
         except IndexError:
             raise NoItem(uid)
+
+        self.tree = Tree('tags')
 
         """
         sql = 'select tag from itemtags where uid = %(uid)s;'
@@ -587,6 +595,42 @@ class siteitem(object):
 
         return (want, wantusers)
 
+    def tags(self):
+        sql = "select tag from itemtags where itemid = %(itemid)s;"
+        tags = doquery(sql, { 'itemid': self.uid })
+
+        ret = list()
+        for tag in tags:
+            ret.append(self.tree.retrieve(tag[0]))
+        return ret
+        
+    def add_tag(self, tag, parent=None):
+        try:
+            self.tree.retrieve(tag)
+        except IndexError:
+            if parent:
+                self.tree.insert_children([tag], parent)
+            else:
+                self.tree.insert_children([tag], 'Unsorted')
+
+        try:
+            sql = "insert into itemtags (itemid, tag) values (%(itemid)s, %(tag)s);"
+            doquery(sql, { 'itemid': self.uid, 'tag': tag })
+        except Exception as e:
+            if e[0] == 1062: # ignore duplicates
+                pass
+            else:
+                raise
+
+    def remove_tag(self, tag):
+        try:
+            self.tree.retrieve(tag)
+        except IndexError:
+            return
+
+        sql = "delete from itemtags where itemid=%(itemid)s and tag=%(tag)s;"
+        doquery(sql, { 'itemid': self.uid, 'tag': tag })
+
 def new_edit(itemid, description, userid):
     if userid == 0:
         userid = None
@@ -604,6 +648,7 @@ def new_edit(itemid, description, userid):
     return edit 
 
 def new_item(name, description, userid):
+    name = name[:64]
     sql = "insert into items (name, description, added, modified) values (%(name)s, 0, %(now)s, %(now)s);"
     doquery(sql, { 'now': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 'name': name })
 
@@ -624,8 +669,9 @@ def new_img(f, title, parent):
     sql = "insert into images (tag, parent, userid, image, ip) values (%(tag)s, %(parent)s, %(userid)s, %(image)s, %(ip)s);"
     doquery(sql, { 'tag': title, 'userid': userid, 'ip': ip_uid(request.remote_addr), 'parent': parent, 'image': image})
 
-    sql = "select uid from images where tag=%(tag)s and parent=%(parent)s and ip=%(ip)s;"
-    imgid = doquery(sql, { 'tag': title, 'ip': ip_uid(request.remote_addr), 'parent': parent })[0][0]
+    # there is a potential race condition with last_insert_id()
+    sql = "select last_insert_id();"
+    imgid = doquery(sql)[0][0]
 
     sql = "insert into imgmods (userid, imgid) values (%(userid)s, %(imgid)s);"
     doquery(sql, { 'userid': userid, 'imgid': imgid })

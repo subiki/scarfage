@@ -125,6 +125,18 @@ You are viewing a historical version of this item's description, click <a href="
 {% endfor %}
 </div>
 
+<div>
+        <div class="page-header"><h4>Tags</h4></div>
+        {%for tag in pd.item.tags()%}
+        {{ tag.name }} <a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag.name) }}">X</a></br>
+        {% endfor %}
+        <form action="/item/tag" method="post" enctype="multipart/form-data">
+            <input type=text name=tag placeholder="Add a tag"><br />
+            <input type=hidden name=uid value={% if pd.item %}{{ pd.item.uid }}{%else%}0{%endif%}> <button class="btn btn-sm btn-default" type=submit>Save</button>
+        </form>
+</div>
+
+
 </div>
 </div>
 

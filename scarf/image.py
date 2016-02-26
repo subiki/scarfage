@@ -10,15 +10,14 @@ import cStringIO
 
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 
-@app.route('/newimg/debug', methods=['GET'], defaults={'debug': True})
-@app.route('/newimg', methods=['GET', 'POST'], defaults={'debug': False})
+@app.route('/newimg', methods=['POST'], defaults={'debug': False})
 def newimg(debug):
     pd = pagedata()
     if request.method == 'POST':
         if request.form['title'] == '':
-            # todo: re fill form
-            flash('No name?')
-            return redirect(url_for('newimg'))
+            title = "(untitled)"
+        else:
+            title = request.form['title']
 
         if 'username' in session:
             uid = pd.authuser.uid
@@ -26,19 +25,10 @@ def newimg(debug):
             uid = 0 
 
         if 'img' in request.files:
-            img = new_img(request.files['img'], request.form['title'], request.form['parent'])
+            img = new_img(request.files['img'], title, request.form['parent'])
 
             if img:
                 return redirect('/image/' + str(img))
-
-    pd.title="Add New Image"
-
-    if debug:
-        if 'username' in session and pd.authuser.accesslevel == 255:
-            pd.debug = dbg(pd)
-
-    pd.items = latest_items()
-    return render_template('newimg.html', pd=pd)
 
 @app.route('/image/<img_id>/reallydelete')
 def reallydelete_image(img_id):

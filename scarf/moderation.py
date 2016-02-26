@@ -1,7 +1,7 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
 from scarflib import redirect_back, pagedata, siteimage, NoImage, user_by_uid
-from sql import doquery, read
+from sql import doquery, read, Tree
 from main import page_not_found
 from debug import dbg
  
@@ -10,6 +10,7 @@ import cStringIO
 import random
 import base64
 from bisect import bisect
+
 
 zonebounds=[36,72,108,144,180,216,252]
 greyscale = [
@@ -23,9 +24,8 @@ greyscale = [
             "#%$"
             ]
 
-@app.route('/mod/debug', defaults={'debug': True})
-@app.route('/mod', defaults={'debug': False})
-def moderate(debug):
+@app.route('/mod')
+def moderate():
     pd = pagedata()
 
     if 'username' not in session or pd.authuser.accesslevel < 10:
@@ -35,6 +35,8 @@ def moderate(debug):
     result = doquery(sql)
 
     pd.mods = []
+
+    pd.tags = Tree('tags')
 
     for mod in result:
         try:
@@ -68,10 +70,6 @@ def moderate(debug):
             return render_template('error.html', pd=pd)
 
     pd.title = "Unmoderated images" 
-
-    if debug:
-        if 'username' in session and pd.authuser.accesslevel == 255:
-            pd.debug = dbg(pd)
 
     return render_template('moderation.html', pd=pd)
 

@@ -1,7 +1,7 @@
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, flash
 from werkzeug import secure_filename
-from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items
+from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items, escape_html
 from main import page_not_found
 from nocache import nocache
 from debug import dbg
@@ -69,9 +69,8 @@ def show_item(item_id, debug):
 
     try:
         showitem = siteitem(item_id)
-        # todo: http://htmlpurifier.org/
 
-        showitem.description_html = markdown.markdown(str(showitem.body()), md_extensions)
+        showitem.description_html = markdown.markdown(escape_html(str(showitem.body())), md_extensions)
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 
@@ -122,11 +121,10 @@ def show_item_edit(item_id, edit, debug):
 
     try:
         showitem = siteitem(item_id)
-        # todo: http://htmlpurifier.org/
         showitem.old = True
         showitem.editid = edit
 
-        showitem.description_html = markdown.markdown(str(showitem.body()), md_extensions)
+        showitem.description_html = markdown.markdown(escape_html(str(showitem.body())), md_extensions)
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 
@@ -187,7 +185,7 @@ def edititem(debug, item_id=None):
                     flash('Edited item!')
                     return redirect('/item/' + str(uid))
                 else:
-                    flash(request.form['name'] + " already exists!")
+                    flash(item.name + " already exists!")
                     item_id = request.form['uid']
 
             except NoItem:
@@ -209,3 +207,32 @@ def edititem(debug, item_id=None):
             pd.debug = dbg(pd)
 
     return render_template('edititem.html', pd=pd)
+
+@app.route('/item/tag', methods=['POST'])
+@nocache
+def tagitem():
+    pd = pagedata()
+    if request.method == 'POST':
+        if 'username' in session:
+            userid = pd.authuser.uid
+        else:
+            userid = 0 
+
+        if 'tag' in request.form:
+            try:
+                item = siteitem(request.form['uid'])
+                item.add_tag(request.form['tag'][:64])
+                return redirect('/item/' + str(item.uid))
+            except NoItem:
+                return page_not_found(404)
+
+@app.route('/item/<item_id>/untag/<tag_ob>')
+def untag_item(item_id, tag_ob):
+    try:
+        item = siteitem(item_id)
+    except NoItem: 
+        return page_not_found(404)
+
+    pd = pagedata()
+    item.remove_tag(pd.decode(tag_ob))
+    return redirect('/item/' + str(item.uid))
