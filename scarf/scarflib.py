@@ -494,7 +494,6 @@ class Tags(Tree):
         items = dict()
         for child in self.all_children_of(tag):
             for item in self.items(child):
-                app.logger.info(item.name)
                 ret = list(set(ret) ^ set([item]))
 
         return ret
@@ -681,12 +680,20 @@ class siteitem(object):
 
         ret = dict()
         for tag in direct_tags:
-            for path_item in self.tree.path_to(tag[0]):
-                if path_item not in ('Hidden', 'Unsorted', self.tree.root):
-                    # is inherited
-                    ret[path_item] = True
+            path = self.tree.path_to(tag[0])
+            # metatags are ignored for now because we don't care about their path
+            if 'Metatags' not in path:
+                for path_item in path:
+                    excludes = list()
+                    excludes.append('Metatags')
+                    excludes.append('Hidden')
+                    excludes.append('Unsorted')
+                    excludes.append(self.tree.root)
+                    if path_item not in excludes: 
+                        # is inherited
+                        ret[path_item] = True
 
-        # ensure all tags directly applied to the item are marked as such
+        # ensure all tags directly applied to the item are included and marked as direct
         for tag in direct_tags:
             ret[tag[0]] = False
 
