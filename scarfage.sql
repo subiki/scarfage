@@ -35,7 +35,7 @@ CREATE TABLE `images` (
   KEY `fk_images_1_idx` (`parent`),
   CONSTRAINT `images_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `images_ibfk_2` FOREIGN KEY (`ip`) REFERENCES `ip` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,7 +87,7 @@ CREATE TABLE `ip` (
   PRIMARY KEY (`uid`),
   UNIQUE KEY `ip` (`ip`),
   KEY `uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,6 +96,7 @@ CREATE TABLE `ip` (
 
 LOCK TABLES `ip` WRITE;
 /*!40000 ALTER TABLE `ip` DISABLE KEYS */;
+INSERT INTO `ip` VALUES (36,'127.0.0.1');
 /*!40000 ALTER TABLE `ip` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -122,7 +123,7 @@ CREATE TABLE `itemedits` (
   CONSTRAINT `itemedits_ibfk_3` FOREIGN KEY (`itemid`) REFERENCES `items` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `itemedits_ibfk_4` FOREIGN KEY (`userid`) REFERENCES `users` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `itemedits_ibfk_5` FOREIGN KEY (`ip`) REFERENCES `ip` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -149,7 +150,7 @@ CREATE TABLE `items` (
   `modified` datetime NOT NULL,
   UNIQUE KEY `uid` (`uid`),
   KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=157 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=159 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -171,8 +172,7 @@ DROP TABLE IF EXISTS `itemtags`;
 CREATE TABLE `itemtags` (
   `itemid` int(11) NOT NULL,
   `tag` varchar(255) NOT NULL,
-  PRIMARY KEY (`tag`),
-  KEY `fk_itemtags_1_idx` (`itemid`),
+  UNIQUE KEY `fk_itemtags_1_idx` (`itemid`,`tag`),
   CONSTRAINT `fk_itemtags_1` FOREIGN KEY (`itemid`) REFERENCES `items` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -241,6 +241,7 @@ CREATE TABLE `metatags` (
 
 LOCK TABLES `metatags` WRITE;
 /*!40000 ALTER TABLE `metatags` DISABLE KEYS */;
+INSERT INTO `metatags` VALUES ('MLS','League'),('Seattle Sounders','Team');
 /*!40000 ALTER TABLE `metatags` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -264,7 +265,7 @@ CREATE TABLE `ownwant` (
   KEY `ownwant_ibfk_1` (`userid`),
   CONSTRAINT `ownwant_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `ownwant_ibfk_2` FOREIGN KEY (`itemid`) REFERENCES `items` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -323,7 +324,7 @@ CREATE TABLE `tree` (
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ref`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -332,7 +333,7 @@ CREATE TABLE `tree` (
 
 LOCK TABLES `tree` WRITE;
 /*!40000 ALTER TABLE `tree` DISABLE KEYS */;
-INSERT INTO `tree` VALUES (1,NULL,2,5,'tags'),(2,1,3,4,'Unsorted');
+INSERT INTO `tree` VALUES (37,NULL,2,15,'tags'),(38,37,3,4,'Unsorted'),(41,37,5,8,'MLS'),(42,41,6,7,'Seattle Sounders'),(48,37,9,14,'Metatags'),(49,48,10,11,'Team'),(50,48,12,13,'League');
 /*!40000 ALTER TABLE `tree` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -361,7 +362,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (25,'admin','$2a$13$RIfeiJptacUai5m5qHK2d.9rZC62RlijDDp.VR3RGhMevUuSGhPe6','change@me.com','2015-04-11 00:00:00',255),(26,'testuser','$2a$13$GEopazeE/tY3RenQ4uWA9eRQ4il01KVvmHWJUGZHJQShyPbfxefui','email@am.com','2015-05-06 00:00:00',1);
+INSERT INTO `users` VALUES (25,'admin','$2a$13$RIfeiJptacUai5m5qHK2d.9rZC62RlijDDp.VR3RGhMevUuSGhPe6','change@me.com','2015-04-11 00:00:00',255),(26,'testuser','$2a$13$a7ZhKlRk9Ghv8LFnEl4B6eXDpOjVgRlBS1F42kaLtFSJmItiVLRla','chris@mazuc.net','2015-05-06 00:00:00',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -386,7 +387,7 @@ CREATE TABLE `userstat_lastseen` (
 
 LOCK TABLES `userstat_lastseen` WRITE;
 /*!40000 ALTER TABLE `userstat_lastseen` DISABLE KEYS */;
-INSERT INTO `userstat_lastseen` VALUES (25,'2016-02-26 20:18:33'),(26,'2016-02-01 22:38:19');
+INSERT INTO `userstat_lastseen` VALUES (25,'2016-02-27 11:46:39'),(26,'2016-02-27 11:44:18');
 /*!40000 ALTER TABLE `userstat_lastseen` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -399,4 +400,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-26 20:19:10
+-- Dump completed on 2016-02-27 11:46:48

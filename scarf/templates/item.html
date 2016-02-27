@@ -132,8 +132,15 @@ You are viewing a historical version of this item's description, click <a href="
 
 <div>
         <div class="page-header"><h4>Tags</h4></div>
-        {%for tag in pd.item.tags()%}
-        <a href="/tag/{{ pd.encode(tag.name) }}">{{ tag.name }}</a> <a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag.name) }}">X</a></br>
+        {% set parent_tags = pd.item.tags_with_parents() %}
+        {%for tag in parent_tags %}
+        <a href="/tag/{{ pd.encode(tag) }}">{{ tag }}</a>
+        {% if not parent_tags[tag] %}
+        <a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag) }}">X</a>
+        {% else %}
+        <small>(inherited)</small>
+        {% endif %}
+        <br>
         {% endfor %}
         <form action="/item/tag" method="post" enctype="multipart/form-data">
             <input type=text name=tag placeholder="Add a tag"><br />

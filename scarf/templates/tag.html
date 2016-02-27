@@ -74,6 +74,22 @@
     <button class="btn btn-sm btn-default" type=submit>Save</button>
 </form>
 
+<div class="page-heading"><h3>Tagged Items</h3></div>
+
+<table class="table">
+{% for item in pd.tree.items(pd.tag) %}
+<tr><td><a href="/item/{{ item.uid }}">{{ item.name }}</a></td></tr>
+{% endfor %}
+</table>
+
+<div class="page-heading"><h3>Inherited Items</h3></div>
+
+<table class="table">
+{% for item in pd.tree.items_from_children(pd.tag) %}
+<tr><td><a href="/item/{{ item.uid }}">{{ item.name }}</a></td></tr>
+{% endfor %}
+</table>
+
 </div>
 
 {% endblock %}

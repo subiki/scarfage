@@ -479,6 +479,26 @@ class Tags(Tree):
             ret.append(tag[0])
         return ret
 
+    def items(self, tag):
+        sql = "select itemid from itemtags where tag = %(tag)s;"
+        tags = doquery(sql, { 'tag': tag })
+
+        ret = list()
+        for tag in tags:
+            ret.append(siteitem(tag[0]))
+        return ret
+
+    def items_from_children(self, tag):
+        ret = list()
+
+        items = dict()
+        for child in self.all_children_of(tag):
+            for item in self.items(child):
+                app.logger.info(item.name)
+                ret = list(set(ret) ^ set([item]))
+
+        return ret
+
 item_cache = dict()
 @memoize_with_expiry(item_cache, long_cache_persist)
 def item_by_uid(uid):
@@ -652,6 +672,23 @@ class siteitem(object):
         ret = list()
         for tag in tags:
             ret.append(self.tree.retrieve(tag[0]))
+        return ret
+
+    def tags_with_parents(self):
+        sql = "select tag from itemtags where itemid = %(itemid)s;"
+        direct_tags = doquery(sql, { 'itemid': self.uid })
+
+        ret = dict()
+        for tag in direct_tags:
+            for path_item in self.tree.path_to(tag[0]):
+                if path_item not in ('Hidden', 'Unsorted', self.tree.root):
+                    # is inherited
+                    ret[path_item] = True
+
+        # ensure all tags directly applied to the item are marked as such
+        for tag in direct_tags:
+            ret[tag[0]] = False
+
         return ret
         
     def add_tag(self, tag, parent=None):
