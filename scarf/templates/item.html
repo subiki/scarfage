@@ -85,9 +85,8 @@ You are viewing a historical version of this item's description, click <a href="
 
 {% else %}
 
-<a href="/item/{{ pd.item.uid }}/have">I own this</a><br />
-<a href="/item/{{ pd.item.uid }}/willtrade">I'll trade this</a><br />
-<a href="/item/{{ pd.item.uid }}/want">I want this</a><br />
+<a class="btn btn-default" href="/item/{{ pd.item.uid }}/have" rel="nofollow">Add to collection</a><br />
+<a class="btn btn-default" href="/item/{{ pd.item.uid }}/want" rel="nofollow">Add to want list</a><br />
 
 {% endif %}
 
@@ -136,9 +135,9 @@ You are viewing a historical version of this item's description, click <a href="
         {%for tag in parent_tags %}
         <a href="/tag/{{ pd.encode(tag) }}">{{ tag }}</a>
         {% if not parent_tags[tag] %}
-        <a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag) }}">X</a>
+        <a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag) }}" rel="nofollow"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span></a>
         {% else %}
-        <small>(inherited)</small>
+        <small><span class="glyphicon glyphicon-lock" aria-hidden="true" style="color: grey;"></span></small>
         {% endif %}
         <br>
         {% endfor %}
