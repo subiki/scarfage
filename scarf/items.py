@@ -67,13 +67,16 @@ def delete_item(item_id):
 def show_item(item_id, debug):
     pd = pagedata()
 
+    if item_id is 'new':
+        return redirect("/item/" + item_id + "/edit")
+
     try:
         showitem = siteitem(item_id)
         # todo: http://htmlpurifier.org/
 
         showitem.description_html = markdown.markdown(str(showitem.body()), md_extensions)
     except NoItem:
-        return redirect("/item/" + item_id + "/edit")
+        return page_not_found(404)
 
     if 'username' in session:
         try:
