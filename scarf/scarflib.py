@@ -293,11 +293,12 @@ class siteuser(object):
  
         if self.accesslevel == 0:
             flash('Your account has been banned')
+            raise AuthFail(self.username)
+
+        if verify_pw(password, pwhash):
+            session['username'] = self.username
         else:
-            if verify_pw(password, pwhash):
-                session['username'] = self.username
-            else:
-                raise AuthFail(self.username)
+            raise AuthFail(self.username)
 
     def newaccesslevel(self, accesslevel):
         self.accesslevel = int(accesslevel)
