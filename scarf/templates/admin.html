@@ -48,7 +48,6 @@
     <td>{{ user.lastseen }}</td>
     <td>{{ pd.accesslevels[user.accesslevel] }}</td>
     <td> 
-    <a href="/admin/users/{{ user.username }}/resetpw">pw reset</a>
     {% if user.uid != pd.authuser.uid %}
     {% if user.accesslevel == 0 %}
     <a href="/admin/users/{{ user.username }}/accesslevel/1"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>

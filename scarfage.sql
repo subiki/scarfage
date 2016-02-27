@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.47, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.46, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: scarfage
 -- ------------------------------------------------------
--- Server version	5.5.47-0ubuntu0.14.04.1
+-- Server version	5.5.46-0ubuntu0.14.04.2
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -35,7 +35,7 @@ CREATE TABLE `images` (
   KEY `fk_images_1_idx` (`parent`),
   CONSTRAINT `images_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `images_ibfk_2` FOREIGN KEY (`ip`) REFERENCES `ip` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,7 +87,7 @@ CREATE TABLE `ip` (
   PRIMARY KEY (`uid`),
   UNIQUE KEY `ip` (`ip`),
   KEY `uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -122,7 +122,7 @@ CREATE TABLE `itemedits` (
   CONSTRAINT `itemedits_ibfk_3` FOREIGN KEY (`itemid`) REFERENCES `items` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `itemedits_ibfk_4` FOREIGN KEY (`userid`) REFERENCES `users` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `itemedits_ibfk_5` FOREIGN KEY (`ip`) REFERENCES `ip` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=86 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -149,7 +149,7 @@ CREATE TABLE `items` (
   `modified` datetime NOT NULL,
   UNIQUE KEY `uid` (`uid`),
   KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=156 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=144 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -188,15 +188,6 @@ CREATE TABLE `messages` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `messages`
---
-
-LOCK TABLES `messages` WRITE;
-/*!40000 ALTER TABLE `messages` DISABLE KEYS */;
-/*!40000 ALTER TABLE `messages` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `ownwant`
 --
 
@@ -216,7 +207,7 @@ CREATE TABLE `ownwant` (
   KEY `ownwant_ibfk_1` (`userid`),
   CONSTRAINT `ownwant_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `ownwant_ibfk_2` FOREIGN KEY (`itemid`) REFERENCES `items` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -248,7 +239,7 @@ CREATE TABLE `tradelist` (
   CONSTRAINT `tradelist_ibfk_1` FOREIGN KEY (`itemid`) REFERENCES `items` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `tradelist_ibfk_2` FOREIGN KEY (`messageid`) REFERENCES `messages` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `tradelist_ibfk_3` FOREIGN KEY (`userid`) REFERENCES `users` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -271,12 +262,13 @@ CREATE TABLE `users` (
   `uid` int(32) NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL,
   `pwhash` varchar(200) NOT NULL,
+  `pwsalt` varchar(20) NOT NULL,
   `email` varchar(200) NOT NULL,
   `joined` datetime DEFAULT NULL,
   `accesslevel` int(32) NOT NULL DEFAULT '0',
   UNIQUE KEY `uid` (`uid`),
   KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -285,7 +277,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (25,'admin','$2a$13$RIfeiJptacUai5m5qHK2d.9rZC62RlijDDp.VR3RGhMevUuSGhPe6','change@me.com','2015-04-11 00:00:00',255),(26,'testuser','$2a$13$GEopazeE/tY3RenQ4uWA9eRQ4il01KVvmHWJUGZHJQShyPbfxefui','email@am.com','2015-05-06 00:00:00',1);
+INSERT INTO `users` VALUES (25,'admin','3f24653f8fa7815ecb2a35f8960e352b49e74f14028b78070e1ce43e','82AA87','email@am.com','2015-04-11 00:00:00',255),(26,'testuser','d09ed5ae1c102a4b3d0608bf6d92f3297d37edf1c49411ddfdeeb8ca','E0197E','email@am.com','2015-05-06 00:00:00',1),(27,'subiki','e996396c29ba1d32e3b79809371b117e116000d3a790c15b1bb5979a','AB3612','karmicj@gmail.com','2015-05-06 00:00:00',10);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -310,7 +302,7 @@ CREATE TABLE `userstat_lastseen` (
 
 LOCK TABLES `userstat_lastseen` WRITE;
 /*!40000 ALTER TABLE `userstat_lastseen` DISABLE KEYS */;
-INSERT INTO `userstat_lastseen` VALUES (25,'2016-02-18 22:08:46'),(26,'2016-02-01 22:38:19');
+INSERT INTO `userstat_lastseen` VALUES (25,'2016-01-30 18:36:17'),(26,'2016-01-29 21:15:10'),(27,'2015-08-21 20:38:09');
 /*!40000 ALTER TABLE `userstat_lastseen` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -323,4 +315,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-18 22:10:15
+-- Dump completed on 2016-01-30 18:42:56

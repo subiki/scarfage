@@ -9,8 +9,4 @@ dbPass = '4AybHApWa7n6VRp6'
 dep_file = '/some/path'
 
 # only needs to be changed on the prod site, this is fine for testing
-# import os
-# os.urandom(24)
 secret_key = '\x8br\xe5\xe8Q~l\xbdb\xe5\xa5\x894i\xb0\xd9\x07\x10\xe6\xa0\xe5\xbd\x1e\xf8'
-
-prefix = ""

@@ -37,7 +37,7 @@ You are viewing a historical version of this item's description, click <a href="
 
 {% for image in pd.item.images() %}
 <p>
-<a href="/image/{{ image.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+<a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
 </p>
 {% endfor %}
 

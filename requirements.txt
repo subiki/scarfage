@@ -6,4 +6,3 @@ Pillow
 markdown
 jsonpickle
 html2text
-bcrypt
