@@ -9,12 +9,13 @@
 
 <p>
 {% if pd.deployment %}
-Deployment date: {{ pd.deployment.date }}<br />
-Branch: <a href="https://github.com/cmazuc/scarfage/tree/{{ pd.deployment.branch }}">{{ pd.deployment.branch }}</a><br />
-Commit: <a href="https://github.com/cmazuc/scarfage/commit/{{ pd.deployment.commit }}">{{ pd.deployment.commit|truncate(10, True, '') }}</a><br />
-User: {{ pd.deployment.user }}<br />
+<table class="table table-condensed">
+<tr><td>Deployment date</td><td>{{ pd.deployment.date }}</td></tr>
+<tr><td>Deployed by</td><td>{{ pd.deployment.user }}</td></tr>
+<tr><td>Commit</td><td><a href="https://github.com/cmazuc/scarfage/tree/{{ pd.deployment.branch }}">{{ pd.deployment.branch }}</a> / <a href="https://github.com/cmazuc/scarfage/commit/{{ pd.deployment.commit }}">{{ pd.deployment.commit|truncate(10, True, '') }}</a></td></tr>
+</table>
 {% else %}
-Dev<br />
+<p>Dev<p><br />
 {% endif %}
 <a href="https://siteadmin.scarfage.com/">Admin Site</a><br/>
 </p>
