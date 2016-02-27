@@ -78,7 +78,7 @@ def show_item(item_id, debug):
     if 'username' in session:
         try:
             user = siteuser.create(session['username'])
-            pd.iteminfo = user.query_collection(showitem.name)
+            pd.iteminfo = user.query_collection(showitem.uid)
         except (NoUser, NoItem):
             pass
 
@@ -122,7 +122,6 @@ def show_item_edit(item_id, edit, debug):
 
     try:
         showitem = siteitem(item_id)
-        # todo: http://htmlpurifier.org/
         showitem.old = True
         showitem.editid = edit
 
