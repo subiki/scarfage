@@ -574,9 +574,11 @@ class siteitem(object):
 
     body_cache = dict()
     @memoize_with_expiry(body_cache, cache_persist)
-    def body(self):
+    def body(self, edit=None):
+        if not edit:
+            edit = self.description
         sql = "select body from itemedits where uid = '%(uid)s';"
-        return doquery(sql, {'uid': self.description })[0][0]
+        return doquery(sql, {'uid': int(edit) })[0][0]
 
     have_cache = dict()
     @memoize_with_expiry(have_cache, cache_persist)

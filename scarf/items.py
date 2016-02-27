@@ -100,15 +100,16 @@ def revert_item_edit(item_id, edit, debug):
     pd = pagedata()
 
     try:
-        pd.item = siteitem(item_id)
+        item = siteitem(item_id)
 
-        showitem.old = True
-        showitem.editid = edit
+        item.old = True
+        item.description = edit
     except:
         pass
 
-    pd.title="Reverting: " + item_id
-    pd.item_name = item_id
+    pd.title="Reverting: " + item.name
+    pd.item_name = item.name
+    pd.item = item
 
     if debug:
         if 'username' in session and pd.authuser.accesslevel == 255:
@@ -125,9 +126,9 @@ def show_item_edit(item_id, edit, debug):
     try:
         showitem = siteitem(item_id)
         showitem.old = True
-        showitem.editid = edit
+        showitem.description = edit
 
-        showitem.description_html = markdown.markdown(escape_html(str(showitem.body())), md_extensions)
+        showitem.description_html = markdown.markdown(escape_html(str(showitem.body(edit))), md_extensions)
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 

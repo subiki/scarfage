@@ -14,7 +14,7 @@
 <small><a href="/item/{{ pd.item.uid }}/history"> History </a></small>
 
 {% if pd.item.old %}
-<small><a href="/item/{{ pd.item.uid }}/revert/{{ pd.item.editid }}"> Revert </a></small>
+<small><a href="/item/{{ pd.item.uid }}/revert/{{ pd.item.description }}"> Revert </a></small>
 {% endif %}
 
 {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
