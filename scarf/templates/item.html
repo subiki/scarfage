@@ -58,6 +58,11 @@ You are viewing a historical version of this item's description, click <a href="
 
 <div class="page-header"><h3>Item actions</h3></div>
 {% if pd.authuser is defined %}
+    {% if pd.iteminfo is defined and pd.iteminfo.hidden == 1 %}
+    <b>You have chosen to hide this part of your collection, for others to see this item's status in your collections please <a href="/item/{{ pd.item.uid }}/show">show</a> it.</b></br>
+    {% else %}
+    <a href="/item/{{ pd.item.uid }}/hide">Hide</a> this item's status from others.</b></br>
+    {% endif %}
     {% if pd.iteminfo is defined and pd.iteminfo.have == 0 %}
         <a href="/item/{{ pd.item.uid }}/have">I own this</a></br>
 

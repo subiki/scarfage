@@ -77,7 +77,7 @@ def show_item(item_id, debug):
     if 'username' in session:
         try:
             user = siteuser.create(session['username'])
-            pd.iteminfo = user.query_collection(showitem.name)
+            pd.iteminfo = user.query_collection(showitem.uid)
         except (NoUser, NoItem):
             pass
 
@@ -187,8 +187,11 @@ def edititem(debug, item_id=None):
                 else:
                     flash(item.name + " already exists!")
                     item_id = request.form['uid']
-
             except NoItem:
+                if uid_by_item(request.form['name']):
+                    flash(request.form['name'] + " already exists!")
+                    return redirect_back("/item/new")
+
                 uid = new_item(request.form['name'], request.form['desc'], userid)
                 return redirect('/item/' + str(uid))
 

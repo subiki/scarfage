@@ -242,8 +242,8 @@ class siteuser(object):
             sql = """select ownwant.uid, ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden
                      from items
                      join ownwant on ownwant.itemid=items.uid
-                     where items.name = %(name)s and ownwant.userid = %(uid)s"""
-            result = doquery(sql, { 'name': item, 'uid': self.uid })
+                     where items.uid = %(itemid)s and ownwant.userid = %(uid)s"""
+            result = doquery(sql, { 'itemid': item, 'uid': self.uid })
 
             ret.uid = result[0][0]
             ret.have = result[0][1]
@@ -584,15 +584,14 @@ class siteitem(object):
         haveusers = list()
         have = 0
 
-        sql = "select * from ownwant where itemid = %(uid)s"
+        sql = "select userid,hidden from ownwant where itemid = %(uid)s and own = 1"
         res = doquery(sql, {"uid": self.uid})
         
         for user in res:
-            if (user[3] == 1):
-                have = have + 1
-                if(user[6] == 0):
-                    userinfo = siteuser.create(user_by_uid(user[1]))
-                    haveusers.append(userinfo)
+            have = have + 1
+            if not user[1]:
+                userinfo = siteuser.create(user_by_uid(user[0]))
+                haveusers.append(userinfo)
 
         return (have, haveusers)
 
@@ -602,16 +601,13 @@ class siteitem(object):
         willtradeusers = list()
         willtrade = 0
 
-        sql = "select * from ownwant where itemid = %(uid)s"
+        sql = "select userid from ownwant where itemid = %(uid)s and willtrade = 1"
         res = doquery(sql, {"uid": self.uid})
- 
         
         for user in res:
-            if (user[4] == 1):
-                willtrade = willtrade + 1
-                if(user[6] == 0):
-                    userinfo = siteuser.create(user_by_uid(user[1]))
-                    willtradeusers.append(userinfo)
+            willtrade = willtrade + 1
+            userinfo = siteuser.create(user_by_uid(user[0]))
+            willtradeusers.append(userinfo)
 
         return (willtrade, willtradeusers)
 
@@ -621,15 +617,13 @@ class siteitem(object):
         wantusers = list()
         want = 0
 
-        sql = "select * from ownwant where itemid = %(uid)s"
+        sql = "select userid from ownwant where itemid = %(uid)s and want = 1 and hidden = 0"
         res = doquery(sql, {"uid": self.uid})
         
         for user in res:
-            if (user[5] == 1):
-                want = want + 1
-                if(user[6] == 0):
-                    userinfo = siteuser.create(user_by_uid(user[1]))
-                    wantusers.append(userinfo)
+            want = want + 1
+            userinfo = siteuser.create(user_by_uid(user[0]))
+            wantusers.append(userinfo)
 
         return (want, wantusers)
 
