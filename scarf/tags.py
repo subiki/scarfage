@@ -24,10 +24,14 @@ def mod_tag(tag):
         subtract = pd.tree.all_children_of(pd.tag)
         parent = pd.tree.parent_of(pd.tag)
 
+        if parent != pd.tree.root:
+            subtract.append(parent)
+
         subtract.append(pd.tag)
-        subtract.append(parent)
 
         pd.reparent_list = list(set(all_tags) ^ set(subtract))
+
+        pd.root_tree = pd.tree.draw_tree(pd.tree.root)
 
         return render_template('tag.html', pd=pd)
     except TypeError:
@@ -44,10 +48,11 @@ def mod_tag_delete(tag):
     decode_tag = pd.decode(tag)
     parent = tree.parent_of(decode_tag)
 
-    app.logger.info('Deleting tag: ' + decode_tag)
-    tree.delete(decode_tag)
-
-    return redirect('/tag/' + pd.encode(parent))
+    if tree.delete(decode_tag):
+        return redirect('/tag/' + pd.encode(parent))
+    else:
+        flash('Unable to delete tag: ' + decode_tag)
+        return redirect_back('/tag/' + tag)
 
 @app.route('/tag/new', methods=['POST'])
 def newtag():

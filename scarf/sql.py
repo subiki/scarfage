@@ -69,6 +69,7 @@ class Tree(object):
         cur.execute("UPDATE tree SET lhs = lhs - %s WHERE lhs > %s", (diff, node.rhs))
         cur.execute("UPDATE tree SET rhs = rhs - %s WHERE rhs > %s", (diff, node.rhs))
         self.conn.commit()
+        return True
 
     def create_root(self, name):
         self.conn.begin()
@@ -94,6 +95,21 @@ class Tree(object):
         else:
             retval.parent = None
         return retval
+
+    def draw_tree(self, rootname):
+        root = self.retrieve(rootname)
+        cur = self.conn.cursor()
+        cur.execute(
+            """SELECT COUNT(t2.name) AS indentation, t1.name 
+            FROM tree AS t1, tree AS t2
+            WHERE t1.lhs BETWEEN t2.lhs AND t2.rhs
+            AND t2.lhs BETWEEN %s AND %s
+            GROUP BY t1.name
+            ORDER BY t1.lhs""", (root.lhs, root.rhs))
+        res = list()
+        for result in cur.fetchall():
+            res.append((result[1], int(result[0]-1)))
+        return res
 
     def all_children_of(self, rootname):
         cur = self.conn.cursor()
@@ -161,21 +177,10 @@ class Tree(object):
 
         children = self.exact_children_of(node)
         for child in children:
-            reparent(child, temp_node)
+            self.reparent(child, temp_node)
 
         self.delete(node)
         self.rename(temp_node, node)
-
-"""
-draw tree
-
-SELECT COUNT(t2.name) AS indentation, t1.name 
-FROM categories AS t1, AS t2
-WHERE t1.lhs BETWEEN t2.lhs AND t2.rhs
-AND t2.lhs BETWEEN %s AND %s
-GROUP BY t1.name
-ORDER BY t1.lhs, (root.lhs, root.rhs))
-"""
 
 db = None
 

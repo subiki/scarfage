@@ -431,14 +431,29 @@ class Tags(Tree):
         self.root = 'tags'
         super(self.__class__, self).__init__(self.root)
 
+    def insert_children(self, names, parentname):
+        if parentname == 'Unsorted':
+            try:
+                self.retrieve('Unsorted')
+            except IndexError:
+                self.insert_children(['Unsorted'], self.root)
+
+        super(self.__class__, self).insert_children(names, parentname)
+
     def delete(self, nodename):
-        super(self.__class__, self).delete(nodename)
+        if nodename == 'Unsorted':
+            return False
+
+        if nodename == self.root:
+            return False
 
         sql = "delete from itemtags where tag=%(tag)s;"
         doquery(sql, { 'tag': nodename })
 
         sql = "delete from metatags where metatag=%(tag)s;"
         doquery(sql, { 'tag': nodename })
+
+        return super(self.__class__, self).delete(nodename)
 
     def add_metatag(self, tag, metatag):
         try:
@@ -507,7 +522,7 @@ class siteitem(object):
         except IndexError:
             raise NoItem(uid)
 
-        self.tree = Tree('tags')
+        self.tree = Tags()
 
         """
         sql = 'select tag from itemtags where uid = %(uid)s;'
@@ -646,7 +661,6 @@ class siteitem(object):
             if parent:
                 self.tree.insert_children([tag], parent)
             else:
-                #self.tree.insert_children(['Unsorted'], 'tags')
                 self.tree.insert_children([tag], 'Unsorted')
 
         try:
