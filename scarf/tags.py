@@ -16,20 +16,22 @@ def mod_tag(tag):
         return redirect(url_for('accessdenied'))
 
     pd.tree = Tags()
-    pd.tag = pd.decode(tag)
+    try:
+        pd.tag = pd.decode(tag)
 
-    # remove children, current parent, and ourself from the reparent list
-    all_tags = pd.tree.all_children_of(pd.tree.root)
-    subtract = pd.tree.all_children_of(pd.tag)
-    parent = pd.tree.parent_of(pd.tag)
+        # remove children, current parent, and ourself from the reparent list
+        all_tags = pd.tree.all_children_of(pd.tree.root)
+        subtract = pd.tree.all_children_of(pd.tag)
+        parent = pd.tree.parent_of(pd.tag)
 
-    subtract.append(pd.tag)
-    subtract.append(parent)
+        subtract.append(pd.tag)
+        subtract.append(parent)
 
-    pd.reparent_list = list(set(all_tags) ^ set(subtract))
-    app.logger.info(pd.reparent_list)
+        pd.reparent_list = list(set(all_tags) ^ set(subtract))
 
-    return render_template('tag.html', pd=pd)
+        return render_template('tag.html', pd=pd)
+    except TypeError:
+        return page_not_found(404)
 
 @app.route('/tag/<tag>/delete')
 def mod_tag_delete(tag):

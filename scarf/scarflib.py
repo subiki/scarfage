@@ -446,7 +446,7 @@ class Tags(Tree):
             self.insert_children([metatag], 'Unsorted')
 
         try:
-            sql = "insert into metatags (tag, metatag) values (%(tag)s, %(metatag)s);"
+            sql = "insert ignore into metatags (tag, metatag) values (%(tag)s, %(metatag)s);"
             doquery(sql, { 'metatag': metatag, 'tag': tag })
         except Exception as e:
             if e[0] == 1062: # ignore duplicates
