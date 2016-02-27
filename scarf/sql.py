@@ -179,7 +179,7 @@ class Tree(object):
         for child in children:
             self.reparent(child, temp_node)
 
-        self.delete(node)
+        Tree(self.root).delete(node)
         self.rename(temp_node, node)
 
 db = None
