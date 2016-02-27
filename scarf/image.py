@@ -28,7 +28,8 @@ def newimg(debug):
             img = new_img(request.files['img'], title, request.form['parent'])
 
             if img:
-                return redirect('/image/' + str(img))
+                return redirect_back('/image/' + str(img))
+        return redirect_back(url_for('index'))
 
 @app.route('/image/<img_id>/reallydelete')
 def reallydelete_image(img_id):
