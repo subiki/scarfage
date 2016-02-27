@@ -104,7 +104,7 @@ def mod_img(image):
 
     pd.image = modimg
 
-    sql = 'select name from items where uid = %(uid)s;'
+    sql = 'select uid name from items where uid = %(uid)s;'
     pd.parent = doquery(sql, {"uid": modimg.parent})[0][0]
 
     try:
