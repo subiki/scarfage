@@ -226,6 +226,9 @@ def tagitem():
             userid = 0 
 
         if 'tag' in request.form:
+            if request.form['tag'] == '':
+                return redirect_back('index')
+
             try:
                 item = siteitem(request.form['uid'])
                 item.add_tag(request.form['tag'][:64])

@@ -65,8 +65,12 @@ def newtag():
             userid = 0 
 
         if 'tag' in request.form:
+
+            if request.form['tag'] == '':
+                return redirect_back('index')
+
             try:
-                Tags().retrieve(request.form['tag'])
+                Tags().retrieve(request.form['tag'].strip())
                 flash('Tag already exists!')
             except IndexError:
                 Tags().insert_children([request.form['tag']], pd.decode(request.form['parent']))
@@ -83,7 +87,10 @@ def new_metatag():
         else:
             userid = 0 
 
-        if 'metatag' in request.form:
+        if 'metatag' and 'tag' in request.form:
+            if request.form['metatag'] == '':
+                return redirect_back('index')
+
             Tags().add_metatag(pd.decode(request.form['tag']), request.form['metatag'])
 
     return redirect_back('index')

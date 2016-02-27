@@ -363,7 +363,7 @@ def new_user(username, password, email):
         joined = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         sql = "insert into users (username, pwhash, email, joined, accesslevel) values (%(username)s, %(pwhash)s, %(email)s, %(joined)s, '1');"
-        result = doquery(sql, { 'username': username, 'pwhash': gen_pwhash(password), 'email': email, 'joined': joined })
+        result = doquery(sql, { 'username': username.strip(), 'pwhash': gen_pwhash(password), 'email': email.strip(), 'joined': joined })
 
         sql = "insert into userstat_lastseen (date, uid) values (%(lastseen)s, %(uid)s);"
         result = doquery(sql, { 'uid': uid_by_user(username), 'lastseen': joined })
@@ -570,6 +570,7 @@ class siteitem(object):
         result = doquery(sql, {"uid": self.uid}) 
 
     def update(self):
+        self.name = self.name.strip()[:64]
         sql = "update items set name = %(name)s, description = %(desc)s, modified = %(modified)s where uid = %(uid)s;"
         return doquery(sql, {"uid": self.uid, "desc": self.description, "name": self.name, "modified": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") })
 
@@ -735,7 +736,7 @@ def new_edit(itemid, description, userid):
     return edit 
 
 def new_item(name, description, userid):
-    name = name[:64]
+    name = name.strip()[:64]
     sql = "insert into items (name, description, added, modified) values (%(name)s, 0, %(now)s, %(now)s);"
     doquery(sql, { 'now': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 'name': name })
 
@@ -748,6 +749,7 @@ def new_item(name, description, userid):
 
 def new_img(f, title, parent):
     image = base64.b64encode(f.read())
+    title = title.strip()[:64]
 
     userid = None
     if 'username' in session:
