@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div id="content">
+<div class="page-heading"><h3>Tag</h3></div>
+<table class="table">
+<tr><td><b>Name</b></td><td>{{ pd.tag }}</tr>
+
+<tr><td><b>Path</b></td><td>/
+{% for tag in pd.tree.path_to(pd.tag) %}
+ {% if tag != pd.tree.root %}
+  {% if tag != pd.tag %}<a href="/tag/{{ pd.encode(tag) }}">{{ tag }}</a>{%endif%} {% if not loop.last %} / {% endif %}
+ {% endif %}
+{% endfor %}
+</tr>
+
+<tr><td><b>Reparent</b></td><td>
+<form action="/tag/reparent" method="post" enctype="multipart/form-data">
+<table><tr><td>
+<select class="form-control" name="reparent" style="max-width:95%;">
+    <option value="{{ pd.encode(pd.tree.root) }}">&lt;root&gt;</option>
+{% for tag in pd.reparent_list %}
+    <option value="{{ pd.encode(tag) }}">{{ tag }}</option>
+{% endfor %}
+</select></td><td>
+<input type=hidden name=name value="{{ pd.encode(pd.tag) }}"> 
+<button class="btn btn-sm btn-default" type=submit>Save</button>
+</td></tr>
+
+</table>
+</form>
+</tr>
+
+</table>
+
+<p>
+<a class="btn btn-danger" href="/tag/{{ pd.encode(pd.tag) }}/delete">Delete this tag and all child tags</a>
+</p>
+
+<div class="page-heading"><h3>Children</h3></div>
+
+<form action="/tag/new" method="post" enctype="multipart/form-data">
+    <input type=text name=tag placeholder="Add a child tag">
+    <input type=hidden name=uid value=0> 
+    <input type=hidden name=parent value="{{ pd.encode(pd.tag) }}"> 
+    <button class="btn btn-sm btn-default" type=submit>Save</button>
+</form>
+
+<table class="table">
+{% for tag in pd.tree.exact_children_of(pd.tag) %}
+<tr><td>{{ tag }}</td><td><a href="/tag/{{ pd.encode(tag) }}">View / Edit</a></td><td></td></tr>
+{% endfor %}
+</table>
+
+<div class="page-heading"><h3>Metatags</h3></div>
+
+<table class="table">
+{% for tag in pd.tree.metatags(pd.tag) %}
+<tr><td>{{ tag }}</td><td><a href="/tag/{{ pd.encode(tag) }}">View / Edit</a></td><td><a href="/tag/{{ pd.encode(tag) }}/delete">Delete</a></td></tr>
+{% endfor %}
+</table>
+
+<form action="/tag/metatag" method="post" enctype="multipart/form-data">
+    <input type=text name=metatag placeholder="Add a metatag">
+    <input type=hidden name=tag value="{{ pd.encode(pd.tag) }}"> 
+    <button class="btn btn-sm btn-default" type=submit>Save</button>
+</form>
+
+</div>
+
+{% endblock %}

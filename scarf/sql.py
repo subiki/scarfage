@@ -4,6 +4,8 @@ import socket
 from time import time
 import datetime
 import inspect
+import random
+import string
 
 from config import dbHost, dbName, dbUser, dbPass
 
@@ -49,6 +51,13 @@ class Tree(object):
                         [(parent.rhs + 2*offset,
                           parent.rhs + 2*offset + 1,
                           parent.ref, name) for offset, name in enumerate(names)])
+        self.conn.commit()
+
+    def rename(self, nodename, newname):
+        self.conn.begin()
+        node = self.retrieve(nodename)
+        cur = self.conn.cursor()
+        cur.execute("UPDATE tree SET name = %s WHERE name = %s", (newname, nodename))
         self.conn.commit()
 
     def delete(self, nodename):
@@ -132,7 +141,30 @@ class Tree(object):
             WHERE t2.lhs BETWEEN t1.lhs AND t1.rhs AND t2.name = %s
             ORDER BY t1.lhs""", (childname,))
         return [result[0] for result in cur.fetchall()]
-    
+
+    def reparent(self, node, parent):
+        if parent == self.parent_of(node):
+            app.logger.error('reparent: null op!')
+            return
+            
+        if node == parent:
+            app.logger.error('reparent: attempted to reparent into myself!')
+            return
+
+        if node in self.all_children_of('parent'):
+            app.logger.error('reparent: attempted to reparent into a child!')
+            return
+
+        temp_node = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(20))
+
+        self.insert_children([temp_node], parent)
+
+        children = self.exact_children_of(node)
+        for child in children:
+            reparent(child, temp_node)
+
+        self.delete(node)
+        self.rename(temp_node, node)
 
 """
 draw tree

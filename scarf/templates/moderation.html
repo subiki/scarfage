@@ -6,10 +6,10 @@
 
 <div id="content">
 
-<div class="page-heading"><h3>Unsorted Tags</h3></div>
+<div class="page-heading"><h3>Tags</h3></div>
 <table class="table">
-{% for tag in pd.tags.exact_children_of('Unsorted') %}
-<tr><td>{{ tag }}</td</tr>
+{% for tag in pd.tags.exact_children_of('tags') %}
+<tr><td>{{ tag }}</td><td><a href="/tag/{{ pd.encode(tag) }}">Edit</a> </tr>
 {% endfor %}
 </table>
 

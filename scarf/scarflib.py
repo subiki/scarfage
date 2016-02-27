@@ -425,6 +425,44 @@ class siteimage(object):
 
 ######### Item stuff
 
+class Tags(Tree):
+    def __init__(self):
+        self.root = 'tags'
+        super(self.__class__, self).__init__(self.root)
+
+    def delete(self, nodename):
+        super(self.__class__, self).delete(nodename)
+
+        sql = "delete from itemtags where tag=%(tag)s;"
+        doquery(sql, { 'tag': nodename })
+
+        sql = "delete from metatags where metatag=%(tag)s;"
+        doquery(sql, { 'tag': nodename })
+
+    def add_metatag(self, tag, metatag):
+        try:
+            data = self.retrieve(metatag)
+        except IndexError:
+            self.insert_children([metatag], 'Unsorted')
+
+        try:
+            sql = "insert into metatags (tag, metatag) values (%(tag)s, %(metatag)s);"
+            doquery(sql, { 'metatag': metatag, 'tag': tag })
+        except Exception as e:
+            if e[0] == 1062: # ignore duplicates
+                pass
+            else:
+                raise
+
+    def metatags(self, tag):
+        sql = "select metatag from metatags where tag = %(tag)s;"
+        tags = doquery(sql, { 'tag': tag })
+
+        ret = list()
+        for tag in tags:
+            ret.append(tag[0])
+        return ret
+
 item_cache = dict()
 @memoize_with_expiry(item_cache, long_cache_persist)
 def item_by_uid(uid):
@@ -611,6 +649,7 @@ class siteitem(object):
             if parent:
                 self.tree.insert_children([tag], parent)
             else:
+                #self.tree.insert_children(['Unsorted'], 'tags')
                 self.tree.insert_children([tag], 'Unsorted')
 
         try:

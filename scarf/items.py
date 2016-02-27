@@ -5,7 +5,7 @@ from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, red
 from main import page_not_found
 from nocache import nocache
 from debug import dbg
-from sql import read, doquery
+from sql import read, doquery, Tree
 
 import markdown
 md_extensions = ['markdown.extensions.extra', 'markdown.extensions.nl2br', 'markdown.extensions.sane_lists']
