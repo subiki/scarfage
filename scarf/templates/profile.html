@@ -93,16 +93,20 @@
         </tr>
 
         {% for pm in pd.profileuser.messages() %}
-        {% if pm.status <= pm.messagestatus['rejected_trade'] %}
+        {% if pm.status <= pm.messagestatus['cancelled_trade'] %}
             <tr>
 
             <td>
             {% if pm.status == pm.messagestatus['unread_trade'] and pm.from_user != pd.authuser.username %}
             <b>New</b>
-            {% elif pm.status < pm.messagestatus['settled_trade'] %}
-            Open
-            {% elif pm.status == pm.messagestatus['settled_trade'] or pm.status == pm.messagestatus['rejected_trade'] %}
+            {% elif pm.status == pm.messagestatus['settled_trade'] %}
             Closed
+            {% elif pm.status == pm.messagestatus['rejected_trade'] %}
+            Rejected
+            {% elif pm.status == pm.messagestatus['cancelled_trade'] %}
+            Cancelled
+            {% else %}
+            Open
             {% endif %}
             </td>
 
@@ -225,7 +229,7 @@
         {% if item.have == 1 %}
            <td>
                {% for image in item.images()[:1] %}
-                   <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+                   <a href="/image/{{ image.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
                {% endfor %}
            </td>
 
@@ -248,13 +252,13 @@
         {% if item.hidden == 0 and item.have == 1 %}
            <td>
                {% for image in item.images()[:1] %}
-                   <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+                   <a href="/image/{{ image.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
                {% endfor %}
            </td>
 
             <td> <a href="/item/{{ item.name }}">{{ item.name }}</a> </td>
             {% if item.willtrade == 1 %}
-                <td>available for trade / <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a></td>
+                <td>available for trade / <a href="/user/{{ pd.profileuser.username }}/trade/{{ item.uid }}">Make trade request</a></td>
             {% endif %}
         {% endif %}
       {% endif %}
@@ -271,14 +275,14 @@
 
            {% for image in item.images()[:1] %}
            <p>
-           <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+           <a href="/image/{{ image.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
            </p>
            {% endfor %}
 
            {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
              <small><a href="/item/{{ item.name }}/dontwant"><span class="glyphicon glyphicon-trash"></span> Remove from list</a></small>
            {%else%}
-             <a href="/user/{{ pd.profileuser.username }}/trade/{{item.name}}">Make trade request</a>
+             <a href="/user/{{ pd.profileuser.username }}/trade/{{ item.uid }}">Make trade request</a>
            {% endif %}
            </div>
        </div>

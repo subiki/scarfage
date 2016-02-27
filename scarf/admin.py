@@ -5,6 +5,7 @@ from sql import read, doquery
 from debug import dbg
 import os.path, time
 import jsonpickle
+import config as sf_conf
 
 from config import dep_file
 
@@ -23,6 +24,7 @@ def get_users():
 @app.route('/admin', defaults={'debug': False})
 def admin_users(debug):
     pd = pagedata()
+    pd.sf_conf = sf_conf
 
     if 'username' not in session or pd.authuser.accesslevel < 255:
         return redirect(url_for('accessdenied'))
@@ -31,7 +33,7 @@ def admin_users(debug):
 
     pd.users = get_users()
     try:
-        with open(dep_file, 'r') as depfile:
+        with open(sf_conf.dep_file, 'r') as depfile:
             frozen = depfile.read()
         pd.deployment = jsonpickle.decode(frozen)
         pd.mode = 'prod'
@@ -76,5 +78,31 @@ def admin_set_accesslevel(user, level):
     moduser.newaccesslevel(level)
     app.logger.info('Accesslevel change for ' + user)
     flash('User ' + user + '\'s accesslevel has been set to ' + level)
+
+    return redirect_back('/admin')
+
+@app.route('/admin/users/<user>/resetpw')
+def admin_reset_pw(user):
+    pd = pagedata()
+
+    if 'username' not in session or pd.authuser.accesslevel < 10:
+        return redirect(url_for('accessdenied'))
+
+    if session['username'] == user:
+        app.logger.error('Admin access was denied for user: ' + pd.authuser.username)
+        return redirect_back('index')
+
+    if pd.authuser.accesslevel != 255 and pd.authuser.accesslevel <= level:
+        app.logger.error('Admin password reset was denied for user: ' + pd.authuser.username)
+        flash("No.")
+        return redirect_back('index')
+
+    try:
+        user = siteuser.create(user)
+        user.forgot_pw_reset(admin=True)
+    except NoUser:
+        return page_not_found(404)
+
+    flash('A new password has been e-mailed to ' + user.username + '.')
 
     return redirect_back('/admin')

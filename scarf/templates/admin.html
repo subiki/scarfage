@@ -9,15 +9,26 @@
 
 <p>
 {% if pd.deployment %}
-Deployment date: {{ pd.deployment.date }}<br />
-Branch: <a href="https://github.com/cmazuc/scarfage/tree/{{ pd.deployment.branch }}">{{ pd.deployment.branch }}</a><br />
-Commit: <a href="https://github.com/cmazuc/scarfage/commit/{{ pd.deployment.commit }}">{{ pd.deployment.commit|truncate(10, True, '') }}</a><br />
-User: {{ pd.deployment.user }}<br />
+<table class="table table-condensed">
+<tr><td>Deployment date</td><td>{{ pd.deployment.date }}</td></tr>
+<tr><td>Deployed by</td><td>{{ pd.deployment.user }}</td></tr>
+<tr><td>Commit</td><td><a href="https://github.com/cmazuc/scarfage/tree/{{ pd.deployment.branch }}">{{ pd.deployment.branch }}</a> / <a href="https://github.com/cmazuc/scarfage/commit/{{ pd.deployment.commit }}">{{ pd.deployment.commit|truncate(10, True, '') }}</a></td></tr>
+</table>
 {% else %}
-Dev<br />
+<p>Dev<p><br />
 {% endif %}
 <a href="https://siteadmin.scarfage.com/">Admin Site</a><br/>
 </p>
+
+<div class="page-header"><h4>Site config</h4></div>
+<table class="table table-condensed">
+<tr><th>Name</th><th>Value</th></tr>
+<tr><td>Database Host</td><td>{{pd.sf_conf.dbHost}}</td></tr>
+<tr><td>Database Name</td><td>{{pd.sf_conf.dbName}}</td></tr>
+<tr><td>Database User</td><td>{{pd.sf_conf.dbUser}}</td></tr>
+<tr><td>Deployment Metadata</td><td>{{pd.sf_conf.dep_file}}</td></tr>
+<tr><td>URL Prefix</td><td>{{pd.sf_conf.prefix}}</td></tr>
+</table>
 
 <div class="page-header"><h4>Site users</h4></div>
 <table class="table table-condensed">
@@ -37,6 +48,7 @@ Dev<br />
     <td>{{ user.lastseen }}</td>
     <td>{{ pd.accesslevels[user.accesslevel] }}</td>
     <td> 
+    <a href="/admin/users/{{ user.username }}/resetpw">pw reset</a>
     {% if user.uid != pd.authuser.uid %}
     {% if user.accesslevel == 0 %}
     <a href="/admin/users/{{ user.username }}/accesslevel/1"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>

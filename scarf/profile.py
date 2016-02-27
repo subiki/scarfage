@@ -10,24 +10,18 @@ import random
 
 @app.route('/forgotpw', methods=['GET', 'POST'])
 def userupdate():
-    def forgot_pw_reset(userobj):
-        newpw = ''.join([random.choice(ascii_letters + digits) for _ in range(12)])
-        userobj.newpassword(newpw)
-
-        message = render_template('email/pwreset.html', username=userobj.username, email=userobj.email, newpw=newpw, ip=request.environ['REMOTE_ADDR'])
-        send_mail(recipient=userobj.email, subject='Password Reset', message=message)
-
     pd = pagedata()
     if request.method == 'POST':
         try:
             user = siteuser.create(request.form['username'])
-            forgot_pw_reset(user)
+            user.forgot_pw_reset()
         except NoUser:
             email_user = check_email(request.form['email'])
             if email_user:
-                forgot_pw_reset(email_user)
+                email_user.forgot_pw_reset()
 
-        flash('A new password has been sent.')
+        flash('A new password has been e-mailed. Please remember to change it when you log in.')
+        return redirect(url_for('index'))
 
     return render_template('forgotpw.html', pd=pd)
 

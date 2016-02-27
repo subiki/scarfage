@@ -1,7 +1,7 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
 from scarflib import redirect_back, pagedata, siteimage, NoImage, user_by_uid
-from sql import doupsert, upsert, doquery, read, delete, sql_escape
+from sql import doquery, read
 from main import page_not_found
 from debug import dbg
  
@@ -98,13 +98,16 @@ def mod_img(image):
     if 'username' not in session or pd.authuser.accesslevel < 10:
         return redirect(url_for('accessdenied'))
 
-    modimg = siteimage.create(sql_escape(image))
+    modimg = siteimage.create(image)
     try:
-        modimg = siteimage.create(sql_escape(image))
+        modimg = siteimage.create(image)
     except NoImage:
         return page_not_found(404)
 
     pd.image = modimg
+
+    sql = 'select name from items where uid = %(uid)s;'
+    pd.parent = doquery(sql, {"uid": modimg.parent})[0][0]
 
     try:
         sql = 'select * from imgmods where imgid = %(uid)s;'

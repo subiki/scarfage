@@ -6,11 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="icon" type="image/png" href="/static/favicon.png" />
+    <link rel="icon" type="image/png" href="{{pd.prefix}}/static/favicon.png" />
     <title>{{ pd.title }}</title>
 
-    <link rel="stylesheet" href="/static/style.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="{{pd.prefix}}/static/main.css">
     {% endblock %}
 </head>
 
@@ -52,8 +54,8 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/newitem">Add Item</a></li>
-            <li><a href="/stats">Site Stats</a></li>
+            <li><a href="/item/edit">Add item</a></li>
+            <li><a href="/stats">Site stats</a></li>
             {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
             <li><a href="/mod">Moderate</a></li>
             {% endif %}
@@ -83,6 +85,7 @@
               </form>
             </li>
             <li><a href="/newuser"><small>Sign up</small></a></li>
+            <li><a href="/forgotpw"><small>Forgot Password</small></a></li>
           {% endif %}
           </ul>
         </div><!--/.nav-collapse -->
@@ -90,7 +93,7 @@
     </nav>
 </header>
 
-<div id="wrapper">
+
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
@@ -110,6 +113,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
-    <script src="/static/main.js"></script>
+    <script src="{{pd.prefix}}/static/main.js"></script>
 </body>
 </html>

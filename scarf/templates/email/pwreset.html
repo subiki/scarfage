@@ -2,9 +2,12 @@
 
 {% block body %}
 
-<p> The password for <b>{{username}}</b> was reset to <b>{{newpw}}</b> by someone at {{ ip }}</p>
-
+{% if admin %}
+<p> The password for <b>{{username}}</b> was reset to <b>{{newpw}}</b> by an administrator. Please remember to reset your password once you log in.</p>
+{% else %}
+<p> The password for <b>{{username}}</b> was reset to <b>{{newpw}}</b> by someone at <b>{{ ip }}</b></p>
 <p> Please remember to reset your password once you log in. If you did not request for your password to be reset ~~ insert instructions for contacting an admin here ~~</p>
+{% endif %}
 
 <p>
 <a href="https://www.scarfage.com/user/{{username}}">Your Profile</a><br />

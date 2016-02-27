@@ -10,53 +10,111 @@
 
 <div class="page-header"><h3>Trade Request</h3></div>
 
+<div class="col-md-8">
 <p>
-From: <a href="/user/{{ pd.pm.from_user }}">{{ pd.pm.from_user }}</a><br />
-To: <a href="/user/{{ pd.pm.to_user}}">{{ pd.pm.to_user }}</a><br />
+<b>Trade status</b>: 
+{% if pd.pm.status == pd.pm.messagestatus['settled_trade'] %}
+Closed<br />
+{% elif pd.pm.status == pd.pm.messagestatus['rejected_trade'] %}
+Rejected<br />
+{% elif pd.pm.status == pd.pm.messagestatus['cancelled_trade'] %}
+Cancelled<br />
+{% else %}
+Open<br />
+{% endif %}
+<b>From:</b> <a href="/user/{{ pd.pm.from_user }}">{{ pd.pm.from_user }}</a><br />
+<b>To:</b> <a href="/user/{{ pd.pm.to_user}}">{{ pd.pm.to_user }}</a><br />
+</div>
+<div class="col-md-4">
 
+{% if pd.pm.status == pd.pm.messagestatus['settled_trade'] %}
+    <a class="btn btn-primary" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reopen">Reopen this trade</a>
+{% elif pd.pm.status == pd.pm.messagestatus['rejected_trade'] %}
+    {% if pd.pm.to_user == pd.authuser.username %}
+        <a class="btn btn-primary" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reopen">Reopen this trade</a>
+    {% endif %}
+{% elif pd.pm.status == pd.pm.messagestatus['cancelled_trade'] %}
+    {% if pd.pm.from_user == pd.authuser.username %}
+        <a class="btn btn-primary" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reopen">Reopen this trade</a>
+    {% endif %}
+{% else %}
+    {% if pd.pm.status == pd.pm.messagestatus['complete_trade'] %}
+        <a class="btn btn-default" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/settle">Close this trade</a>
+    {% endif %}
+
+    {% if pd.pm.to_user == pd.authuser.username %}
+        <a class="btn btn-danger" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject">Reject this trade</a><br />
+    {% else %}
+        <a class="btn btn-danger" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/cancel">Cancel this trade</a><br />
+    {% endif %}
+{% endif %}
+
+</div>
 <table class="table">
 <tr>
+<th>From</th>
 <th></th>
-<th>Owner</th>
+<th>To</th>
 <th>Item</th>
+<th></th>
 <th>Status</th>
+<th>Actions</th>
 </tr>
 {% for ti in pd.pm.items %}
 <tr>
 
-    <td>
-    {% for image in ti.item.images()[:1] %}
-        <a href="/image/{{ image.uid }}"><img style="max-width:500px;" class="img-rounded" src="/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
-    {% endfor %}
-    </td>
-    <td>{{ti.user.username }}</td>
+    {% if ti.user.uid != pd.authuser.uid %}
+    <td>{{ ti.user.username }}</td><td><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></td><td>{{pd.authuser.username}}</td>
+    {% else %}
+        {% if ti.user.username == pd.pm.from_user %}
+            <td>{{ pd.authuser.username }}</td><td><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></td><td>{{pd.pm.to_user}}</td>
+        {% else %}
+            <td>{{ pd.authuser.username }}</td><td><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></td><td>{{pd.pm.from_user}}</td>
+        {% endif %}
+    {% endif %}
 
     <td>{{ ti.item.name }}</td>
 
     <td>
-    {% if ti.acceptstatus < pd.pm.tradestatus['accepted'] %}
-        {% if ti.user.uid == pd.authuser.uid %}
-            <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/accept/{{ ti.uid }}">Accept item</a><br />
+    {% for image in ti.item.images()[:1] %}
+        <a href="/image/{{ image.uid }}"><img style="max-height:100px; max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /></a>
+    {% endfor %}
+    </td>
 
-            {% if ti.acceptstatus == pd.pm.tradestatus['rejected'] %}
-            Rejected
-            {% else %}
-            <a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject/{{ ti.uid }}">Reject item</a> 
+    {% if ti.acceptstatus < pd.pm.tradeitemstatus['accepted'] %}
+        {% if ti.user.uid == pd.authuser.uid %}
+            {% if ti.acceptstatus == pd.pm.tradeitemstatus['rejected'] %}
+            <td><b><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span><b></td>
+            {% elif pd.pm.status < pd.pm.messagestatus['complete_trade'] %}
+            <td><a class="btn btn-default" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject/{{ ti.uid }}">Reject</a> </td>
+            {% endif %}
+            {% if pd.pm.status < pd.pm.messagestatus['complete_trade'] %}
+            <td><a class="btn btn-default" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/accept/{{ ti.uid }}">Accept</a></td>
             {% endif %}
         {% else %}
-            {% if ti.acceptstatus == pd.pm.tradestatus['rejected'] %}
-                Rejected
+            {% if ti.acceptstatus == pd.pm.tradeitemstatus['rejected']  %}
+                <td><b><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span><b></td><td></td>
             {% else %}
-                Pending
+                <td><b><span class="glyphicon glyphicon-refresh" aria-hidden="true" style="color: blue;"></span><b></td><td></td>
             {%endif%}
         {%endif%}
     {% else %}
-        Accepted
+        {% if pd.pm.status > pd.pm.messagestatus['settled_trade'] and not ti.acceptstatus == pd.pm.tradeitemstatus['accepted'] %}
+            <td><b><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span><b></td><td></td>
+        {% else %}
+            <td><b><span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: green;"></span><b></td>
+        {% endif %}
+
+        {% if ti.user.uid == pd.authuser.uid and pd.pm.status < pd.pm.messagestatus['complete_trade'] %}
+        <td> <a class="btn btn-danger" href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/reject/{{ ti.uid }}">Cancel</a> </td>
+        {% endif %}
     {%endif%}
     </td>
 </tr>
 {% endfor %}
 </table>
+
+
 {% else %}
     <div class="page-header"><h3>Private Message</h3></div>
 {% endif %}
@@ -71,7 +129,7 @@ To: <a href="/user/{{ pd.pm.to_user}}">{{ pd.pm.to_user }}</a><br />
 <div class="well well-sm">
     <p>
     <b>{{ pd.pm.subject }}</b></br>
-    From: {{ pd.pm.from_user }}</br>
+    <b>From:</b> {{ pd.pm.from_user }}</br>
     <div class="well well-ff">{{ pd.pm.message }}<br/></div>
     <small>{{ pd.pm.sent }}</small></br>
     </p>
@@ -94,7 +152,7 @@ To: <a href="/user/{{ pd.pm.to_user}}">{{ pd.pm.to_user }}</a><br />
     <div class="well well-sm">
     <p>
     <b><a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid_obfuscated }}">{{ reply.subject }}</a></b></br>
-    From: {{ reply.from_user }}</b></br>
+    <b>From:</b> {{ reply.from_user }}</b></br>
     <div class="well well-ff">{{ reply.message }}<br/></div>
     <small>{{ reply.sent }}</small></br>
     </p>
@@ -103,7 +161,7 @@ To: <a href="/user/{{ pd.pm.to_user}}">{{ pd.pm.to_user }}</a><br />
      <div class="well well-sm">
         <p>
         <b><a href="/user/{{ pd.authuser.username }}/pm/{{ reply2.uid_obfuscated }}">{{ reply2.subject }}</a></b></br>
-        From: {{ reply2.from_user }}</b></br>
+        <b>From:</b> {{ reply2.from_user }}</b></br>
         <div class="well well-ff">{{ reply2.message }}<br/></div>
         <small>{{ reply2.sent }}</small>
         </p>

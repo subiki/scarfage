@@ -1,80 +1,49 @@
 from scarf import app
 from flask import flash, render_template, session, request, redirect
-from scarflib import pagedata, NoItem, NoUser, siteuser, siteitem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, pmessage, trademessage, messagestatus, tradeitem, tradestatus, deobfuscate, obfuscate
+from scarflib import pagedata, NoItem, NoUser, siteuser, siteitem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, pmessage, trademessage, messagestatus, tradeitem, tradeitemstatus, deobfuscate, obfuscate
 from main import page_not_found
 
 # fix these URLs s/pm/trade/
-@app.route('/user/<username>/pm/<messageid>/accept/<item>')
-def accepttradeitem(username, messageid, item):
+@app.route('/user/<username>/pm/<messageid>/<action>/<item>')
+@app.route('/user/<username>/pm/<messageid>/<action>')
+def accepttradeitem(username, messageid, action, item=None):
     pd = pagedata()
 
     if not pd.authuser.username == username:
         return page_not_found(404)
 
     if 'username' in session:
-        try:
-            ti = tradeitem(item)
-        except:
-            return page_not_found(404)
+        if item:
+            try:
+                ti = tradeitem(item)
+            except:
+                return page_not_found(404)
 
-        try:
-            t = trademessage.create(deobfuscate(messageid))
-        except:
-            return page_not_found(404)
+            if action == "accept":
+                ti.accept()
+            elif action == "reject":
+                ti.reject()
+            else:
+                return page_not_found(404)
+        else:
+            try:
+                t = trademessage.create(deobfuscate(messageid))
+            except NoItem:
+                return page_not_found(404)
 
-        ti.accept()
-
-    return redirect_back('index')
-
-@app.route('/user/<username>/pm/<messageid>/reject/<item>')
-def rejecttradeitem(username, messageid, item):
-    pd = pagedata()
-
-    if not pd.authuser.username == username:
-        return page_not_found(404)
-
-    # TODO: this doesn't check messageid...
-    if 'username' in session:
-        try:
-            t = tradeitem(item)
-            t.reject()
-        except NoItem:
-            return page_not_found(404)
-
-    return redirect_back('index')
-
-@app.route('/user/<username>/pm/<messageid>/settle')
-def settletrade(username, messageid):
-    pd = pagedata()
-
-    if not pd.authuser.username == username:
-        return page_not_found(404)
-
-    if 'username' in session:
-        try:
-            t = trademessage.create(deobfuscate(messageid))
-            t.settle()
-        except NoItem:
-            return page_not_found(404)
+            if action == "settle":
+                t.settle()
+            elif action == "cancel":
+                t.cancel()
+            elif action == "reject":
+                t.reject()
+            elif action == "reopen":
+                t.unread()
+                t.read()
+            else:
+                return page_not_found(404)
 
     return redirect_back('index')
-
-@app.route('/user/<username>/pm/<messageid>/reject')
-def rejecttrade(username, messageid):
-    pd = pagedata()
-
-    if not pd.authuser.username == username:
-        return page_not_found(404)
-
-    if 'username' in session:
-        try:
-            t = trademessage.create(deobfuscate(messageid))
-            t.reject()
-        except NoItem:
-            return page_not_found(404)
-
-    return redirect_back('index')
-
 
 @app.route('/user/<username>/trade/<itemid>/debug', methods=['GET'], defaults={'debug': True})
 @app.route('/user/<username>/trade/<itemid>', methods=['GET', 'POST'], defaults={'debug': False})
@@ -101,9 +70,9 @@ def trade(username, itemid, debug):
                 messageid = send_pm(pd.authuser.uid, pd.tradeuser.uid, subject, message, messagestatus['unread_trade'], parent)
 
                 for item in items:
-                    add_tradeitem(item, messageid, pd.authuser.uid, tradestatus['accepted'])
+                    add_tradeitem(item, messageid, pd.authuser.uid, tradeitemstatus['accepted'])
 
-                add_tradeitem(siteitem(itemid).uid, messageid, pd.tradeuser.uid, tradestatus['unmarked'])
+                add_tradeitem(siteitem(itemid).uid, messageid, pd.tradeuser.uid, tradeitemstatus['unmarked'])
 
                 if messageid:
                     flash('Submitted trade request!')

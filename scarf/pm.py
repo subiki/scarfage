@@ -9,12 +9,13 @@ from debug import dbg
 @app.route('/user/<username>/pm/<messageid>', defaults={'debug': False})
 def viewpm(username, messageid, debug):
     pd = pagedata()
+    dmid = deobfuscate(messageid)
 
-    if not 'username' in session or pd.authuser.username != username:
-        return page_not_found(404)
+    if not 'username' in session or pd.authuser.username != username or dmid is None:
+        return render_template('pm_error.html', pd=pd)
 
     if 'username' in session:
-        pm = trademessage.create(deobfuscate(messageid))
+        pm = trademessage.create(dmid)
         pm.read()
 
         if pm.messagestatus < messagestatus['unread_pm']:

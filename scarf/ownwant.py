@@ -58,17 +58,17 @@ def ownwant(item_id, values):
         moditem = siteitem(item_id)
     except NoItem:
         flash('Error adding ' + item_id + 'to your collection')
-        return False
+        return
 
     if 'username' in session:
         try:
             user = siteuser.create(session['username'])
         except NoUser:
             flash('You must be logged in to add items to a collection')
-            return False
+            return
     else:
         flash('You must be logged in to add items to a collection')
-        return False
+        return
 
     result = user.query_collection(item_id)
 
@@ -85,7 +85,5 @@ def ownwant(item_id, values):
 
     data = doupsert(sql)
 
-    sql = delete('ownwant', **{ 'own': '0', 'willtrade': '0', 'want': '0', 'hidden': '0' })
+    sql = "delete from ownwant where hidden = '0' and own = '0' and want = '0' and willtrade = '0';"
     result = doquery(sql)
-
-    return True 
