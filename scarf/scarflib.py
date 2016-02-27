@@ -556,6 +556,9 @@ class siteitem(object):
     def delete(self):
         item_cache = dict()
 
+        for image in self.images():
+            image.delete()
+
         sql = 'delete from itemedits where itemid = %(uid)s;'
         result = doquery(sql, {"uid": self.uid}) 
      
@@ -564,6 +567,9 @@ class siteitem(object):
 
         sql = 'delete from tradelist where itemid = %(itemid)s;'
         result = doquery(sql, {"itemid": self.uid}) 
+
+        sql = 'delete from itemtags where itemid = %(uid)s;'
+        result = doquery(sql, {"uid": self.uid}) 
 
         sql = 'delete from items where uid = %(uid)s;'
         result = doquery(sql, {"uid": self.uid}) 
