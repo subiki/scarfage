@@ -4,6 +4,8 @@ from scarflib import redirect_back, pagedata, siteimage, NoImage, user_by_uid
 from sql import doquery, read, Tree
 from main import page_not_found
 from debug import dbg
+
+from access import check_mod
  
 from PIL import Image
 import cStringIO
@@ -25,11 +27,9 @@ greyscale = [
             ]
 
 @app.route('/mod')
+@check_mod
 def moderate():
     pd = pagedata()
-
-    if 'username' not in session or pd.authuser.accesslevel < 10:
-        return redirect(url_for('accessdenied'))
 
     sql = read('imgmods')
     result = doquery(sql)
@@ -74,11 +74,9 @@ def moderate():
     return render_template('moderation.html', pd=pd)
 
 @app.route('/mod/ban/<user>')
+@check_mod
 def mod_ban_user(user):
     pd = pagedata()
-
-    if 'username' not in session or pd.authuser.accesslevel < 255:
-        return redirect(url_for('accessdenied'))
 
     pd.title="Banning user " + user
 
@@ -90,11 +88,9 @@ def mod_ban_user(user):
     return render_template('confirm.html', pd=pd)
 
 @app.route('/mod/image/<image>')
+@check_mod
 def mod_img(image):
     pd = pagedata()
-
-    if 'username' not in session or pd.authuser.accesslevel < 10:
-        return redirect(url_for('accessdenied'))
 
     modimg = siteimage.create(image)
     try:
@@ -145,6 +141,7 @@ def mod_img(image):
     return render_template('mod_img.html', pd=pd)
 
 @app.route('/mod/image/<imageid>/approve')
+@check_mod
 def mod_img_approve(imageid):
     pd = pagedata()
 
@@ -153,9 +150,6 @@ def mod_img_approve(imageid):
     except:
         flash('Error during moderation')
         return redirect(url_for('moderate'))
-
-    if 'username' not in session or pd.authuser.accesslevel < 10:
-        return redirect(url_for('accessdenied'))
 
     modimg.approve()
 

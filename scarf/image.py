@@ -8,6 +8,8 @@ from debug import dbg
 import base64
 import cStringIO
 
+from access import check_mod
+
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 
 @app.route('/newimg', methods=['POST'], defaults={'debug': False})
@@ -32,11 +34,9 @@ def newimg(debug):
         return redirect_back(url_for('index'))
 
 @app.route('/image/<img_id>/reallydelete')
+@check_mod
 def reallydelete_image(img_id):
     pd = pagedata()
-
-    if not pd.authuser.accesslevel >= 10:
-        return redirect(url_for('accessdenied'))
 
     delimg = siteimage.create(img_id)
     delimg.delete()
@@ -49,11 +49,9 @@ def reallydelete_image(img_id):
     return render_template('confirm.html', pd=pd)
 
 @app.route('/image/<img_id>/delete')
+@check_mod
 def delete_image(img_id):
     pd = pagedata()
-
-    if not pd.authuser.accesslevel >= 10:
-        return redirect(url_for('accessdenied'))
 
     delimg = siteimage.create(img_id)
 

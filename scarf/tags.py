@@ -3,6 +3,7 @@ from flask import redirect, url_for, render_template, session, request, flash
 from scarflib import redirect_back, pagedata, siteimage, NoImage, user_by_uid, Tags
 from sql import doquery, read
 from main import page_not_found
+from access import check_mod
  
 @app.route('/tag/')
 def bare_tag():
@@ -11,9 +12,6 @@ def bare_tag():
 @app.route('/tag/<tag>')
 def mod_tag(tag):
     pd = pagedata()
-
-    if 'username' not in session or pd.authuser.accesslevel < 10:
-        return redirect(url_for('accessdenied'))
 
     pd.tree = Tags()
     try:
@@ -38,11 +36,9 @@ def mod_tag(tag):
         return page_not_found(404)
 
 @app.route('/tag/<tag>/delete')
+@check_mod
 def mod_tag_delete(tag):
     pd = pagedata()
-
-    if 'username' not in session or pd.authuser.accesslevel < 10:
-        return redirect(url_for('accessdenied'))
 
     tree = Tags()
     decode_tag = pd.decode(tag)
@@ -96,6 +92,7 @@ def new_metatag():
     return redirect_back('index')
 
 @app.route('/tag/reparent', methods=['POST'])
+@check_mod
 def tagreparent():
     pd = pagedata()
 

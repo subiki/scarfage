@@ -6,6 +6,7 @@ from main import page_not_found
 from nocache import nocache
 from debug import dbg
 from sql import read, doquery, Tree
+from access import check_admin
 
 import markdown
 md_extensions = ['markdown.extensions.extra', 'markdown.extensions.nl2br', 'markdown.extensions.sane_lists']
@@ -19,6 +20,7 @@ def itemroot():
     return redirect(url_for('index'))
 
 @app.route('/item/<item_id>/reallydelete')
+@check_admin
 def reallydelete_item(item_id):
     try:
         delitem = siteitem(item_id)
@@ -26,9 +28,6 @@ def reallydelete_item(item_id):
         return page_not_found(404)
 
     pd = pagedata()
-
-    if not pd.authuser.accesslevel == 255:
-        return redirect(url_for('accessdenied'))
 
     pd.title=item_id + " has been deleted"
 
@@ -41,6 +40,7 @@ def reallydelete_item(item_id):
     return render_template('confirm.html', pd=pd)
 
 @app.route('/item/<item_id>/delete')
+@check_admin
 def delete_item(item_id):
     try:
         delitem = siteitem(item_id)
@@ -48,9 +48,6 @@ def delete_item(item_id):
         return page_not_found(404)
 
     pd = pagedata()
-
-    if not pd.authuser.accesslevel == 255:
-        return redirect(url_for('accessdenied'))
 
     pd.title=item_id
 
