@@ -13,5 +13,6 @@ import scarf.moderation
 import scarf.user
 import scarf.trade
 import scarf.pm
+import scarf.tags
 import scarf.stats
 import scarf.memoize

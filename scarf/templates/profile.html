@@ -230,19 +230,19 @@
            </td>
 
 
-            <td><a href="/item/{{ item.name }}">{{ item.name }}</a></td>
+            <td><a href="/item/{{ item.uid }}">{{ item.name }}</a></td>
             {% if item.hidden == 0 %}
-                <td><a href="/item/{{ item.name }}/hide">Don't show to others</a></td>
+                <td><a href="/item/{{ item.uid }}/hide">Don't show to others</a></td>
             {% else %}
-                <td><a href="/item/{{ item.name }}/show">Show to others</a></td>
+                <td><a href="/item/{{ item.uid }}/show">Show to others</a></td>
             {% endif %}
 
             {% if item.willtrade == 1 %}
-               <td><a href="/item/{{ item.name }}/wonttrade">Mark as unavailable for trade</a></td>
+               <td><a href="/item/{{ item.uid }}/wonttrade">Mark as unavailable for trade</a></td>
             {% else %}
-               <td><a href="/item/{{ item.name }}/willtrade">Mark as available for trade</a></td>
+               <td><a href="/item/{{ item.uid }}/willtrade">Mark as available for trade</a></td>
             {% endif %}
-           <td><a href="/item/{{ item.name }}/donthave">Remove from collection</a></td>
+           <td><a href="/item/{{ item.uid }}/donthave">Remove from collection</a></td>
         {% endif %}
       {% else %}
         {% if item.hidden == 0 and item.have == 1 %}
@@ -252,7 +252,7 @@
                {% endfor %}
            </td>
 
-            <td> <a href="/item/{{ item.name }}">{{ item.name }}</a> </td>
+            <td> <a href="/item/{{ item.uid }}/">{{ item.name }}</a> </td>
             {% if item.willtrade == 1 %}
                 <td>available for trade / <a href="/user/{{ pd.profileuser.username }}/trade/{{ item.uid }}">Make trade request</a></td>
             {% endif %}
@@ -267,7 +267,7 @@
      {% if item.want == 1 %}
      <div class="col-md-4">
        <div align="center">
-           <a href="/item/{{ item.name }}">{{ item.name }}</a><br \>
+           <a href="/item/{{ item.uid }}/">{{ item.name }}</a><br \>
 
            {% for image in item.images()[:1] %}
            <p>
@@ -276,7 +276,7 @@
            {% endfor %}
 
            {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
-             <small><a href="/item/{{ item.name }}/dontwant"><span class="glyphicon glyphicon-trash"></span> Remove from list</a></small>
+             <small><a href="/item/{{ item.uid }}/dontwant"><span class="glyphicon glyphicon-trash"></span> Remove from list</a></small>
            {%else%}
              <a href="/user/{{ pd.profileuser.username }}/trade/{{ item.uid }}">Make trade request</a>
            {% endif %}

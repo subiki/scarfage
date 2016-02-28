@@ -19,7 +19,7 @@ def have(item_id):
 
 @app.route('/item/<item_id>/hide')
 def hide(item_id):
-    update = dict(hidden=1)
+    update = dict(willtrade=0, hidden=1)
     ownwant(item_id, update)
     return redirect_back('/item/' + item_id)
 
@@ -85,5 +85,5 @@ def ownwant(item_id, values):
 
     data = doupsert(sql)
 
-    sql = "delete from ownwant where hidden = '0' and own = '0' and want = '0' and willtrade = '0';"
+    sql = "delete from ownwant where own = '0' and want = '0' and willtrade = '0';"
     result = doquery(sql)

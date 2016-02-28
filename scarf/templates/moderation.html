@@ -6,6 +6,13 @@
 
 <div id="content">
 
+<div class="page-heading"><h3>Tags</h3></div>
+<table class="table">
+{% for tag in pd.tags.exact_children_of('tags') %}
+<tr><td>{{ tag }}</td><td><a href="/tag/{{ pd.encode(tag) }}">Edit</a> </tr>
+{% endfor %}
+</table>
+
 <div class="page-heading"><h3>Image Moderation</h3></div>
 
 <table class="table">

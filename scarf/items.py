@@ -1,11 +1,12 @@
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, flash
 from werkzeug import secure_filename
-from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items
+from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items, escape_html
 from main import page_not_found
 from nocache import nocache
 from debug import dbg
-from sql import read, doquery
+from sql import read, doquery, Tree
+from access import check_admin
 
 import markdown
 md_extensions = ['markdown.extensions.extra', 'markdown.extensions.nl2br', 'markdown.extensions.sane_lists']
@@ -19,6 +20,7 @@ def itemroot():
     return redirect(url_for('index'))
 
 @app.route('/item/<item_id>/reallydelete')
+@check_admin
 def reallydelete_item(item_id):
     try:
         delitem = siteitem(item_id)
@@ -26,9 +28,6 @@ def reallydelete_item(item_id):
         return page_not_found(404)
 
     pd = pagedata()
-
-    if not pd.authuser.accesslevel == 255:
-        return redirect(url_for('accessdenied'))
 
     pd.title=item_id + " has been deleted"
 
@@ -41,6 +40,7 @@ def reallydelete_item(item_id):
     return render_template('confirm.html', pd=pd)
 
 @app.route('/item/<item_id>/delete')
+@check_admin
 def delete_item(item_id):
     try:
         delitem = siteitem(item_id)
@@ -48,9 +48,6 @@ def delete_item(item_id):
         return page_not_found(404)
 
     pd = pagedata()
-
-    if not pd.authuser.accesslevel == 255:
-        return redirect(url_for('accessdenied'))
 
     pd.title=item_id
 
@@ -67,19 +64,20 @@ def delete_item(item_id):
 def show_item(item_id, debug):
     pd = pagedata()
 
+    if item_id is 'new':
+        return redirect("/item/" + item_id + "/edit")
+
     try:
         showitem = siteitem(item_id)
-        # todo: http://htmlpurifier.org/
-        # todo: memoize
 
-        showitem.description_html = markdown.markdown(str(showitem.body()), md_extensions)
+        showitem.description_html = markdown.markdown(escape_html(str(showitem.body())), md_extensions)
     except NoItem:
-        return redirect("/item/" + item_id + "/edit")
+        return page_not_found(404)
 
     if 'username' in session:
         try:
             user = siteuser.create(session['username'])
-            pd.iteminfo = user.query_collection(showitem.name)
+            pd.iteminfo = user.query_collection(showitem.uid)
         except (NoUser, NoItem):
             pass
 
@@ -99,15 +97,16 @@ def revert_item_edit(item_id, edit, debug):
     pd = pagedata()
 
     try:
-        pd.item = siteitem(item_id)
+        item = siteitem(item_id)
 
-        showitem.old = True
-        showitem.editid = edit
+        item.old = True
+        item.description = edit
     except:
         pass
 
-    pd.title="Reverting: " + item_id
-    pd.item_name = item_id
+    pd.title="Reverting: " + item.name
+    pd.item_name = item.name
+    pd.item = item
 
     if debug:
         if 'username' in session and pd.authuser.accesslevel == 255:
@@ -123,11 +122,10 @@ def show_item_edit(item_id, edit, debug):
 
     try:
         showitem = siteitem(item_id)
-        # todo: http://htmlpurifier.org/
         showitem.old = True
-        showitem.editid = edit
+        showitem.description = edit
 
-        showitem.description_html = markdown.markdown(str(showitem.body()), md_extensions)
+        showitem.description_html = markdown.markdown(escape_html(str(showitem.body(edit))), md_extensions)
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 
@@ -188,10 +186,13 @@ def edititem(debug, item_id=None):
                     flash('Edited item!')
                     return redirect('/item/' + str(uid))
                 else:
-                    flash(request.form['name'] + " already exists!")
+                    flash(item.name + " already exists!")
                     item_id = request.form['uid']
-
             except NoItem:
+                if uid_by_item(request.form['name']):
+                    flash(request.form['name'] + " already exists!")
+                    return redirect_back("/item/new")
+
                 uid = new_item(request.form['name'], request.form['desc'], userid)
                 return redirect('/item/' + str(uid))
 
@@ -210,3 +211,35 @@ def edititem(debug, item_id=None):
             pd.debug = dbg(pd)
 
     return render_template('edititem.html', pd=pd)
+
+@app.route('/item/tag', methods=['POST'])
+@nocache
+def tagitem():
+    pd = pagedata()
+    if request.method == 'POST':
+        if 'username' in session:
+            userid = pd.authuser.uid
+        else:
+            userid = 0 
+
+        if 'tag' in request.form:
+            if request.form['tag'] == '':
+                return redirect_back('index')
+
+            try:
+                item = siteitem(request.form['uid'])
+                item.add_tag(request.form['tag'][:64])
+                return redirect('/item/' + str(item.uid))
+            except NoItem:
+                return page_not_found(404)
+
+@app.route('/item/<item_id>/untag/<tag_ob>')
+def untag_item(item_id, tag_ob):
+    try:
+        item = siteitem(item_id)
+    except NoItem: 
+        return page_not_found(404)
+
+    pd = pagedata()
+    item.remove_tag(pd.decode(tag_ob))
+    return redirect('/item/' + str(item.uid))

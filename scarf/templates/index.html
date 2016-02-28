@@ -2,86 +2,27 @@
 
 {% block body %}
 
-
-<div class="container">
-  <div id="top-collectors" class="col-md-5 stat">
-    <div class="page-heading"><h3> Top Collectors </h3></div>
-
-    <table class="table">
-      <tr>
-        <th>User</th>
-        <th>Trades</th>
-      </tr>
-    {% for user in pd.topcollectors %}
-      <tr>
-        <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
-        <td>{{ user[0] }}</td>
-      </tr>
-    {% endfor %}
-    </table><br/>
-  </div>
-
-  <div id="top-contributors" class="col-md-5 stat">
-    <div class="page-heading"><h3> Top Contributors </h3></div>
-
-    <table class="table">
-      <tr>
-        <th>User</th>
-        <th>Edits</th>
-      </tr>
-    {% for user in pd.topcontributors %}
-      <tr>
-        <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
-        <td>{{ user[0] }}</td>
-      </tr>
-    {% endfor %}
-    </table><br/>
-  </div>
-
-  <div id="most-needy" class="col-md-5 stat">
-    <div class="page-heading"><h3> Most Needy </h3></div>
-
-    <table class="table">
-      <tr>
-        <th>User</th>
-        <th>Wanted</th>
-      </tr>
-    {% for user in pd.topneedy %}
-      <tr>
-        <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
-        <td>{{ user[0] }}</td>
-      </tr>
-    {% endfor %}
-    </table><br/>
-  </div>
-
-  <div id="most-available" class="col-md-5 stat">
-    <div class="page-heading"><h3> Most items available for trade </h3></div>
-
-    <table class="table">
-      <tr>
-        <th>User</th>
-        <th>Items</th>
-
-      </tr>
-    {% for user in pd.topwilltrade %}
-      <tr>
-        <td><a href="/user/{{ user[1] }}">{{ user[1] }}</a></td>
-        <td>{{ user[0] }}</td>
-      </tr>
-    {% endfor %}
-    </table><br/>
-  </div>
+<div class="jumbotron">
+    <div class="container">
+    Be excellent to each other.
+    </div>
 </div>
 
-
 <div class="container">
-    <div class="col-md-5 stat">
-          <div class="page-heading"><h3>Recently Added:</h3></div>
+  <div class="row">
+    <div class="col-md-4">
+        <div class="page-header"><h4>Recently aded items:</h4></div>
         {% for item in pd.items %}
         {{ item.added }} - <a href="/item/{{ item.uid }}">{{ item.name }}</a><br />
         {% endfor %}
     </div>
+    <div class="col-md-4">
+    Something else cool
+    </div>
+    <div class="col-md-4">
+    Some more cool stuff
+    </div>
+  </div>
 </div>
 
 {% endblock %}

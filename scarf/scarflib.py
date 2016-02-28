@@ -8,6 +8,7 @@ import bcrypt
 import hashlib
 #import hmac
 import random
+import cgi
 
 from config import *
 from string import ascii_letters, digits
@@ -21,6 +22,13 @@ from mail import send_mail
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 
 ########## Utility stuff
+
+def escape_html(text):
+    """escape strings for display in HTML"""
+    return cgi.escape(text, quote=True).\
+           replace(u'\n', u'<br />').\
+           replace(u'\t', u'&emsp;').\
+           replace(u'  ', u' &nbsp;')
 
 """
 Workaround for the issue identified here:
@@ -58,7 +66,6 @@ def ip_uid(ip, r=False):
             return None
         sql = "insert into ip (ip) values ( %(ip)s );"
         result = doquery(sql, { 'ip': ip })
-        app.logger.info(result)
         return ip_uid(ip, True)
 
 class pagedata(object):
@@ -71,11 +78,14 @@ class pagedata(object):
         except NameError:
             self.prefix = ''
 
+        self.encode = base64.b32encode
+        self.decode = base64.b32decode
+
         if 'username' in session:
-            self.authuser = siteuser.create(session['username'])
             try:
                 self.authuser = siteuser.create(session['username'])
             except:
+                self.authuser = None
                 pass
 
 ######### User stuff
@@ -232,8 +242,8 @@ class siteuser(object):
             sql = """select ownwant.uid, ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden
                      from items
                      join ownwant on ownwant.itemid=items.uid
-                     where items.name = %(name)s and ownwant.userid = %(uid)s"""
-            result = doquery(sql, { 'name': item, 'uid': self.uid })
+                     where items.uid = %(itemid)s and ownwant.userid = %(uid)s"""
+            result = doquery(sql, { 'itemid': item, 'uid': self.uid })
 
             ret.uid = result[0][0]
             ret.have = result[0][1]
@@ -283,11 +293,12 @@ class siteuser(object):
  
         if self.accesslevel == 0:
             flash('Your account has been banned')
+            raise AuthFail(self.username)
+
+        if verify_pw(password, pwhash):
+            session['username'] = self.username
         else:
-            if verify_pw(password, pwhash):
-                session['username'] = self.username
-            else:
-                raise AuthFail(self.username)
+            raise AuthFail(self.username)
 
     def newaccesslevel(self, accesslevel):
         self.accesslevel = int(accesslevel)
@@ -348,6 +359,8 @@ def check_email(email):
         return None
 
 def new_user(username, password, email):
+    username = username.strip()
+    email = email.strip()
     try:
         joined = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -356,11 +369,11 @@ def new_user(username, password, email):
 
         sql = "insert into userstat_lastseen (date, uid) values (%(lastseen)s, %(uid)s);"
         result = doquery(sql, { 'uid': uid_by_user(username), 'lastseen': joined })
+
+        message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=request.environ['REMOTE_ADDR'])
+        send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
     except Exception as e:
         return False
-
-    message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=request.environ['REMOTE_ADDR'])
-    send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
 
     return True
 
@@ -415,9 +428,77 @@ class siteimage(object):
 
 ######### Item stuff
 
-class Tag(Tree):
+class Tags(Tree):
     def __init__(self):
-        super(self.__class__, self).__init__('tags')
+        self.root = 'tags'
+        super(self.__class__, self).__init__(self.root)
+
+    def insert_children(self, names, parentname):
+        if parentname == 'Unsorted':
+            try:
+                self.retrieve('Unsorted')
+            except IndexError:
+                self.insert_children(['Unsorted'], self.root)
+
+        super(self.__class__, self).insert_children(names, parentname)
+
+    def delete(self, nodename):
+        if nodename == 'Unsorted':
+            return False
+
+        if nodename == self.root:
+            return False
+
+        sql = "delete from itemtags where tag=%(tag)s;"
+        doquery(sql, { 'tag': nodename })
+
+        sql = "delete from metatags where metatag=%(tag)s;"
+        doquery(sql, { 'tag': nodename })
+
+        return super(self.__class__, self).delete(nodename)
+
+    def add_metatag(self, tag, metatag):
+        try:
+            data = self.retrieve(metatag)
+        except IndexError:
+            self.insert_children([metatag], 'Unsorted')
+
+        try:
+            sql = "insert ignore into metatags (tag, metatag) values (%(tag)s, %(metatag)s);"
+            doquery(sql, { 'metatag': metatag, 'tag': tag })
+        except Exception as e:
+            if e[0] == 1062: # ignore duplicates
+                pass
+            else:
+                raise
+
+    def metatags(self, tag):
+        sql = "select metatag from metatags where tag = %(tag)s;"
+        tags = doquery(sql, { 'tag': tag })
+
+        ret = list()
+        for tag in tags:
+            ret.append(tag[0])
+        return ret
+
+    def items(self, tag):
+        sql = "select itemid from itemtags where tag = %(tag)s;"
+        tags = doquery(sql, { 'tag': tag })
+
+        ret = list()
+        for tag in tags:
+            ret.append(siteitem(tag[0]))
+        return ret
+
+    def items_from_children(self, tag):
+        ret = list()
+
+        items = dict()
+        for child in self.all_children_of(tag):
+            for item in self.items(child):
+                ret = list(set(ret) ^ set([item]))
+
+        return ret
 
 item_cache = dict()
 @memoize_with_expiry(item_cache, long_cache_persist)
@@ -462,6 +543,8 @@ class siteitem(object):
         except IndexError:
             raise NoItem(uid)
 
+        self.tree = Tags()
+
         """
         sql = 'select tag from itemtags where uid = %(uid)s;'
         result = doquery(sql, { 'uid': uid })
@@ -475,6 +558,9 @@ class siteitem(object):
     def delete(self):
         item_cache = dict()
 
+        for image in self.images():
+            image.delete()
+
         sql = 'delete from itemedits where itemid = %(uid)s;'
         result = doquery(sql, {"uid": self.uid}) 
      
@@ -484,10 +570,14 @@ class siteitem(object):
         sql = 'delete from tradelist where itemid = %(itemid)s;'
         result = doquery(sql, {"itemid": self.uid}) 
 
+        sql = 'delete from itemtags where itemid = %(uid)s;'
+        result = doquery(sql, {"uid": self.uid}) 
+
         sql = 'delete from items where uid = %(uid)s;'
         result = doquery(sql, {"uid": self.uid}) 
 
     def update(self):
+        self.name = self.name.strip()[:64]
         sql = "update items set name = %(name)s, description = %(desc)s, modified = %(modified)s where uid = %(uid)s;"
         return doquery(sql, {"uid": self.uid, "desc": self.description, "name": self.name, "modified": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") })
 
@@ -528,9 +618,11 @@ class siteitem(object):
 
     body_cache = dict()
     @memoize_with_expiry(body_cache, cache_persist)
-    def body(self):
+    def body(self, edit=None):
+        if not edit:
+            edit = self.description
         sql = "select body from itemedits where uid = '%(uid)s';"
-        return doquery(sql, {'uid': self.description })[0][0]
+        return doquery(sql, {'uid': int(edit) })[0][0]
 
     have_cache = dict()
     @memoize_with_expiry(have_cache, cache_persist)
@@ -538,15 +630,14 @@ class siteitem(object):
         haveusers = list()
         have = 0
 
-        sql = "select * from ownwant where itemid = %(uid)s"
+        sql = "select userid,hidden from ownwant where itemid = %(uid)s and own = 1"
         res = doquery(sql, {"uid": self.uid})
         
         for user in res:
-            if (user[3] == 1):
-                have = have + 1
-                if(user[6] == 0):
-                    userinfo = siteuser.create(user_by_uid(user[1]))
-                    haveusers.append(userinfo)
+            have = have + 1
+            if not user[1]:
+                userinfo = siteuser.create(user_by_uid(user[0]))
+                haveusers.append(userinfo)
 
         return (have, haveusers)
 
@@ -556,16 +647,13 @@ class siteitem(object):
         willtradeusers = list()
         willtrade = 0
 
-        sql = "select * from ownwant where itemid = %(uid)s"
+        sql = "select userid from ownwant where itemid = %(uid)s and willtrade = 1"
         res = doquery(sql, {"uid": self.uid})
- 
         
         for user in res:
-            if (user[4] == 1):
-                willtrade = willtrade + 1
-                if(user[6] == 0):
-                    userinfo = siteuser.create(user_by_uid(user[1]))
-                    willtradeusers.append(userinfo)
+            willtrade = willtrade + 1
+            userinfo = siteuser.create(user_by_uid(user[0]))
+            willtradeusers.append(userinfo)
 
         return (willtrade, willtradeusers)
 
@@ -575,17 +663,76 @@ class siteitem(object):
         wantusers = list()
         want = 0
 
-        sql = "select * from ownwant where itemid = %(uid)s"
+        sql = "select userid from ownwant where itemid = %(uid)s and want = 1 and hidden = 0"
         res = doquery(sql, {"uid": self.uid})
         
         for user in res:
-            if (user[5] == 1):
-                want = want + 1
-                if(user[6] == 0):
-                    userinfo = siteuser.create(user_by_uid(user[1]))
-                    wantusers.append(userinfo)
+            want = want + 1
+            userinfo = siteuser.create(user_by_uid(user[0]))
+            wantusers.append(userinfo)
 
         return (want, wantusers)
+
+    def tags(self):
+        sql = "select tag from itemtags where itemid = %(itemid)s;"
+        tags = doquery(sql, { 'itemid': self.uid })
+
+        ret = list()
+        for tag in tags:
+            ret.append(self.tree.retrieve(tag[0]))
+        return ret
+
+    def tags_with_parents(self):
+        sql = "select tag from itemtags where itemid = %(itemid)s;"
+        direct_tags = doquery(sql, { 'itemid': self.uid })
+
+        ret = dict()
+        for tag in direct_tags:
+            path = self.tree.path_to(tag[0])
+            # metatags are ignored for now because we don't care about their path
+            if 'Metatags' not in path:
+                for path_item in path:
+                    excludes = list()
+                    excludes.append('Metatags')
+                    excludes.append('Hidden')
+                    excludes.append('Unsorted')
+                    excludes.append(self.tree.root)
+                    if path_item not in excludes: 
+                        # is inherited
+                        ret[path_item] = True
+
+        # ensure all tags directly applied to the item are included and marked as direct
+        for tag in direct_tags:
+            ret[tag[0]] = False
+
+        return ret
+        
+    def add_tag(self, tag, parent=None):
+        try:
+            self.tree.retrieve(tag)
+        except IndexError:
+            if parent:
+                self.tree.insert_children([tag], parent)
+            else:
+                self.tree.insert_children([tag], 'Unsorted')
+
+        try:
+            sql = "insert into itemtags (itemid, tag) values (%(itemid)s, %(tag)s);"
+            doquery(sql, { 'itemid': self.uid, 'tag': tag })
+        except Exception as e:
+            if e[0] == 1062: # ignore duplicates
+                pass
+            else:
+                raise
+
+    def remove_tag(self, tag):
+        try:
+            self.tree.retrieve(tag)
+        except IndexError:
+            return
+
+        sql = "delete from itemtags where itemid=%(itemid)s and tag=%(tag)s;"
+        doquery(sql, { 'itemid': self.uid, 'tag': tag })
 
 def new_edit(itemid, description, userid):
     if userid == 0:
@@ -604,6 +751,7 @@ def new_edit(itemid, description, userid):
     return edit 
 
 def new_item(name, description, userid):
+    name = name.strip()[:64]
     sql = "insert into items (name, description, added, modified) values (%(name)s, 0, %(now)s, %(now)s);"
     doquery(sql, { 'now': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 'name': name })
 
@@ -616,6 +764,7 @@ def new_item(name, description, userid):
 
 def new_img(f, title, parent):
     image = base64.b64encode(f.read())
+    title = title.strip()[:64]
 
     userid = None
     if 'username' in session:
@@ -624,8 +773,9 @@ def new_img(f, title, parent):
     sql = "insert into images (tag, parent, userid, image, ip) values (%(tag)s, %(parent)s, %(userid)s, %(image)s, %(ip)s);"
     doquery(sql, { 'tag': title, 'userid': userid, 'ip': ip_uid(request.remote_addr), 'parent': parent, 'image': image})
 
-    sql = "select uid from images where tag=%(tag)s and parent=%(parent)s and ip=%(ip)s;"
-    imgid = doquery(sql, { 'tag': title, 'ip': ip_uid(request.remote_addr), 'parent': parent })[0][0]
+    # there is a potential race condition with last_insert_id()
+    sql = "select last_insert_id();"
+    imgid = doquery(sql)[0][0]
 
     sql = "insert into imgmods (userid, imgid) values (%(userid)s, %(imgid)s);"
     doquery(sql, { 'userid': userid, 'imgid': imgid })

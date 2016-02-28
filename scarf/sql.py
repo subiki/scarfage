@@ -4,6 +4,8 @@ import socket
 from time import time
 import datetime
 import inspect
+import random
+import string
 
 from config import dbHost, dbName, dbUser, dbPass
 
@@ -51,6 +53,13 @@ class Tree(object):
                           parent.ref, name) for offset, name in enumerate(names)])
         self.conn.commit()
 
+    def rename(self, nodename, newname):
+        self.conn.begin()
+        node = self.retrieve(nodename)
+        cur = self.conn.cursor()
+        cur.execute("UPDATE tree SET name = %s WHERE name = %s", (newname, nodename))
+        self.conn.commit()
+
     def delete(self, nodename):
         self.conn.begin()
         node = self.retrieve(nodename)
@@ -60,6 +69,7 @@ class Tree(object):
         cur.execute("UPDATE tree SET lhs = lhs - %s WHERE lhs > %s", (diff, node.rhs))
         cur.execute("UPDATE tree SET rhs = rhs - %s WHERE rhs > %s", (diff, node.rhs))
         self.conn.commit()
+        return True
 
     def create_root(self, name):
         self.conn.begin()
@@ -85,6 +95,21 @@ class Tree(object):
         else:
             retval.parent = None
         return retval
+
+    def draw_tree(self, rootname):
+        root = self.retrieve(rootname)
+        cur = self.conn.cursor()
+        cur.execute(
+            """SELECT COUNT(t2.name) AS indentation, t1.name 
+            FROM tree AS t1, tree AS t2
+            WHERE t1.lhs BETWEEN t2.lhs AND t2.rhs
+            AND t2.lhs BETWEEN %s AND %s
+            GROUP BY t1.name
+            ORDER BY t1.lhs""", (root.lhs, root.rhs))
+        res = list()
+        for result in cur.fetchall():
+            res.append((result[1], int(result[0]-1)))
+        return res
 
     def all_children_of(self, rootname):
         cur = self.conn.cursor()
@@ -132,18 +157,30 @@ class Tree(object):
             WHERE t2.lhs BETWEEN t1.lhs AND t1.rhs AND t2.name = %s
             ORDER BY t1.lhs""", (childname,))
         return [result[0] for result in cur.fetchall()]
-    
 
-"""
-draw tree
+    def reparent(self, node, parent):
+        if parent == self.parent_of(node):
+            app.logger.error('reparent: null op!')
+            return
+            
+        if node == parent:
+            app.logger.error('reparent: attempted to reparent into myself!')
+            return
 
-SELECT COUNT(t2.name) AS indentation, t1.name 
-FROM categories AS t1, AS t2
-WHERE t1.lhs BETWEEN t2.lhs AND t2.rhs
-AND t2.lhs BETWEEN %s AND %s
-GROUP BY t1.name
-ORDER BY t1.lhs, (root.lhs, root.rhs))
-"""
+        if node in self.all_children_of('parent'):
+            app.logger.error('reparent: attempted to reparent into a child!')
+            return
+
+        temp_node = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(20))
+
+        self.insert_children([temp_node], parent)
+
+        children = self.exact_children_of(node)
+        for child in children:
+            self.reparent(child, temp_node)
+
+        Tree(self.root).delete(node)
+        self.rename(temp_node, node)
 
 db = None
 
