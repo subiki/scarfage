@@ -82,10 +82,10 @@ class pagedata(object):
         self.decode = base64.b32decode
 
         if 'username' in session:
-            self.authuser = siteuser.create(session['username'])
             try:
                 self.authuser = siteuser.create(session['username'])
             except:
+                self.authuser = None
                 pass
 
 ######### User stuff
@@ -359,19 +359,21 @@ def check_email(email):
         return None
 
 def new_user(username, password, email):
+    username = username.strip()
+    email = email.strip()
     try:
         joined = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         sql = "insert into users (username, pwhash, email, joined, accesslevel) values (%(username)s, %(pwhash)s, %(email)s, %(joined)s, '1');"
-        result = doquery(sql, { 'username': username.strip(), 'pwhash': gen_pwhash(password), 'email': email.strip(), 'joined': joined })
+        result = doquery(sql, { 'username': username, 'pwhash': gen_pwhash(password), 'email': email, 'joined': joined })
 
         sql = "insert into userstat_lastseen (date, uid) values (%(lastseen)s, %(uid)s);"
         result = doquery(sql, { 'uid': uid_by_user(username), 'lastseen': joined })
+
+        message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=request.environ['REMOTE_ADDR'])
+        send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
     except Exception as e:
         return False
-
-    message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=request.environ['REMOTE_ADDR'])
-    send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
 
     return True
 
