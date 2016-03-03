@@ -92,7 +92,6 @@ def mod_ban_user(user):
 def mod_img(image):
     pd = pagedata()
 
-    modimg = siteimage.create(image)
     try:
         modimg = siteimage.create(image)
     except NoImage:

@@ -29,7 +29,7 @@ def reallydelete_item(item_id):
 
     pd = pagedata()
 
-    pd.title=item_id + " has been deleted"
+    pd.title=delitem.name + " has been deleted"
 
     delitem.delete()
 
@@ -49,7 +49,7 @@ def delete_item(item_id):
 
     pd = pagedata()
 
-    pd.title=item_id
+    pd.title=delitem.name
 
     pd.accessreq = 255
     pd.conftext = "Deleting item " + delitem.name + ". This will also delete all trades but not the associated PMs. If this item has open trades you are going to confuse people. Are you really sure you want to do this?"
@@ -81,7 +81,7 @@ def show_item(item_id, debug):
         except (NoUser, NoItem):
             pass
 
-    pd.title = item_id
+    pd.title = showitem.name
     pd.item = showitem
 
     if debug:
@@ -129,7 +129,7 @@ def show_item_edit(item_id, edit, debug):
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 
-    pd.title = item_id
+    pd.title = showitem.name
     pd.item = showitem
 
     if debug:
@@ -149,7 +149,7 @@ def show_item_history(item_id, debug):
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 
-    pd.title = item_id
+    pd.title = showitem.name
     pd.item = showitem
 
     if debug:
@@ -202,7 +202,7 @@ def edititem(debug, item_id=None):
         except:
             return page_not_found(404)
      
-        pd.title="Editing: " + str(item_id)
+        pd.title="Editing: %s" % pd.item.name
     else:
         pd.title="Editing: New Item"
 

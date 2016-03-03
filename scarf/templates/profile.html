@@ -229,7 +229,7 @@
         {% if item.have == 1 %}
            <td>
                {% for image in item.images()[:1] %}
-                   <a href="/image/{{ image.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+                   <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
                {% endfor %}
            </td>
 
@@ -252,11 +252,11 @@
         {% if item.hidden == 0 and item.have == 1 %}
            <td>
                {% for image in item.images()[:1] %}
-                   <a href="/image/{{ image.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+                   <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
                {% endfor %}
            </td>
 
-            <td> <a href="/item/{{ item.uid }}/">{{ item.name }}</a> </td>
+            <td> <a href="/item/{{ item.uid }}">{{ item.name }}</a> </td>
             {% if item.willtrade == 1 %}
                 <td>available for trade / <a href="/user/{{ pd.profileuser.username }}/trade/{{ item.uid }}">Make trade request</a></td>
             {% endif %}
@@ -271,11 +271,11 @@
      {% if item.want == 1 %}
      <div class="col-md-4">
        <div align="center">
-           <a href="/item/{{ item.uid }}/">{{ item.name }}</a><br \>
+           <a href="/item/{{ item.uid }}">{{ item.name }}</a><br \>
 
            {% for image in item.images()[:1] %}
            <p>
-           <a href="/image/{{ image.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
+           <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /> </a>
            </p>
            {% endfor %}
 
