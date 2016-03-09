@@ -1,7 +1,7 @@
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, flash
 from sql import upsert, doupsert, read, doquery, delete
-from scarflib import siteuser, NoUser, siteitem, NoItem, redirect_back
+from scarflib import SiteUser, NoUser, SiteItem, NoItem, redirect_back
 
 #TODO more user feedback
 
@@ -55,14 +55,14 @@ def dontwant(item_id):
 
 def ownwant(item_id, values):
     try:
-        moditem = siteitem(item_id)
+        moditem = SiteItem(item_id)
     except NoItem:
         flash('Error adding ' + item_id + 'to your collection')
         return
 
     if 'username' in session:
         try:
-            user = siteuser.create(session['username'])
+            user = SiteUser.create(session['username'])
         except NoUser:
             flash('You must be logged in to add items to a collection')
             return

@@ -2,7 +2,7 @@ from StringIO import StringIO
 from PIL import Image
 from scarf import app
 from flask import make_response, redirect, url_for, request, render_template, session, flash, send_file
-from scarflib import redirect_back, pagedata, siteimage, siteitem, NoItem, NoImage, new_img, latest_items
+from scarflib import redirect_back, PageData, SiteImage, SiteItem, NoItem, NoImage, new_img, latest_items
 from main import page_not_found
 from debug import dbg
 import base64
@@ -14,7 +14,7 @@ from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 
 @app.route('/newimg', methods=['POST'], defaults={'debug': False})
 def newimg(debug):
-    pd = pagedata()
+    pd = PageData()
     if request.method == 'POST':
         if request.form['title'] == '':
             title = "(untitled)"
@@ -36,9 +36,9 @@ def newimg(debug):
 @app.route('/image/<img_id>/reallydelete')
 @check_mod
 def reallydelete_image(img_id):
-    pd = pagedata()
+    pd = PageData()
 
-    delimg = siteimage.create(img_id)
+    delimg = SiteImage.create(img_id)
     delimg.delete()
 
     pd.title = delimg.tag + " has been deleted"
@@ -51,9 +51,9 @@ def reallydelete_image(img_id):
 @app.route('/image/<img_id>/delete')
 @check_mod
 def delete_image(img_id):
-    pd = pagedata()
+    pd = PageData()
 
-    delimg = siteimage.create(img_id)
+    delimg = SiteImage.create(img_id)
 
     pd.title=delimg.tag
 
@@ -66,9 +66,9 @@ def delete_image(img_id):
 
 @app.route('/image/<img_id>/flag')
 def flag_image(img_id):
-    pd = pagedata()
+    pd = PageData()
 
-    flagimg = siteimage.create(img_id)
+    flagimg = SiteImage.create(img_id)
     flagimg.flag()
 
     flash("The image has been flagged and will be reviewed by a moderator.")
@@ -117,7 +117,7 @@ def resize(img, maxwidth, maxheight):
 @app.route('/image/<img_id>/full')
 def serve_full(img_id):
     try:
-        simg = siteimage.create(img_id)
+        simg = SiteImage.create(img_id)
 
         resp = make_response(base64.b64decode(simg.image))
         resp.content_type = "image/png"
@@ -128,7 +128,7 @@ def serve_full(img_id):
 @app.route('/image/<img_id>/thumbnail')
 def serve_thumb(img_id):
     try:
-        simg = siteimage.create(img_id)
+        simg = SiteImage.create(img_id)
         image_string = cStringIO.StringIO(base64.b64decode(simg.image))
         img = Image.open(image_string)
         img = resize(img, 800.0, 200.0)
@@ -139,7 +139,7 @@ def serve_thumb(img_id):
 @app.route('/image/<img_id>/preview')
 def serve_preview(img_id):
     try:
-        simg = siteimage.create(img_id)
+        simg = SiteImage.create(img_id)
         image_string = cStringIO.StringIO(base64.b64decode(simg.image))
         img = Image.open(image_string)
         img = resize(img, 800.0, 800.0)
@@ -150,10 +150,10 @@ def serve_preview(img_id):
 @app.route('/image/<img_id>/debug', defaults={'debug': True})
 @app.route('/image/<img_id>', defaults={'debug': False})
 def show_image(img_id, debug):
-    pd = pagedata()
+    pd = PageData()
 
     try:
-        pd.img = siteimage.create(img_id)
+        pd.img = SiteImage.create(img_id)
         pd.title=pd.img.tag
     except NoImage:
         return page_not_found(404)

@@ -1,13 +1,13 @@
 from scarf import app
 from flask import flash, render_template, session, request, redirect
-from scarflib import pagedata, NoItem, NoUser, siteuser, siteitem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, pmessage, trademessage, messagestatus, tradeitem, tradeitemstatus, deobfuscate, obfuscate
+from scarflib import PageData, NoItem, NoUser, SiteUser, SiteItem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, PrivateMessage, TradeMessage, messagestatus, TradeItem, tradeitemstatus, deobfuscate, obfuscate
 from main import page_not_found
 
 # fix these URLs s/pm/trade/
 @app.route('/user/<username>/pm/<messageid>/<action>/<item>')
 @app.route('/user/<username>/pm/<messageid>/<action>')
 def accepttradeitem(username, messageid, action, item=None):
-    pd = pagedata()
+    pd = PageData()
 
     if not pd.authuser.username == username:
         return page_not_found(404)
@@ -15,7 +15,7 @@ def accepttradeitem(username, messageid, action, item=None):
     if 'username' in session:
         if item:
             try:
-                ti = tradeitem(item)
+                ti = TradeItem(item)
             except:
                 return page_not_found(404)
 
@@ -27,7 +27,7 @@ def accepttradeitem(username, messageid, action, item=None):
                 return page_not_found(404)
         else:
             try:
-                t = trademessage.create(deobfuscate(messageid))
+                t = TradeMessage.create(deobfuscate(messageid))
             except NoItem:
                 return page_not_found(404)
 
@@ -48,10 +48,10 @@ def accepttradeitem(username, messageid, action, item=None):
 @app.route('/user/<username>/trade/<itemid>/debug', methods=['GET'], defaults={'debug': True})
 @app.route('/user/<username>/trade/<itemid>', methods=['GET', 'POST'], defaults={'debug': False})
 def trade(username, itemid, debug):
-    pd = pagedata()
+    pd = PageData()
 
     try:
-        pd.tradeuser = siteuser.create(username)
+        pd.tradeuser = SiteUser.create(username)
     except (NoItem, NoUser):
         return page_not_found(404)
 
@@ -72,7 +72,7 @@ def trade(username, itemid, debug):
                 for item in items:
                     add_tradeitem(item, messageid, pd.authuser.uid, tradeitemstatus['accepted'])
 
-                add_tradeitem(siteitem(itemid).uid, messageid, pd.tradeuser.uid, tradeitemstatus['unmarked'])
+                add_tradeitem(SiteItem(itemid).uid, messageid, pd.tradeuser.uid, tradeitemstatus['unmarked'])
 
                 if messageid:
                     flash('Submitted trade request!')
@@ -89,7 +89,7 @@ def trade(username, itemid, debug):
 
     try:
         pd.tradeuser.ownwant = pd.tradeuser.query_collection(itemid)
-        pd.item = siteitem(itemid)
+        pd.item = SiteItem(itemid)
     except (NoItem, NoUser):
         return page_not_found(404)
 

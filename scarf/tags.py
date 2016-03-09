@@ -1,6 +1,6 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from scarflib import redirect_back, pagedata, siteimage, NoImage, user_by_uid, Tags
+from scarflib import redirect_back, PageData, SiteImage, NoImage, user_by_uid, Tags
 from sql import doquery, read
 from main import page_not_found
 from access import check_mod
@@ -11,7 +11,7 @@ def bare_tag():
 
 @app.route('/tag/<tag>')
 def mod_tag(tag):
-    pd = pagedata()
+    pd = PageData()
 
     pd.tree = Tags()
     try:
@@ -38,7 +38,7 @@ def mod_tag(tag):
 @app.route('/tag/<tag>/delete')
 @check_mod
 def mod_tag_delete(tag):
-    pd = pagedata()
+    pd = PageData()
 
     tree = Tags()
     decode_tag = pd.decode(tag)
@@ -52,7 +52,7 @@ def mod_tag_delete(tag):
 
 @app.route('/tag/new', methods=['POST'])
 def newtag():
-    pd = pagedata()
+    pd = PageData()
 
     if request.method == 'POST':
         if 'username' in session:
@@ -75,7 +75,7 @@ def newtag():
 
 @app.route('/tag/metatag', methods=['POST'])
 def new_metatag():
-    pd = pagedata()
+    pd = PageData()
 
     if request.method == 'POST':
         if 'username' in session:
@@ -94,7 +94,7 @@ def new_metatag():
 @app.route('/tag/reparent', methods=['POST'])
 @check_mod
 def tagreparent():
-    pd = pagedata()
+    pd = PageData()
 
     if request.method == 'POST':
         if 'username' in session:

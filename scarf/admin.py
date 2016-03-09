@@ -1,6 +1,6 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from scarflib import redirect_back, pagedata, NoUser, siteuser
+from scarflib import redirect_back, PageData, NoUser, SiteUser
 from sql import read, doquery
 from debug import dbg
 import os.path, time
@@ -17,7 +17,7 @@ def get_users():
     users = []
 
     for user in result:
-        users.append(siteuser.create(user[1]))
+        users.append(SiteUser.create(user[1]))
 
     return users
 
@@ -25,7 +25,7 @@ def get_users():
 @app.route('/admin', defaults={'debug': False})
 @check_admin
 def admin_users(debug):
-    pd = pagedata()
+    pd = PageData()
     pd.sf_conf = sf_conf
 
     pd.title = "Admin" 
@@ -47,7 +47,7 @@ def admin_users(debug):
 @app.route('/admin/users/<user>/accesslevel/<level>')
 @check_mod
 def admin_set_accesslevel(user, level):
-    pd = pagedata()
+    pd = PageData()
 
     if pd.authuser.accesslevel != 255 and pd.authuser.accesslevel <= level:
         app.logger.error('Accesslevel change was denied for user: ' + pd.authuser.username)
@@ -59,7 +59,7 @@ def admin_set_accesslevel(user, level):
         return redirect_back('index')
 
     try:
-        moduser = siteuser.create(user)
+        moduser = SiteUser.create(user)
     except NoUser:
         app.logger.error('Accesslevel change attempted for invalid user by: ' + pd.authuser.username)
         pd.title = "User does not exist"
@@ -75,10 +75,10 @@ def admin_set_accesslevel(user, level):
 @app.route('/admin/users/<user>/resetpw')
 @check_admin
 def admin_reset_pw(user):
-    pd = pagedata()
+    pd = PageData()
 
     try:
-        user = siteuser.create(user)
+        user = SiteUser.create(user)
         user.forgot_pw_reset(admin=True)
     except NoUser:
         return page_not_found(404)

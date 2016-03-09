@@ -2,12 +2,12 @@
 from scarf import app
 from flask import render_template, session, request, flash
 from sql import doquery, read
-from scarflib import pagedata, latest_items, redirect_back
+from scarflib import PageData, latest_items, redirect_back
 from nocache import nocache
 
 @app.errorhandler(404)
 def page_not_found(error):
-    pd = pagedata()
+    pd = PageData()
     app.logger.error('404! Referrer was: ' + str(request.referrer))
     pd.title = "File not found"
     pd.errorcode="404"
@@ -16,7 +16,7 @@ def page_not_found(error):
 
 @app.errorhandler(500)
 def own_goal(error):
-    pd = pagedata()
+    pd = PageData()
     app.logger.error('500! Referrer was: ' + str(request.referrer))
     pd.title = "Oh noes!"
     pd.errorcode="500"
@@ -30,14 +30,14 @@ def upload_error():
 
 @app.route('/error')
 def error():
-    pd = pagedata()
+    pd = PageData()
     pd.title = "Error!"
     pd.errortext="Oh noes!!"
     return render_template('error.html', pd=pd)
 
 @app.route('/accessdenied')
 def accessdenied():
-    pd = pagedata()
+    pd = PageData()
     pd.title = "Access Denied"
     pd.errortext = "Access Denied"
     return render_template('error.html', pd=pd), 403
@@ -45,7 +45,7 @@ def accessdenied():
 @app.route('/')
 @nocache
 def index():
-    pd = pagedata()
+    pd = PageData()
     pd.title = "Scarfage"
 
     pd.items = latest_items(50)

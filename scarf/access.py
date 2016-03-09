@@ -1,9 +1,9 @@
 from functools import wraps
 from flask import redirect, url_for, session, flash
-from scarflib import pagedata
+from scarflib import PageData
 
 def check_level(level):
-    pd = pagedata()
+    pd = PageData()
     if 'username' not in session or pd.authuser.accesslevel < level:
         return False
     else:

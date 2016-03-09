@@ -1,7 +1,7 @@
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from scarflib import redirect_back, pagedata, siteuser, NoUser, new_user, AuthFail, check_email
+from scarflib import redirect_back, PageData, SiteUser, NoUser, new_user, AuthFail, check_email
 
 from config import secret_key
 app.secret_key = secret_key
@@ -9,7 +9,7 @@ app.secret_key = secret_key
 def check_new_user(request):
     ret = True
     try:
-        user = siteuser.create(request.form['username'])
+        user = SiteUser.create(request.form['username'])
         flash("User already exists!")
         ret = False
     except NoUser:
@@ -44,7 +44,7 @@ def check_new_user(request):
 def login():
     if request.method == 'POST':
         try:
-            user = siteuser.create(request.form['username'])
+            user = SiteUser.create(request.form['username'])
             user.authenticate(request.form['password'])
         except (NoUser, AuthFail) as e:
             app.logger.warning("Failed login: " + e.args[0]) 
@@ -61,7 +61,7 @@ def login():
 
 @app.route('/newuser', methods=['GET', 'POST'])
 def newuser():
-    pd = pagedata();
+    pd = PageData();
     pd.title = "New User"
 
     if 'username' in session:

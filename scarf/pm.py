@@ -1,6 +1,6 @@
 from scarf import app
 from flask import flash, render_template, session, request, redirect
-from scarflib import pagedata, NoItem, NoUser, siteuser, redirect_back, user_by_uid, send_pm, pmessage, messagestatus, trademessage, deobfuscate, obfuscate
+from scarflib import PageData, NoItem, NoUser, SiteUser, redirect_back, user_by_uid, send_pm, PrivateMessage, messagestatus, TradeMessage, deobfuscate, obfuscate
 from main import page_not_found
 from debug import dbg
 
@@ -8,18 +8,18 @@ from debug import dbg
 @app.route('/user/<username>/pm/<messageid>/debug', defaults={'debug': True})
 @app.route('/user/<username>/pm/<messageid>', defaults={'debug': False})
 def viewpm(username, messageid, debug):
-    pd = pagedata()
+    pd = PageData()
     dmid = deobfuscate(messageid)
 
     if not 'username' in session or pd.authuser.username != username or dmid is None:
         return render_template('pm_error.html', pd=pd)
 
     if 'username' in session:
-        pm = trademessage.create(dmid)
+        pm = TradeMessage.create(dmid)
         pm.read()
 
         if pm.messagestatus < messagestatus['unread_pm']:
-            pm = trademessage.create(messageid)
+            pm = TradeMessage.create(messageid)
 
         pd.pm = pm
 
@@ -32,10 +32,10 @@ def viewpm(username, messageid, debug):
 @app.route('/user/<username>/pm/debug', methods=['GET'], defaults={'debug': True})
 @app.route('/user/<username>/pm', methods=['GET', 'POST'], defaults={'debug': False})
 def pm(username, debug):
-    pd = pagedata()
+    pd = PageData()
 
     try:
-        pd.recipient = siteuser.create(username)
+        pd.recipient = SiteUser.create(username)
     except (NoItem, NoUser):
         return page_not_found(404)
 

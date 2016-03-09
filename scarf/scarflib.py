@@ -10,12 +10,15 @@ import hashlib
 import random
 import cgi
 
-from config import *
+from urlparse import urlparse, urljoin
 from string import ascii_letters, digits
 
-from scarf import app
 from flask import request, redirect, session, flash, url_for, render_template
-from urlparse import urlparse, urljoin
+
+from config import *
+
+from scarf import app
+
 from sql import upsert, doupsert, doquery, Tree
 from mail import send_mail
 
@@ -68,7 +71,7 @@ def ip_uid(ip, r=False):
         result = doquery(sql, { 'ip': ip })
         return ip_uid(ip, True)
 
-class pagedata(object):
+class PageData(object):
     accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
     pass
 
@@ -83,7 +86,7 @@ class pagedata(object):
 
         if 'username' in session:
             try:
-                self.authuser = siteuser.create(session['username'])
+                self.authuser = SiteUser.create(session['username'])
             except:
                 self.authuser = None
                 pass
@@ -167,7 +170,7 @@ class AuthFail(Exception):
     def __init__(self, username):
         Exception.__init__(self, username)
 
-class ownwant(object):
+class OwnWant(object):
     def __init__(self):
         self.have = 0
         self.want = 0
@@ -177,7 +180,7 @@ class ownwant(object):
 siteuser_cache = dict()
 collection_cache = dict()
 message_cache = dict()
-class siteuser(object):
+class SiteUser(object):
     @classmethod
     @memoize_with_expiry(siteuser_cache, cache_persist)
     def create(cls, username):
@@ -223,7 +226,7 @@ class siteuser(object):
         result = doquery(sql, { 'uid': self.uid })
 
         for item in result:
-            sitem = siteitem(item[4])
+            sitem = SiteItem(item[4])
             sitem.have = item[0]
             sitem.willtrade = item[1]
             sitem.want = item[2]
@@ -236,7 +239,7 @@ class siteuser(object):
     #@memoize_with_expiry(collection_cache, cache_persist)
     # ^^^ causes a bug with ownwant updates
     def query_collection(self, item):
-        ret = ownwant()
+        ret = OwnWant()
 
         try:
             sql = """select ownwant.uid, ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden
@@ -265,9 +268,9 @@ class siteuser(object):
 
         for item in result:
             if item[1] >= messagestatus['unread_pm']:
-                pm = pmessage.create(item[0])
+                pm = PrivateMessage.create(item[0])
             else:
-                pm = trademessage.create(item[0])
+                pm = TradeMessage.create(item[0])
 
             ret.append(pm)
 
@@ -354,7 +357,7 @@ def check_email(email):
     result = doquery(sql, { 'email': email })
 
     try: 
-        return siteuser.create(result[0][0])
+        return SiteUser.create(result[0][0])
     except IndexError:
         return None
 
@@ -384,7 +387,7 @@ class NoImage(Exception):
         Exception.__init__(self, item)
 
 siteimage_cache = dict()
-class siteimage(object):
+class SiteImage(object):
     @classmethod
     @memoize_with_expiry(siteimage_cache, long_cache_persist)
     def create(cls, username):
@@ -487,7 +490,7 @@ class Tags(Tree):
 
         ret = list()
         for tag in tags:
-            ret.append(siteitem(tag[0]))
+            ret.append(SiteItem(tag[0]))
         return ret
 
     def items_from_children(self, tag):
@@ -521,7 +524,7 @@ def uid_by_item(item):
     except IndexError:
         return
 
-class itemhist(object):
+class ItemHist(object):
     def __init__(self, uid):
         self.uid = uid
 
@@ -529,7 +532,7 @@ class NoItem(Exception):
     def __init__(self, item):
         Exception.__init__(self, item)
 
-class siteitem(object):
+class SiteItem(object):
     def __init__(self, uid):
         sql = 'select * from items where uid = %(uid)s;'
         result = doquery(sql, { 'uid': uid })
@@ -591,7 +594,7 @@ class siteitem(object):
 
         ret = list()
         for edit in edits:
-            editobject = itemhist(edit[0])
+            editobject = ItemHist(edit[0])
             editobject.uid = str(editobject.uid).zfill(8)
             editobject.itemid = edit[1]
             editobject.date = edit[2]
@@ -612,7 +615,7 @@ class siteitem(object):
                  from images
                  where parent = %(uid)s"""
         for row in doquery(sql, { 'uid': self.uid }):
-            ret.append(siteimage(row[0]))
+            ret.append(SiteImage(row[0]))
 
         return ret
 
@@ -636,7 +639,7 @@ class siteitem(object):
         for user in res:
             have = have + 1
             if not user[1]:
-                userinfo = siteuser.create(user_by_uid(user[0]))
+                userinfo = SiteUser.create(user_by_uid(user[0]))
                 haveusers.append(userinfo)
 
         return (have, haveusers)
@@ -652,7 +655,7 @@ class siteitem(object):
         
         for user in res:
             willtrade = willtrade + 1
-            userinfo = siteuser.create(user_by_uid(user[0]))
+            userinfo = SiteUser.create(user_by_uid(user[0]))
             willtradeusers.append(userinfo)
 
         return (willtrade, willtradeusers)
@@ -668,7 +671,7 @@ class siteitem(object):
         
         for user in res:
             want = want + 1
-            userinfo = siteuser.create(user_by_uid(user[0]))
+            userinfo = SiteUser.create(user_by_uid(user[0]))
             wantusers.append(userinfo)
 
         return (want, wantusers)
@@ -794,7 +797,7 @@ def latest_items(limit=0):
             sql = "SELECT uid FROM items;"
         result = doquery(sql, { 'limit': limit })
         for item in result:
-            items.append(siteitem(item[0]))
+            items.append(SiteItem(item[0]))
     except TypeError:
         pass
 
@@ -820,10 +823,10 @@ def redirect_back(endpoint, **values):
 messagestatus = {'unread_trade': 0, 'active_trade': 1, 'complete_trade': 2, 'settled_trade': 3, 'rejected_trade': 4, 'cancelled_trade': 5, 'unread_pm': 10, 'read_pm': 11}
 tradeitemstatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
 
-pmessage_cache = dict()
-class pmessage(object):
+privatemessage_cache = dict()
+class PrivateMessage(object):
     @classmethod
-    @memoize_with_expiry(pmessage_cache, cache_persist)
+    @memoize_with_expiry(privatemessage_cache, cache_persist)
     def create(cls, messageid):
         return cls(messageid)
 
@@ -845,14 +848,14 @@ class pmessage(object):
             self.parentid_obfuscated = obfuscate(result[0][6])
             self.sent = result[0][7]
 
-            self.from_user = siteuser.create(user_by_uid(self.from_uid)).username
-            self.to_user = siteuser.create(user_by_uid(self.to_uid)).username
+            self.from_user = SiteUser.create(user_by_uid(self.from_uid)).username
+            self.to_user = SiteUser.create(user_by_uid(self.to_uid)).username
         except IndexError:
             raise NoItem(messageid)
 
     def parent(self):
         if self.parentid > 0:
-            return pmessage.create(self.parentid)
+            return PrivateMessage.create(self.parentid)
 
     def setstatus(self, status):
         if self.uid > 0:
@@ -882,7 +885,7 @@ class pmessage(object):
             return self.setstatus(messagestatus['unread_trade'])
         return
 
-    @memoize_with_expiry(pmessage_cache, cache_persist)
+    @memoize_with_expiry(privatemessage_cache, cache_persist)
     def replies(self):
         ret = list()
 
@@ -890,12 +893,12 @@ class pmessage(object):
         result = doquery(sql, {"uid": self.uid})
 
         for reply in result:
-            pm = pmessage.create(reply[0])
+            pm = PrivateMessage.create(reply[0])
             ret.append(pm)
 
         return ret
 
-class tradeitem(object):
+class TradeItem(object):
     def __init__(self, itemid):
         self.uid = itemid 
         self.itemid = 0
@@ -917,7 +920,7 @@ class tradeitem(object):
         return self.setstatus(tradeitemstatus['rejected'])
 
 trademessage_cache = dict()
-class trademessage(pmessage):
+class TradeMessage(PrivateMessage):
     @classmethod
     @memoize_with_expiry(trademessage_cache, cache_persist)
     def create(cls, messageid):
@@ -934,13 +937,13 @@ class trademessage(pmessage):
 
         complete = True
         for item in result:
-            ti = tradeitem(item[0])
+            ti = TradeItem(item[0])
             ti.itemid = item[1]
             ti.messageid = item[2]
             ti.userid = item[3]
             ti.acceptstatus = item[4]
-            ti.item = siteitem(ti.itemid)
-            ti.user = siteuser.create(user_by_uid(ti.userid))
+            ti.item = SiteItem(ti.itemid)
+            ti.user = SiteUser.create(user_by_uid(ti.userid))
 
             self.items.append(ti)
 
@@ -972,8 +975,8 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
     sql = "select uid from messages where fromuserid=%(fromuserid)s and touserid=%(touserid)s and sent=%(sent)s;"
     messageid = doquery(sql, { 'fromuserid': fromuserid, 'touserid': touserid, 'sent': sent })[0][0]
 
-    email_user = siteuser.create(user_by_uid(touserid))
-    from_user = siteuser.create(user_by_uid(fromuserid))
+    email_user = SiteUser.create(user_by_uid(touserid))
+    from_user = SiteUser.create(user_by_uid(fromuserid))
 
     message = render_template('email/pm_notify.html', to_user=email_user, email=email_user.email, from_user=from_user, message=message, status=status, parent=parent, messageid=obfuscate(messageid))
 

@@ -1,6 +1,6 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from scarflib import redirect_back, pagedata, siteimage, NoImage, user_by_uid
+from scarflib import redirect_back, PageData, SiteImage, NoImage, user_by_uid
 from sql import doquery, read, Tree
 from main import page_not_found
 from debug import dbg
@@ -29,7 +29,7 @@ greyscale = [
 @app.route('/mod')
 @check_mod
 def moderate():
-    pd = pagedata()
+    pd = PageData()
 
     sql = read('imgmods')
     result = doquery(sql)
@@ -53,8 +53,9 @@ def moderate():
                 sql = 'select * from images where uid = %(uid)s;'
                 img = doquery(sql, {"uid": imgid})
                 
-                class mod:
+                class Mod:
                     pass
+                mod = Mod()
 
                 if img:
                     mod.uid = imgid
@@ -76,7 +77,7 @@ def moderate():
 @app.route('/mod/ban/<user>')
 @check_mod
 def mod_ban_user(user):
-    pd = pagedata()
+    pd = PageData()
 
     pd.title="Banning user " + user
 
@@ -90,10 +91,10 @@ def mod_ban_user(user):
 @app.route('/mod/image/<image>')
 @check_mod
 def mod_img(image):
-    pd = pagedata()
+    pd = PageData()
 
     try:
-        modimg = siteimage.create(image)
+        modimg = SiteImage.create(image)
     except NoImage:
         return page_not_found(404)
 
@@ -117,7 +118,7 @@ def mod_img(image):
         pd.errortext = "SQL error"
         return render_template('error.html', pd=pd)
 
-    simg = siteimage.create(modimg.uid)
+    simg = SiteImage.create(modimg.uid)
     image_string = cStringIO.StringIO(base64.b64decode(simg.image))
     im = Image.open(image_string)
     basewidth = 100
@@ -142,10 +143,10 @@ def mod_img(image):
 @app.route('/mod/image/<imageid>/approve')
 @check_mod
 def mod_img_approve(imageid):
-    pd = pagedata()
+    pd = PageData()
 
     try:
-        modimg = siteimage.create(imageid)
+        modimg = SiteImage.create(imageid)
     except:
         flash('Error during moderation')
         return redirect(url_for('moderate'))

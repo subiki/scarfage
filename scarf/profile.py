@@ -1,7 +1,7 @@
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from scarflib import redirect_back, pagedata, siteuser, NoUser, check_email
+from scarflib import redirect_back, PageData, SiteUser, NoUser, check_email
 from main import page_not_found
 from debug import dbg
 from string import ascii_letters, digits
@@ -10,10 +10,10 @@ import random
 
 @app.route('/forgotpw', methods=['GET', 'POST'])
 def userupdate():
-    pd = pagedata()
+    pd = PageData()
     if request.method == 'POST':
         try:
-            user = siteuser.create(request.form['username'])
+            user = SiteUser.create(request.form['username'])
             user.forgot_pw_reset()
         except NoUser:
             email_user = check_email(request.form['email'])
@@ -28,11 +28,11 @@ def userupdate():
 #TODO /user/<user>/<whatever>
 @app.route('/emailupdate', methods=['GET', 'POST'])
 def emailupdate():
-    pd = pagedata()
+    pd = PageData()
     if 'username' in session:
         if request.method == 'POST':
             try:
-                user = siteuser.create(session['username'])
+                user = SiteUser.create(session['username'])
             except NoUser:
                 return render_template('error.html', pd=pd)
 
@@ -58,12 +58,12 @@ def emailupdate():
 #TODO /user/<user>/<whatever>
 @app.route('/pwreset', methods=['GET', 'POST'])
 def pwreset():
-    pd = pagedata()
+    pd = PageData()
     if 'username' in session:
         ret = False
         if request.method == 'POST':
             try:
-                user = siteuser.create(session['username'])
+                user = SiteUser.create(session['username'])
             except NoUser:
                 return render_template('error.html', pd=pd)
 
@@ -97,11 +97,11 @@ def pwreset():
 @app.route('/user/<username>/debug', defaults={'debug': True})
 @app.route('/user/<username>', defaults={'debug': False})
 def show_user_profile(username, debug):
-    pd = pagedata()
+    pd = PageData()
     pd.title = "Profile for " + username
 
     try:
-        pd.profileuser = siteuser.create(username)
+        pd.profileuser = SiteUser.create(username)
     except NoUser:
         return page_not_found(404)
 

@@ -1,7 +1,7 @@
 from scarf import app
 from flask import redirect, url_for, request, render_template, session, flash
 from werkzeug import secure_filename
-from scarflib import pagedata, siteuser, NoUser, siteitem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items, escape_html
+from scarflib import PageData, SiteUser, NoUser, SiteItem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items, escape_html
 from main import page_not_found
 from nocache import nocache
 from debug import dbg
@@ -23,11 +23,11 @@ def itemroot():
 @check_admin
 def reallydelete_item(item_id):
     try:
-        delitem = siteitem(item_id)
+        delitem = SiteItem(item_id)
     except NoItem: 
         return page_not_found(404)
 
-    pd = pagedata()
+    pd = PageData()
 
     pd.title=delitem.name + " has been deleted"
 
@@ -43,11 +43,11 @@ def reallydelete_item(item_id):
 @check_admin
 def delete_item(item_id):
     try:
-        delitem = siteitem(item_id)
+        delitem = SiteItem(item_id)
     except NoItem: 
         return page_not_found(404)
 
-    pd = pagedata()
+    pd = PageData()
 
     pd.title=delitem.name
 
@@ -62,13 +62,13 @@ def delete_item(item_id):
 @app.route('/item/<item_id>', defaults={'debug': False})
 @nocache
 def show_item(item_id, debug):
-    pd = pagedata()
+    pd = PageData()
 
     if item_id is 'new':
         return redirect("/item/" + item_id + "/edit")
 
     try:
-        showitem = siteitem(item_id)
+        showitem = SiteItem(item_id)
 
         showitem.description_html = markdown.markdown(escape_html(str(showitem.body())), md_extensions)
     except NoItem:
@@ -76,7 +76,7 @@ def show_item(item_id, debug):
 
     if 'username' in session:
         try:
-            user = siteuser.create(session['username'])
+            user = SiteUser.create(session['username'])
             pd.iteminfo = user.query_collection(showitem.uid)
         except (NoUser, NoItem):
             pass
@@ -94,10 +94,10 @@ def show_item(item_id, debug):
 @app.route('/item/<item_id>/revert/<edit>', defaults={'debug': False})
 @nocache
 def revert_item_edit(item_id, edit, debug):
-    pd = pagedata()
+    pd = PageData()
 
     try:
-        item = siteitem(item_id)
+        item = SiteItem(item_id)
 
         item.old = True
         item.description = edit
@@ -118,10 +118,10 @@ def revert_item_edit(item_id, edit, debug):
 @app.route('/item/<item_id>/history/<edit>', defaults={'debug': False})
 @nocache
 def show_item_edit(item_id, edit, debug):
-    pd = pagedata()
+    pd = PageData()
 
     try:
-        showitem = siteitem(item_id)
+        showitem = SiteItem(item_id)
         showitem.old = True
         showitem.description = edit
 
@@ -142,10 +142,10 @@ def show_item_edit(item_id, edit, debug):
 @app.route('/item/<item_id>/history', defaults={'debug': False})
 @nocache
 def show_item_history(item_id, debug):
-    pd = pagedata()
+    pd = PageData()
 
     try:
-        showitem = siteitem(item_id)
+        showitem = SiteItem(item_id)
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 
@@ -163,7 +163,7 @@ def show_item_history(item_id, debug):
 @app.route('/item/edit', methods=['GET', 'POST'], defaults={'debug': False})
 @nocache
 def edititem(debug, item_id=None):
-    pd = pagedata()
+    pd = PageData()
     if request.method == 'POST':
         if 'username' in session:
             userid = pd.authuser.uid
@@ -172,7 +172,7 @@ def edititem(debug, item_id=None):
 
         if 'desc' in request.form:
             try:
-                item = siteitem(request.form['uid'])
+                item = SiteItem(request.form['uid'])
 
                 item_id = uid_by_item(request.form['name'])
                 if not item_id or item_id == int(request.form['uid']):
@@ -198,7 +198,7 @@ def edititem(debug, item_id=None):
 
     if item_id:
         try:
-            pd.item = siteitem(item_id)
+            pd.item = SiteItem(item_id)
         except:
             return page_not_found(404)
      
@@ -215,7 +215,7 @@ def edititem(debug, item_id=None):
 @app.route('/item/tag', methods=['POST'])
 @nocache
 def tagitem():
-    pd = pagedata()
+    pd = PageData()
     if request.method == 'POST':
         if 'username' in session:
             userid = pd.authuser.uid
@@ -227,7 +227,7 @@ def tagitem():
                 return redirect_back('index')
 
             try:
-                item = siteitem(request.form['uid'])
+                item = SiteItem(request.form['uid'])
                 item.add_tag(request.form['tag'][:64])
                 return redirect('/item/' + str(item.uid))
             except NoItem:
@@ -236,10 +236,10 @@ def tagitem():
 @app.route('/item/<item_id>/untag/<tag_ob>')
 def untag_item(item_id, tag_ob):
     try:
-        item = siteitem(item_id)
+        item = SiteItem(item_id)
     except NoItem: 
         return page_not_found(404)
 
-    pd = pagedata()
+    pd = PageData()
     item.remove_tag(pd.decode(tag_ob))
     return redirect('/item/' + str(item.uid))
