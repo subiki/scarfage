@@ -2,7 +2,7 @@
 from scarf import app
 from flask import render_template, session, request, flash
 from sql import doquery, read
-from scarflib import PageData, latest_items, redirect_back
+from core import PageData, latest_items, redirect_back
 from nocache import nocache
 
 @app.errorhandler(404)

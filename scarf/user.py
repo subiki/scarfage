@@ -1,7 +1,7 @@
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from scarflib import redirect_back, PageData, SiteUser, NoUser, new_user, AuthFail, check_email
+from core import redirect_back, PageData, SiteUser, NoUser, new_user, AuthFail, check_email
 
 from config import secret_key
 app.secret_key = secret_key

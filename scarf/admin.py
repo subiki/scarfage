@@ -1,6 +1,6 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from scarflib import redirect_back, PageData, NoUser, SiteUser
+from core import redirect_back, PageData, NoUser, SiteUser
 from sql import read, doquery
 from debug import dbg
 import os.path, time

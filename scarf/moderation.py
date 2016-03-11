@@ -1,6 +1,6 @@
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from scarflib import redirect_back, PageData, SiteImage, NoImage, user_by_uid
+from core import redirect_back, PageData, SiteImage, NoImage, user_by_uid
 from sql import doquery, read, Tree
 from main import page_not_found
 from debug import dbg

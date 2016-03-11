@@ -1,6 +1,6 @@
 from functools import wraps
 from flask import redirect, url_for, session, flash
-from scarflib import PageData
+from core import PageData
 
 def check_level(level):
     pd = PageData()

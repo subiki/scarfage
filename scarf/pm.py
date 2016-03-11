@@ -1,6 +1,6 @@
 from scarf import app
 from flask import flash, render_template, session, request, redirect
-from scarflib import PageData, NoItem, NoUser, SiteUser, redirect_back, user_by_uid, send_pm, PrivateMessage, messagestatus, TradeMessage, deobfuscate, obfuscate
+from core import PageData, NoItem, NoUser, SiteUser, redirect_back, user_by_uid, send_pm, PrivateMessage, messagestatus, TradeMessage, deobfuscate, obfuscate
 from main import page_not_found
 from debug import dbg
 

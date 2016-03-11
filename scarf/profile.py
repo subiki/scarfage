@@ -1,7 +1,7 @@
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from scarflib import redirect_back, PageData, SiteUser, NoUser, check_email
+from core import redirect_back, PageData, SiteUser, NoUser, check_email
 from main import page_not_found
 from debug import dbg
 from string import ascii_letters, digits

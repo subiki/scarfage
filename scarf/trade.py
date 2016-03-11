@@ -1,6 +1,6 @@
 from scarf import app
 from flask import flash, render_template, session, request, redirect
-from scarflib import PageData, NoItem, NoUser, SiteUser, SiteItem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, PrivateMessage, TradeMessage, messagestatus, TradeItem, tradeitemstatus, deobfuscate, obfuscate
+from core import PageData, NoItem, NoUser, SiteUser, SiteItem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, PrivateMessage, TradeMessage, messagestatus, TradeItem, tradeitemstatus, deobfuscate, obfuscate
 from main import page_not_found
 
 # fix these URLs s/pm/trade/
