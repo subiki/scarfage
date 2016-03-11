@@ -1,18 +1,16 @@
 from scarf import app
-from flask import redirect, url_for, render_template, session, request, flash
-from core import redirect_back, PageData, SiteImage, NoImage, user_by_uid
-from sql import doquery, read, Tree
-from main import page_not_found
-from debug import dbg
+from core import redirect_back, SiteImage, NoImage, user_by_uid, doquery, read, Tree
 
+from main import page_not_found, PageData
 from access import check_mod
+
+from flask import redirect, url_for, render_template, session, request, flash
  
 from PIL import Image
 import cStringIO
 import random
 import base64
 from bisect import bisect
-
 
 zonebounds=[36,72,108,144,180,216,252]
 greyscale = [

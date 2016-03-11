@@ -1,14 +1,12 @@
+import config as sf_conf
 from scarf import app
+from access import check_mod, check_admin
+from core import redirect_back, NoUser, SiteUser, read, doquery
+from main import PageData
+
 from flask import redirect, url_for, render_template, session, request, flash
-from core import redirect_back, PageData, NoUser, SiteUser
-from sql import read, doquery
-from debug import dbg
 import os.path, time
 import jsonpickle
-import config as sf_conf
-
-from config import dep_file
-from access import check_mod, check_admin
 
 def get_users():
     sql = read('users')
@@ -21,10 +19,9 @@ def get_users():
 
     return users
 
-@app.route('/admin/debug', defaults={'debug': True})
-@app.route('/admin', defaults={'debug': False})
+@app.route('/admin')
 @check_admin
-def admin_users(debug):
+def admin_users():
     pd = PageData()
     pd.sf_conf = sf_conf
 
@@ -38,9 +35,6 @@ def admin_users(debug):
         pd.mode = 'prod'
     except (OSError, IOError):
         pd.mode = "dev"
-
-    if debug:
-        pd.debug = dbg(pd)
 
     return render_template('admin.html', pd=pd)
 
@@ -79,7 +73,7 @@ def admin_reset_pw(user):
 
     try:
         user = SiteUser.create(user)
-        user.forgot_pw_reset(admin=True)
+        user.forgot_pw_reset(ip='0.0.0.0', admin=True)
     except NoUser:
         return page_not_found(404)
 

@@ -1,9 +1,9 @@
 from scarf import app
-from flask import redirect, url_for, render_template, session, request, flash
-from core import redirect_back, PageData, SiteImage, NoImage, user_by_uid, Tags
-from sql import doquery, read
-from main import page_not_found
+from core import redirect_back, SiteImage, NoImage, user_by_uid, Tags
+from main import page_not_found, PageData
 from access import check_mod
+
+from flask import redirect, url_for, render_template, session, request, flash
  
 @app.route('/tag/')
 def bare_tag():

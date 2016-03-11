@@ -1,6 +1,7 @@
 from scarf import app
 from flask import render_template
-from core import PageData, get_whores_table, get_contribs_table, get_needy_table, get_willtrade_table
+from core import get_whores_table, get_contribs_table, get_needy_table, get_willtrade_table
+from main import PageData
 
 @app.route('/stats')
 def stats():

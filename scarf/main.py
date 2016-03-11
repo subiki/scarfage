@@ -1,9 +1,35 @@
 # -*- coding: utf-8 -*-
+import base64
+
+import core
 from scarf import app
 from flask import render_template, session, request, flash
-from sql import doquery, read
-from core import PageData, latest_items, redirect_back
+from core import redirect_back
 from nocache import nocache
+
+class PageData(object):
+    pass
+
+    def __init__(self):
+        try:
+            self.prefix = prefix
+        except NameError:
+            self.prefix = ''
+
+        self.accesslevels = core.accesslevels
+
+        self.encode = base64.b32encode
+        self.decode = base64.b32decode
+
+        self.uid_by_user = core.uid_by_user
+        self.user_by_uid = core.user_by_uid
+
+        if 'username' in session:
+            try:
+                self.authuser = core.SiteUser.create(session['username'])
+            except:
+                self.authuser = None
+                pass
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -48,6 +74,6 @@ def index():
     pd = PageData()
     pd.title = "Scarfage"
 
-    pd.items = latest_items(50)
+    pd.items = core.latest_items(50)
 
     return render_template('index.html', pd=pd)

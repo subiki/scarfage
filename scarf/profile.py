@@ -1,12 +1,11 @@
-import re
 from scarf import app
+from core import redirect_back, SiteUser, NoUser, check_email, send_mail
+from main import page_not_found, PageData
+
 from flask import redirect, url_for, render_template, session, request, flash
-from core import redirect_back, PageData, SiteUser, NoUser, check_email
-from main import page_not_found
-from debug import dbg
 from string import ascii_letters, digits
-from mail import send_mail
 import random
+import re
 
 @app.route('/forgotpw', methods=['GET', 'POST'])
 def userupdate():
@@ -14,11 +13,11 @@ def userupdate():
     if request.method == 'POST':
         try:
             user = SiteUser.create(request.form['username'])
-            user.forgot_pw_reset()
+            user.forgot_pw_reset(request.remote_addr)
         except NoUser:
             email_user = check_email(request.form['email'])
             if email_user:
-                email_user.forgot_pw_reset()
+                email_user.forgot_pw_reset(request.remote_addr)
 
         flash('A new password has been e-mailed. Please remember to change it when you log in.')
         return redirect(url_for('index'))
@@ -94,9 +93,8 @@ def pwreset():
 
     return redirect(url_for('index'))
 
-@app.route('/user/<username>/debug', defaults={'debug': True})
-@app.route('/user/<username>', defaults={'debug': False})
-def show_user_profile(username, debug):
+@app.route('/user/<username>')
+def show_user_profile(username):
     pd = PageData()
     pd.title = "Profile for " + username
 
@@ -104,9 +102,5 @@ def show_user_profile(username, debug):
         pd.profileuser = SiteUser.create(username)
     except NoUser:
         return page_not_found(404)
-
-    if debug:
-        if 'username' in session and pd.authuser.accesslevel == 255:
-            pd.debug = dbg(pd)
 
     return render_template('profile.html', pd=pd)

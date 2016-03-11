@@ -1,7 +1,8 @@
 import re
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
-from core import redirect_back, PageData, SiteUser, NoUser, new_user, AuthFail, check_email
+from core import redirect_back, SiteUser, NoUser, new_user, AuthFail, check_email
+from main import PageData
 
 from config import secret_key
 app.secret_key = secret_key
@@ -45,10 +46,18 @@ def login():
     if request.method == 'POST':
         try:
             user = SiteUser.create(request.form['username'])
+        except NoUser as e:
+            flash('Login unsuccessful.')
+            return redirect(url_for('index'))
+
+        try:
             user.authenticate(request.form['password'])
         except (NoUser, AuthFail) as e:
             app.logger.warning("Failed login: " + e.args[0]) 
-            flash('Login unsuccessful.')
+            if user.accesslevel is 0:
+                flash('Your account has been banned')
+            else:
+                flash('Login unsuccessful.')
             return redirect(url_for('index'))
 
         user.seen()
@@ -74,7 +83,7 @@ def newuser():
                 pd.email = request.form['email']
                 return render_template('newuser.html', pd=pd)
 
-            if not new_user(request.form['username'], request.form['password'], request.form['email']):
+            if not new_user(request.form['username'], request.form['password'], request.form['email'], request.remote_addr):
                 return render_template('error.html', pd=pd)
 
             session['username'] = request.form['username']

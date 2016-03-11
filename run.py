@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
 from scarf import app
-#app.run()
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
 app.run(host='0.0.0.0', debug=True)

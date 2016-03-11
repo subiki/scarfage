@@ -1,5 +1,4 @@
 from time import time
-from scarf import app
 
 '''
 use like:

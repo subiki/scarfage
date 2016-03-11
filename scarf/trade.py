@@ -1,7 +1,7 @@
 from scarf import app
 from flask import flash, render_template, session, request, redirect
-from core import PageData, NoItem, NoUser, SiteUser, SiteItem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, PrivateMessage, TradeMessage, messagestatus, TradeItem, tradeitemstatus, deobfuscate, obfuscate
-from main import page_not_found
+from core import NoItem, NoUser, SiteUser, SiteItem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, PrivateMessage, TradeMessage, messagestatus, TradeItem, tradeitemstatus, deobfuscate, obfuscate
+from main import page_not_found, PageData
 
 # fix these URLs s/pm/trade/
 @app.route('/user/<username>/pm/<messageid>/<action>/<item>')
@@ -45,9 +45,8 @@ def accepttradeitem(username, messageid, action, item=None):
 
     return redirect_back('index')
 
-@app.route('/user/<username>/trade/<itemid>/debug', methods=['GET'], defaults={'debug': True})
-@app.route('/user/<username>/trade/<itemid>', methods=['GET', 'POST'], defaults={'debug': False})
-def trade(username, itemid, debug):
+@app.route('/user/<username>/trade/<itemid>', methods=['GET', 'POST'])
+def trade(username, itemid):
     pd = PageData()
 
     try:
@@ -92,9 +91,5 @@ def trade(username, itemid, debug):
         pd.item = SiteItem(itemid)
     except (NoItem, NoUser):
         return page_not_found(404)
-
-    if debug:
-        if 'username' in session and pd.authuser.accesslevel == 255:
-            pd.debug = dbg(pd)
 
     return render_template('trade.html', pd=pd)

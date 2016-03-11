@@ -1,11 +1,10 @@
 from scarf import app
+from core import SiteUser, NoUser, SiteItem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items, escape_html
+from main import page_not_found, PageData
+from nocache import nocache
+
 from flask import redirect, url_for, request, render_template, session, flash
 from werkzeug import secure_filename
-from core import PageData, SiteUser, NoUser, SiteItem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items, escape_html
-from main import page_not_found
-from nocache import nocache
-from debug import dbg
-from sql import read, doquery, Tree
 from access import check_admin
 
 import markdown
@@ -58,10 +57,9 @@ def delete_item(item_id):
 
     return render_template('confirm.html', pd=pd)
 
-@app.route('/item/<item_id>/debug', defaults={'debug': True})
-@app.route('/item/<item_id>', defaults={'debug': False})
+@app.route('/item/<item_id>')
 @nocache
-def show_item(item_id, debug):
+def show_item(item_id):
     pd = PageData()
 
     if item_id is 'new':
@@ -84,16 +82,11 @@ def show_item(item_id, debug):
     pd.title = showitem.name
     pd.item = showitem
 
-    if debug:
-        if 'username' in session and pd.authuser.accesslevel == 255:
-            pd.debug = dbg(pd)
-
     return render_template('item.html', pd=pd)
 
-@app.route('/item/<item_id>/revert/<edit>/debug', defaults={'debug': True})
-@app.route('/item/<item_id>/revert/<edit>', defaults={'debug': False})
+@app.route('/item/<item_id>/revert/<edit>')
 @nocache
-def revert_item_edit(item_id, edit, debug):
+def revert_item_edit(item_id, edit):
     pd = PageData()
 
     try:
@@ -108,16 +101,11 @@ def revert_item_edit(item_id, edit, debug):
     pd.item_name = item.name
     pd.item = item
 
-    if debug:
-        if 'username' in session and pd.authuser.accesslevel == 255:
-            pd.debug = dbg(pd)
-
     return render_template('edititem.html', pd=pd)
 
-@app.route('/item/<item_id>/history/<edit>/debug', defaults={'debug': True})
-@app.route('/item/<item_id>/history/<edit>', defaults={'debug': False})
+@app.route('/item/<item_id>/history/<edit>')
 @nocache
-def show_item_edit(item_id, edit, debug):
+def show_item_edit(item_id, edit):
     pd = PageData()
 
     try:
@@ -132,16 +120,11 @@ def show_item_edit(item_id, edit, debug):
     pd.title = showitem.name
     pd.item = showitem
 
-    if debug:
-        if 'username' in session and pd.authuser.accesslevel == 255:
-            pd.debug = dbg(pd)
-
     return render_template('item.html', pd=pd)
 
-@app.route('/item/<item_id>/history/debug', defaults={'debug': True})
-@app.route('/item/<item_id>/history', defaults={'debug': False})
+@app.route('/item/<item_id>/history')
 @nocache
-def show_item_history(item_id, debug):
+def show_item_history(item_id):
     pd = PageData()
 
     try:
@@ -152,17 +135,12 @@ def show_item_history(item_id, debug):
     pd.title = showitem.name
     pd.item = showitem
 
-    if debug:
-        if 'username' in session and pd.authuser.accesslevel == 255:
-            pd.debug = dbg(pd)
-
     return render_template('itemhistory.html', pd=pd)
 
-@app.route('/item/edit/debug', methods=['GET', 'POST'], defaults={'debug': True})
-@app.route('/item/<item_id>/edit', methods=['GET', 'POST'], defaults={'debug': False})
-@app.route('/item/edit', methods=['GET', 'POST'], defaults={'debug': False})
+@app.route('/item/<item_id>/edit', methods=['GET', 'POST'])
+@app.route('/item/edit', methods=['GET', 'POST'])
 @nocache
-def edititem(debug, item_id=None):
+def edititem(item_id=None):
     pd = PageData()
     if request.method == 'POST':
         if 'username' in session:
@@ -171,6 +149,10 @@ def edititem(debug, item_id=None):
             userid = 0 
 
         if 'desc' in request.form:
+            if request.form['name'] == '':
+                flash('No name for this item?')
+                return redirect_back("/item/new")
+
             try:
                 item = SiteItem(request.form['uid'])
 
@@ -180,7 +162,7 @@ def edititem(debug, item_id=None):
                     item.update()
 
                     # todo: check for null edits
-                    new_edit(request.form['uid'], request.form['desc'], userid)
+                    new_edit(request.form['uid'], request.form['desc'], userid, request.remote_addr)
 
                     uid = request.form['uid']
                     flash('Edited item!')
@@ -193,7 +175,7 @@ def edititem(debug, item_id=None):
                     flash(request.form['name'] + " already exists!")
                     return redirect_back("/item/new")
 
-                uid = new_item(request.form['name'], request.form['desc'], userid)
+                uid = new_item(request.form['name'], request.form['desc'], userid, request.remote_addr)
                 return redirect('/item/' + str(uid))
 
     if item_id:
@@ -205,10 +187,6 @@ def edititem(debug, item_id=None):
         pd.title="Editing: %s" % pd.item.name
     else:
         pd.title="Editing: New Item"
-
-    if debug:
-        if 'username' in session and pd.authuser.accesslevel == 255:
-            pd.debug = dbg(pd)
 
     return render_template('edititem.html', pd=pd)
 

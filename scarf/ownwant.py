@@ -1,7 +1,7 @@
 from scarf import app
+from core import SiteUser, NoUser, SiteItem, NoItem, redirect_back, upsert, doupsert, read, doquery, delete
+
 from flask import redirect, url_for, request, render_template, session, flash
-from sql import upsert, doupsert, read, doquery, delete
-from core import SiteUser, NoUser, SiteItem, NoItem, redirect_back
 
 #TODO more user feedback
 

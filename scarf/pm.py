@@ -1,13 +1,11 @@
 from scarf import app
+from core import NoItem, NoUser, SiteUser, redirect_back, user_by_uid, send_pm, PrivateMessage, messagestatus, TradeMessage, deobfuscate, obfuscate
+from main import page_not_found, PageData
+
 from flask import flash, render_template, session, request, redirect
-from core import PageData, NoItem, NoUser, SiteUser, redirect_back, user_by_uid, send_pm, PrivateMessage, messagestatus, TradeMessage, deobfuscate, obfuscate
-from main import page_not_found
-from debug import dbg
 
-
-@app.route('/user/<username>/pm/<messageid>/debug', defaults={'debug': True})
-@app.route('/user/<username>/pm/<messageid>', defaults={'debug': False})
-def viewpm(username, messageid, debug):
+@app.route('/user/<username>/pm/<messageid>')
+def viewpm(username, messageid):
     pd = PageData()
     dmid = deobfuscate(messageid)
 
@@ -16,22 +14,19 @@ def viewpm(username, messageid, debug):
 
     if 'username' in session:
         pm = TradeMessage.create(dmid)
-        pm.read()
 
         if pm.messagestatus < messagestatus['unread_pm']:
             pm = TradeMessage.create(messageid)
 
-        pd.pm = pm
+        if session['username'] is pm.to_user:
+            pm.read()
 
-        if debug:
-            if 'username' in session and pd.authuser.accesslevel == 255:
-                pd.debug = dbg(pd)
+        pd.pm = pm
 
         return render_template('pm.html', pd=pd)
  
-@app.route('/user/<username>/pm/debug', methods=['GET'], defaults={'debug': True})
-@app.route('/user/<username>/pm', methods=['GET', 'POST'], defaults={'debug': False})
-def pm(username, debug):
+@app.route('/user/<username>/pm', methods=['GET', 'POST'])
+def pm(username):
     pd = PageData()
 
     try:
@@ -59,9 +54,5 @@ def pm(username, debug):
 # TODO re-fill form
                 flash('No message or subject')
                 return redirect_back('/user/' + username + '/pm')
-
-    if debug:
-        if 'username' in session and pd.authuser.accesslevel == 255:
-            pd.debug = dbg(pd)
 
     return render_template('sendpm.html', pd=pd)

@@ -1,19 +1,19 @@
+from scarf import app
+from core import redirect_back, SiteImage, SiteItem, NoItem, NoImage, new_img, latest_items, memoize_with_expiry, cache_persist, long_cache_persist
+from main import page_not_found, PageData
+import core
+
 from StringIO import StringIO
 from PIL import Image
-from scarf import app
 from flask import make_response, redirect, url_for, request, render_template, session, flash, send_file
-from core import redirect_back, PageData, SiteImage, SiteItem, NoItem, NoImage, new_img, latest_items
-from main import page_not_found
-from debug import dbg
+
 import base64
 import cStringIO
 
 from access import check_mod
 
-from memoize import memoize_with_expiry, cache_persist, long_cache_persist
-
-@app.route('/newimg', methods=['POST'], defaults={'debug': False})
-def newimg(debug):
+@app.route('/newimg', methods=['POST'])
+def newimg():
     pd = PageData()
     if request.method == 'POST':
         if request.form['title'] == '':
@@ -22,14 +22,15 @@ def newimg(debug):
             title = request.form['title']
 
         if 'username' in session:
-            uid = pd.authuser.uid
+            userid = pd.authuser.uid
         else:
-            uid = 0 
+            userid = None
 
         if 'img' in request.files:
-            img = new_img(request.files['img'], title, request.form['parent'])
+            img = new_img(request.files['img'], title, request.form['parent'], userid, request.remote_addr)
 
             if img:
+                flash('Uploaded ' + request.files['img'].filename)
                 return redirect_back('/image/' + str(img))
         return redirect_back(url_for('index'))
 
@@ -69,7 +70,12 @@ def flag_image(img_id):
     pd = PageData()
 
     flagimg = SiteImage.create(img_id)
-    flagimg.flag()
+    if 'username' in session:
+        userid = core.uid_by_user(session['username'])
+    else:
+        userid = None
+
+    flagimg.flag(userid)
 
     flash("The image has been flagged and will be reviewed by a moderator.")
 
@@ -147,9 +153,8 @@ def serve_preview(img_id):
     except (IOError, NoImage):
         return page_not_found(404)
 
-@app.route('/image/<img_id>/debug', defaults={'debug': True})
-@app.route('/image/<img_id>', defaults={'debug': False})
-def show_image(img_id, debug):
+@app.route('/image/<img_id>')
+def show_image(img_id):
     pd = PageData()
 
     try:
@@ -157,9 +162,5 @@ def show_image(img_id, debug):
         pd.title=pd.img.tag
     except NoImage:
         return page_not_found(404)
-
-    if debug:
-        if 'username' in session and pd.authuser.accesslevel == 255:
-            pd.debug = dbg(pd)
 
     return render_template('image.html', pd=pd)
