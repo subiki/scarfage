@@ -8,7 +8,11 @@ logger = logging.getLogger(__name__)
 
 def check_level(level):
     pd = PageData()
-    if 'username' not in session or pd.authuser.accesslevel < level:
+    if 'username' not in session:
+        logger.info('check_level failed: no session')
+        return False
+
+    if pd.authuser.accesslevel < level:
         logger.info('check_level failed for {}: {} < {}'.format(session['username'], pd.authuser.accesslevel, level))
         return False
     else:
