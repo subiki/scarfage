@@ -12,7 +12,7 @@ from core import redirect_back
 from nocache import nocache
 
 if 'LOGFILE' in config.__dict__:
-    logging.basicConfig(filename=config.LOGFILE,level=logging.DEBUG)
+    logging.basicConfig(filename=config.LOGFILE,level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler(stream=sys.stdout)
@@ -23,7 +23,7 @@ def handle_exception(exc_type, exc_value, exc_traceback):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
 
-    logger.error("{} Uncaught exception".format(datetime.datetime.now()), exc_info=(exc_type, exc_value, exc_traceback))
+    logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
 
 sys.excepthook = handle_exception
 
