@@ -1,10 +1,12 @@
 import imghdr
 import logging
+import base64
 
 from sql import upsert, doupsert, doquery, Tree
 from mail import send_mail
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 import users
+import utility
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +20,29 @@ def test_icc_profile_images(h, f):
     if h.startswith('\xff\xd8') and h[6:17] == b'ICC_PROFILE':
         return "jpeg"
 imghdr.tests.append(test_icc_profile_images)
+
+def new_img(f, title, parent, userid, ip):
+    raw = f.read()
+
+    if not imghdr.what(None, raw):
+        logger.info('failed to add image to {} by {} / {} '.format(parent, userid, ip))
+        return
+
+    image = base64.b64encode(raw)
+    title = title.strip()[:64]
+
+    sql = "insert into images (tag, parent, userid, image, ip) values (%(tag)s, %(parent)s, %(userid)s, %(image)s, %(ip)s);"
+    doquery(sql, { 'tag': title, 'userid': userid, 'ip': utility.ip_uid(ip), 'parent': parent, 'image': image})
+
+    # there is a potential race condition with last_insert_id()
+    sql = "select last_insert_id();"
+    imgid = doquery(sql)[0][0]
+
+    sql = "insert into imgmods (userid, imgid) values (%(userid)s, %(imgid)s);"
+    doquery(sql, { 'userid': userid, 'imgid': imgid })
+
+    logger.info('new image added to {} by {} / {} '.format(parent, userid, ip))
+    return imgid 
 
 class NoImage(Exception):
     def __init__(self, item):

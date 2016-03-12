@@ -1,5 +1,4 @@
 import datetime
-import base64
 import logging
 
 from sql import upsert, doupsert, doquery, Tree
@@ -332,23 +331,6 @@ def new_item(name, description, userid, ip):
     new_edit(itemid, description, userid, ip)
 
     return itemid 
-
-def new_img(f, title, parent, userid, ip):
-    logger.info('new image added to {} by {} / {} '.format(parent, userid, ip))
-    image = base64.b64encode(f.read())
-    title = title.strip()[:64]
-
-    sql = "insert into images (tag, parent, userid, image, ip) values (%(tag)s, %(parent)s, %(userid)s, %(image)s, %(ip)s);"
-    doquery(sql, { 'tag': title, 'userid': userid, 'ip': ip_uid(ip), 'parent': parent, 'image': image})
-
-    # there is a potential race condition with last_insert_id()
-    sql = "select last_insert_id();"
-    imgid = doquery(sql)[0][0]
-
-    sql = "insert into imgmods (userid, imgid) values (%(userid)s, %(imgid)s);"
-    doquery(sql, { 'userid': userid, 'imgid': imgid })
-
-    return imgid 
 
 @memoize_with_expiry(item_cache, long_cache_persist)
 def latest_items(limit=0):

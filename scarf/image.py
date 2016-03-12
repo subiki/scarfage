@@ -16,22 +16,25 @@ from access import check_mod
 def newimg():
     pd = PageData()
     if request.method == 'POST':
-        if request.form['title'] == '':
-            title = "(untitled)"
-        else:
-            title = request.form['title']
-
-        if 'username' in session:
-            userid = pd.authuser.uid
-        else:
-            userid = None
-
         if 'img' in request.files:
+            if request.form['title'] == '':
+                title = request.files['img'].filename
+            else:
+                title = request.form['title']
+
+            if 'username' in session:
+                userid = pd.authuser.uid
+            else:
+                userid = None
+
             img = new_img(request.files['img'], title, request.form['parent'], userid, request.remote_addr)
 
             if img:
-                flash('Uploaded ' + request.files['img'].filename)
+                flash('Uploaded {}'.format(request.files['img'].filename))
                 return redirect_back('/image/' + str(img))
+            else:
+                flash('An error occurred while processing {}'.format(request.files['img'].filename))
+
         return redirect_back(url_for('index'))
 
 @app.route('/image/<img_id>/reallydelete')
