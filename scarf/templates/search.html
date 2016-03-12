@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div id="content">
+
+{% if pd.results %}
+<div class="col-md-12">
+<div class="page-heading"><h3>Search Results for "{{pd.query}}"</h3></div>
+
+<table class="table">
+{% for item in pd.results %}
+{% if item == None %}
+No results.
+{%else%}
+<tr>
+   <td><a href="/item/{{ item.uid }}"><h4>{{item.name}}</h4></a></td>
+   <td>
+   {% for image in item.images()[:1] %}
+       <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"></a>
+   {% endfor %}
+   </td>
+</tr>
+{% endif %}
+{% endfor %}
+</table>
+
+</div>
+{% endif %}
+</div>
+
+{% endblock %}

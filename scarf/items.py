@@ -2,13 +2,16 @@ from scarf import app
 from core import SiteUser, NoUser, SiteItem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items, escape_html
 from main import page_not_found, PageData
 from nocache import nocache
+import core
 
 from flask import redirect, url_for, request, render_template, session, flash
 from werkzeug import secure_filename
 from access import check_admin
-
+import logging
 import markdown
+
 md_extensions = ['markdown.extensions.extra', 'markdown.extensions.nl2br', 'markdown.extensions.sane_lists']
+logger = logging.getLogger(__name__)
 
 import sys
 reload(sys)  
@@ -207,3 +210,22 @@ def untag_item(item_id, tag_ob):
     pd = PageData()
     item.remove_tag(pd.decode(tag_ob))
     return redirect('/item/' + str(item.uid))
+
+@app.route('/item/search', methods=['GET', 'POST'])
+@nocache
+def searchitem():
+    pd = PageData()
+    if request.method == 'POST':
+        if 'query' in request.form:
+            pd.query = request.form['query']
+    else:
+        pd.query = request.args.get('query')
+
+    if pd.query == '':
+        return redirect_back('/')
+    if pd.query is not None:
+        pd.results = core.item_search(pd.query)
+        if len(pd.results) == 0:
+            pd.results = [None]
+
+    return render_template('search.html', pd=pd)

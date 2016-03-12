@@ -78,6 +78,15 @@ def uid_by_item(item):
     except IndexError:
         return
 
+def item_search(query):
+    sql = 'select uid from items where name like %(query)s;'
+    result = doquery(sql, {'query': '%{}%'.format(query)})
+
+    ret = list()
+    for item in result:
+        ret.append(SiteItem(item[0]))
+    return ret
+
 class ItemHist(object):
     def __init__(self, uid):
         self.uid = uid
