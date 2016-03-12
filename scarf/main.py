@@ -1,11 +1,31 @@
 # -*- coding: utf-8 -*-
 import base64
+import logging
+import datetime
+import os, sys
 
 import core
+import config
 from scarf import app
 from flask import render_template, session, request, flash
 from core import redirect_back
 from nocache import nocache
+
+if 'LOGFILE' in config.__dict__:
+    logging.basicConfig(filename=config.LOGFILE,level=logging.DEBUG)
+
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+
+    logger.error("{} Uncaught exception".format(datetime.datetime.now()), exc_info=(exc_type, exc_value, exc_traceback))
+
+sys.excepthook = handle_exception
 
 class PageData(object):
     pass

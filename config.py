@@ -8,6 +8,9 @@ DBPASS = '4AybHApWa7n6VRp6'
 
 DEPFILE = '/some/path'
 
+# feel free to leave this unset
+#LOGFILE = '/some/path'
+
 # only needs to be changed on the prod site, this is fine for testing
 # import os
 # os.urandom(24)

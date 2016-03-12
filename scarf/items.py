@@ -57,9 +57,10 @@ def delete_item(item_id):
 
     return render_template('confirm.html', pd=pd)
 
+@app.route('/item/<item_id>/history/<edit>')
 @app.route('/item/<item_id>')
 @nocache
-def show_item(item_id):
+def show_item(item_id, edit=None):
     pd = PageData()
 
     if item_id is 'new':
@@ -68,7 +69,11 @@ def show_item(item_id):
     try:
         showitem = SiteItem(item_id)
 
-        showitem.description_html = markdown.markdown(escape_html(str(showitem.body())), md_extensions)
+        if edit:
+            showitem.old = True
+            showitem.description = edit
+
+        showitem.description_html = markdown.markdown(escape_html(str(showitem.body(edit))), md_extensions)
     except NoItem:
         return page_not_found(404)
 
@@ -102,25 +107,6 @@ def revert_item_edit(item_id, edit):
     pd.item = item
 
     return render_template('edititem.html', pd=pd)
-
-@app.route('/item/<item_id>/history/<edit>')
-@nocache
-def show_item_edit(item_id, edit):
-    pd = PageData()
-
-    try:
-        showitem = SiteItem(item_id)
-        showitem.old = True
-        showitem.description = edit
-
-        showitem.description_html = markdown.markdown(escape_html(str(showitem.body(edit))), md_extensions)
-    except NoItem:
-        return redirect("/item/" + item_id + "/edit")
-
-    pd.title = showitem.name
-    pd.item = showitem
-
-    return render_template('item.html', pd=pd)
 
 @app.route('/item/<item_id>/history')
 @nocache

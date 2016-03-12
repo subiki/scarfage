@@ -60,20 +60,6 @@
 {% endfor %}
 </table>
 
-<div class="page-heading"><h3>Metatags</h3></div>
-
-<table class="table">
-{% for tag in pd.tree.metatags(pd.tag) %}
-<tr><td>{{ tag }}</td><td><a href="/tag/{{ pd.encode(tag) }}">View / Edit</a></td><td><a href="/tag/{{ pd.encode(tag) }}/delete">Delete</a></td></tr>
-{% endfor %}
-</table>
-
-<form action="/tag/metatag" method="post" enctype="multipart/form-data">
-    <input type=text name=metatag placeholder="Add a metatag">
-    <input type=hidden name=tag value="{{ pd.encode(pd.tag) }}"> 
-    <button class="btn btn-sm btn-default" type=submit>Save</button>
-</form>
-
 <div class="page-heading"><h3>Tagged Items</h3></div>
 
 <table class="table">

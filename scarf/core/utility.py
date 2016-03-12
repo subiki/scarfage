@@ -5,6 +5,7 @@ from flask import request, redirect, url_for
 
 from mail import send_mail
 from sql import doquery
+from .. import config
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)

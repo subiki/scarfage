@@ -73,24 +73,6 @@ def newtag():
 
     return redirect_back('index')
 
-@app.route('/tag/metatag', methods=['POST'])
-def new_metatag():
-    pd = PageData()
-
-    if request.method == 'POST':
-        if 'username' in session:
-            userid = pd.authuser.uid
-        else:
-            userid = 0 
-
-        if 'metatag' and 'tag' in request.form:
-            if request.form['metatag'] == '':
-                return redirect_back('index')
-
-            Tags().add_metatag(pd.decode(request.form['tag']), request.form['metatag'])
-
-    return redirect_back('index')
-
 @app.route('/tag/reparent', methods=['POST'])
 @check_mod
 def tagreparent():
