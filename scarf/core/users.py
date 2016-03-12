@@ -240,20 +240,17 @@ def check_email(email):
 def new_user(username, password, email, ip):
     username = username.strip()
     email = email.strip()
-    try:
-        joined = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        sql = "insert into users (username, pwhash, email, joined, accesslevel) values (%(username)s, %(pwhash)s, %(email)s, %(joined)s, '1');"
-        result = doquery(sql, { 'username': username, 'pwhash': gen_pwhash(password), 'email': email, 'joined': joined })
+    joined = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        sql = "insert into userstat_lastseen (date, uid) values (%(lastseen)s, %(uid)s);"
-        result = doquery(sql, { 'uid': uid_by_user(username), 'lastseen': joined })
+    sql = "insert into users (username, pwhash, email, joined, accesslevel) values (%(username)s, %(pwhash)s, %(email)s, %(joined)s, '1');"
+    result = doquery(sql, { 'username': username, 'pwhash': gen_pwhash(password), 'email': email, 'joined': joined })
 
-        message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=ip)
-        send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
-    except Exception as e:
-        logger.error('Failed to add new user {}: {}'.format(username, e.message))
-        return False
+    sql = "insert into userstat_lastseen (date, uid) values (%(lastseen)s, %(uid)s);"
+    result = doquery(sql, { 'uid': uid_by_user(username), 'lastseen': joined })
+
+    message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=ip)
+    send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
 
     logger.info('Added new user {}'.format(username))
     return True

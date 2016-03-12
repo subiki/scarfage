@@ -3,9 +3,12 @@ from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
 from core import redirect_back, SiteUser, NoUser, new_user, AuthFail, check_email
 from main import PageData
+import logging
 
 import config
 app.secret_key = config.SECRETKEY
+
+logger = logging.getLogger(__name__)
 
 def check_new_user(request):
     ret = True
@@ -73,7 +76,6 @@ def newuser():
     pd.title = "New User"
 
     if 'username' in session:
-        flash('Don\'t be greedy')
         return redirect(url_for('index'))
     else:
         if request.method == 'POST':
