@@ -320,7 +320,7 @@ def new_edit(itemid, description, userid, ip):
 
 def new_item(name, description, userid, ip):
     name = name.strip()[:64]
-    logger.info('new item {} added by {} / {} '.format(itemid, userid, ip))
+    logger.info('new item {} added by {} / {} '.format(name, userid, ip))
 
     sql = "insert into items (name, description, added, modified) values (%(name)s, 0, %(now)s, %(now)s);"
     doquery(sql, { 'now': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 'name': name })
