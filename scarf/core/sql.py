@@ -7,7 +7,7 @@ import random
 import string
 import logging
 
-from ..config import dbHost, dbName, dbUser, dbPass
+from .. import config
 
 # based on 
 # https://code.activestate.com/recipes/280653-efficient-database-trees/
@@ -236,7 +236,7 @@ def get_db():
     try:
         if db is None:
             logging.info("Connecting to db host")
-            db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
+            db = MySQLdb.connect(host=config.DBHOST, db=config.DBNAME, user=config.DBUSER, passwd=config.DBPASS)
 
             db.set_character_set('utf8')
 
@@ -269,7 +269,7 @@ def doquery(query, data=None, select=True):
     try:
         if db is None:
             logging.info("Connecting to db host")
-            db = MySQLdb.connect(host=dbHost, db=dbName, user=dbUser, passwd=dbPass)
+            db = MySQLdb.connect(host=config.DBHOST, db=config.DBNAME, user=config.DBUSER, passwd=config.DBPASS)
 
             db.set_character_set('utf8')
             cursor = db.cursor()

@@ -1,4 +1,4 @@
-import config as sf_conf
+import config
 from scarf import app
 from access import check_mod, check_admin
 from core import redirect_back, NoUser, SiteUser, read, doquery
@@ -23,13 +23,13 @@ def get_users():
 @check_admin
 def admin_users():
     pd = PageData()
-    pd.sf_conf = sf_conf
+    pd.sf_conf = config
 
     pd.title = "Admin" 
 
     pd.users = get_users()
     try:
-        with open(sf_conf.dep_file, 'r') as depfile:
+        with open(config.DEPFILE, 'r') as depfile:
             frozen = depfile.read()
         pd.deployment = jsonpickle.decode(frozen)
         pd.mode = 'prod'

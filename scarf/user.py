@@ -4,8 +4,8 @@ from flask import redirect, url_for, render_template, session, request, flash
 from core import redirect_back, SiteUser, NoUser, new_user, AuthFail, check_email
 from main import PageData
 
-from config import secret_key
-app.secret_key = secret_key
+import config
+app.secret_key = config.SECRETKEY
 
 def check_new_user(request):
     ret = True
