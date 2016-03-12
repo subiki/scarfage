@@ -32,7 +32,7 @@ class PageData(object):
 
     def __init__(self):
         try:
-            self.prefix = prefix
+            self.prefix = config.PREFIX
         except NameError:
             self.prefix = ''
 
