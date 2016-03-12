@@ -28,8 +28,6 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 sys.excepthook = handle_exception
 
 class PageData(object):
-    pass
-
     def __init__(self):
         try:
             self.prefix = config.PREFIX

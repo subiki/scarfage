@@ -1,7 +1,8 @@
 import cgi
 import base64
 from urlparse import urlparse, urljoin
-from flask import request, redirect, url_for 
+from flask import request, redirect, url_for
+from werkzeug.routing import BuildError
 
 from mail import send_mail
 from sql import doquery
@@ -16,7 +17,11 @@ def is_safe_url(target):
 def redirect_back(endpoint, **values):
     target = request.referrer
     if not target or not is_safe_url(target):
-        target = url_for(endpoint, **values)
+        # if ^/, not except
+        try:
+            target = url_for(endpoint, **values)
+        except BuildError:
+            target = endpoint
     return redirect(target)
 
 def escape_html(text):

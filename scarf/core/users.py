@@ -252,7 +252,9 @@ def new_user(username, password, email, ip):
         message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=ip)
         send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
     except Exception as e:
+        logger.error('Failed to add new user {}: {}'.format(username, e.message))
         return False
 
+    logger.info('Added new user {}'.format(username))
     return True
 
