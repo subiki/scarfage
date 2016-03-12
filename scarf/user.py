@@ -53,7 +53,6 @@ def login():
         try:
             user.authenticate(request.form['password'])
         except (NoUser, AuthFail) as e:
-            app.logger.warning("Failed login: " + e.args[0]) 
             if user.accesslevel is 0:
                 flash('Your account has been banned')
             else:

@@ -1,10 +1,14 @@
 import smtplib
 import html2text
+import logging
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+logger = logging.getLogger(__name__)
+
 def send_mail(recipient, subject, message, sender=None):
+    logger.info('send_mail f: {} r: {} sub: {}'.format(sender, recipiend, subject))
     if sender is None:
         sender = 'Scarfage <do_not_reply@scarfage.com>'
 

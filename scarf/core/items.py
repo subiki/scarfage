@@ -1,6 +1,6 @@
 import datetime
 import base64
-#import time
+import logging
 
 from sql import upsert, doupsert, doquery, Tree
 from mail import send_mail
@@ -9,6 +9,8 @@ from utility import ip_uid
 
 import images
 import users
+
+logger = logging.getLogger(__name__)
 
 class Tags(Tree):
     def __init__(self):
@@ -111,6 +113,7 @@ class SiteItem(object):
         """
 
     def delete(self):
+        logger.info('deleted item id {}: {}'.format(self.uid, self.name))
         item_cache = dict()
 
         for image in self.images():
@@ -132,6 +135,7 @@ class SiteItem(object):
         result = doquery(sql, {"uid": self.uid}) 
 
     def update(self):
+        logger.info('item updated {}: {} '.format(self.uid, self.name))
         self.name = self.name.strip()[:64]
         sql = "update items set name = %(name)s, description = %(desc)s, modified = %(modified)s where uid = %(uid)s;"
         return doquery(sql, {"uid": self.uid, "desc": self.description, "name": self.name, "modified": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") })
@@ -260,6 +264,7 @@ class SiteItem(object):
         return ret
         
     def add_tag(self, tag, parent=None):
+        logger.info('tag {} added to {}: {} '.format(tag, self.uid, self.name))
         try:
             self.tree.retrieve(tag)
         except IndexError:
@@ -278,6 +283,7 @@ class SiteItem(object):
                 raise
 
     def remove_tag(self, tag):
+        logger.info('tag {} removed from {}: {} '.format(tag, self.uid, self.name))
         try:
             self.tree.retrieve(tag)
         except IndexError:
@@ -289,6 +295,8 @@ class SiteItem(object):
 def new_edit(itemid, description, userid, ip):
     if userid == 0:
         userid = None
+
+    logger.info('item {} edited by {} / {} '.format(itemid, userid, ip))
 
     date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sql = "insert into itemedits (date, itemid, userid, ip, body) values (%(date)s, %(itemid)s, %(userid)s, %(ip)s, %(body)s);"
@@ -304,6 +312,8 @@ def new_edit(itemid, description, userid, ip):
 
 def new_item(name, description, userid, ip):
     name = name.strip()[:64]
+    logger.info('new item {} added by {} / {} '.format(itemid, userid, ip))
+
     sql = "insert into items (name, description, added, modified) values (%(name)s, 0, %(now)s, %(now)s);"
     doquery(sql, { 'now': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 'name': name })
 
@@ -315,6 +325,7 @@ def new_item(name, description, userid, ip):
     return itemid 
 
 def new_img(f, title, parent, userid, ip):
+    logger.info('new image added to {} by {} / {} '.format(parent, userid, ip))
     image = base64.b64encode(f.read())
     title = title.strip()[:64]
 
@@ -346,5 +357,3 @@ def latest_items(limit=0):
         pass
 
     return items
-
-

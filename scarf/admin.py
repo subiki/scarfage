@@ -61,7 +61,6 @@ def admin_set_accesslevel(user, level):
         return render_template('error.html', pd=pd)
 
     moduser.newaccesslevel(level)
-    app.logger.info('Accesslevel change for ' + user)
     flash('User ' + user + '\'s accesslevel has been set to ' + level)
 
     return redirect_back('/admin')

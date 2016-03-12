@@ -107,7 +107,6 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
 
     return messageid 
 
-
 class TradeItem(object):
     def __init__(self, itemid):
         self.uid = itemid 

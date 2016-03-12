@@ -54,7 +54,7 @@ class PageData(object):
 @app.errorhandler(404)
 def page_not_found(error):
     pd = PageData()
-    app.logger.error('404! Referrer was: ' + str(request.referrer))
+    logger.error('404! Referrer was: ' + str(request.referrer))
     pd.title = "File not found"
     pd.errorcode="404"
     pd.errortext="File not found."
@@ -63,7 +63,7 @@ def page_not_found(error):
 @app.errorhandler(500)
 def own_goal(error):
     pd = PageData()
-    app.logger.error('500! Referrer was: ' + str(request.referrer))
+    logger.error('500! Referrer was: ' + str(request.referrer))
     pd.title = "Oh noes!"
     pd.errorcode="500"
     pd.errortext="(╯°□°）╯︵ ┻━┻"

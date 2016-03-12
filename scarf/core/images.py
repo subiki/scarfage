@@ -1,9 +1,12 @@
 import imghdr
+import logging
 
 from sql import upsert, doupsert, doquery, Tree
 from mail import send_mail
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 import users
+
+logger = logging.getLogger(__name__)
 
 """
 Workaround for the issue identified here:
@@ -42,6 +45,7 @@ class SiteImage(object):
             raise NoImage(uid)
 
     def delete(self):
+        logger.info('deleted image id {}: {}'.format(self.uid, self.tag))
         siteimage_cache = dict()
         #TODO image purgatory
         sql = 'delete from imgmods where imgid = %(uid)s;'
@@ -51,12 +55,13 @@ class SiteImage(object):
         result = doquery(sql, { 'uid': self.uid })
 
     def approve(self):
+        logger.info('moderation approved image id {}: {}'.format(self.uid, self.tag))
         sql = 'delete from imgmods where imgid = %(uid)s;'
         result = doquery(sql, { 'uid': self.uid })
 
     def flag(self, userid=None):
+        logger.info('moderation flag added for image id {} by userid {}'.format(self.uid, userid))
         if userid:
             sql = upsert('imgmods', **{"imgid": self.uid, "userid": userid, "flag": 1})
         else:
             sql = upsert('imgmods', **{"imgid": self.uid, "flag": 1})
-

@@ -9,6 +9,8 @@ import logging
 
 from .. import config
 
+logger = logging.getLogger(__name__)
+
 # based on 
 # https://code.activestate.com/recipes/280653-efficient-database-trees/
 # PSF License
@@ -160,15 +162,15 @@ class Tree(object):
 
     def reparent(self, node, parent):
         if parent == self.parent_of(node):
-            logging.error('reparent: null op!')
+            logger.error('reparent: null op!')
             return
             
         if node == parent:
-            logging.error('reparent: attempted to reparent into myself!')
+            logger.error('reparent: attempted to reparent into myself!')
             return
 
         if node in self.all_children_of('parent'):
-            logging.error('reparent: attempted to reparent into a child!')
+            logger.error('reparent: attempted to reparent into a child!')
             return
 
         temp_node = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(20))
@@ -187,7 +189,7 @@ db = None
 def read(table, **kwargs):
     curframe = inspect.currentframe()
     calframe = inspect.getouterframes(curframe, 2)
-    logging.error("deprecated function read called by " + calframe[1][3])
+    logger.error("deprecated function read called by " + calframe[1][3])
  
     """ Generates SQL for a SELECT statement matching the kwargs passed. """
     sql = list()
@@ -200,7 +202,7 @@ def read(table, **kwargs):
 def upsert(table, **kwargs):
     curframe = inspect.currentframe()
     calframe = inspect.getouterframes(curframe, 2)
-    logging.error("deprecated function upsert called by " + calframe[1][3])
+    logger.error("deprecated function upsert called by " + calframe[1][3])
     
     """ update/insert rows into objects table (update if the row already exists)
         given the key-value pairs in kwargs """
@@ -221,7 +223,7 @@ def delete(table, **kwargs):
 
     curframe = inspect.currentframe()
     calframe = inspect.getouterframes(curframe, 2)
-    logging.error("deprecated function delete called by " + calframe[1][3])
+    logger.error("deprecated function delete called by " + calframe[1][3])
 
 
     sql = list()
@@ -235,20 +237,20 @@ def get_db():
 
     try:
         if db is None:
-            logging.info("Connecting to db host")
+            logger.info("Connecting to db host")
             db = MySQLdb.connect(host=config.DBHOST, db=config.DBNAME, user=config.DBUSER, passwd=config.DBPASS)
 
             db.set_character_set('utf8')
 
     except MySQLdb.MySQLError as e:
         db = None
-        logging.error("Cannot connect to database. MySQL error: " + str(e))
+        logger.error("Cannot connect to database. MySQL error: " + str(e))
         raise
 
 def doupsert(query):
     curframe = inspect.currentframe()
     calframe = inspect.getouterframes(curframe, 2)
-    logging.error("deprecated function doupsert called by " + calframe[1][3])
+    logger.error("deprecated function doupsert called by " + calframe[1][3])
 
     get_db()
     cursor = db.cursor()
@@ -268,7 +270,7 @@ def doquery(query, data=None, select=True):
 
     try:
         if db is None:
-            logging.info("Connecting to db host")
+            logger.info("Connecting to db host")
             db = MySQLdb.connect(host=config.DBHOST, db=config.DBNAME, user=config.DBUSER, passwd=config.DBPASS)
 
             db.set_character_set('utf8')
@@ -282,7 +284,7 @@ def doquery(query, data=None, select=True):
         cur = db.cursor()
         cur.execute(query, data)
 
-        #logging.info((query, data, 'rows: ' + str(cur.rowcount)))
+        #logger.info((query, data, 'rows: ' + str(cur.rowcount)))
 
         if select:
             data = cur.fetchall()
@@ -296,5 +298,5 @@ def doquery(query, data=None, select=True):
 
     except MySQLdb.MySQLError as e:
         db = None
-        logging.error("Cannot connect to database. MySQL error: " + str(e))
+        logger.error("Cannot connect to database. MySQL error: " + str(e))
         raise

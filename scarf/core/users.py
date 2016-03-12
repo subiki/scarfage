@@ -2,6 +2,7 @@ import datetime
 import base64
 import bcrypt
 import hashlib
+import logging
 #import hmac
 import random
 from string import ascii_letters, digits
@@ -13,6 +14,8 @@ from mail import send_mail
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 import items
 import messages 
+
+logger = logging.getLogger(__name__)
 
 accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
 
@@ -159,21 +162,28 @@ class SiteUser(object):
         try:
             pwhash = result[0][0]
         except IndexError:
+            logger.info('AuthFail for user {}: unable to find user'.format(self.username))
             raise AuthFail(self.username)
  
         if self.accesslevel == 0:
+            logger.info('AuthFail for user {}: account has been banned'.format(self.username))
             raise AuthFail(self.username)
 
         if not verify_pw(password, pwhash):
+            logger.info('AuthFail for user {}: invalid password'.format(self.username))
             raise AuthFail(self.username)
 
+        logger.info('Successful authentication for user {}'.format(self.username))
+
     def newaccesslevel(self, accesslevel):
+        logger.info('Accesslevel change for user {}, was {} is now {}'.format(self.username, self.accesslevel, accesslevel))
         self.accesslevel = int(accesslevel)
 
         sql = "update users set accesslevel = %(level)s where uid = %(uid)s;"
         return doquery(sql, {"uid": self.uid, "level": self.accesslevel})
 
     def newpassword(self, password):
+        logger.info('Password reset for user {}'.format(self.username))
         pwhash = gen_pwhash(password)
         del password
 
@@ -181,12 +191,14 @@ class SiteUser(object):
         return doquery(sql, {"uid": self.uid, "pwhash": pwhash})
 
     def newemail(self, email):
+        logger.info('Email reset for user {}'.format(self.username))
         self.email = email
 
         sql = "update users set email = %(email)s where uid = %(uid)s;"
         return doquery(sql, {"uid": self.uid, "email": email})
 
     def forgot_pw_reset(self, ip, admin=False):
+        logger.info('Forgotten password reset for user {} by {}'.format(self.username, ip))
         newpw = ''.join([random.choice(ascii_letters + digits) for _ in range(12)])
         self.newpassword(newpw)
 
