@@ -80,9 +80,12 @@ def trade(username, itemid):
                     flash('Submitted trade request!')
                     return redirect('/user/' + pd.authuser.username + '/pm/' + obfuscate(messageid))
 
-            return redirect('/item/' + itemid)
+            if message == '':
+                flash('Please add a message')
 
-    pd.title = "Trade for " + itemid
+            return redirect_back('/item/' + itemid)
+
+    pd.title = "Trading with {}".format(username)
 
     try:
         pd.authuser.ownwant = pd.authuser.query_collection(itemid)

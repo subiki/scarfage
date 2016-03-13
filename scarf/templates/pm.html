@@ -82,7 +82,7 @@ Open<br />
     <td>
     {% for image in ti.item.images()[:1] %}
         <a href="/image/{{ image.uid }}"><img style="max-height:100px; max-height:100px; max-width:500px; 
-         {% if ti.acceptstatus == pd.pm.tradeitemstatus['rejected'] %}opacity: 0.25; filter: alpha(opacity=25); background-color: #000;"{%endif%}
+         {% if ti.acceptstatus == pd.pm.tradeitemstatus['rejected'] %}opacity: 0.25; filter: alpha(opacity=25); background-color: #000;{%endif%}"
          class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"><br /></a>
     {% endfor %}
     </td>
@@ -129,7 +129,7 @@ Open<br />
 
 <div class="col-md-12">
 <p>
-<b><a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/add"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add another item</a></b>
+<b><a href="/user/{{ pd.authuser.username }}/pm/{{ pd.pm.uid_obfuscated }}/add"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add more items</a></b>
 </p>
 </div>
 
