@@ -4,6 +4,7 @@ app = Flask(__name__)
 
 import scarf.main
 import scarf.image
+import scarf.resize
 import scarf.items
 import scarf.ownwant
 import scarf.profile
