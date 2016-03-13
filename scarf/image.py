@@ -1,16 +1,17 @@
 from scarf import app
 from core import redirect_back, SiteImage, SiteItem, NoItem, NoImage, new_img, latest_items, memoize_with_expiry, cache_persist, long_cache_persist
 from main import page_not_found, PageData
+from access import check_mod
 import core
 
 from StringIO import StringIO
 from PIL import Image
 from flask import make_response, redirect, url_for, request, render_template, session, flash, send_file
-
+import logging
 import base64
 import cStringIO
 
-from access import check_mod
+logger = logging.getLogger(__name__)
 
 @app.route('/newimg', methods=['POST'])
 def newimg():
@@ -130,24 +131,16 @@ def serve_full(img_id):
     except (IOError, NoImage):
         return page_not_found(404)
 
-@app.route('/image/<img_id>/thumbnail')
-def serve_thumb(img_id):
+@app.route('/resize/<size>/<img_id>')
+def resize_image(size, img_id):
     try:
+        logger.info('resize fallback URL called for imgid {} - {}'.format(img_id, size))
         simg = SiteImage.create(img_id)
         image_string = cStringIO.StringIO(base64.b64decode(simg.image))
-        img = resize(image_string, 800.0, 200.0)
+        (x, y) = size.split('x')
+        img = resize(image_string, float(x), float(y))
         return serve_pil_image(img)
-    except (IOError, NoImage):
-        return page_not_found(404)
-
-@app.route('/image/<img_id>/preview')
-def serve_preview(img_id):
-    try:
-        simg = SiteImage.create(img_id)
-        image_string = cStringIO.StringIO(base64.b64decode(simg.image))
-        img = resize(image_string, 800.0, 800.0)
-        return serve_pil_image(img)
-    except (IOError, NoImage):
+    except (IOError, NoImage, ValueError):
         return page_not_found(404)
 
 @app.route('/image/<img_id>')

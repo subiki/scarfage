@@ -17,7 +17,7 @@ No results.
    <td><a href="/item/{{ item.uid }}"><h4>{{item.name}}</h4></a></td>
    <td>
    {% for image in item.images()[:1] %}
-       <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/image/{{ image.uid }}/thumbnail" alt="{{ image.tag }}"></a>
+       <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"></a>
    {% endfor %}
    </td>
 </tr>
