@@ -16,7 +16,7 @@ def accepttradeitem(username, messageid, action, item=None):
         if item:
             try:
                 ti = TradeItem(item)
-            except:
+            except NoItem:
                 return page_not_found(404)
 
             if action == "accept":
@@ -40,6 +40,9 @@ def accepttradeitem(username, messageid, action, item=None):
             elif action == "reopen":
                 t.unread()
                 t.read()
+            elif action == "add":
+                flash('Coming soon...')
+                return redirect_back('/')
             else:
                 return page_not_found(404)
 

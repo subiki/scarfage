@@ -91,12 +91,8 @@ def serve_pil_image(pil_img):
     img_io.seek(0)
     return send_file(img_io, mimetype='image/png')
 
-#    pil_img.save(img_io, 'JPEG', quality=70)
-#    img_io.seek(0)
-#    return send_file(img_io, mimetype='image/jpeg')
-
-#TODO this is broken, I hate it
-def resize(img, maxwidth, maxheight):
+def resize(image_string, maxwidth, maxheight):
+    img = Image.open(image_string)
     hsize = img.size[0]
     vsize = img.size[1]
     factor = 1
@@ -139,8 +135,7 @@ def serve_thumb(img_id):
     try:
         simg = SiteImage.create(img_id)
         image_string = cStringIO.StringIO(base64.b64decode(simg.image))
-        img = Image.open(image_string)
-        img = resize(img, 800.0, 200.0)
+        img = resize(image_string, 800.0, 200.0)
         return serve_pil_image(img)
     except (IOError, NoImage):
         return page_not_found(404)
@@ -150,8 +145,7 @@ def serve_preview(img_id):
     try:
         simg = SiteImage.create(img_id)
         image_string = cStringIO.StringIO(base64.b64decode(simg.image))
-        img = Image.open(image_string)
-        img = resize(img, 800.0, 800.0)
+        img = resize(image_string, 800.0, 800.0)
         return serve_pil_image(img)
     except (IOError, NoImage):
         return page_not_found(404)

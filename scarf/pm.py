@@ -39,9 +39,9 @@ def pm(username):
             message = request.form['body']
             subject = request.form['subject']
 
-            try:
+            if 'parent' in request.form:
                 parent = deobfuscate(request.form['parent'])
-            except:
+            else:
                 parent = None
 
             if message and subject:
@@ -49,7 +49,11 @@ def pm(username):
 
                 if messageid:
                     flash('Message sent!')
-                    return redirect('/user/' + pd.authuser.username + '/pm/' + obfuscate((messageid)))
+                    if parent:
+                        return redirect_back('/user/' + username + '/pm')
+                    else:
+                        return redirect('/user/' + pd.authuser.username + '/pm/' + obfuscate((messageid)))
+
             else:
 # TODO re-fill form
                 flash('No message or subject')

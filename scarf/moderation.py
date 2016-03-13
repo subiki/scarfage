@@ -116,6 +116,7 @@ def mod_img(image):
         pd.errortext = "SQL error"
         return render_template('error.html', pd=pd)
 
+    # TODO: move to siteimage
     simg = SiteImage.create(modimg.uid)
     image_string = cStringIO.StringIO(base64.b64decode(simg.image))
     im = Image.open(image_string)
@@ -145,7 +146,7 @@ def mod_img_approve(imageid):
 
     try:
         modimg = SiteImage.create(imageid)
-    except:
+    except NoImage:
         flash('Error during moderation')
         return redirect(url_for('moderate'))
 

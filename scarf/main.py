@@ -45,7 +45,7 @@ class PageData(object):
         if 'username' in session:
             try:
                 self.authuser = core.SiteUser.create(session['username'])
-            except:
+            except core.NoUser:
                 self.authuser = None
                 pass
 

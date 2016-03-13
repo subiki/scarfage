@@ -102,8 +102,8 @@ def revert_item_edit(item_id, edit):
 
         item.old = True
         item.description = edit
-    except:
-        pass
+    except NoItem:
+        return page_not_found(404)
 
     pd.title="Reverting: " + item.name
     pd.item_name = item.name
@@ -170,7 +170,7 @@ def edititem(item_id=None):
     if item_id:
         try:
             pd.item = SiteItem(item_id)
-        except:
+        except NoItem:
             return page_not_found(404)
      
         pd.title="Editing: %s" % pd.item.name
