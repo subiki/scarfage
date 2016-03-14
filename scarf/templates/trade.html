@@ -23,8 +23,8 @@ Trading with yourself would get awful lonely...
 
         <table class="table">
         {% for item in pd.tradeuser.collection() %}
-            {% if item.uid not in tradeitems %}
             <tr>
+            {% if item.uid not in tradeitems %}
                 {% if item.willtrade == 1 %}
                    <td><input type="checkbox" name="item" value="{{ item.uid }}"{% if pd.item and pd.item.name == item.name %} checked="yes"{%endif%}></td>
                    <td>{{ item.name }}</td>
@@ -33,7 +33,6 @@ Trading with yourself would get awful lonely...
                         class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
                    {% endfor %}
                {% endif %}
-            </tr>
             {% else %}
                <td> <b><span class="glyphicon glyphicon-check" aria-hidden="true" style="color: blue;"></span></b> </td>
                <td>{{ item.name }}</td>
@@ -42,6 +41,7 @@ Trading with yourself would get awful lonely...
                     class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
                {% endfor %}
             {% endif %}
+            </tr>
         {% endfor %}
         </table>
         {% endif %}
@@ -50,15 +50,14 @@ Trading with yourself would get awful lonely...
 
         <table class="table">
         {% for item in pd.authuser.collection() %}
-            {% if item.uid not in tradeitems %}
             <tr>
+            {% if item.uid not in tradeitems %}
                <td><input type="checkbox" name="item" value="{{ item.uid }}"{% if pd.item and pd.item.name == item.name %} checked="yes"{%endif%}></td>
                <td>{{ item.name }}</td>
                {% for image in item.images()[:1] %}
                    <td><a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;"
                     class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
                {% endfor %}
-            </tr>
             {% else %}
                <td> <b><span class="glyphicon glyphicon-check" aria-hidden="true" style="color: blue;"></span></b> </td>
                <td>{{ item.name }}</td>
@@ -67,7 +66,7 @@ Trading with yourself would get awful lonely...
                     class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
                {% endfor %}
             {% endif %}
-        </tr>
+            </tr>
         {% endfor %}
         </table>
 
