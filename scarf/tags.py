@@ -17,16 +17,11 @@ def mod_tag(tag):
     try:
         pd.tag = pd.decode(tag)
 
-        # remove children, current parent, and ourself from the reparent list
         all_tags = pd.tree.all_children_of(pd.tree.root)
+
+        # remove children and ourself from the reparent list
         subtract = pd.tree.all_children_of(pd.tag)
-        parent = pd.tree.parent_of(pd.tag)
-
-        if parent != pd.tree.root:
-            subtract.append(parent)
-
         subtract.append(pd.tag)
-
         pd.reparent_list = list(set(all_tags) ^ set(subtract))
 
         pd.root_tree = pd.tree.draw_tree(pd.tree.root)
