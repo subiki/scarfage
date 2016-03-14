@@ -1,5 +1,6 @@
 from scarf import app
-from core import SiteUser, NoUser, SiteItem, NoItem, redirect_back, upsert, doupsert, read, doquery, delete
+from core import SiteUser, NoUser, SiteItem, NoItem, redirect_back, OwnWant
+from main import page_not_found
 
 from flask import redirect, url_for, request, render_template, session, flash
 
@@ -57,33 +58,12 @@ def ownwant(item_id, values):
     try:
         moditem = SiteItem(item_id)
     except NoItem:
-        flash('Error adding ' + item_id + 'to your collection')
-        return
-
-    if 'username' in session:
-        try:
-            user = SiteUser.create(session['username'])
-        except NoUser:
-            flash('You must be logged in to add items to a collection')
-            return
-    else:
-        flash('You must be logged in to add items to a collection')
-        return
-
-    result = user.query_collection(item_id)
+        return page_not_found(404)
 
     try:
-        iuid = result.uid
-    except AttributeError: 
-        iuid=0
+        user = SiteUser.create(session['username'])
+    except NoUser, KeyError:
+        flash('You must be logged in to add items to a collection')
+        return redirect('newuser')
 
-    update = dict(uid=iuid, userid=user.uid, itemid=moditem.uid)
-    update.update(values)
-
-    sql = upsert("ownwant", \
-                 **update)
-
-    data = doupsert(sql)
-
-    sql = "delete from ownwant where own = '0' and want = '0' and willtrade = '0';"
-    result = doquery(sql)
+    OwnWant(item_id, user.uid).update(values)

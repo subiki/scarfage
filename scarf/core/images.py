@@ -1,12 +1,28 @@
+from bisect import bisect
+from PIL import Image
+import cStringIO
 import imghdr
 import logging
 import base64
+import random
 
 from sql import upsert, doupsert, doquery, Tree
 from mail import send_mail
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 import users
 import utility
+
+zonebounds=[36,72,108,144,180,216,252]
+greyscale = [
+            " ",
+            " ",
+            ".,-",
+            "_ivc=!/|\\~",
+            "gjez2]/(YL)t[+T7Vf",
+            "mdKbNDXY5P*Q",
+            "W8KMA",
+            "#%$"
+            ]
 
 logger = logging.getLogger(__name__)
 
@@ -90,3 +106,23 @@ class SiteImage(object):
             sql = upsert('imgmods', **{"imgid": self.uid, "userid": userid, "flag": 1})
         else:
             sql = upsert('imgmods', **{"imgid": self.uid, "flag": 1})
+
+    def ascii(self, scale=1):
+        image_string = cStringIO.StringIO(base64.b64decode(self.image))
+        im = Image.open(image_string)
+        basewidth = int(100 * scale)
+        wpercent = (basewidth/float(im.size[0]))
+        hsize = int((float(im.size[1])*float(wpercent))) / 2
+        im=im.resize((basewidth,hsize), Image.ANTIALIAS)
+        im=im.convert("L") # convert to mono
+
+        ascii=""
+        for y in range(0,im.size[1]):
+            for x in range(0,im.size[0]):
+                lum=255-im.getpixel((x,y))
+                row=bisect(zonebounds,lum)
+                possibles=greyscale[row]
+                ascii=ascii+possibles[random.randint(0,len(possibles)-1)]
+            ascii=ascii+"\n"
+
+        return ascii

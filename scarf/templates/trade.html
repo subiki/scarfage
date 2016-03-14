@@ -30,7 +30,7 @@ Trading with yourself would get awful lonely...
                    <td>{{ item.name }}</td>
                    {% for image in item.images()[:1] %}
                        <td><a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;"
-                        class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
+                        class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
                    {% endfor %}
                {% endif %}
             {% else %}
@@ -38,7 +38,7 @@ Trading with yourself would get awful lonely...
                <td>{{ item.name }}</td>
                {% for image in item.images()[:1] %}
                    <td><a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;"
-                    class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
+                    class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
                {% endfor %}
             {% endif %}
             </tr>
@@ -56,14 +56,14 @@ Trading with yourself would get awful lonely...
                <td>{{ item.name }}</td>
                {% for image in item.images()[:1] %}
                    <td><a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;"
-                    class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
+                    class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
                {% endfor %}
             {% else %}
                <td> <b><span class="glyphicon glyphicon-check" aria-hidden="true" style="color: blue;"></span></b> </td>
                <td>{{ item.name }}</td>
                {% for image in item.images()[:1] %}
                    <td><a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;"
-                    class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
+                    class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
                {% endfor %}
             {% endif %}
             </tr>

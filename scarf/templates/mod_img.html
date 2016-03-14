@@ -6,37 +6,8 @@
 
 <div class="container">
 
-
-<div class="col-md-8">
-
-    <div class="page-header"><h3> {{ pd.image.tag }} </h3></div>
-
-    <ul class="nav nav-pills">
-      <li class="active"><a data-toggle="pill" href="#ascii">Ascii</a></li>
-      <li><a data-toggle="pill" href="#image">Image</a></li>
-    </ul>
-
-    <div class="tab-content">
-
-    <div id="ascii" class="tab-pane fade in active">
-
-
-    <pre style="font-size: xx-small;">
-
-
-    {{ pd.ascii }}
-    </pre>
-    </div>
-
-    <div id="image" class="tab-pane fade">
-    <a href="/image/{{ pd.image.uid }}/full"><img style="max-width:100%;" src="/resize/800x800/{{ pd.image.uid }}" alt="{{ pd.image.tag }}"></a><br />
-    </div>
-    </div>
-</div>
-
-
 <div class="col-md-3">
-    <div class="page-header"><h3>Uploaded by <a href="/users/{{ pd.moduser }}">{{ pd.moduser }}</a></h3></div>
+    <div class="page-header"><h3>Uploaded by <a href="/user/{{ pd.moduser }}">{{ pd.moduser }}</a></h3></div>
 
     <h3> <a href="/item/{{ pd.parent }}">Parent item<a></h3><br />
 
@@ -48,4 +19,45 @@
 
     <p><a class="btn btn-success" href="/mod/image/{{ pd.image.uid }}/approve"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Approve</a></p>
 </div>
+
+<div class="col-md-9">
+
+    <div class="page-header"><h3> {{ pd.image.tag }} </h3></div>
+
+    <ul class="nav nav-pills">
+      <li class="active"><a data-toggle="pill" href="#ascii">Ascii</a></li>
+      <li><a data-toggle="pill" href="#image">Image</a></li>
+    </ul>
+
+
+    <div class="tab-content">
+
+    <div id="ascii" class="tab-pane fade in active">
+
+    <div class="page-header"><h4>
+    <a href="/mod/image/{{ pd.image.uid }}/{{ pd.scale * 2 }}#ascii"><span class="glyphicon glyphicon-zoom-in" aria-hidden=true></span></a>
+    <a href="/mod/image/{{ pd.image.uid }}/{{ pd.scale / 2 }}#ascii"><span class="glyphicon glyphicon-zoom-out" aria-hidden=true></span></a>
+    </h4></div>
+
+    <pre style="font-size: xx-small;">
+    {{ pd.ascii }}
+    </pre>
+    </div>
+
+    <div id="image" class="tab-pane fade">
+
+    <div class="page-header"><h4>
+    <a href="/mod/image/{{ pd.image.uid }}/{{ pd.scale * 2 }}#image"><span class="glyphicon glyphicon-zoom-in" aria-hidden=true></span></a>
+    <a href="/mod/image/{{ pd.image.uid }}/{{ pd.scale / 2 }}#image"><span class="glyphicon glyphicon-zoom-out" aria-hidden=true></span></a>
+    </h4></div>
+
+    {% set x = (100 * (pd.scale / 2))|int %}
+    {% set y = (500 * (pd.scale / 2))|int %}
+
+    <a href="/image/{{ pd.image.uid }}/full"><img style="max-height: {{ x }}px; max-width:{{ y }}px;" class="img-rounded" src="/resize/{{ x }}x{{ y }}/{{ pd.image.uid }}" alt="{{ pd.image.tag }}"></a><br />
+    </div>
+    </div>
+</div>
+
+
 {% endblock %}

@@ -30,7 +30,7 @@
            <td><a href="/item/{{ item.uid }}">{{ item.name }}</a></td>
            <td>
            {% for image in item.images()[:1] %}
-               <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+               <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
            {% endfor %}
            </td>
         </tr>

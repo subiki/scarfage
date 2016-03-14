@@ -21,6 +21,7 @@ def redirect_back(endpoint, **values):
             target = url_for(endpoint, **values)
         except BuildError:
             target = endpoint
+
     return redirect(target)
 
 def escape_html(text):

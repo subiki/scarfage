@@ -36,12 +36,13 @@ class PageData(object):
 
         self.accesslevels = core.accesslevels
 
+
         self.encode = base64.b32encode
         self.decode = base64.b32decode
 
+        self.escape_html = core.escape_html
         self.obfuscate = core.obfuscate
         self.deobfuscate = core.deobfuscate
-
         self.uid_by_user = core.uid_by_user
         self.user_by_uid = core.user_by_uid
 

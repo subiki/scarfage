@@ -1,23 +1,12 @@
 import config
 from scarf import app
 from access import check_mod, check_admin
-from core import redirect_back, NoUser, SiteUser, read, doquery
+from core import redirect_back, NoUser, SiteUser, get_users
 from main import PageData
 
 from flask import redirect, url_for, render_template, session, request, flash
 import os.path, time
 import jsonpickle
-
-def get_users():
-    sql = read('users')
-    result = doquery(sql)
-
-    users = []
-
-    for user in result:
-        users.append(SiteUser.create(user[1]))
-
-    return users
 
 @app.route('/admin')
 @check_admin

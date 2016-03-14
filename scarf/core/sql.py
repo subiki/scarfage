@@ -10,6 +10,7 @@ import logging
 from .. import config
 
 logger = logging.getLogger(__name__)
+db = None
 
 # based on 
 # https://code.activestate.com/recipes/280653-efficient-database-trees/
@@ -184,14 +185,13 @@ class Tree(object):
         Tree(self.root).delete(node)
         self.rename(temp_node, node)
 
-db = None
-
 def read(table, **kwargs):
+    """ Generates SQL for a SELECT statement matching the kwargs passed. """
+
     curframe = inspect.currentframe()
     calframe = inspect.getouterframes(curframe, 2)
     logger.error("deprecated function read called by " + calframe[1][3])
  
-    """ Generates SQL for a SELECT statement matching the kwargs passed. """
     sql = list()
     sql.append("SELECT * FROM %s " % table)
     if kwargs:
@@ -199,13 +199,15 @@ def read(table, **kwargs):
     sql.append(";")
     return "".join(sql)
 
-def upsert(table, **kwargs):
-    curframe = inspect.currentframe()
-    calframe = inspect.getouterframes(curframe, 2)
-    logger.error("deprecated function upsert called by " + calframe[1][3])
-    
+def upsert(table, safe=False, **kwargs):
     """ update/insert rows into objects table (update if the row already exists)
         given the key-value pairs in kwargs """
+
+    if not safe:
+        curframe = inspect.currentframe()
+        calframe = inspect.getouterframes(curframe, 2)
+        logger.error("deprecated function upsert called by " + calframe[1][3])
+    
     keys = ["%s" % k for k in kwargs]
     values = ["'%s'" % v for v in kwargs.values()]
     sql = list()
@@ -247,10 +249,11 @@ def get_db():
         logger.error("Cannot connect to database. MySQL error: " + str(e))
         raise
 
-def doupsert(query):
-    curframe = inspect.currentframe()
-    calframe = inspect.getouterframes(curframe, 2)
-    logger.error("deprecated function doupsert called by " + calframe[1][3])
+def doupsert(query, safe=False):
+    if not safe:
+        curframe = inspect.currentframe()
+        calframe = inspect.getouterframes(curframe, 2)
+        logger.error("deprecated function doupsert called by " + calframe[1][3])
 
     get_db()
     cursor = db.cursor()
@@ -284,7 +287,8 @@ def doquery(query, data=None, select=True):
         cur = db.cursor()
         cur.execute(query, data)
 
-        #logger.info((query, data, 'rows: ' + str(cur.rowcount)))
+        if 'SQLCONFIG' in config.__dict__:
+            logger.info((query, data, 'rows: ' + str(cur.rowcount)))
 
         if select:
             data = cur.fetchall()

@@ -6,23 +6,7 @@ from access import check_mod
 
 from flask import redirect, url_for, render_template, session, request, flash
  
-from PIL import Image
-import cStringIO
-import random
-import base64
-from bisect import bisect
-
-zonebounds=[36,72,108,144,180,216,252]
-greyscale = [
-            " ",
-            " ",
-            ".,-",
-            "_ivc=!/|\\~",
-            "gjez2]/(YL)t[+T7Vf",
-            "mdKbNDXY5P*Q",
-            "W8KMA",
-            "#%$"
-            ]
+#TODO: finish sql cleanup
 
 @app.route('/mod')
 @check_mod
@@ -86,10 +70,12 @@ def mod_ban_user(user):
 
     return render_template('confirm.html', pd=pd)
 
+@app.route('/mod/image/<image>/<scale>')
 @app.route('/mod/image/<image>')
 @check_mod
-def mod_img(image):
+def mod_img(image, scale=2):
     pd = PageData()
+    pd.scale = float(scale)
 
     try:
         modimg = SiteImage.create(image)
@@ -98,10 +84,10 @@ def mod_img(image):
 
     pd.image = modimg
 
-    sql = 'select uid name from items where uid = %(uid)s;'
-    pd.parent = doquery(sql, {"uid": modimg.parent})[0][0]
-
     try:
+        sql = 'select uid name from items where uid = %(uid)s;'
+        pd.parent = doquery(sql, {"uid": modimg.parent})[0][0]
+
         sql = 'select * from imgmods where imgid = %(uid)s;'
         result = doquery(sql, {"uid": modimg.uid})
 
@@ -112,30 +98,9 @@ def mod_img(image):
         
         pd.moduser = user
     except IndexError:
-        pd.title = "SQL error"
-        pd.errortext = "SQL error"
-        return render_template('error.html', pd=pd)
+        return page_not_found(404)
 
-    # TODO: move to siteimage
-    simg = SiteImage.create(modimg.uid)
-    image_string = cStringIO.StringIO(base64.b64decode(simg.image))
-    im = Image.open(image_string)
-    basewidth = 100
-    wpercent = (basewidth/float(im.size[0]))
-    hsize = int((float(im.size[1])*float(wpercent))) / 2
-    im=im.resize((basewidth,hsize), Image.ANTIALIAS)
-    im=im.convert("L") # convert to mono
-
-    ascii=""
-    for y in range(0,im.size[1]):
-        for x in range(0,im.size[0]):
-            lum=255-im.getpixel((x,y))
-            row=bisect(zonebounds,lum)
-            possibles=greyscale[row]
-            ascii=ascii+possibles[random.randint(0,len(possibles)-1)]
-        ascii=ascii+"\n"
-
-    pd.ascii = ascii
+    pd.ascii = SiteImage.create(modimg.uid).ascii(scale=pd.scale)
 
     return render_template('mod_img.html', pd=pd)
 

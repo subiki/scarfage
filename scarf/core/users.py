@@ -9,7 +9,7 @@ from string import ascii_letters, digits
 
 from flask import render_template
 
-from sql import upsert, doupsert, doquery, Tree
+from sql import read, doquery, upsert, doupsert, doquery, Tree
 from mail import send_mail
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 import items
@@ -18,6 +18,17 @@ import messages
 logger = logging.getLogger(__name__)
 
 accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
+
+def get_users():
+    sql = 'select * from users'
+    result = doquery(sql)
+
+    users = []
+
+    for user in result:
+        users.append(SiteUser.create(user[1]))
+
+    return users
 
 stats_cache = dict()
 @memoize_with_expiry(stats_cache, long_cache_persist)
@@ -48,11 +59,36 @@ class AuthFail(Exception):
         Exception.__init__(self, username)
 
 class OwnWant(object):
-    def __init__(self):
-        self.have = 0
-        self.want = 0
-        self.willtrade = 0
-        self.hidden = 0
+    def __init__(self, itemid, userid):
+        sql = """select ownwant.uid, ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden
+                 from items
+                 join ownwant on ownwant.itemid=items.uid
+                 where items.uid = %(itemid)s and ownwant.userid = %(uid)s"""
+        result = doquery(sql, { 'itemid': itemid, 'uid': userid })
+        self.itemid = itemid
+        self.userid = userid
+
+        try:
+            self.uid = result[0][0]
+            self.have = result[0][1]
+            self.willtrade = result[0][2]
+            self.want = result[0][3]
+            self.hidden = result[0][4]
+        except IndexError:
+            self.uid = 0
+            self.have = 0
+            self.willtrade = 0
+            self.want = 0
+            self.hidden = 0
+
+    def update(self, values):
+        update = dict(uid=self.uid, userid=self.userid, itemid=self.itemid)
+        update.update(values)
+ 
+        sql = upsert("ownwant", safe=True, **update)
+        data = doupsert(sql, safe=True)
+        sql = "delete from ownwant where own = '0' and want = '0' and willtrade = '0';"
+        result = doquery(sql)
 
 siteuser_cache = dict()
 collection_cache = dict()
@@ -109,24 +145,7 @@ class SiteUser(object):
     #@memoize_with_expiry(collection_cache, cache_persist)
     # ^^^ causes a bug with ownwant updates
     def query_collection(self, item):
-        ret = OwnWant()
-
-        try:
-            sql = """select ownwant.uid, ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden
-                     from items
-                     join ownwant on ownwant.itemid=items.uid
-                     where items.uid = %(itemid)s and ownwant.userid = %(uid)s"""
-            result = doquery(sql, { 'itemid': item, 'uid': self.uid })
-
-            ret.uid = result[0][0]
-            ret.have = result[0][1]
-            ret.willtrade = result[0][2]
-            ret.want = result[0][3]
-            ret.hidden = result[0][4]
-        except IndexError:
-            pass
-
-        return ret
+        return OwnWant(item, self.uid)
 
     @memoize_with_expiry(message_cache, cache_persist)
     def messages(self):

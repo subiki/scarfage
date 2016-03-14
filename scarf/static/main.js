@@ -1,4 +1,18 @@
 $(document).ready(function(){
+    $('ul.nav-pills a').click(function (e) {
+        $(this).tab('show');
+        var scrollmem = $('body').scrollTop();
+        window.location.hash = this.hash;
+        $('html,body').scrollTop(scrollmem);
+    });
+
+    $('div.tab-content div').click(function (e) {
+        $(this).tab('show');
+        var scrollmem = $('body').scrollTop();
+        window.location.hash = this.hash;
+        $('html,body').scrollTop(scrollmem);
+    });
+
     //Manage hash in URL to open the right pill
     var hash = window.location.hash;
     // If a hash is provided 
