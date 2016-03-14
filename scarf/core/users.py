@@ -132,7 +132,8 @@ class SiteUser(object):
     def messages(self):
         ret = list()
         sql = """select uid,status from messages
-                 where fromuserid = %(fromuid)s or touserid = %(touid)s"""
+                 where fromuserid = %(fromuid)s or touserid = %(touid)s
+                 order by sent desc;"""
 
         result = doquery(sql, { 'fromuid': self.uid, 'touid': self.uid })
 

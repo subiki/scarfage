@@ -19,9 +19,13 @@ def viewpm(username, messageid):
             pm = TradeMessage.create(messageid)
 
         if session['username'] is pm.to_user:
+            pd.tradeuser = pm.from_user
             pm.read()
+        else:
+            pd.tradeuser = pm.to_user
 
         pd.pm = pm
+        pd.title = pm.subject
 
         return render_template('pm.html', pd=pd)
  

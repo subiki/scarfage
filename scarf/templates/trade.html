@@ -8,22 +8,40 @@
 {% if pd.authuser is defined and pd.authuser.uid == pd.tradeuser.uid %}
 Trading with yourself would get awful lonely...
 {% elif pd.authuser is defined %}
+    {% if pd.trademessage %}
+    <form action="/user/{{ pd.tradeuser.username }}/modifytrade/{{ pd.obfuscate(pd.trademessage.uid) }}" method="post" enctype="multipart/form-data">
+    {% else %}
     <form action="/user/{{ pd.tradeuser.username }}/trade/{{ pd.item.uid }}" method="post" enctype="multipart/form-data">
+    {% endif %}
         {% if pd.tradeuser %}
         <div class="page-header"><h4> {{ pd.tradeuser.username }}'s collection:</h4></div>
 
+        {% if pd.trademessage %}
+        {% set tradeitems = {} %}
+        {% for item in pd.trademessage.items %} {% set _dummy = tradeitems.update({item.itemid: item}) %} {% endfor %}
+        {% endif %}
+
         <table class="table">
         {% for item in pd.tradeuser.collection() %}
-        <tr>
-            {% if item.willtrade == 1 %}
-               <td><input type="checkbox" name="item" value="{{ item.uid }}"{% if pd.item.name == item.name %} checked="yes"{%endif%}></td>
+            {% if item.uid not in tradeitems %}
+            <tr>
+                {% if item.willtrade == 1 %}
+                   <td><input type="checkbox" name="item" value="{{ item.uid }}"{% if pd.item and pd.item.name == item.name %} checked="yes"{%endif%}></td>
+                   <td>{{ item.name }}</td>
+                   {% for image in item.images()[:1] %}
+                       <td><a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;"
+                        class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
+                   {% endfor %}
+               {% endif %}
+            </tr>
+            {% else %}
+               <td> <b><span class="glyphicon glyphicon-check" aria-hidden="true" style="color: blue;"></span></b> </td>
                <td>{{ item.name }}</td>
                {% for image in item.images()[:1] %}
                    <td><a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;"
                     class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
                {% endfor %}
-           {% endif %}
-        </tr>
+            {% endif %}
         {% endfor %}
         </table>
         {% endif %}
@@ -32,9 +50,17 @@ Trading with yourself would get awful lonely...
 
         <table class="table">
         {% for item in pd.authuser.collection() %}
-        <tr>
-            {% if item.have == 1 %}
-               <td><input type="checkbox" name="item" value="{{ item.uid }}"{% if pd.item.name == item.name %} checked="yes"{%endif%}></td>
+            {% if item.uid not in tradeitems %}
+            <tr>
+               <td><input type="checkbox" name="item" value="{{ item.uid }}"{% if pd.item and pd.item.name == item.name %} checked="yes"{%endif%}></td>
+               <td>{{ item.name }}</td>
+               {% for image in item.images()[:1] %}
+                   <td><a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;"
+                    class="img-rounded" src="{{pd.prefix}}/resize/800x200/{{ image.uid }}" alt="{{ image.tag }}"></a></td>
+               {% endfor %}
+            </tr>
+            {% else %}
+               <td> <b><span class="glyphicon glyphicon-check" aria-hidden="true" style="color: blue;"></span></b> </td>
                <td>{{ item.name }}</td>
                {% for image in item.images()[:1] %}
                    <td><a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;"
@@ -48,7 +74,7 @@ Trading with yourself would get awful lonely...
 <div class="page-header"><h4>Message</h4></div>
 
 <div class="well well-sm">
-Subject: <input type=text name=subject value="{{ pd.item.name }}" required></br>
+Subject: <input type=text name=subject value="{% if pd.trademessage %}re: {{pd.trademessage.subject}}{% else %}Trade request for {{ pd.item.name }}{% endif %}" required></br>
 <textarea name=body rows="4" cols="50" placeholder="Please add a message"></textarea><br />
 <input type=submit value=Submit>
 </form>

@@ -1,11 +1,11 @@
 from scarf import app
 from flask import flash, render_template, session, request, redirect
 from core import NoItem, NoUser, SiteUser, SiteItem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, PrivateMessage, TradeMessage, messagestatus, TradeItem, tradeitemstatus, deobfuscate, obfuscate
+import core
 from main import page_not_found, PageData
 
-# fix these URLs s/pm/trade/
-@app.route('/user/<username>/pm/<messageid>/<action>/<item>')
-@app.route('/user/<username>/pm/<messageid>/<action>')
+@app.route('/user/<username>/trade/<messageid>/<action>/<item>')
+@app.route('/user/<username>/trade/<messageid>/<action>')
 def accepttradeitem(username, messageid, action, item=None):
     pd = PageData()
 
@@ -48,13 +48,16 @@ def accepttradeitem(username, messageid, action, item=None):
 
     return redirect_back('index')
 
+@app.route('/user/<username>/modifytrade/<messageid>', methods=['GET', 'POST'])
 @app.route('/user/<username>/trade/<itemid>', methods=['GET', 'POST'])
-def trade(username, itemid):
+def trade(username, itemid=None, messageid=None):
     pd = PageData()
+
+    status = messagestatus['unread_trade']
 
     try:
         pd.tradeuser = SiteUser.create(username)
-    except (NoItem, NoUser):
+    except NoUser:
         return page_not_found(404)
 
     if 'username' in session:
@@ -63,22 +66,32 @@ def trade(username, itemid):
             message = request.form['body']
             subject = request.form['subject']
 
-            try:
+            if 'parent' in request.form:
                 parent = request.form['parent']
-            except:
-                parent = None
+            else:
+                if messageid:
+                    parent = core.deobfuscate(messageid)
+                    messageid = parent
+                    status = messagestatus['unread_pm']
+                    flashmsg = 'Message sent!'
+                else:
+                    parent = None
+                    messageid = None
+                    flashmsg = 'Submitted trade request!'
 
             if message and subject:
-                messageid = send_pm(pd.authuser.uid, pd.tradeuser.uid, subject, message, messagestatus['unread_trade'], parent)
+                pmid = send_pm(pd.authuser.uid, pd.tradeuser.uid, subject, message, status, parent)
+
+                if not messageid:
+                    messageid = pmid
+                elif items:
+                    flashmsg = 'Trade updated'
 
                 for item in items:
                     add_tradeitem(item, messageid, pd.authuser.uid, tradeitemstatus['accepted'])
 
-                add_tradeitem(SiteItem(itemid).uid, messageid, pd.tradeuser.uid, tradeitemstatus['unmarked'])
-
-                if messageid:
-                    flash('Submitted trade request!')
-                    return redirect('/user/' + pd.authuser.username + '/pm/' + obfuscate(messageid))
+                flash(flashmsg)
+                return redirect('/user/' + pd.authuser.username + '/pm/' + obfuscate(messageid))
 
             if message == '':
                 flash('Please add a message')
@@ -95,7 +108,13 @@ def trade(username, itemid):
     try:
         pd.tradeuser.ownwant = pd.tradeuser.query_collection(itemid)
         pd.item = SiteItem(itemid)
-    except (NoItem, NoUser):
-        return page_not_found(404)
+    except NoItem:
+        if messageid:
+            try:
+                pd.trademessage = TradeMessage.create(deobfuscate(messageid))
+            except NoItem:
+                return page_not_found(404)
+        else:
+            return page_not_found(404)
 
     return render_template('trade.html', pd=pd)
