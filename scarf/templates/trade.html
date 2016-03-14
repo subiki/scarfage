@@ -26,7 +26,7 @@ Trading with yourself would get awful lonely...
             <tr>
             {% if item.uid not in tradeitems %}
                 {% if item.willtrade == 1 %}
-                   <td><input type="checkbox" name="item" value="{{ item.uid }}"{% if pd.item and pd.item.name == item.name %} checked="yes"{%endif%}></td>
+                   <td><input type="checkbox" name="tradeuseritem" value="{{ item.uid }}"{% if pd.item and pd.item.name == item.name %} checked="yes"{%endif%}></td>
                    <td>{{ item.name }}</td>
                    {% for image in item.images()[:1] %}
                        <td><a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;"
@@ -52,7 +52,7 @@ Trading with yourself would get awful lonely...
         {% for item in pd.authuser.collection() %}
             <tr>
             {% if item.uid not in tradeitems %}
-               <td><input type="checkbox" name="item" value="{{ item.uid }}"{% if pd.item and pd.item.name == item.name %} checked="yes"{%endif%}></td>
+               <td><input type="checkbox" name="authuseritem" value="{{ item.uid }}"{% if pd.item and pd.item.name == item.name %} checked="yes"{%endif%}></td>
                <td>{{ item.name }}</td>
                {% for image in item.images()[:1] %}
                    <td><a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;"

@@ -62,7 +62,8 @@ def trade(username, itemid=None, messageid=None):
 
     if 'username' in session:
         if request.method == 'POST':
-            items = request.form.getlist('item')
+            authuseritems = request.form.getlist('authuseritem')
+            tradeuseritems = request.form.getlist('tradeuseritem')
             message = request.form['body']
             subject = request.form['subject']
 
@@ -84,11 +85,14 @@ def trade(username, itemid=None, messageid=None):
 
                 if not messageid:
                     messageid = pmid
-                elif items:
+                elif tradeuseritems or authuseritems:
                     flashmsg = 'Trade updated'
 
-                for item in items:
+                for item in authuseritems:
                     add_tradeitem(item, messageid, pd.authuser.uid, tradeitemstatus['accepted'])
+
+                for item in tradeuseritems:
+                    add_tradeitem(item, messageid, pd.tradeuser.uid, tradeitemstatus['unmarked'])
 
                 flash(flashmsg)
                 return redirect('/user/' + pd.authuser.username + '/pm/' + obfuscate(messageid))
