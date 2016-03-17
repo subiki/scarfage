@@ -200,7 +200,7 @@ class SiteUser(object):
         self.accesslevel = int(accesslevel)
 
         sql = "update users set accesslevel = %(level)s where uid = %(uid)s;"
-        return doquery(sql, {"uid": self.uid, "level": self.accesslevel})
+        doquery(sql, {"uid": self.uid, "level": self.accesslevel})
 
     def newpassword(self, password):
         logger.info('Password reset for user {}'.format(self.username))
@@ -224,6 +224,9 @@ class SiteUser(object):
 
         message = render_template('email/pwreset.html', username=self.username, email=self.email, newpw=newpw, admin=admin, ip=ip)
         send_mail(recipient=self.email, subject='Password Reset', message=message)
+
+    def delete(self):
+        logger.info('Account deletion for user {}'.format(self.username))
 
 def hashize(string):
     return base64.b64encode(hashlib.sha384(string).digest())
@@ -263,15 +266,25 @@ def new_user(username, password, email, ip):
 
     joined = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    try:
+        sql = "select uid from users where username = %(username)s;"
+        uid = doquery(sql, { 'username': username })[0][0]
+        # user exists
+        return False
+    except IndexError:
+        # user doesn't exist
+        pass
+
     sql = "insert into users (username, pwhash, email, joined, accesslevel) values (%(username)s, %(pwhash)s, %(email)s, %(joined)s, '1');"
     result = doquery(sql, { 'username': username, 'pwhash': gen_pwhash(password), 'email': email, 'joined': joined })
 
+    uid = uid_by_user(username)
+
     sql = "insert into userstat_lastseen (date, uid) values (%(lastseen)s, %(uid)s);"
-    result = doquery(sql, { 'uid': uid_by_user(username), 'lastseen': joined })
+    result = doquery(sql, { 'uid': uid, 'lastseen': joined })
 
     message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=ip)
     send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
 
     logger.info('Added new user {}'.format(username))
-    return True
-
+    return uid
