@@ -6,16 +6,20 @@ import inspect
 import random
 import string
 import logging
+import warnings
 
 from .. import config
 
 logger = logging.getLogger(__name__)
+
 db = None
+
+# Turn SQL warnings into exceptions
+warnings.filterwarnings('error', category=MySQLdb.Warning)
 
 # based on 
 # https://code.activestate.com/recipes/280653-efficient-database-trees/
 # PSF License
-
 """CREATE TABLE tree(ref int PRIMARY KEY AUTO_INCREMENT, parent int,
 lhs int, rhs int, name varchar(255), UNIQUE INDEX(name))"""
 class Tree(object):
@@ -281,6 +285,7 @@ def doquery(query, data=None, select=True):
             cursor.execute('SET NAMES utf8;')
             cursor.execute('SET CHARACTER SET utf8;')
             cursor.execute('SET character_set_connection=utf8;')
+            cursor.execute('SET sql_mode=\'TRADITIONAL\'')
             db.commit()
             cursor.close()
 

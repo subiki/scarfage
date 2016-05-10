@@ -5,10 +5,14 @@ import flask
 import string
 import random
 import logging
+import json
+import base64
 
 from scarf import app
+from ..sql import doquery
 
 logging.basicConfig(filename='tests.log',level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 def generator(size=6, chars=string.ascii_lowercase + string.ascii_uppercase + string.digits):
    return ''.join(random.choice(chars) for _ in range(size))
@@ -16,12 +20,13 @@ def generator(size=6, chars=string.ascii_lowercase + string.ascii_uppercase + st
 class SiteUserTestCase(unittest.TestCase):
     def setUp(self):
         scarf.app.config['TESTING'] = True
+        
         self.username = generator(12)
         self.domain = generator(12)
         self.password = generator(12)
 
         with app.test_request_context(''):
-            uid = scarf.core.new_user(self.username, self.password, '{}@{}.com'.format(self.username, self.domain), '0.0.0.0')
+            uid = scarf.core.new_user(self.username, self.password, '{}@{}'.format(self.username, self.domain), '0.0.0.0')
 
         assert uid is not False 
         assert isinstance(uid, (int, long)) is True
@@ -63,7 +68,7 @@ class SiteUserTestCase(unittest.TestCase):
 
     def test_siteuser_email_reset(self):
         newemail = generator(12)
-        self.siteuser.newemail(newemail)
+        self.siteuser.newemail('{}@{}'.format(self.username, newemail))
         self.email = newemail
 
     def test_siteuser_forgot_pw_reset(self):
@@ -75,6 +80,26 @@ class SiteUserTestCase(unittest.TestCase):
 
     def test_siteuser_check_email(self):
         assert scarf.core.check_email('invalid email') is None
+
+class SiteUserNaughtyStringsTestCase(unittest.TestCase):
+    def __init__(self, methodName, naughty_string=''):
+        scarf.app.config['TESTING'] = True
+        scarf.config.BCRYPT_ROUNDS = 4
+        super(SiteUserNaughtyStringsTestCase, self).__init__(methodName)
+
+        self.ns = naughty_string
+
+    def runTest(self):
+        try:
+            uid = scarf.core.new_user(self.ns, self.ns, '{}@{}'.format(self.ns, self.ns), '0.0.0.0')
+        except scarf.core.NoUser:
+            return
+
+        try:
+            siteuser = scarf.core.SiteUser.create(self.ns)
+            siteuser.delete()
+        except scarf.core.NoUser:
+            pass
 
 if __name__ == '__main__':
     unittest.main()

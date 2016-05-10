@@ -16,6 +16,9 @@ DEPFILE = '/some/path'
 # os.urandom(24)
 SECRETKEY = '\x8br\xe5\xe8Q~l\xbdb\xe5\xa5\x894i\xb0\xd9\x07\x10\xe6\xa0\xe5\xbd\x1e\xf8'
 
+#
+BCRYPT_ROUNDS = 13
+
 # prefix for cached content
 PREFIX = ""
 

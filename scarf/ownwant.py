@@ -62,7 +62,7 @@ def ownwant(item_id, values):
 
     try:
         user = SiteUser.create(session['username'])
-    except NoUser, KeyError:
+    except (NoUser, KeyError):
         flash('You must be logged in to add items to a collection')
         return redirect('newuser')
 

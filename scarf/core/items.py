@@ -1,7 +1,7 @@
 import datetime
 import logging
 
-from sql import upsert, doupsert, doquery, Tree
+from sql import upsert, doupsert, doquery, Tree, MySQLdb
 from mail import send_mail
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 from utility import ip_uid
@@ -97,15 +97,16 @@ class NoItem(Exception):
 class SiteItem(object):
     def __init__(self, uid):
         sql = 'select * from items where uid = %(uid)s;'
-        result = doquery(sql, { 'uid': uid })
 
         try:
+            result = doquery(sql, { 'uid': uid })
+
             self.uid = result[0][0]
             self.name = result[0][1]
             self.description = result[0][2]
             self.added = result[0][3]
             self.modified = result[0][4]
-        except IndexError:
+        except (Warning, IndexError):
             raise NoItem(uid)
 
         self.tree = Tags()
@@ -306,27 +307,36 @@ def new_edit(itemid, description, userid, ip):
 
     logger.info('item {} edited by {} / {} '.format(itemid, userid, ip))
 
-    date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    sql = "insert into itemedits (date, itemid, userid, ip, body) values (%(date)s, %(itemid)s, %(userid)s, %(ip)s, %(body)s);"
-    doquery(sql, { 'date': date, 'itemid': itemid, 'userid': userid, 'ip': ip_uid(ip), 'body': description })
+    try:
+        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        sql = "insert into itemedits (date, itemid, userid, ip, body) values (%(date)s, %(itemid)s, %(userid)s, %(ip)s, %(body)s);"
+        doquery(sql, { 'date': date, 'itemid': itemid, 'userid': userid, 'ip': ip_uid(ip), 'body': description })
 
-    sql = "select uid from itemedits where date=%(date)s and itemid=%(itemid)s and ip=%(ip)s;"
-    edit = doquery(sql, { 'date': date, 'itemid': itemid, 'ip': ip_uid(ip) })[0][0]
+        sql = "select uid from itemedits where date=%(date)s and itemid=%(itemid)s and ip=%(ip)s;"
+        edit = doquery(sql, { 'date': date, 'itemid': itemid, 'ip': ip_uid(ip) })[0][0]
 
-    sql = "update items set description = %(edit)s, modified = %(modified)s where uid = %(uid)s;"
-    doquery(sql, {"uid": itemid, "edit": edit, "modified": date })
+        sql = "update items set description = %(edit)s, modified = %(modified)s where uid = %(uid)s;"
+        doquery(sql, {"uid": itemid, "edit": edit, "modified": date })
 
-    return edit 
+        return edit 
+    except MySQLdb.OperationalError, Warning:
+        logger.info('Error editing item {} by {} ({})'.format(itemid, userid, ip))
+        #FIXME: raise something else
+        raise NoItem(itemid)
 
 def new_item(name, description, userid, ip):
     name = name.strip()[:64]
     logger.info('new item {} added by {} / {} '.format(name, userid, ip))
 
-    sql = "insert into items (name, description, added, modified) values (%(name)s, 0, %(now)s, %(now)s);"
-    doquery(sql, { 'now': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 'name': name })
+    try:
+        sql = "insert into items (name, description, added, modified) values (%(name)s, 0, %(now)s, %(now)s);"
+        doquery(sql, { 'now': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 'name': name })
 
-    sql = "select uid from items where name=%(name)s and description=0;"
-    itemid = doquery(sql, { 'name': name })[0][0]
+        sql = "select uid from items where name=%(name)s and description=0;"
+        itemid = doquery(sql, { 'name': name })[0][0]
+    except MySQLdb.OperationalError, Warning:
+        logger.info('Error adding item {} by {} ({})'.format(name, userid, ip))
+        raise NoItem(0)
 
     new_edit(itemid, description, userid, ip)
 

@@ -4,6 +4,7 @@ import logging
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.header import HeaderParseError
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,8 @@ def send_mail(recipient, subject, message, sender=None):
     msg.attach(part2)
 
     s = smtplib.SMTP('localhost')
-    s.sendmail(sender, recipient, msg.as_string())
+    try:
+        s.sendmail(sender, recipient, msg.as_string())
+    except (smtplib.SMTPRecipientsRefused, HeaderParseError):
+        pass
     s.quit()
-

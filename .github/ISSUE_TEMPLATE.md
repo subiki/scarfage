@@ -6,4 +6,4 @@ Did you receive a specific error message?
 
 What was the URL that gave an error?
 
-Approximately what time did the error occur?
+Approximately what time did the error occur (please include time zone)?

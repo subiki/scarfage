@@ -9,7 +9,9 @@ from string import ascii_letters, digits
 
 from flask import render_template
 
-from sql import read, doquery, upsert, doupsert, doquery, Tree
+from .. import config
+
+from sql import read, doquery, upsert, doupsert, doquery, Tree, MySQLdb
 from mail import send_mail
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 import items
@@ -43,7 +45,7 @@ def user_by_uid(uid):
 @memoize_with_expiry(stats_cache, long_cache_persist)
 def uid_by_user(username):
     sql = "select uid from users where username = %(username)s;"
-    result = doquery(sql, { 'username': username })
+    result = doquery(sql, { 'username': unicode(username)[:200] })
 
     try:
         return result[0][0]
@@ -101,22 +103,21 @@ class SiteUser(object):
 
     def __init__(self, username):
         self.auth = False
-        self.username = username
+        self.username = unicode(username)[:200]
 
         sql = """select users.uid, users.email, users.joined, userstat_lastseen.date, users.accesslevel 
                  from users
                  join userstat_lastseen on userstat_lastseen.uid=users.uid 
                  where users.username = %(username)s; """
 
-        result = doquery(sql, { 'username': username })
-
         try:
+            result = doquery(sql, { 'username': username })
             self.uid = result[0][0]
             self.email = result[0][1]
             self.joined = result[0][2]
             self.lastseen = result[0][3]
             self.accesslevel = result[0][4]
-        except IndexError:
+        except (Warning, IndexError):
             raise NoUser(username)
         except TypeError:
             pass
@@ -232,7 +233,7 @@ def hashize(string):
     return base64.b64encode(hashlib.sha384(string).digest())
 
 def gen_pwhash(password):
-    return bcrypt.hashpw(hashize(password), bcrypt.gensalt(13))
+    return bcrypt.hashpw(hashize(password), bcrypt.gensalt(config.BCRYPT_ROUNDS))
 
 def verify_pw(password, pwhash):
     if (bcrypt.hashpw(hashize(password), pwhash) == pwhash):
@@ -261,8 +262,15 @@ def check_email(email):
         return None
 
 def new_user(username, password, email, ip):
-    username = username.strip()
-    email = email.strip()
+    username = unicode(username).strip()[:200]
+    email = email.strip()[:200]
+    pwhash = gen_pwhash(password)
+
+    if len(username) == 0:
+        raise NoUser(0)
+
+    if len(email) < 3:
+        raise NoUser(0)
 
     joined = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -271,20 +279,24 @@ def new_user(username, password, email, ip):
         uid = doquery(sql, { 'username': username })[0][0]
         # user exists
         return False
-    except IndexError:
+    except (Warning, IndexError):
         # user doesn't exist
         pass
 
-    sql = "insert into users (username, pwhash, email, joined, accesslevel) values (%(username)s, %(pwhash)s, %(email)s, %(joined)s, '1');"
-    result = doquery(sql, { 'username': username, 'pwhash': gen_pwhash(password), 'email': email, 'joined': joined })
+    try:
+        sql = "insert into users (username, pwhash, email, joined, accesslevel) values (%(username)s, %(pwhash)s, %(email)s, %(joined)s, '1');"
+        result = doquery(sql, { 'username': username, 'pwhash': pwhash, 'email': email, 'joined': joined })
+    except (MySQLdb.DataError, MySQLdb.OperationalError):
+        return NoUser(0)
 
     uid = uid_by_user(username)
 
     sql = "insert into userstat_lastseen (date, uid) values (%(lastseen)s, %(uid)s);"
     result = doquery(sql, { 'uid': uid, 'lastseen': joined })
 
-    message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=ip)
-    send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
+    if '0.0.0.0' not in ip:
+        message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=ip)
+        send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
 
     logger.info('Added new user {}'.format(username))
     return uid
