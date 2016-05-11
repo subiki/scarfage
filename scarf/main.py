@@ -96,6 +96,6 @@ def index():
     pd = PageData()
     pd.title = "Scarfage"
 
-    pd.items = core.latest_items(50)
+    pd.items = core.latest_items(10)
 
     return render_template('index.html', pd=pd)
