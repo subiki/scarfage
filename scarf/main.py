@@ -99,3 +99,8 @@ def index():
     pd.items = core.latest_items(10)
 
     return render_template('index.html', pd=pd)
+
+@app.route('/ping')
+@nocache
+def ping():
+    return "OK!"
