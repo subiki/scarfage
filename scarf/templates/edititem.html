@@ -12,7 +12,7 @@
             <div class="page-header"><h4>Name</h4></div>
             <input type=text name=name value="{% if pd.item %}{{ pd.item.name }}{%endif%}"><br />
             <div class="page-header"><h4>Description</h4></div>
-            <textarea name=desc cols="50" rows="2" placeholder="Stuff about your item here">{% if pd.item %}{{ pd.item.body() }}{% endif %}</textarea><br />
+            <textarea name=desc cols="50" rows="2" placeholder="Stuff about your item here. You can upload images on the next page.">{% if pd.item %}{{ pd.item.body() }}{% endif %}</textarea><br />
 
             <input type=hidden name=uid value={% if pd.item %}{{ pd.item.uid }}{%else%}0{%endif%}>
     </div>
