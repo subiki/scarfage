@@ -1,4 +1,5 @@
 *.pyc
+blns.base64.json
 tests.log
 venv/*
 docs/*

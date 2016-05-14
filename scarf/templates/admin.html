@@ -51,8 +51,8 @@
     <tr>
     <td><a href="/user/{{ user.username }}">{{ user.username }}</a></td>
     <td>{{ user.email }}</td>
-    <td>{{ user.joined }}</td>
-    <td>{{ user.lastseen }}</td>
+    <td>{{ pd.localtime(user.joined) }}</td>
+    <td>{{ pd.localtime(user.lastseen) }}</td>
     <td>{{ pd.accesslevels[user.accesslevel] }}</td>
     <td> 
     <a href="/admin/users/{{ user.username }}/resetpw">pw reset</a>

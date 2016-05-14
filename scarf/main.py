@@ -3,6 +3,7 @@ import base64
 import logging
 import datetime
 import os, sys
+from pytz import timezone
 
 import core
 import config
@@ -52,6 +53,17 @@ class PageData(object):
             except core.NoUser:
                 self.authuser = None
                 pass
+
+    def localtime(self, timestamp):
+        utc = timezone('UTC')
+        utc_dt = utc.localize(timestamp)
+
+        if self.authuser:
+            user_tz = timezone(self.authuser.profile().timezone)
+        else:
+            user_tz = timezone('US/Pacific')
+
+        return utc_dt.astimezone(user_tz)
 
 @app.errorhandler(404)
 def page_not_found(error):

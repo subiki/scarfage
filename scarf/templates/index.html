@@ -23,7 +23,7 @@
         <table class="table">
         {% for item in pd.items %}
         <tr>
-           <td>{{ item.added }}</td>
+           <td>{{ pd.localtime(item.added) }}</td>
            <td><a href="/item/{{ item.uid }}">{{ item.name }}</a></td>
            <td>
            {% for image in item.images()[:1] %}

@@ -86,7 +86,7 @@ class PrivateMessage(object):
 
 def send_pm(fromuserid, touserid, subject, message, status, parent):
     # FIXME: parent id validation
-    sent = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    sent = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     sql = "insert into messages (fromuserid, touserid, subject, message, parent, sent, status) values (%(fromuserid)s, %(touserid)s, %(subject)s, %(message)s, %(parent)s, %(sent)s, %(status)s);"
     doquery(sql, { 'fromuserid': fromuserid, 'touserid': touserid, 'subject': subject, 'message': message, 'parent': parent, 'sent': sent, 'status': status })
 
