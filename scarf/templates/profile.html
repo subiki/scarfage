@@ -5,8 +5,10 @@
 
 
 <ul class="nav nav-pills">
-  <li class="active"><a data-toggle="pill" href="#userinfo">User Info</a></li>
+  <li class="active"><a data-toggle="pill" href="#userinfo">Profile</a></li>
+  {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
   <li><a data-toggle="pill" href="#trades">Trades</a></li>
+  {% endif %}
   <li><a data-toggle="pill" href="#messages">Messages</a></li>
   <li><a data-toggle="pill" href="#collections">Collections</a></li>
 </ul>
@@ -15,15 +17,13 @@
 <div class="tab-content">
   <div id="userinfo" class="tab-pane fade in active">
     {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
-    <div class="page-header"><h2>{{ pd.profileuser.username }}'s Profile</h2></div>
-
-        <h4>User info:</h4>
+        <div class="page-header"><h4>{{ pd.profileuser.username }}'s Profile</h4></div>
         <ul>
             <li>Member since: {{ pd.profileuser.joined }}</li>
             <li>Last seen: {{ pd.profileuser.lastseen }}</li>
         </ul>
     {% else %}
-        <div class="page-header"><h4>User info:</h4></div>
+        <div class="page-header"><h4>Your Profile</h4></div>
         <ul>
             <li>Email: {{ pd.profileuser.email }}</li>
             <li>Member since: {{ pd.profileuser.joined }}</li>
@@ -76,11 +76,9 @@
     {% endif %}
   </div>
 
+  {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
   <div id="trades" class="tab-pane fade">
-    {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
-        You cannot currently view other people's trades.
-    {% else %}
-        <div class="page-header"><h4>Trade requests:</h4></div>
+        <div class="page-header"><h4>Trade Requests</h4></div>
 
         <table class="table table-condensed">
         <tr>
@@ -131,23 +129,61 @@
         {% endfor %}
         </table>
 
+        <div class="page-header"><h4>Offline Trades</h4></div>
 
+        <table class="table table-condensed">
+        <tr>
+        <th>Trade status</th>
+        <th>Item</th>
+        <th>Notes</th>
+        <th>Date</th>
+        </tr>
 
-    {% endif %}
+        <tr>
+            <td>Closed <a href=""><span class="glyphicon glyphicon-repeat" aria-hidden="true" style="color: green;"></span></a></td>
+            <td><a href="">[======  image  ======] Some item</a></td>
+            <td>Trading for Some Awesome Item from Some Dude</td>
+            <td>4/20</td>
+        </tr>
+        <tr>
+            <td>Cancelled <a href=""><span class="glyphicon glyphicon-repeat" aria-hidden="true" style="color: green;"></span></a></td>
+            <td><a href="">[======  image  ======] A different item</a></td>
+            <td>Trading for Random Item from Some Shady Dude</td>
+            <td>4/27</td>
+        </tr>
+
+        <tr>
+            <td>Open <a href=""><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><a href=""><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span></td>
+            <td><a href="">[======  image  ======] Some other item</a></td>
+            <td>Trading for Some Other Awesome Item from Some Dude. <a href=""><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></td>
+            <td>6/30 <a href=""><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></a></td>
+        </tr>
+        <tr>
+            <td>Open <a href=""><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><a href=""><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span></td>
+            <td><a href="">[======  image  ======] Excellent item</a></td>
+            <td>Trading for Some Other Nifty Item from Some Other Dude. <a href=""><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></td>
+            <td>7/15 <a href=""><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></a></td>
+        </tr>
+        <tr>
+            <td><a href=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</a></td></tr>
+        </table>
+
   </div>
+  {% endif %}
 
 
 
   <div id="messages" class="tab-pane fade">
     {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
-    <div class="container">
-        <form action="/user/{{ pd.profileuser.username }}/pm" method="post" enctype="multipart/form-data">
-            Subject: <input type=text name=subject default="Subject" required></br>
-            Message: </br>
-            <textarea name=body rows="4" cols="50"></textarea><br />
-            <input type=submit value=Submit>
-        </form>
-    </div>
+        <div class="page-header"><h4>Send a message to {{ pd.profileuser.username }}</h4></div>
+        <div class="container">
+            <form action="/user/{{ pd.profileuser.username }}/pm" method="post" enctype="multipart/form-data">
+                Subject: <input type=text name=subject default="Subject" required></br>
+                Message: </br>
+                <textarea name=body rows="4" cols="50"></textarea><br />
+                <input type=submit value=Submit>
+            </form>
+        </div>
     {% else %}
         <div class="page-header"><h4>Received:</h4></div>
 
