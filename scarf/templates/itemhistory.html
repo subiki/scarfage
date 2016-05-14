@@ -6,18 +6,15 @@
 
 <div id="content">
 
-<div id="itemname">
-<h1>{{ pd.item.name }}</h1>
-</div>
+<div id="page-header">
+<h3>{{ pd.item.name }}</h3>
 
-<div id="itemactions">
-
-<a href="/item/{{ pd.item.uid }}">Go back</a><br />
+<a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}">Cancel</a>
 
 {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
-<a href="/item/{{ pd.item.uid }}/delete">Delete item</a><br />
+<a class="btn btn-sm btn-danger" href="/item/{{ pd.item.uid }}/delete">Delete item</a><br>
 {% endif %}
-
+</div>
 </div>
 
 <table class="table table-condensed">
@@ -37,8 +34,8 @@ Anonymous ({{ ent.ip }})
 <a href="/user/{{ ent.user }}">{{ ent.user }}</a>
 {% endif %}
 </td>
-<td><a href="/item/{{ pd.item.uid }}/revert/{{ ent.uid }}">Revert to this</a></td>
-<td><a href="/item/{{ pd.item.uid }}/history/{{ ent.uid }}">View</a></td>
+<td><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/revert/{{ ent.uid }}">Revert to this</a></td>
+<td><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/history/{{ ent.uid }}">View</a></td>
 </tr>
 {% endfor %}
 </table>

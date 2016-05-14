@@ -8,21 +8,19 @@
 <div class="col-md-8">
 
 {% if pd.item %}
-<div class="page-header"> <h3>{{ pd.item.name }}
+<div class="page-header"> <h3>{{ pd.item.name }}</h3><br>
 
-<small><a href="/item/{{ pd.item.uid }}/edit"> Edit </a></small>
-<small><a href="/item/{{ pd.item.uid }}/history"> History </a></small>
+<small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/edit"> Edit </a></small>
+<small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/history"> History </a></small>
 
 {% if pd.item.old %}
-<small><a href="/item/{{ pd.item.uid }}/revert/{{ pd.item.description }}"> Revert </a></small>
+<small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/revert/{{ pd.item.description }}"> Revert </a></small>
 {% endif %}
 
 {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
-<small><a href="/item/{{ pd.item.uid }}/delete"> Delete </a></small>
+<small><a class="btn btn-sm btn-danger" href="/item/{{ pd.item.uid }}/delete"> Delete </a></small>
 {% endif %}
 {% endif %}
-</h3>
-
 </div>
 
 {% if pd.item.old %}
@@ -59,34 +57,34 @@ You are viewing an older version of this item's description, click <a href="/ite
 <div class="page-header"><h3>Item actions</h3></div>
 {% if pd.authuser is defined %}
     {% if pd.iteminfo is defined and pd.iteminfo.hidden == 1 %}
-    <a class="btn btn-default" href="/item/{{ pd.item.uid }}/show">Show item status to others</a></b></br>
+    <a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/show">Show item status to others</a></b></br>
     {% elif pd.iteminfo is defined and pd.iteminfo.have == 1 %}
-    <a class="btn btn-default" href="/item/{{ pd.item.uid }}/hide">Hide item status from others</a></b></br>
+    <a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/hide">Hide item status from others</a></b></br>
     {% endif %}
     {% if pd.iteminfo is defined and pd.iteminfo.have == 0 %}
-        <a class="btn btn-default" href="/item/{{ pd.item.uid }}/have">Add to collection</a></br>
+        <a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/have">Add to collection</a></br>
 
     {% else %}
-        <a class="btn btn-default" href="/item/{{ pd.item.uid }}/donthave">Remove from collection</a>.<br />
+        <a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/donthave">Remove from collection</a>.<br />
 
         {% if pd.iteminfo is defined and pd.iteminfo.willtrade == 0 %}
-        <a class="btn btn-default" href="/item/{{ pd.item.uid }}/willtrade">Mark as available for trade</a><br />
+        <a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/willtrade">Mark as available for trade</a><br />
         {% else %}
-        <a class="btn btn-default" href="/item/{{ pd.item.uid }}/wonttrade">Mark as unavailable for trade</a>.<br />
+        <a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/wonttrade">Mark as unavailable for trade</a>.<br />
         {% endif %}
 
     {% endif %}
 
     {% if pd.iteminfo is defined and pd.iteminfo.want == 0 %}
-    <a class="btn btn-default" href="/item/{{ pd.item.uid }}/want">Add to want list</a></br>
+    <a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/want">Add to want list</a></br>
     {% else %}
-    <a class="btn btn-default" href="/item/{{ pd.item.uid }}/dontwant">Remove from want list</a><br />
+    <a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/dontwant">Remove from want list</a><br />
     {% endif %}
 
 {% else %}
 
-<a class="btn btn-default" href="/item/{{ pd.item.uid }}/have" rel="nofollow">Add to collection</a><br />
-<a class="btn btn-default" href="/item/{{ pd.item.uid }}/want" rel="nofollow">Add to want list</a><br />
+<a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/have" rel="nofollow">Add to collection</a><br />
+<a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/want" rel="nofollow">Add to want list</a><br />
 
 {% endif %}
 

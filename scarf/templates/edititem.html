@@ -7,7 +7,7 @@
 
 <div class="container">
     <div class="col-md-8">
-        <div class="page-header"><h3>Editing: {% if pd.item %}"{{ pd.item.name }}" <small><a href="/item/{{ pd.item.uid }}/history">History</a></small>{% else %}(new item){% endif %} </h3></div>
+        <div class="page-header"><h3>Editing: {% if pd.item %}"{{ pd.item.name }}" <small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/history">History</a></small>{% else %}(new item){% endif %} </h3></div>
         <form action="/item/edit" method="post" enctype="multipart/form-data">
             <div class="page-header"><h4>Name</h4></div>
             <input type=text name=name value="{% if pd.item %}{{ pd.item.name }}{%endif%}"><br />
@@ -18,9 +18,9 @@
     </div>
 
     <div class="col-md-3">
-            <button class="btn btn-sm btn-default" type=submit>Save</button>
+            <button class="btn btn-sm btn-primary" type=submit>Save</button>
             {% if pd.item %}
-            <a class="btn btn-sm btn-primary" href="/item/{{ pd.item.uid }}">Cancel</a>
+            <a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}">Cancel</a>
             {% endif %}
         </form>
     </div>

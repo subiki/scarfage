@@ -14,6 +14,22 @@ from ..sql import doquery
 logging.basicConfig(filename='tests.log',level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+class SiteStringsNaughtyStringsTestCase(unittest.TestCase):
+    def __init__(self, methodName, naughty_string=''):
+        scarf.app.config['TESTING'] = True
+        super(SiteStringsNaughtyStringsTestCase, self).__init__(methodName)
+
+        self.ns = naughty_string
+
+    def runTest(self):
+        try:
+            uid = scarf.core.new_string(self.ns, self.ns, 'en')
+        except scarf.core.NoString:
+            return
+
+        ss = scarf.core.SiteString.create(self.ns)
+        ss.delete()
+
 class SiteUserNaughtyStringsTestCase(unittest.TestCase):
     def __init__(self, methodName, naughty_string=''):
         scarf.app.config['TESTING'] = True
@@ -28,11 +44,8 @@ class SiteUserNaughtyStringsTestCase(unittest.TestCase):
         except scarf.core.NoUser:
             return
 
-        try:
-            siteuser = scarf.core.SiteUser.create(self.ns)
-            siteuser.delete()
-        except scarf.core.NoUser:
-            pass
+        siteuser = scarf.core.SiteUser.create(self.ns)
+        siteuser.delete()
 
 def load_tests(loader, tests, pattern):
     test_cases = unittest.TestSuite()
@@ -47,6 +60,7 @@ def load_tests(loader, tests, pattern):
         for naughty_string in json.load(f):
             with app.test_request_context(''):
                 test_cases.addTest(SiteUserNaughtyStringsTestCase('runTest', unicode(base64.b64decode(naughty_string))))
+                test_cases.addTest(SiteStringsNaughtyStringsTestCase('runTest', unicode(base64.b64decode(naughty_string))))
 
     return test_cases
 

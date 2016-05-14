@@ -30,6 +30,13 @@
 <tr><td>URL Prefix</td><td>{{pd.sf_conf.PREFIX}}</td></tr>
 </table>
 
+<div class="page-header"><h4>Welcome Banner</h4></div>
+<form action="/admin/strings/edit" method="post" enctype="multipart/form-data">
+<textarea name=text cols="120" rows="8">{{ pd.welcomebanner }}</textarea><br />
+<input type="hidden" name="name" value="welcomebanner">
+<button class="btn btn-sm btn-primary" type=submit>Save</button>
+</form>
+
 <div class="page-header"><h4>Site users</h4></div>
 <table class="table table-condensed">
 <tr>

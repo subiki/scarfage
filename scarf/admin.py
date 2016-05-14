@@ -1,7 +1,7 @@
 import config
 from scarf import app
 from access import check_mod, check_admin
-from core import redirect_back, NoUser, SiteUser, get_users
+from core import redirect_back, NoUser, SiteUser, get_users, new_string, SiteString
 from main import PageData
 
 from flask import redirect, url_for, render_template, session, request, flash
@@ -16,6 +16,9 @@ def admin_users():
 
     pd.title = "Admin" 
 
+    new_string('welcomebanner', 'Placeholder...')
+    pd.welcomebanner = SiteString('welcomebanner').string
+
     pd.users = get_users()
     try:
         with open(config.DEPFILE, 'r') as depfile:
@@ -26,6 +29,20 @@ def admin_users():
         pd.mode = "dev"
 
     return render_template('admin.html', pd=pd)
+
+@app.route('/admin/strings/edit', methods=['POST'])
+@check_admin
+def editstring():
+    if request.method == 'POST':
+        if 'text' in request.form:
+            if request.form['text'] == '':
+                return redirect_back('index')
+
+            ss = SiteString('welcomebanner')
+            ss.string = request.form['text']
+            ss.update()
+
+    return redirect_back('index')
 
 @app.route('/admin/users/<user>/accesslevel/<level>')
 @check_mod

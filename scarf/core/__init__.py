@@ -7,3 +7,4 @@ from images import *
 from items import *
 from users import *
 from stats import *
+from strings import *

@@ -103,7 +103,7 @@ class SiteUser(object):
 
     def __init__(self, username):
         self.auth = False
-        self.username = unicode(username)[:200]
+        self.username = unicode(username).strip()[:200]
 
         sql = """select users.uid, users.email, users.joined, userstat_lastseen.date, users.accesslevel 
                  from users
@@ -287,9 +287,11 @@ def new_user(username, password, email, ip):
         sql = "insert into users (username, pwhash, email, joined, accesslevel) values (%(username)s, %(pwhash)s, %(email)s, %(joined)s, '1');"
         result = doquery(sql, { 'username': username, 'pwhash': pwhash, 'email': email, 'joined': joined })
     except (MySQLdb.DataError, MySQLdb.OperationalError):
-        return NoUser(0)
+        raise NoUser(0)
 
     uid = uid_by_user(username)
+    if not uid:
+        raise NoUser(0)
 
     sql = "insert into userstat_lastseen (date, uid) values (%(lastseen)s, %(uid)s);"
     result = doquery(sql, { 'uid': uid, 'lastseen': joined })
@@ -298,5 +300,5 @@ def new_user(username, password, email, ip):
         message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=ip)
         send_mail(recipient=email, subject='Welcome to Scarfage', message=message)
 
-    logger.info('Added new user {}'.format(username))
+    logger.info('Added new user {} ({})'.format(username, uid))
     return uid
