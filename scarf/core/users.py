@@ -117,6 +117,7 @@ class SiteUserProfile(object):
             result = doquery(sql, { 'uid': uid, 'json': json.dumps(self.profile)})
  
     def update(self):
+        profile_cache = dict()
         sql = "update user_profiles set json = %(json)s where uid = %(uid)s;"
         doquery(sql, {"uid": self.uid, "json": json.dumps(self.profile)})
 

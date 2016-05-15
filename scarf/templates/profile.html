@@ -17,7 +17,7 @@
 
     {% set profile = pd.profileuser.profile().profile %}
     {% if 'avatar' in profile %}
-        {% set avatarurl = pd.prefix + "/user/" + pd.profileuser.username + "/avatar" %}
+        {% set avatarurl = "/user/" + pd.profileuser.username + "/avatar" %}
     {% else %}
         {% set avatarurl = pd.prefix + "/static/defaultavatar.png" %}
     {% endif %}
