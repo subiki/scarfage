@@ -152,7 +152,7 @@ Open<br />
     <b>{{ pd.pm.subject }}</b></br>
     <b>From:</b> {{ pd.pm.from_user }}</br>
     <div class="well well-ff">{{ pd.pm.message }}<br/></div>
-    <small>{{ pd.pm.sent }}</small></br>
+    <small>{{ pd.localtime(pd.pm.sent) }}</small></br>
     </p>
 </div>
 
@@ -162,7 +162,7 @@ Open<br />
     <b><a href="/user/{{ pd.authuser.username }}/pm/{{ reply.uid_obfuscated }}">{{ reply.subject }}</a></b></br>
     <b>From:</b> {{ reply.from_user }}</b></br>
     <div class="well well-ff">{{ reply.message }}<br/></div>
-    <small>{{ reply.sent }}</small></br>
+    <small>{{ pd.localtime(reply.sent) }}</small></br>
     </p>
 
     {% for reply2 in reply.replies() %}
@@ -171,7 +171,7 @@ Open<br />
         <b><a href="/user/{{ pd.authuser.username }}/pm/{{ reply2.uid_obfuscated }}">{{ reply2.subject }}</a></b></br>
         <b>From:</b> {{ reply2.from_user }}</b></br>
         <div class="well well-ff">{{ reply2.message }}<br/></div>
-        <small>{{ reply2.sent }}</small>
+        <small>{{ pd.localtime(reply2.sent) }}</small>
         </p>
 
         {% for reply3 in reply2.replies()[:1] %}

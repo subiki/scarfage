@@ -147,7 +147,7 @@ class SiteItem(object):
         logger.info('item updated {}: {} '.format(self.uid, self.name))
         self.name = self.name.strip()[:64]
         sql = "update items set name = %(name)s, description = %(desc)s, modified = %(modified)s where uid = %(uid)s;"
-        return doquery(sql, {"uid": self.uid, "desc": self.description, "name": self.name, "modified": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") })
+        return doquery(sql, {"uid": self.uid, "desc": self.description, "name": self.name, "modified": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S") })
 
     def history(self):
         sql = """select itemedits.uid, itemedits.itemid, itemedits.date, itemedits.userid, ip.ip
@@ -308,7 +308,7 @@ def new_edit(itemid, description, userid, ip):
     logger.info('item {} edited by {} / {} '.format(itemid, userid, ip))
 
     try:
-        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        date = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         sql = "insert into itemedits (date, itemid, userid, ip, body) values (%(date)s, %(itemid)s, %(userid)s, %(ip)s, %(body)s);"
         doquery(sql, { 'date': date, 'itemid': itemid, 'userid': userid, 'ip': ip_uid(ip), 'body': description })
 
@@ -330,7 +330,7 @@ def new_item(name, description, userid, ip):
 
     try:
         sql = "insert into items (name, description, added, modified) values (%(name)s, 0, %(now)s, %(now)s);"
-        doquery(sql, { 'now': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 'name': name })
+        doquery(sql, { 'now': datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"), 'name': name })
 
         sql = "select uid from items where name=%(name)s and description=0;"
         itemid = doquery(sql, { 'name': name })[0][0]

@@ -92,8 +92,13 @@ class OwnWant(object):
         sql = "delete from ownwant where own = '0' and want = '0' and willtrade = '0';"
         result = doquery(sql)
 
+class SiteUserProfile(object):
+    def __init__(self, username):
+        self.timezone = "US/Pacific"
+
 siteuser_cache = dict()
 collection_cache = dict()
+profile_cache = dict()
 message_cache = dict()
 class SiteUser(object):
     @classmethod
@@ -143,6 +148,11 @@ class SiteUser(object):
 
         return ret
 
+
+    @memoize_with_expiry(profile_cache, cache_persist)
+    def profile(self):
+        return SiteUserProfile(self.username)
+
     #@memoize_with_expiry(collection_cache, cache_persist)
     # ^^^ causes a bug with ownwant updates
     def query_collection(self, item):
@@ -168,7 +178,7 @@ class SiteUser(object):
         return ret
 
     def seen(self):
-        self.lastseen=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.lastseen=datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
         # FIXME: update, not insert
         sql = "INSERT INTO userstat_lastseen (date, uid) VALUES (%(lastseen)s, %(uid)s) ON DUPLICATE KEY UPDATE date = %(lastseen)s, uid = %(uid)s;"
@@ -272,7 +282,7 @@ def new_user(username, password, email, ip):
     if len(email) < 3:
         raise NoUser(0)
 
-    joined = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    joined = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     try:
         sql = "select uid from users where username = %(username)s;"

@@ -2,8 +2,6 @@
 
 {% block body %}
 
-
-
 <ul class="nav nav-pills">
   <li class="active"><a data-toggle="pill" href="#userinfo">Profile</a></li>
   {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
@@ -19,16 +17,17 @@
     {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
         <div class="page-header"><h4>{{ pd.profileuser.username }}'s Profile</h4></div>
         <ul>
-            <li>Member since: {{ pd.profileuser.joined }}</li>
-            <li>Last seen: {{ pd.profileuser.lastseen }}</li>
+            <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
+            <li>Last seen: {{ pd.localtime(pd.profileuser.lastseen) }}</li>
         </ul>
     {% else %}
         <div class="page-header"><h4>Your Profile</h4></div>
         <ul>
             <li>Email: {{ pd.profileuser.email }}</li>
-            <li>Member since: {{ pd.profileuser.joined }}</li>
+            <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
             <li>Items added: {{ pd.profileuser.numadds }}</li>
             <li>Access level: {{ pd.accesslevels[pd.profileuser.accesslevel] }}</li>
+            <li>Timezone: {{ pd.profileuser.profile().timezone }}</li>
         </ul>
 
         <div>
@@ -118,7 +117,7 @@
             <a href="/user/{{ pm.to_user }}">{{ pm.to_user }}</a><br />
             </td>
 
-            <td>{{ pm.sent }}</td>
+            <td>{{ pd.localtime(pm.sent) }}</td>
 
             <td>
             <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">View</a></br>
@@ -202,7 +201,7 @@
             <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a>
             </td>
 
-            <td>{{ pm.sent }}</td>
+            <td>{{ pd.localtime(pm.sent) }}</td>
 
             <td>
             <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">
@@ -236,7 +235,7 @@
             <a href="/user/{{ pm.to_user }}">{{ pm.to_user }}</a><br />
             </td>
 
-            <td>{{ pm.sent }}</td>
+            <td>{{ pd.localtime(pm.sent) }}</td>
 
             <td>
             <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">{{ pm.subject }}</a>
