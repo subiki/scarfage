@@ -173,6 +173,9 @@ def serve_avatar(username):
     except (IOError, NoUser):
         return page_not_found(404)
 
+from core.memoize import memoize_with_expiry
+tzcache = dict()
+@memoize_with_expiry(tzcache, 99999999999)
 def get_timezones():
     timezones = dict()
     for timezone in pytz.common_timezones:
