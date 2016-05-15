@@ -61,7 +61,7 @@ class PageData(object):
         if 'username' in session:
             user_tz = timezone(self.authuser.profile().profile['timezone'])
         else:
-            user_tz = timezone('US/Pacific')
+            user_tz = timezone('America/Los_Angeles')
 
         return utc_dt.astimezone(user_tz)
 

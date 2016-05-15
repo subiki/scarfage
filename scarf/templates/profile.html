@@ -5,6 +5,7 @@
 <ul class="nav nav-pills">
   <li class="active"><a data-toggle="pill" href="#userinfo">Profile</a></li>
   {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
+  <li><a data-toggle="pill" href="#prefs">Preferences</a></li>
   <li><a data-toggle="pill" href="#trades">Trades</a></li>
   {% endif %}
   <li><a data-toggle="pill" href="#messages">Messages</a></li>
@@ -42,7 +43,6 @@
             <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
             <li>Items added: {{ pd.profileuser.numadds }}</li>
             <li>Access level: {{ pd.accesslevels[pd.profileuser.accesslevel] }}</li>
-            <li>Timezone: {{ profile['timezone'] }}</li>
         </ul>
 
         <div>
@@ -107,6 +107,32 @@
   </div>
 
   {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
+  <div id="prefs" class="tab-pane fade">
+        <div class="page-header"><h4>Preferences</h4></div>
+        <form class="form-horizontal" role="form" action="/user/{{ pd.profileuser.username }}/prefs" method="post" enctype="multipart/form-data">
+
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="timezone">Timezone:</label>
+            <div class="col-sm-10">
+                <select name="timezone" id="timezone">
+                  <option value="{{ profile['timezone'] }}" selected>{{ profile['timezone'] }}</option>
+                  <option value="">---------</option>
+                  {% for timezone in pd.timezones|dictsort|reverse %}
+                  <option value="{{ pd.timezones[timezone[0]] }}">{{ timezone[0] }}</option>
+                  {% endfor %}
+                </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-default">Save</button>
+            </div>
+          </div>
+        </form>
+ 
+  </div>
+
   <div id="trades" class="tab-pane fade">
         <div class="page-header"><h4>Trade Requests</h4></div>
         <table class="table table-condensed">

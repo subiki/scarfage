@@ -111,7 +111,7 @@ class SiteUserProfile(object):
             self.profile = json.loads(result[0][0])
         except (Warning, IndexError):
             self.profile = dict()
-            self.profile['timezone'] = "US/Pacific"
+            self.profile['timezone'] = "America/Los_Angeles"
 
             sql = "insert into user_profiles (uid, json) values (%(uid)s, %(json)s);"
             result = doquery(sql, { 'uid': uid, 'json': json.dumps(self.profile)})

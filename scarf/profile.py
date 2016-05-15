@@ -1,6 +1,9 @@
 import imghdr
 import base64
 import logging
+import pytz 
+import datetime
+
 from scarf import app
 from core import redirect_back, SiteUser, NoUser, check_email, send_mail
 from main import page_not_found, PageData
@@ -98,6 +101,30 @@ def pwreset():
 
     return redirect(url_for('index'))
 
+@app.route('/user/<username>/prefs', methods=['POST'])
+def updateprefs(username):
+    pd = PageData()
+    if 'username' in session:
+        ret = False
+        if request.method == 'POST':
+            try:
+                user = SiteUser.create(session['username'])
+                profile = user.profile()
+            except NoUser:
+                return render_template('error.html', pd=pd)
+
+            if request.form['timezone'] in pytz.common_timezones:
+                logger.info('timezone updated for for {}'.format(username))
+                profile.profile['timezone'] = request.form['timezone']
+
+            profile.update()
+
+            flash("Your profile has been updated.")
+            logger.info('profile updated for for {}'.format(username))
+            return redirect('/user/' + user.username)
+
+    return redirect(url_for('index'))
+
 @app.route('/user/<username>/profile/newavatar', methods=['POST'])
 def newavatar(username):
     pd = PageData()
@@ -146,10 +173,19 @@ def serve_avatar(username):
     except (IOError, NoUser):
         return page_not_found(404)
 
+def get_timezones():
+    timezones = dict()
+    for timezone in pytz.common_timezones:
+        offset = datetime.datetime.now(pytz.timezone(timezone)).strftime('%z')
+        key = '{} {}'.format(offset, timezone)
+        timezones[key] = timezone
+    return timezones
+
 @app.route('/user/<username>')
 def show_user_profile(username):
     pd = PageData()
     pd.title = "Profile for " + username
+    pd.timezones = get_timezones()
 
     try:
         pd.profileuser = SiteUser.create(username)
