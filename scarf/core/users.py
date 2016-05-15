@@ -203,11 +203,11 @@ class SiteUser(object):
         return ret
 
     def seen(self):
-        self.lastseen=datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.datetime.utcnow().replace(microsecond=0)
 
-        # FIXME: update, not insert
-        sql = "INSERT INTO userstat_lastseen (date, uid) VALUES (%(lastseen)s, %(uid)s) ON DUPLICATE KEY UPDATE date = %(lastseen)s, uid = %(uid)s;"
-        result = doquery(sql, { 'uid': self.uid, 'lastseen': self.lastseen })
+        if now - self.lastseen > datetime.timedelta(minutes=10):
+            sql = "INSERT INTO userstat_lastseen (date, uid) VALUES (%(lastseen)s, %(uid)s) ON DUPLICATE KEY UPDATE date = %(lastseen)s, uid = %(uid)s;"
+            result = doquery(sql, { 'uid': self.uid, 'lastseen': now.strftime("%Y-%m-%d %H:%M:%S") })
 
     def authenticate(self, password):
         sql = """select users.pwhash

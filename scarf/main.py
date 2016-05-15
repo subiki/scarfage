@@ -37,7 +37,6 @@ class PageData(object):
 
         self.accesslevels = core.accesslevels
 
-
         self.encode = base64.b32encode
         self.decode = base64.b32decode
 
@@ -50,6 +49,7 @@ class PageData(object):
         if 'username' in session:
             try:
                 self.authuser = core.SiteUser.create(session['username'])
+                self.authuser.seen()
             except core.NoUser:
                 self.authuser = None
                 pass
