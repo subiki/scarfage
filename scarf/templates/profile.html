@@ -12,22 +12,35 @@
 
 <div class="tab-content">
   <div id="userinfo" class="tab-pane fade in active">
+
+    {% set profile = pd.profileuser.profile().profile %}
+    {% if 'avatar' in profile %}
+        {% set avatarurl = pd.prefix + "/user/" + pd.profileuser.username + "/avatar/" %}
+    {% else %}
+        {% set avatarurl = pd.prefix + "/static/defaultavatar.png" %}
+    {% endif %}
     {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
     <div class="page-header"><h2>{{ pd.profileuser.username }}'s Profile</h2></div>
 
         <h4>User info:</h4>
+        <div class="col-md-8">
         <ul>
             <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
             <li>Last seen: {{ pd.localtime(pd.profileuser.lastseen) }}</li>
         </ul>
+        </div>
+        <div class="col-md-4">
+            <img style="max-height:100px; max-width:100px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
+        </div>
     {% else %}
         <div class="page-header"><h4>User info:</h4></div>
+        <div class="col-md-8">
         <ul>
             <li>Email: {{ pd.profileuser.email }}</li>
             <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
             <li>Items added: {{ pd.profileuser.numadds }}</li>
             <li>Access level: {{ pd.accesslevels[pd.profileuser.accesslevel] }}</li>
-            <li>Timezone: {{ pd.profileuser.profile().timezone }}</li>
+            <li>Timezone: {{ profile['timezone'] }}</li>
         </ul>
 
         <div>
@@ -71,6 +84,22 @@
             <input class="button" type=submit value=Submit>
           </div>
         </form>
+        </div>
+        </div>
+
+        <div class="col-md-4">
+          <a data-toggle="collapse" href="#collapseNewAvatar" aria-expanded="false" aria-controls="collapseNewAvatar">
+            <img style="max-height:100px; max-width:100px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
+          </a>
+          <div class="collapse" id="collapseNewAvatar">
+            <div class="card card-block">
+                <form action="/user/{{pd.authuser.username}}/newavatar" method="post" enctype="multipart/form-data">
+                    <input class="btn btn-sm btn-file" type="file" name="img" accept="image/*">
+                    <button type=submit class="btn btn-sm btn-default"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload</button>
+                </form>
+
+            </div>
+          </div>
         </div>
     {% endif %}
   </div>
