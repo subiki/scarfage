@@ -4,6 +4,7 @@ import bcrypt
 import hashlib
 import logging
 #import hmac
+import json
 import random
 from string import ascii_letters, digits
 
@@ -93,8 +94,31 @@ class OwnWant(object):
         result = doquery(sql)
 
 class SiteUserProfile(object):
-    def __init__(self, username):
-        self.timezone = "US/Pacific"
+    def __init__(self, username=None, uid=None):
+        try:
+            if username:
+                uid = uid_by_user(username)
+
+            if not uid:
+                raise NoUser(None)
+
+            sql = """select json 
+                     from user_profiles
+                     where uid = %(uid)s; """
+            result = doquery(sql, { 'uid': uid })
+
+            self.uid = uid
+            self.profile = json.loads(result[0][0])
+        except (Warning, IndexError):
+            self.profile = dict()
+            self.profile['timezone'] = "US/Pacific"
+
+            sql = "insert into user_profiles (uid, json) values (%(uid)s, %(json)s);"
+            result = doquery(sql, { 'uid': uid, 'json': json.dumps(self.profile)})
+ 
+    def update(self):
+        sql = "update user_profiles set json = %(json)s where uid = %(uid)s;"
+        doquery(sql, {"uid": self.uid, "json": json.dumps(self.profile)})
 
 siteuser_cache = dict()
 collection_cache = dict()
