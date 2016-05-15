@@ -15,7 +15,7 @@
 
     {% set profile = pd.profileuser.profile().profile %}
     {% if 'avatar' in profile %}
-        {% set avatarurl = pd.prefix + "/user/" + pd.profileuser.username + "/avatar/" %}
+        {% set avatarurl = pd.prefix + "/user/" + pd.profileuser.username + "/avatar" %}
     {% else %}
         {% set avatarurl = pd.prefix + "/static/defaultavatar.png" %}
     {% endif %}
@@ -30,7 +30,7 @@
         </ul>
         </div>
         <div class="col-md-4">
-            <img style="max-height:100px; max-width:100px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
+            <img style="max-height:150px; max-width:150px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
         </div>
     {% else %}
         <div class="page-header"><h4>User info:</h4></div>
@@ -89,11 +89,11 @@
 
         <div class="col-md-4">
           <a data-toggle="collapse" href="#collapseNewAvatar" aria-expanded="false" aria-controls="collapseNewAvatar">
-            <img style="max-height:100px; max-width:100px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
+            <img style="max-height:150px; max-width:150px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
           </a>
           <div class="collapse" id="collapseNewAvatar">
             <div class="card card-block">
-                <form action="/user/{{pd.authuser.username}}/newavatar" method="post" enctype="multipart/form-data">
+                <form action="/user/{{pd.authuser.username}}/profile/newavatar" method="post" enctype="multipart/form-data">
                     <input class="btn btn-sm btn-file" type="file" name="img" accept="image/*">
                     <button type=submit class="btn btn-sm btn-default"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload</button>
                 </form>

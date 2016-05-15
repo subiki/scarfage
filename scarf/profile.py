@@ -1,8 +1,10 @@
+import imghdr
+import base64
 from scarf import app
 from core import redirect_back, SiteUser, NoUser, check_email, send_mail
 from main import page_not_found, PageData
 
-from flask import redirect, url_for, render_template, session, request, flash
+from flask import redirect, url_for, render_template, session, request, flash, make_response
 from string import ascii_letters, digits
 import random
 import re
@@ -92,6 +94,47 @@ def pwreset():
             return redirect('/user/' + user.username)
 
     return redirect(url_for('index'))
+
+@app.route('/user/<username>/profile/newavatar', methods=['POST'])
+def newavatar(username):
+    pd = PageData()
+    if 'username' in session:
+        ret = False
+        if request.method == 'POST':
+            try:
+                user = SiteUser.create(session['username'])
+                profile = user.profile()
+            except NoUser:
+                return render_template('error.html', pd=pd)
+
+            raw = request.files['img'].read()
+
+            if not imghdr.what(None, raw):
+                flash("There was a problem updating your avatar.")
+                logger.info('failed to update avatar for {} '.format(username))
+                return
+
+            image = base64.b64encode(raw)
+ 
+            profile.profile['avatar'] = image
+            profile.update()
+
+            flash("Your avatar has been updated.")
+            return redirect('/user/' + user.username)
+
+    return redirect(url_for('index'))
+
+@app.route('/user/<username>/avatar')
+def serve_avatar(username):
+    try:
+        user = SiteUser.create(username)
+        avatar = user.profile().profile['avatar']
+
+        resp = make_response(base64.b64decode(avatar))
+        resp.content_type = "image/png"
+        return resp
+    except (IOError, NoUser):
+        return page_not_found(404)
 
 @app.route('/user/<username>')
 def show_user_profile(username):
