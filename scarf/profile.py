@@ -1,5 +1,6 @@
 import imghdr
 import base64
+import logging
 from scarf import app
 from core import redirect_back, SiteUser, NoUser, check_email, send_mail
 from main import page_not_found, PageData
@@ -8,6 +9,8 @@ from flask import redirect, url_for, render_template, session, request, flash, m
 from string import ascii_letters, digits
 import random
 import re
+ 
+logger = logging.getLogger(__name__)
 
 @app.route('/forgotpw', methods=['GET', 'POST'])
 def userupdate():
@@ -109,10 +112,16 @@ def newavatar(username):
 
             raw = request.files['img'].read()
 
+            size = len(raw)
+            if size > 2097152:
+                logger.info('rejected avatar for {}, raw size is {}'.format(username, size))
+                flash("Please resize your avatar to be smaller than 2MB. The image you uploaded was {:.1f}MB".format(size / 1000000.0))
+                return redirect('/user/' + user.username)
+
             if not imghdr.what(None, raw):
                 flash("There was a problem updating your avatar.")
                 logger.info('failed to update avatar for {} '.format(username))
-                return
+                return redirect('/user/' + user.username)
 
             image = base64.b64encode(raw)
  
@@ -120,6 +129,7 @@ def newavatar(username):
             profile.update()
 
             flash("Your avatar has been updated.")
+            logger.info('avatar updated for for {}, raw size is {}'.format(username, size))
             return redirect('/user/' + user.username)
 
     return redirect(url_for('index'))

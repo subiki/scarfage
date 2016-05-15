@@ -3,8 +3,10 @@
 {% block body %}
 
 <ul class="nav nav-pills">
-  <li class="active"><a data-toggle="pill" href="#userinfo">User Info</a></li>
+  <li class="active"><a data-toggle="pill" href="#userinfo">Profile</a></li>
+  {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
   <li><a data-toggle="pill" href="#trades">Trades</a></li>
+  {% endif %}
   <li><a data-toggle="pill" href="#messages">Messages</a></li>
   <li><a data-toggle="pill" href="#collections">Collections</a></li>
 </ul>
@@ -22,7 +24,7 @@
     {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
     <div class="page-header"><h2>{{ pd.profileuser.username }}'s Profile</h2></div>
 
-        <h4>User info:</h4>
+        <h4>User info</h4>
         <div class="col-md-8">
         <ul>
             <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
@@ -33,7 +35,7 @@
             <img style="max-height:150px; max-width:150px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
         </div>
     {% else %}
-        <div class="page-header"><h4>User info:</h4></div>
+        <div class="page-header"><h4>User info</h4></div>
         <div class="col-md-8">
         <ul>
             <li>Email: {{ pd.profileuser.email }}</li>
@@ -104,12 +106,9 @@
     {% endif %}
   </div>
 
+  {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
   <div id="trades" class="tab-pane fade">
-    {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
-        You cannot currently view other people's trades.
-    {% else %}
-        <div class="page-header"><h4>Trade requests:</h4></div>
-
+        <div class="page-header"><h4>Trade Requests</h4></div>
         <table class="table table-condensed">
         <tr>
         <th>Trade status</th>
@@ -158,26 +157,22 @@
         {% endif %}
         {% endfor %}
         </table>
-
-
-
-    {% endif %}
   </div>
-
-
+  {% endif %}
 
   <div id="messages" class="tab-pane fade">
     {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
-    <div class="container">
-        <form action="/user/{{ pd.profileuser.username }}/pm" method="post" enctype="multipart/form-data">
-            Subject: <input type=text name=subject default="Subject" required></br>
-            Message: </br>
-            <textarea name=body rows="4" cols="50"></textarea><br />
-            <input type=submit value=Submit>
-        </form>
-    </div>
+        <div class="page-header"><h4>Send a message to {{ pd.profileuser.username }}</h4></div>
+        <div class="container">
+            <form action="/user/{{ pd.profileuser.username }}/pm" method="post" enctype="multipart/form-data">
+                Subject: <input type=text name=subject default="Subject" required></br>
+                Message: </br>
+                <textarea name=body rows="4" cols="50"></textarea><br />
+                <input type=submit value=Submit>
+            </form>
+        </div>
     {% else %}
-        <div class="page-header"><h4>Received:</h4></div>
+        <div class="page-header"><h4>Received</h4></div>
 
         <table class="table table-condensed">
         <tr>
@@ -211,7 +206,7 @@
 
         </table>
 
-        <div class="page-header"><h4>Sent:</h4></div>
+        <div class="page-header"><h4>Sent</h4></div>
 
         <table class="table table-condensed">
         <tr>
@@ -249,18 +244,16 @@
 
     <div class="page-header"><h3>{{ pd.profileuser.username }}'s collection</h3></div>
 
-
     <table class="table">
     {% for item in pd.profileuser.collection() %}
     <tr>
       {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
         {% if item.have == 1 %}
-           <td>
+            <td>
                {% for image in item.images()[:1] %}
                    <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
                {% endfor %}
-           </td>
-
+            </td>
 
             <td><a href="/item/{{ item.uid }}">{{ item.name }}</a></td>
             {% if item.hidden == 0 %}
