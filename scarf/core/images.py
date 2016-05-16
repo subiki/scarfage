@@ -102,10 +102,9 @@ class SiteImage(object):
 
     def flag(self, userid=None):
         logger.info('moderation flag added for image id {} by userid {}'.format(self.uid, userid))
-        if userid:
-            sql = upsert('imgmods', **{"imgid": self.uid, "userid": userid, "flag": 1})
-        else:
-            sql = upsert('imgmods', **{"imgid": self.uid, "flag": 1})
+
+        sql = "insert into imgmods (imgid, userid, flag) values (%(imgid)s, %(userid)s, %(flag)s) on duplicate key update flag = %(flag)s;"
+        doquery(sql, { 'imgid': self.uid, 'userid': userid, 'flag': 1})
 
     def ascii(self, scale=1):
         image_string = cStringIO.StringIO(base64.b64decode(self.image))
