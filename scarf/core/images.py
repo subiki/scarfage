@@ -100,11 +100,11 @@ class SiteImage(object):
         sql = 'delete from imgmods where imgid = %(uid)s;'
         result = doquery(sql, { 'uid': self.uid })
 
-    def flag(self, userid=None):
-        logger.info('moderation flag added for image id {} by userid {}'.format(self.uid, userid))
+    def flag(self):
+        logger.info('moderation flag added for image id {}'.format(self.uid))
 
         sql = "insert into imgmods (imgid, userid, flag) values (%(imgid)s, %(userid)s, %(flag)s) on duplicate key update flag = %(flag)s;"
-        doquery(sql, { 'imgid': self.uid, 'userid': userid, 'flag': 1})
+        doquery(sql, { 'imgid': self.uid, 'userid': self.userid, 'flag': 1})
 
     def ascii(self, scale=1):
         image_string = cStringIO.StringIO(base64.b64decode(self.image))

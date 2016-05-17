@@ -71,12 +71,7 @@ def flag_image(img_id):
     pd = PageData()
 
     flagimg = SiteImage.create(img_id)
-    if 'username' in session:
-        userid = core.uid_by_user(session['username'])
-    else:
-        userid = None
-
-    flagimg.flag(userid)
+    flagimg.flag()
 
     flash("The image has been flagged and will be reviewed by a moderator.")
 
