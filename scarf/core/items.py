@@ -305,8 +305,7 @@ def new_edit(itemid, description, userid, ip):
     if userid == 0:
         userid = None
 
-    logger.info('item {} edited by {} / {} '.format(itemid, userid, ip))
-
+    username = users.user_by_uid(userid)
     try:
         date = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         sql = "insert into itemedits (date, itemid, userid, ip, body) values (%(date)s, %(itemid)s, %(userid)s, %(ip)s, %(body)s);"
@@ -318,15 +317,16 @@ def new_edit(itemid, description, userid, ip):
         sql = "update items set description = %(edit)s, modified = %(modified)s where uid = %(uid)s;"
         doquery(sql, {"uid": itemid, "edit": edit, "modified": date })
 
+        logger.info('item {} edited by {} / {} '.format(itemid, username, ip))
+
         return edit 
     except MySQLdb.OperationalError, Warning:
-        logger.info('Error editing item {} by {} ({})'.format(itemid, userid, ip))
+        logger.info('Error editing item {} by {} ({})'.format(itemid, username, ip))
         #FIXME: raise something else
         raise NoItem(itemid)
 
 def new_item(name, description, userid, ip):
     name = name.strip()[:64]
-    logger.info('new item {} added by {} / {} '.format(name, userid, ip))
 
     try:
         sql = "insert into items (name, description, added, modified) values (%(name)s, 0, %(now)s, %(now)s);"
@@ -339,6 +339,9 @@ def new_item(name, description, userid, ip):
         raise NoItem(0)
 
     new_edit(itemid, description, userid, ip)
+
+    username = users.user_by_uid(userid)
+    logger.info('new item {} added by {} / {} '.format(name, username, ip))
 
     return itemid 
 

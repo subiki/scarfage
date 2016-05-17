@@ -41,7 +41,7 @@ def user_by_uid(uid):
     try:
         return result[0][0]
     except IndexError:
-        return
+        return None
 
 @memoize_with_expiry(stats_cache, long_cache_persist)
 def uid_by_user(username):
@@ -51,7 +51,7 @@ def uid_by_user(username):
     try:
         return result[0][0]
     except IndexError:
-        return
+        return None
 
 class NoUser(Exception):
     def __init__(self, username):

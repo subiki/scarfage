@@ -40,8 +40,9 @@ imghdr.tests.append(test_icc_profile_images)
 def new_img(f, title, parent, userid, ip):
     raw = f.read()
 
+    username = users.user_by_uid(userid)
     if not imghdr.what(None, raw):
-        logger.info('failed to add image to {} by {} / {} '.format(parent, userid, ip))
+        logger.info('failed to add image to {} by {} / {} '.format(parent, username, ip))
         return
 
     image = base64.b64encode(raw)
@@ -57,7 +58,7 @@ def new_img(f, title, parent, userid, ip):
     sql = "insert into imgmods (userid, imgid) values (%(userid)s, %(imgid)s);"
     doquery(sql, { 'userid': userid, 'imgid': imgid })
 
-    logger.info('new image added to {} by {} / {} '.format(parent, userid, ip))
+    logger.info('new image added to {} by {} / {} '.format(parent, username, ip))
     return imgid 
 
 class NoImage(Exception):
