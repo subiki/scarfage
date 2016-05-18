@@ -141,15 +141,15 @@ class SiteUser(object):
                  where users.username = %(username)s; """
 
         try:
-            result = doquery(sql, { 'username': username })
+            result = doquery(sql, { 'username': self.username })
             self.uid = result[0][0]
             self.email = result[0][1]
             self.joined = result[0][2]
             self.lastseen = result[0][3]
             self.accesslevel = result[0][4]
-        except (Warning, IndexError):
+        except IndexError:
             raise NoUser(username)
-        except TypeError:
+        except (Warning, TypeError):
             pass
 
     @memoize_with_expiry(collection_cache, cache_persist)
@@ -264,6 +264,17 @@ class SiteUser(object):
     def delete(self):
         logger.info('Account deletion for user {}'.format(self.username))
 
+        #TODO: clean up the other tables
+        sql = "delete from userstat_lastseen where uid = %(uid)s;"
+        doquery(sql, {"uid": self.uid})
+
+        sql = "delete from user_profiles where uid = %(uid)s;"
+        doquery(sql, {"uid": self.uid})
+
+        sql = "delete from users where uid = %(uid)s;"
+        doquery(sql, {"uid": self.uid})
+
+
 def hashize(string):
     return base64.b64encode(hashlib.sha384(string).digest())
 
@@ -321,15 +332,20 @@ def new_user(username, password, email, ip):
     try:
         sql = "insert into users (username, pwhash, email, joined, accesslevel) values (%(username)s, %(pwhash)s, %(email)s, %(joined)s, '1');"
         result = doquery(sql, { 'username': username, 'pwhash': pwhash, 'email': email, 'joined': joined })
-    except (MySQLdb.DataError, MySQLdb.OperationalError):
-        raise NoUser(0)
 
-    uid = uid_by_user(username)
-    if not uid:
-        raise NoUser(0)
+        uid = doquery("select last_insert_id();")[0][0]
+        if not uid:
+            raise NoUser(username)
 
-    sql = "insert into userstat_lastseen (date, uid) values (%(lastseen)s, %(uid)s);"
-    result = doquery(sql, { 'uid': uid, 'lastseen': joined })
+        sql = "insert into userstat_lastseen (date, uid) values (%(lastseen)s, %(uid)s);"
+        result = doquery(sql, { 'uid': uid, 'lastseen': joined })
+    except MySQLdb.Error, e:
+        try:
+            logger.info('MySQL error adding new user {} - {}: {})'.format(username, e.args[0], e.args[1]))
+            raise NoUser(username)
+        except IndexError:
+            logger.info('MySQL error adding new user {} - {})'.format(username, e))
+            raise NoUser(username)
 
     if '0.0.0.0' not in ip:
         message = render_template('email/new_user.html', username=username, email=email, joined=joined, ip=ip)

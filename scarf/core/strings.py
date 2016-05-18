@@ -17,12 +17,15 @@ class SiteString(object):
 
     @classmethod
     @memoize_with_expiry(sitestring_cache, long_cache_persist)
-    def create(cls, name):
-        return cls(name)
+    def create(cls, name, lang=None):
+        return cls(name, lang)
 
     def __init__(self, name, lang=None):
         if not lang:
             lang = SiteString.DEFAULTLANG
+
+        if not name:
+            raise NoString(name, lang)
 
         sql = 'select id, string from strings where name = %(name)s and lang = %(lang)s;'
         result = doquery(sql, { 'name': name, 'lang': lang })
@@ -43,9 +46,9 @@ class SiteString(object):
 
     def delete(self):
         logger.info('deleted string id {}'.format(self.uid))
+        sql = 'delete from strings where name = %(name)s and lang = %(lang)s;'
+        result = doquery(sql, { 'name': self.name, 'lang': self.lang })
         sitestring_cache = dict()
-        sql = 'delete from strings where id = %(uid)s;'
-        result = doquery(sql, { 'uid': self.uid })
 
 def new_string(name, string, lang=SiteString.DEFAULTLANG):
     if not name or not string:

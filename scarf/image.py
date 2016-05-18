@@ -40,8 +40,11 @@ def newimg():
 def reallydelete_image(img_id):
     pd = PageData()
 
-    delimg = SiteImage.create(img_id)
-    delimg.delete()
+    try:
+        delimg = SiteImage.create(img_id)
+        delimg.delete()
+    except NoImage:
+        return page_not_found(404)
 
     pd.title = delimg.tag + " has been deleted"
     pd.accessreq = 10
@@ -55,7 +58,10 @@ def reallydelete_image(img_id):
 def delete_image(img_id):
     pd = PageData()
 
-    delimg = SiteImage.create(img_id)
+    try:
+        delimg = SiteImage.create(img_id)
+    except NoImage:
+        return page_not_found(404)
 
     pd.title=delimg.tag
 
@@ -70,8 +76,11 @@ def delete_image(img_id):
 def flag_image(img_id):
     pd = PageData()
 
-    flagimg = SiteImage.create(img_id)
-    flagimg.flag()
+    try:
+        flagimg = SiteImage.create(img_id)
+        flagimg.flag()
+    except NoImage:
+        return page_not_found(404)
 
     flash("The image has been flagged and will be reviewed by a moderator.")
 

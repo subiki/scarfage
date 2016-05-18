@@ -100,7 +100,7 @@ def trade(username, itemid=None, messageid=None):
             if message == '':
                 flash('Please add a message')
 
-            return redirect_back('/item/' + itemid)
+            return redirect_back('/')
 
     pd.title = "Trading with {}".format(username)
 

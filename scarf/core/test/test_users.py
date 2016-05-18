@@ -81,25 +81,5 @@ class SiteUserTestCase(unittest.TestCase):
     def test_siteuser_check_email(self):
         assert scarf.core.check_email('invalid email') is None
 
-class SiteUserNaughtyStringsTestCase(unittest.TestCase):
-    def __init__(self, methodName, naughty_string=''):
-        scarf.app.config['TESTING'] = True
-        scarf.config.BCRYPT_ROUNDS = 4
-        super(SiteUserNaughtyStringsTestCase, self).__init__(methodName)
-
-        self.ns = naughty_string
-
-    def runTest(self):
-        try:
-            uid = scarf.core.new_user(self.ns, self.ns, '{}@{}'.format(self.ns, self.ns), '0.0.0.0')
-        except scarf.core.NoUser:
-            return
-
-        try:
-            siteuser = scarf.core.SiteUser.create(self.ns)
-            siteuser.delete()
-        except scarf.core.NoUser:
-            pass
-
 if __name__ == '__main__':
     unittest.main()

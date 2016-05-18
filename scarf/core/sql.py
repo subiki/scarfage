@@ -249,7 +249,8 @@ def get_db():
             db.set_character_set('utf8')
 
     except MySQLdb.MySQLError as e:
-        db = None
+        if e[0] >= 2000:
+            db = None
         logger.error("Cannot connect to database. MySQL error: " + str(e))
         raise
 
@@ -306,6 +307,7 @@ def doquery(query, data=None, select=True):
         return data
 
     except MySQLdb.MySQLError as e:
-        db = None
-        logger.error("Cannot connect to database. MySQL error: " + str(e))
+        if e[0] >= 2000:
+            db = None
+        logger.error("MySQL error: " + str(e))
         raise
