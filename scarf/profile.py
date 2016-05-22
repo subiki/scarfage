@@ -117,6 +117,8 @@ def updateprefs(username):
                 logger.info('timezone updated for for {}'.format(username))
                 profile.profile['timezone'] = request.form['timezone']
 
+            profile.profile['summary'] = request.form['summary']
+
             profile.update()
 
             flash("Your profile has been updated.")

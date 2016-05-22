@@ -49,17 +49,17 @@ def editstring():
 def admin_set_accesslevel(user, level):
     pd = PageData()
 
-    if pd.authuser.accesslevel != 255 and pd.authuser.accesslevel <= level:
+    if pd.authuser.accesslevel != 255 and pd.authuser.accesslevel <= int(level):
         app.logger.error('Accesslevel change was denied for user: ' + pd.authuser.username)
         flash("Access level change denied.")
         return redirect_back('index')
 
-    if pd.authuser.accesslevel != 255 and moduser.accesslevel >= pd.authuser.accesslevel:
-        flash("Please contact an admin to modify this user's account.")
-        return redirect_back('index')
-
     try:
         moduser = SiteUser.create(user)
+
+        if pd.authuser.accesslevel != 255 and moduser.accesslevel >= pd.authuser.accesslevel:
+            flash("Please contact an admin to modify this user's account.")
+            return redirect_back('index')
     except NoUser:
         app.logger.error('Accesslevel change attempted for invalid user by: ' + pd.authuser.username)
         pd.title = "User does not exist"
@@ -69,7 +69,7 @@ def admin_set_accesslevel(user, level):
     moduser.newaccesslevel(level)
     flash('User ' + user + '\'s accesslevel has been set to ' + level)
 
-    return redirect_back('/admin')
+    return redirect('/user/' + moduser.username)
 
 @app.route('/admin/users/<user>/resetpw')
 @check_admin
