@@ -76,6 +76,7 @@ def newuser():
     pd.title = "New User"
 
     if 'username' in session:
+        flash('You are already logged in.')
         return redirect(url_for('index'))
     else:
         if request.method == 'POST':
@@ -87,8 +88,14 @@ def newuser():
             if not new_user(request.form['username'], request.form['password'], request.form['email'], request.remote_addr):
                 return render_template('error.html', pd=pd)
 
-            session['username'] = request.form['username']
-            flash('Welcome ' + session['username'])
+            try:
+                user = SiteUser.create(request.form['username'])
+                user.authenticate(request.form['password'])
+                session['username'] = user.username
+            except (NoUser, AuthFail):
+                return render_template('error.html', pd=pd)
+
+            flash('Welcome ' + request.form['username'])
             return redirect(url_for('index'))
 
         return render_template('newuser.html', pd=pd)

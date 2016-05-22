@@ -3,6 +3,8 @@ usage:
 	# tests     -   run tests, app must be configured for db access
 	# docs      -   generate docs
 	# clean     -   clean up docs, venv, test log
+	# dumpdb    -   dump the database schema (config.py must already exist)
+	# importdb  -   import the database (config.py must already exist)
 
 venv:
 	virtualenv venv --no-site-packages

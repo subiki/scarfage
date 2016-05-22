@@ -51,8 +51,7 @@ class PageData(object):
                 self.authuser = core.SiteUser.create(session['username'])
                 self.authuser.seen()
             except core.NoUser:
-                self.authuser = None
-                pass
+                del session['username']
 
     def localtime(self, timestamp):
         utc = timezone('UTC')
