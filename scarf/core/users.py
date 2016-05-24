@@ -93,6 +93,9 @@ class OwnWant(object):
         sql = "delete from ownwant where own = '0' and want = '0' and willtrade = '0';"
         result = doquery(sql)
 
+    def values(self):
+        return dict(have=self.have, want=self.want, willtrade=self.willtrade, hidden=self.hidden)
+
 class SiteUserProfile(object):
     def __init__(self, username=None, uid=None):
         try:
