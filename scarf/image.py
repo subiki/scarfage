@@ -91,7 +91,7 @@ def serve_full(img_id):
     try:
         simg = SiteImage.create(img_id)
 
-        resp = make_response(base64.b64decode(simg.image))
+        resp = make_response(base64.b64decode(simg.image()))
         resp.content_type = "image/png"
         return resp
     except (IOError, NoImage):

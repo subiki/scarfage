@@ -8,7 +8,7 @@ import random
 
 from sql import upsert, doupsert, doquery, Tree
 from mail import send_mail
-from memoize import memoize_with_expiry, cache_persist, long_cache_persist
+from memoize import memoize_with_expiry, long_cache_persist
 import users
 import utility
 
@@ -65,16 +65,15 @@ class NoImage(Exception):
     def __init__(self, item):
         Exception.__init__(self, item)
 
-# testing removal of caching this object to see how it affects performance and RAM usage
-#siteimage_cache = dict()
+siteimage_cache = dict()
 class SiteImage(object):
     @classmethod
-    #@memoize_with_expiry(siteimage_cache, long_cache_persist)
+    @memoize_with_expiry(siteimage_cache, long_cache_persist)
     def create(cls, username):
         return cls(username)
 
     def __init__(self, uid):
-        sql = 'select * from images where uid = %(uid)s;'
+        sql = 'select uid, tag, userid, ip, parent from images where uid = %(uid)s;'
         result = doquery(sql, { 'uid': uid })
 
         try: 
@@ -82,8 +81,16 @@ class SiteImage(object):
             self.tag = result[0][1]
             self.userid = result[0][2]
             self.ip = result[0][3] #FIXME: needs join on ip, nothing uses this yet tho
-            self.image = result[0][4]
-            self.parent = result[0][5]
+            self.parent = result[0][4]
+        except IndexError:
+            raise NoImage(uid)
+
+    def image(self):
+        sql = 'select image from images where uid = %(uid)s;'
+        result = doquery(sql, { 'uid': self.uid })
+
+        try: 
+            return result[0][0]
         except IndexError:
             raise NoImage(uid)
 
@@ -109,7 +116,7 @@ class SiteImage(object):
         doquery(sql, { 'imgid': self.uid, 'userid': self.userid, 'flag': 1})
 
     def ascii(self, scale=1):
-        image_string = cStringIO.StringIO(base64.b64decode(self.image))
+        image_string = cStringIO.StringIO(base64.b64decode(self.image()))
         im = Image.open(image_string)
         basewidth = int(100 * scale)
         wpercent = (basewidth/float(im.size[0]))

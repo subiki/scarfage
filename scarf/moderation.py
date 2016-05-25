@@ -32,7 +32,7 @@ def moderate():
                 user = user_by_uid(user)
 
             if mod[1] == 0 or flag == 1:
-                sql = 'select * from images where uid = %(uid)s;'
+                sql = 'select tag from images where uid = %(uid)s;'
                 img = doquery(sql, {"uid": imgid})
                 
                 class Mod:
@@ -41,7 +41,7 @@ def moderate():
 
                 if img:
                     mod.uid = imgid
-                    mod.tag = img[0][1]
+                    mod.tag = img[0][0]
                     mod.user = user
                     mod.flag = flag
                     pd.mods.append(mod)

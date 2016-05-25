@@ -54,7 +54,7 @@ def resize_image(size, img_id):
     try:
         logger.info('resize fallback URL called for imgid {} - {}'.format(img_id, size))
         simg = SiteImage.create(img_id)
-        image_string = cStringIO.StringIO(base64.b64decode(simg.image))
+        image_string = cStringIO.StringIO(base64.b64decode(simg.image()))
         (x, y) = size.split('x')
         img = resize(image_string, float(x), float(y))
         return serve_pil_image(img)
