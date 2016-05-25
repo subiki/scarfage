@@ -256,11 +256,8 @@ def searchitem():
     else:
         pd.query = request.args.get('query')
 
-    if pd.query == '':
-        return redirect_back('/')
-    if pd.query is not None:
-        pd.results = core.item_search(pd.query)
-        if len(pd.results) == 0:
-            pd.results = [None]
+    pd.results = core.item_search(pd.query)
+    if len(pd.results) == 0:
+        pd.results = [None]
 
     return render_template('search.html', pd=pd)
