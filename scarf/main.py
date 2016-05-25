@@ -7,10 +7,13 @@ from pytz import timezone
 
 import core
 import config
+import markdown
 from scarf import app
 from flask import render_template, session, request, flash
 from core import redirect_back
 from nocache import nocache
+
+md_extensions = ['markdown.extensions.extra', 'markdown.extensions.nl2br', 'markdown.extensions.sane_lists']
 
 if 'LOGFILE' in config.__dict__:
     logging.basicConfig(filename=config.LOGFILE,level=logging.INFO)
@@ -63,6 +66,9 @@ class PageData(object):
             user_tz = timezone('America/Los_Angeles')
 
         return utc_dt.astimezone(user_tz)
+
+    def render_markdown(self, string):
+        return markdown.markdown(core.escape_html(str(string)), md_extensions)
 
 @app.errorhandler(404)
 def page_not_found(error):

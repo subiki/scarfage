@@ -1,5 +1,5 @@
 from scarf import app
-from core import SiteUser, NoUser, SiteItem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items, escape_html
+from core import SiteUser, NoUser, SiteItem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items
 from main import page_not_found, PageData
 from nocache import nocache
 import core
@@ -8,9 +8,7 @@ from flask import redirect, url_for, request, render_template, session, flash
 from werkzeug import secure_filename
 from access import check_admin
 import logging
-import markdown
 
-md_extensions = ['markdown.extensions.extra', 'markdown.extensions.nl2br', 'markdown.extensions.sane_lists']
 logger = logging.getLogger(__name__)
 
 import sys
@@ -76,7 +74,7 @@ def show_item(item_id, edit=None):
             showitem.old = True
             showitem.description = edit
 
-        showitem.description_html = markdown.markdown(escape_html(str(showitem.body(edit))), md_extensions)
+        showitem.description_content = showitem.body(edit)
     except NoItem:
         return page_not_found(404)
 

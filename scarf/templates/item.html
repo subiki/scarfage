@@ -30,7 +30,7 @@ You are viewing an older version of this item's description, click <a href="/ite
 {% endif %}
 
 <div id="description">
-{{ pd.item.description_html|safe }}
+{{ pd.render_markdown(pd.item.description_content)|safe }}
 </div>
 
 {% for image in pd.item.images() %}

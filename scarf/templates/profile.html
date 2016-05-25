@@ -35,7 +35,7 @@
             <li>Last seen: {{ pd.localtime(pd.profileuser.lastseen) }}</li>
         </ul>
 
-        {{ profile['summary'] }}
+        {{ pd.render_markdown(profile['summary'])|safe }}
         </div>
         <div class="col-md-4">
             <div align="center">
@@ -58,7 +58,7 @@
             <li>Items added: {{ pd.profileuser.numadds }}</li>
         </ul>
 
-        {{ profile['summary'] }}
+        {{ pd.render_markdown(profile['summary'])|safe }}
         </div>
 
         <div class="col-md-4">
