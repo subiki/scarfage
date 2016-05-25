@@ -172,6 +172,16 @@ class SiteItem(object):
 
         return ret
 
+    def values(self, edit=None):
+        if not edit:
+            edit = self.description
+
+        return dict(body=self.body(edit),
+                    name=self.name,
+                    description=self.description,
+                    added=str(self.added),
+                    modified=str(self.modified))
+
     imglist_cache = dict()
     @memoize_with_expiry(imglist_cache, cache_persist)
     def images(self):

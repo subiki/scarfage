@@ -1,6 +1,6 @@
 from scarf import app
 from core import SiteUser, NoUser, SiteItem, NoItem, redirect_back, OwnWant
-from main import page_not_found, own_goal
+from main import page_not_found, own_goal, request_wants_json
 
 import json
 from flask import redirect, url_for, request, render_template, session, flash
@@ -27,6 +27,7 @@ def itemaction(item_id, action):
     Update or query the logged in user's record for an item.
 
     If a POST request is received then the current record is returned instead of a redirect back to the previous page.
+    Setting the accept:application/json header will always return JSON regardless of request type.
 
     Allowed actions:
     'status'    - Return the item's current status
@@ -63,9 +64,11 @@ def itemaction(item_id, action):
         except (NoItem, KeyError):
             return page_not_found(404)
 
-        if request.method == 'POST':
+        if request.method == 'POST' or request_wants_json():
             return get_record()
     else:
+        if request_wants_json():
+            return '{}', 400
         flash('You must be logged in to have a collection')
 
     return redirect_back('/item/' + item_id)

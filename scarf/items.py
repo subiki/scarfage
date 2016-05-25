@@ -1,8 +1,9 @@
 from scarf import app
 from core import SiteUser, NoUser, SiteItem, NoItem, new_item, redirect_back, new_edit, uid_by_item, latest_items
-from main import page_not_found, PageData
+from main import page_not_found, PageData, request_wants_json, render_markdown
 from nocache import nocache
 import core
+import json
 
 from flask import redirect, url_for, request, render_template, session, flash
 from werkzeug import secure_filename
@@ -27,17 +28,19 @@ def reallydelete_item(item_id):
     except NoItem: 
         return page_not_found(404)
 
-    pd = PageData()
-
-    pd.title=delitem.name + " has been deleted"
-
     delitem.delete()
 
-    pd.accessreq = 255
-    pd.conftext = delitem.name + " has been deleted. I hope you meant to do that."
-    pd.conftarget = ""
-    pd.conflinktext = ""
-    return render_template('confirm.html', pd=pd)
+    if request_wants_json():
+        return '{}'
+    else:
+        pd = PageData()
+        pd.title=delitem.name + " has been deleted"
+        pd.accessreq = 255
+        pd.conftext = delitem.name + " has been deleted. I hope you meant to do that."
+        pd.conftarget = ""
+        pd.conflinktext = ""
+
+        return render_template('confirm.html', pd=pd)
 
 @app.route('/item/<item_id>/delete')
 @check_admin
@@ -62,7 +65,31 @@ def delete_item(item_id):
 @app.route('/item/<item_id>')
 @nocache
 def show_item(item_id, edit=None):
-    pd = PageData()
+    """
+    URLs: /item/<item_id>/history/<edit>
+          /item/<item_id>
+    Methods: GET
+
+    Setting the accept:application/json header will return JSON.
+
+    Sample response:
+
+    {
+        "added": "2016-05-24 05:05:40",
+        "body": "[Link text](https://scarfage.com/whatever) ",
+        "body_rendered": "<p><a href=\"https://scarfage.com/whatever\">Link text</a> </p>",
+        "description": 905,
+        "modified": "2016-05-25 01:45:21",
+        "name": "new item"
+    }
+
+    added         - Date added, always UTC
+    modified      - Late modified, also always UTC
+    name          - Item's name
+    body          - raw unrendered description body
+    body_rendered - rendered content
+    description   - edit identifier
+    """
 
     if item_id is 'new':
         return redirect("/item/" + item_id + "/edit")
@@ -78,17 +105,24 @@ def show_item(item_id, edit=None):
     except NoItem:
         return page_not_found(404)
 
-    if 'username' in session:
-        try:
-            user = SiteUser.create(session['username'])
-            pd.iteminfo = user.query_collection(showitem.uid)
-        except (NoUser, NoItem):
-            pass
+    if request_wants_json():
+        values = showitem.values()
+        values['body_rendered'] = render_markdown(values['body'])
+        return json.dumps(values)
+    else:
+        pd = PageData()
 
-    pd.title = showitem.name
-    pd.item = showitem
+        if 'username' in session:
+            try:
+                user = SiteUser.create(session['username'])
+                pd.iteminfo = user.query_collection(showitem.uid)
+            except (NoUser, NoItem):
+                pass
 
-    return render_template('item.html', pd=pd)
+        pd.title = showitem.name
+        pd.item = showitem
+
+        return render_template('item.html', pd=pd)
 
 @app.route('/item/<item_id>/revert/<edit>')
 @nocache

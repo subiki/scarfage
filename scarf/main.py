@@ -48,6 +48,7 @@ class PageData(object):
         self.deobfuscate = core.deobfuscate
         self.uid_by_user = core.uid_by_user
         self.user_by_uid = core.user_by_uid
+        self.render_markdown = render_markdown
 
         if 'username' in session:
             try:
@@ -67,8 +68,15 @@ class PageData(object):
 
         return utc_dt.astimezone(user_tz)
 
-    def render_markdown(self, string):
-        return markdown.markdown(core.escape_html(str(string)), md_extensions)
+def render_markdown(string):
+    return markdown.markdown(core.escape_html(str(string)), md_extensions)
+
+def request_wants_json():
+    best = request.accept_mimetypes \
+        .best_match(['application/json', 'text/html'])
+    return best == 'application/json' and \
+        request.accept_mimetypes[best] > \
+        request.accept_mimetypes['text/html']
 
 @app.errorhandler(404)
 def page_not_found(error):
