@@ -65,10 +65,11 @@ class NoImage(Exception):
     def __init__(self, item):
         Exception.__init__(self, item)
 
-siteimage_cache = dict()
+# testing removal of caching this object to see how it affects performance and RAM usage
+#siteimage_cache = dict()
 class SiteImage(object):
     @classmethod
-    @memoize_with_expiry(siteimage_cache, long_cache_persist)
+    #@memoize_with_expiry(siteimage_cache, long_cache_persist)
     def create(cls, username):
         return cls(username)
 
