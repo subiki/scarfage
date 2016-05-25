@@ -43,7 +43,7 @@ class Tags(Tree):
 
         ret = list()
         for tag in tags:
-            ret.append(SiteItem(tag[0]))
+            ret.append(SiteItem.create(tag[0]))
         return ret
 
     def items_from_children(self, tag):
@@ -83,7 +83,7 @@ def item_search(query):
 
     ret = list()
     for item in result:
-        ret.append(SiteItem(item[0]))
+        ret.append(SiteItem.create(item[0]))
     return ret
 
 class ItemHist(object):
@@ -94,18 +94,23 @@ class NoItem(Exception):
     def __init__(self, item):
         Exception.__init__(self, item)
 
+siteitem_cache = dict()
 class SiteItem(object):
+    @classmethod
+    @memoize_with_expiry(siteitem_cache, long_cache_persist)
+    def create(cls, username):
+        return cls(username)
+
     def __init__(self, uid):
-        sql = 'select * from items where uid = %(uid)s;'
+        sql = 'select uid, name, description, added, modified from items where uid = %(uid)s;'
 
         try:
             result = doquery(sql, { 'uid': uid })
 
             self.uid = result[0][0]
             self.name = result[0][1]
-            self.description = result[0][2]
-            self.added = result[0][3]
-            self.modified = result[0][4]
+            self.added = result[0][2]
+            self.modified = result[0][3]
         except (Warning, IndexError):
             raise NoItem(uid)
 
@@ -120,6 +125,15 @@ class SiteItem(object):
         except IndexError:
             self.tags = None
         """
+
+    def description(self):
+        sql = 'select description from items where uid = %(uid)s;'
+
+        try:
+            result = doquery(sql, { 'uid': self.uid })
+            return result[0][0]
+        except (Warning, IndexError):
+            raise NoItem(uid)
 
     def delete(self):
         logger.info('deleted item id {}: {}'.format(self.uid, self.name))
@@ -146,8 +160,8 @@ class SiteItem(object):
     def update(self):
         logger.info('item updated {}: {} '.format(self.uid, self.name))
         self.name = self.name.strip()[:64]
-        sql = "update items set name = %(name)s, description = %(desc)s, modified = %(modified)s where uid = %(uid)s;"
-        return doquery(sql, {"uid": self.uid, "desc": self.description, "name": self.name, "modified": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S") })
+        sql = "update items set name = %(name)s, modified = %(modified)s where uid = %(uid)s;"
+        return doquery(sql, {"uid": self.uid, "name": self.name, "modified": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S") })
 
     def history(self):
         sql = """select itemedits.uid, itemedits.itemid, itemedits.date, itemedits.userid, ip.ip
@@ -174,11 +188,11 @@ class SiteItem(object):
 
     def values(self, edit=None):
         if not edit:
-            edit = self.description
+            edit = self.description()
 
         return dict(body=self.body(edit),
                     name=self.name,
-                    description=self.description,
+                    description=self.description(),
                     added=str(self.added),
                     modified=str(self.modified))
 
@@ -190,7 +204,7 @@ class SiteItem(object):
                  from images
                  where parent = %(uid)s"""
         for row in doquery(sql, { 'uid': self.uid }):
-            ret.append(images.SiteImage(row[0]))
+            ret.append(images.SiteImage.create(row[0]))
 
         return ret
 
@@ -198,7 +212,7 @@ class SiteItem(object):
     @memoize_with_expiry(body_cache, cache_persist)
     def body(self, edit=None):
         if not edit:
-            edit = self.description
+            edit = self.description()
         sql = "select body from itemedits where uid = '%(uid)s';"
         return doquery(sql, {'uid': int(edit) })[0][0]
 
@@ -366,7 +380,7 @@ def latest_items(limit=0):
             sql = "SELECT uid FROM items;"
         result = doquery(sql, { 'limit': limit })
         for item in result:
-            items.append(SiteItem(item[0]))
+            items.append(SiteItem.create(item[0]))
     except TypeError:
         pass
 

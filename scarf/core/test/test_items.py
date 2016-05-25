@@ -46,7 +46,7 @@ class SiteItemTestCase(unittest.TestCase):
                 decoded = base64.b64decode(naughty_string)
                 try:
                     itemid = scarf.core.new_item(decoded, decoded, self.siteuser.uid, '0.0.0.0')
-                    item = scarf.core.SiteItem(itemid)
+                    item = scarf.core.SiteItem.create(itemid)
                     item.delete()
                 except scarf.core.NoItem:
                     pass

@@ -86,7 +86,7 @@ class SiteItemNaughtyStringsTestCase(unittest.TestCase):
         siteuser = scarf.core.SiteUser.create(self.username)
         try:
             itemid = scarf.core.new_item(self.ns, self.ns, siteuser.uid, '0.0.0.0')
-            item = scarf.core.SiteItem(itemid)
+            item = scarf.core.SiteItem.create(itemid)
             item.delete()
         except scarf.core.NoItem:
             pass

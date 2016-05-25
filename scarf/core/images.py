@@ -68,9 +68,9 @@ class NoImage(Exception):
 siteimage_cache = dict()
 class SiteImage(object):
     @classmethod
-    @memoize_with_expiry(siteimage_cache, long_cache_persist)
-    def create(cls, username):
-        return cls(username)
+    @memoize_with_expiry(siteimage_cache, 0)
+    def create(cls, uid):
+        return cls(uid)
 
     def __init__(self, uid):
         sql = 'select uid, tag, userid, ip, parent from images where uid = %(uid)s;'

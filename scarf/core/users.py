@@ -166,7 +166,7 @@ class SiteUser(object):
         result = doquery(sql, { 'uid': self.uid })
 
         for item in result:
-            sitem = items.SiteItem(item[4])
+            sitem = items.SiteItem.create(item[4])
             sitem.have = item[0]
             sitem.willtrade = item[1]
             sitem.want = item[2]

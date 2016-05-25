@@ -24,7 +24,7 @@ def itemroot():
 @check_admin
 def reallydelete_item(item_id):
     try:
-        delitem = SiteItem(item_id)
+        delitem = SiteItem.create(item_id)
     except NoItem: 
         return page_not_found(404)
 
@@ -46,7 +46,7 @@ def reallydelete_item(item_id):
 @check_admin
 def delete_item(item_id):
     try:
-        delitem = SiteItem(item_id)
+        delitem = SiteItem.create(item_id)
     except NoItem: 
         return page_not_found(404)
 
@@ -95,11 +95,14 @@ def show_item(item_id, edit=None):
         return redirect("/item/" + item_id + "/edit")
 
     try:
-        showitem = SiteItem(item_id)
+        showitem = SiteItem.create(item_id)
 
         if edit:
             showitem.old = True
-            showitem.description = edit
+            showitem.edit = edit
+        else:
+            showitem.old = False
+            showitem.edit = None
 
         showitem.description_content = showitem.body(edit)
     except NoItem:
@@ -130,10 +133,10 @@ def revert_item_edit(item_id, edit):
     pd = PageData()
 
     try:
-        item = SiteItem(item_id)
+        item = SiteItem.create(item_id)
 
         item.old = True
-        item.description = edit
+        item.edit = edit
     except NoItem:
         return page_not_found(404)
 
@@ -149,7 +152,7 @@ def show_item_history(item_id):
     pd = PageData()
 
     try:
-        showitem = SiteItem(item_id)
+        showitem = SiteItem.create(item_id)
     except NoItem:
         return redirect("/item/" + item_id + "/edit")
 
@@ -175,7 +178,7 @@ def edititem(item_id=None):
                 return redirect_back("/item/new")
 
             try:
-                item = SiteItem(request.form['uid'])
+                item = SiteItem.create(request.form['uid'])
 
                 item_id = uid_by_item(request.form['name'])
                 if not item_id or item_id == int(request.form['uid']):
@@ -201,7 +204,7 @@ def edititem(item_id=None):
 
     if item_id:
         try:
-            pd.item = SiteItem(item_id)
+            pd.item = SiteItem.create(item_id)
         except NoItem:
             return page_not_found(404)
      
@@ -226,7 +229,7 @@ def tagitem():
                 return redirect_back('index')
 
             try:
-                item = SiteItem(request.form['uid'])
+                item = SiteItem.create(request.form['uid'])
                 item.add_tag(request.form['tag'][:64])
                 return redirect('/item/' + str(item.uid))
             except NoItem:
@@ -235,7 +238,7 @@ def tagitem():
 @app.route('/item/<item_id>/untag/<tag_ob>')
 def untag_item(item_id, tag_ob):
     try:
-        item = SiteItem(item_id)
+        item = SiteItem.create(item_id)
     except NoItem: 
         return page_not_found(404)
 

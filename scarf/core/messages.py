@@ -151,7 +151,7 @@ class TradeMessage(PrivateMessage):
             ti.messageid = item[2]
             ti.userid = item[3]
             ti.acceptstatus = item[4]
-            ti.item = items.SiteItem(ti.itemid)
+            ti.item = items.SiteItem.create(ti.itemid)
             ti.user = users.SiteUser.create(users.user_by_uid(ti.userid))
 
             self.items.append(ti)

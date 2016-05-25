@@ -111,7 +111,7 @@ def trade(username, itemid=None, messageid=None):
 
     try:
         pd.tradeuser.ownwant = pd.tradeuser.query_collection(itemid)
-        pd.item = SiteItem(itemid)
+        pd.item = SiteItem.create(itemid)
     except NoItem:
         if messageid:
             try:
