@@ -102,7 +102,7 @@ class SiteItem(object):
         return cls(username)
 
     def __init__(self, uid):
-        sql = 'select uid, name, description, added, modified from items where uid = %(uid)s;'
+        sql = 'select uid, name, added, modified from items where uid = %(uid)s;'
 
         try:
             result = doquery(sql, { 'uid': uid })
