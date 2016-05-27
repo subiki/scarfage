@@ -58,7 +58,7 @@
             <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
           {% if pd.authuser is defined %}
             <li><a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a></li>
-            <li><a href="/logout"><small>Logout</small></a></li>
+            <li class="logout"><a href="/logout"><small>Logout</small></a></li>
           {% else %}
             <li><form class="navbar-form navbar-right" role="form" action="/login" method="post">
             <div class="form-group">
