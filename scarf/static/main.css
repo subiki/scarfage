@@ -23,3 +23,12 @@ body { padding-top: 100px; }
 .well-ff {
     background: rgb(255, 255, 255);
 }
+
+/* Mobile */
+@media (max-width: 768px) {
+  /* logout button */
+  li.logout {
+    display: none;
+  }
+
+}
