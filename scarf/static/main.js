@@ -42,16 +42,18 @@ $(document).ready(function(){
     function item_action(action) {
        var itemid = $('#itemid').val();
 
-       $.ajax({
-          type: "POST",
-          // all JS requests should be application/json even if not POST
-          accepts: "application/json",
-          url: '/item/' + itemid + '/' + action,
-          success: function (itemstatus) {
-              var obj = jQuery.parseJSON( itemstatus );
-              update_buttons(obj);
-          }
-       });
+       if (itemid != null) {
+           $.ajax({
+              type: "POST",
+              // all JS requests should be application/json even if not POST
+              accepts: "application/json",
+              url: '/item/' + itemid + '/' + action,
+              success: function (itemstatus) {
+                  var obj = jQuery.parseJSON( itemstatus );
+                  update_buttons(obj);
+              }
+           });
+       }
     }
 
     function update_buttons(itemstatus) {

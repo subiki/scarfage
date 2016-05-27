@@ -59,16 +59,16 @@ You are viewing an older version of this item's description, click <a href="/ite
     <input type="hidden" id="itemid" value="{{ pd.item.uid }}" />
 
     <input type="hidden" id="itemhavestatus" value="{% if pd.iteminfo is defined and pd.iteminfo.have == 1 %}1{%else%}0{%endif%}" />
-    <input type="button" class="btn btn-sm btn-default" id="itemhavebutton" /></br>
+    <input type="button" class="btn btn-sm btn-default" id="itemhavebutton" value="Loading..." /></br>
 
     <input type="hidden" id="itemhiddenstatus" value="{% if pd.iteminfo is defined and pd.iteminfo.hidden == 1 %}1{%else%}0{%endif%}" />
-    <input type="button" class="btn btn-sm btn-default" id="itemhiddenbutton" /></br>
+    <input type="button" class="btn btn-sm btn-default" id="itemhiddenbutton" value="Loading..." /></br>
 
     <input type="hidden" id="itemwilltradestatus" value="{% if pd.iteminfo is defined and pd.iteminfo.willtrade == 1 %}1{%else%}0{%endif%}" />
-    <input type="button" class="btn btn-sm btn-default" id="itemwilltradebutton" /></br>
+    <input type="button" class="btn btn-sm btn-default" id="itemwilltradebutton" value="Loading..." /></br>
 
     <input type="hidden" id="itemwantstatus" value="{% if pd.iteminfo is defined and pd.iteminfo.want == 1 %}1{%else%}0{%endif%}" />
-    <input type="button" class="btn btn-sm btn-default" id="itemwantbutton" /></br>
+    <input type="button" class="btn btn-sm btn-default" id="itemwantbutton" value="Loading..." /></br>
 {% else %}
 
 <a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/have" rel="nofollow">Add to collection</a><br />
