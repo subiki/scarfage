@@ -1,4 +1,4 @@
-import cgi
+import bleach
 import base64
 from urlparse import urlparse, urljoin
 from flask import request, redirect, url_for
@@ -25,11 +25,10 @@ def redirect_back(endpoint, **values):
     return redirect(target)
 
 def escape_html(text):
-    """escape strings for display in HTML"""
-    return cgi.escape(text, quote=True).\
-           replace(u'\n', u'<br />').\
-           replace(u'\t', u'&emsp;').\
-           replace(u'  ', u' &nbsp;')
+    """
+    Strip the naughty bits out of a string and turn URLs into links while we're at it
+    """
+    return bleach.linkify(bleach.clean(text))
 
 def xor_strings(s,t):
     return "".join(chr(ord(a)^ord(b)) for a,b in zip(s,t))
