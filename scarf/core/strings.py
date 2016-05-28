@@ -116,6 +116,7 @@ def new_string(name, string, lang=SiteString.DEFAULTLANG):
     :param name: Name of the string. Strings configurable by the user should have all-lowercase descriptive names so as not to conflict with translations. When used for translation the name should be the DEFAULTLANG version of the string itself.
     :param string: The string to be stored. 
     :param lang: Optional parameter, defaults to DEFAULTLANG
+    :return: UID of the new string, or UID of the existing string if it already exists
     """
 
     if not name or not string:

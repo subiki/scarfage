@@ -16,10 +16,11 @@ tests: venv blns.base64.json
 run: venv
 	. venv/bin/activate && python run.py
 
-docs: venv
-	. venv/bin/activate && pydoc -w ./
-	mkdir docs
-	mv *.html docs
+docs: venv .docs
+
+.docs:
+	. venv/bin/activate && sphinx-apidoc -lo docs scarf
+	. venv/bin/activate && sphinx-build docs/source/ docs
 
 update: blns.base64.json
 	git pull
@@ -27,9 +28,12 @@ update: blns.base64.json
 blns.base64.json:
 	curl https://raw.githubusercontent.com/minimaxir/big-list-of-naughty-strings/master/blns.base64.json > blns.base64.json
 
-clean:
+clean: docclean
 	find -name "*.pyc" -exec rm -v {} \;
-	rm -rfv venv docs tests.log blns.base64.json
+	rm -rfv venv tests.log blns.base64.json
+
+docclean:
+	rm -rfv docs/objects.inv docs/*.html docs/*.rst docs/*.js docs/_sources docs/_static docs/.buildinfo docs/.doctrees docs/.nojekyll
 
 dbhost = $(shell grep DBHOST scarf/config.py | cut -d"'" -f2)
 dbname = $(shell grep DBNAME scarf/config.py | cut -d"'" -f2)

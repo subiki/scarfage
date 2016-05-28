@@ -9,3 +9,4 @@ html2text
 bcrypt
 pytz
 bleach
+sphinx
