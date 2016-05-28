@@ -28,17 +28,22 @@ body {
 @media (max-width: 768px) {
   body#bsor {
     /* Main Nav */ }
-    body#bsor .navbar-collapse {
-      max-height: none;
-      overflow: scroll; }
+    body#bsor .navbar-collapse li.button {
+      background-color: #3c503c; }
     body#bsor .main-nav li {
-      display: inline-block; }
+      display: inline-block;
+      margin-left: 15px; }
     body#bsor .secondary-nav li {
-      display: inline-block; }
+      display: inline-block;
+      margin-left: 15px; }
       body#bsor .secondary-nav li.item-search, body#bsor .secondary-nav li.login {
+        margin: 0;
         padding: 10px 20px;
         display: block;
         border-top: 1px solid #616161; }
+        body#bsor .secondary-nav li.item-search .forgotpw, body#bsor .secondary-nav li.login .forgotpw {
+          color: #9d9d9d;
+          padding-left: 10px; }
     body#bsor .navbar-form {
       border: none;
       box-shadow: none;

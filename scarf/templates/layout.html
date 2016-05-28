@@ -40,7 +40,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav main-nav">
             <li class="button"><a href="/item/edit">New item</a></li>
-            <li><a href="/stats">Site stats</a></li>
+            <li class="button"><a href="/stats">Site stats</a></li>
             {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
             <li><a href="/mod">Moderate</a></li>
             {% endif %}
@@ -62,7 +62,7 @@
 
           {% if pd.authuser is defined %}
             <li class="profile"><a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a></li>
-            <li class="hidden-xs"><a href="/logout"><small>Logout</small></a></li>
+            <li class="hidden-xs"><a href="/logout">Logout</a></li>
           {% else %}
             <li class="login"><form class="navbar-form navbar-right" role="form" action="/login" method="post">
             <div class="form-group">
@@ -72,9 +72,13 @@
                 <input type="password" placeholder="Password" class="form-control" name="password">
             </div>
             <button type="submit" class="btn btn-success">Sign in</button>
+            <span class="visible-xs-inline">
+              <a href="/forgotpw" class="forgotpw">Forgot Password</a>
+            </span>
+
             </form></li>
-            <li class="forgotpw visible-inline"><a href="/forgotpw">Forgot Password</a></li>
-            <li class="signup visible-inline"><a href="/newuser">Sign up</a></li>
+            <li class="hidden-xs"><a href="/forgotpw">Forgot Password</a></li>
+            <li class="signup visible-inline button"><a href="/newuser">Sign up</a></li>
           {% endif %}
           </ul>
         </div><!--/.nav-collapse -->
