@@ -19,8 +19,28 @@ run: venv
 docs: venv .docs
 
 .docs:
-	. venv/bin/activate && sphinx-apidoc -lo docs scarf
+	. venv/bin/activate && sphinx-apidoc -lo docs/source/ scarf
 	. venv/bin/activate && sphinx-build docs/source/ docs
+
+tempfile := $(shell tempfile)
+
+gh-pages: clean .gh-pages docs
+	-rm *
+	rm -rfv scarf venv
+	mv -v docs/* .
+	rm -rf docs source
+	touch .nojekyll
+	git add -A
+	git commit -m "Generated gh-pages"
+	git push --force origin gh-pages
+	git checkout master
+	git branch -D gh-pages
+	cp ${tempfile} scarf/config.py
+	
+.gh-pages:
+	cp scarf/config.py ${tempfile}
+	git checkout -b gh-pages
+	cp ${tempfile} scarf/config.py
 
 update: blns.base64.json
 	git pull
