@@ -12,6 +12,12 @@ logger = logging.getLogger(__name__)
 
 @app.route('/newimg', methods=['POST'])
 def newimg():
+    """
+    :URL: /newimg
+    :Method: POST
+
+    Upload a new image. 
+    """
     pd = PageData()
     if request.method == 'POST':
         if 'img' in request.files:
@@ -38,13 +44,19 @@ def newimg():
 @app.route('/image/<img_id>/reallydelete')
 @check_mod
 def reallydelete_image(img_id):
+    """
+    :URL: /image/<img_id>/reallydelete
+
+    Actually delete an image
+    """
+
     pd = PageData()
 
     try:
         delimg = SiteImage.create(img_id)
         delimg.delete()
     except NoImage:
-        return page_not_found(404)
+        return page_not_found()
 
     pd.title = delimg.tag + " has been deleted"
     pd.accessreq = 10
@@ -56,12 +68,20 @@ def reallydelete_image(img_id):
 @app.route('/image/<img_id>/delete')
 @check_mod
 def delete_image(img_id):
+    """
+    :URL: /image/<img_id>/delete
+
+    Redirect to a confirmation page to make sure you want to delete an image.
+
+    .. todo:: This should be re-done in javascript.
+    """
+
     pd = PageData()
 
     try:
         delimg = SiteImage.create(img_id)
     except NoImage:
-        return page_not_found(404)
+        return page_not_found()
 
     pd.title=delimg.tag
 
@@ -74,13 +94,21 @@ def delete_image(img_id):
 
 @app.route('/image/<img_id>/flag')
 def flag_image(img_id):
+    """
+    :URL: /image/<img_id>/flag
+
+    Flag an image for review by a moderator.
+
+    .. todo:: Add support for a note and record who flagged it.
+    """
+
     pd = PageData()
 
     try:
         flagimg = SiteImage.create(img_id)
         flagimg.flag()
     except NoImage:
-        return page_not_found(404)
+        return page_not_found()
 
     flash("The image has been flagged and will be reviewed by a moderator.")
 
@@ -88,6 +116,12 @@ def flag_image(img_id):
 
 @app.route('/image/<img_id>/full')
 def serve_full(img_id):
+    """
+    :URL: /image/<img_id>/full
+
+    Retrieve the raw image and return it.
+    """
+
     try:
         simg = SiteImage.create(img_id)
 
@@ -95,16 +129,22 @@ def serve_full(img_id):
         resp.content_type = "image/png"
         return resp
     except (IOError, NoImage):
-        return page_not_found(404)
+        return page_not_found()
 
 @app.route('/image/<img_id>')
 def show_image(img_id):
+    """
+    :URL: /image/<img_id>
+
+    Render a template for viewing an image.
+    """
+
     pd = PageData()
 
     try:
         pd.img = SiteImage.create(img_id)
         pd.title=pd.img.tag
     except NoImage:
-        return page_not_found(404)
+        return page_not_found()
 
     return render_template('image.html', pd=pd)

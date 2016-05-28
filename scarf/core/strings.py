@@ -14,6 +14,8 @@ class SiteString(object):
     """
     SiteString - used for storage and translation of arbitrary strings
 
+    :Example:
+
     >>> scarf.core.new_string('welcomebanner', 'Welcome to the site')
     1110L
     >>> scarf.core.SiteString('welcomebanner').string
@@ -30,6 +32,8 @@ class SiteString(object):
     'Welcome to the site'
 
     If the string does not currently exist it will be created and the string will be set to the name, this allows you to use SiteString blindly and not worry if a string has actually been translated.
+
+    :Example:
 
     >>> scarf.core.SiteString('Add to collection').string
     'Add to collection'

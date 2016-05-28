@@ -10,26 +10,26 @@ def accepttradeitem(username, messageid, action, item=None):
     pd = PageData()
 
     if not pd.authuser.username == username:
-        return page_not_found(404)
+        return page_not_found()
 
     if 'username' in session:
         if item:
             try:
                 ti = TradeItem(item)
             except NoItem:
-                return page_not_found(404)
+                return page_not_found()
 
             if action == "accept":
                 ti.accept()
             elif action == "reject":
                 ti.reject()
             else:
-                return page_not_found(404)
+                return page_not_found()
         else:
             try:
                 t = TradeMessage.create(deobfuscate(messageid))
             except NoItem:
-                return page_not_found(404)
+                return page_not_found()
 
             if action == "settle":
                 t.settle()
@@ -44,7 +44,7 @@ def accepttradeitem(username, messageid, action, item=None):
                 flash('Coming soon...')
                 return redirect_back('/')
             else:
-                return page_not_found(404)
+                return page_not_found()
 
     return redirect_back('index')
 
@@ -58,7 +58,7 @@ def trade(username, itemid=None, messageid=None):
     try:
         pd.tradeuser = SiteUser.create(username)
     except NoUser:
-        return page_not_found(404)
+        return page_not_found()
 
     if 'username' in session:
         if request.method == 'POST':
@@ -117,8 +117,8 @@ def trade(username, itemid=None, messageid=None):
             try:
                 pd.trademessage = TradeMessage.create(deobfuscate(messageid))
             except NoItem:
-                return page_not_found(404)
+                return page_not_found()
         else:
-            return page_not_found(404)
+            return page_not_found()
 
     return render_template('trade.html', pd=pd)

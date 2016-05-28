@@ -23,6 +23,12 @@ logger = logging.getLogger(__name__)
 accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
 
 def get_users():
+    """
+    Get a list of all users sorted by last seen.
+  
+    .. todo:: Add range and sort parameters
+    :return: List of SiteUsers
+    """
     sql = """select users.username 
              from users
              join userstat_lastseen on userstat_lastseen.uid=users.uid 
@@ -40,6 +46,12 @@ def get_users():
 stats_cache = dict()
 @memoize_with_expiry(stats_cache, long_cache_persist)
 def user_by_uid(uid):
+    """
+    Lookup username by uid
+
+    :param uid: UID of a user
+    :return: None or the username
+    """
     sql = "select username from users where uid = %(uid)s;"
     result = doquery(sql, { 'uid': uid })
     try:
@@ -49,6 +61,13 @@ def user_by_uid(uid):
 
 @memoize_with_expiry(stats_cache, long_cache_persist)
 def uid_by_user(username):
+    """
+    Lookup user's UID by username
+
+    :param username: User's username
+    :return: UID of the user
+    """
+
     sql = "select uid from users where username = %(username)s;"
     result = doquery(sql, { 'username': unicode(username)[:200] })
 
@@ -66,6 +85,10 @@ class AuthFail(Exception):
         Exception.__init__(self, username)
 
 class OwnWant(object):
+    """
+    Object containing a user's status for an item
+    """
+
     def __init__(self, itemid, userid):
         sql = """select ownwant.uid, ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden
                  from items
@@ -89,6 +112,17 @@ class OwnWant(object):
             self.hidden = 0
 
     def update(self, values):
+        """
+        Update the current object and the database from a dict
+
+        :Example:
+
+        >>> OwnWant(item_id, user_id).update(dict(own=1, hidden=0, willtrade=1, want=0))
+
+        :param values: dict to update the object with. Any not being updated can be omitted
+        :return: None
+        """
+
         update = dict(uid=self.uid, userid=self.userid, itemid=self.itemid)
         update.update(values)
  
@@ -98,9 +132,22 @@ class OwnWant(object):
         result = doquery(sql)
 
     def values(self):
+        """
+        Return the object as a dict
+ 
+        :return: dict(have=self.have, want=self.want, willtrade=self.willtrade, hidden=self.hidden)
+        """
         return dict(have=self.have, want=self.want, willtrade=self.willtrade, hidden=self.hidden)
 
 class SiteUserProfile(object):
+    """
+    Object for a user's profile. Not much here yet.
+
+    The object can be initialized with either a username or UID.
+
+    :raises NoUser: If no user is found NoUser will be raised
+    """
+
     def __init__(self, username=None, uid=None):
         try:
             if username:

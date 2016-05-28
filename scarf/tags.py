@@ -28,7 +28,7 @@ def mod_tag(tag):
 
         return render_template('tag.html', pd=pd)
     except TypeError:
-        return page_not_found(404)
+        return page_not_found()
 
 @app.route('/tag/<tag>/delete')
 @check_mod

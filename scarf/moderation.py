@@ -80,7 +80,7 @@ def mod_img(image, scale=2):
     try:
         modimg = SiteImage.create(image)
     except NoImage:
-        return page_not_found(404)
+        return page_not_found()
 
     pd.image = modimg
 
@@ -98,7 +98,7 @@ def mod_img(image, scale=2):
         
         pd.moduser = user
     except IndexError:
-        return page_not_found(404)
+        return page_not_found()
 
     pd.ascii = SiteImage.create(modimg.uid).ascii(scale=pd.scale)
 

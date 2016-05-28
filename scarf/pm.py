@@ -36,7 +36,7 @@ def pm(username):
     try:
         pd.recipient = SiteUser.create(username)
     except (NoItem, NoUser):
-        return page_not_found(404)
+        return page_not_found()
 
     if 'username' in session:
         if request.method == 'POST':

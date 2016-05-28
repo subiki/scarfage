@@ -59,4 +59,4 @@ def resize_image(size, img_id):
         img = resize(image_string, float(x), float(y))
         return serve_pil_image(img)
     except (IOError, NoImage, ValueError):
-        return page_not_found(404)
+        return page_not_found()

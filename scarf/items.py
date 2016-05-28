@@ -26,7 +26,7 @@ def reallydelete_item(item_id):
     try:
         delitem = SiteItem.create(item_id)
     except NoItem: 
-        return page_not_found(404)
+        return page_not_found()
 
     delitem.delete()
 
@@ -48,7 +48,7 @@ def delete_item(item_id):
     try:
         delitem = SiteItem.create(item_id)
     except NoItem: 
-        return page_not_found(404)
+        return page_not_found()
 
     pd = PageData()
 
@@ -66,29 +66,33 @@ def delete_item(item_id):
 @nocache
 def show_item(item_id, edit=None):
     """
-    URLs: /item/<item_id>/history/<edit>
-          /item/<item_id>
-    Methods: GET
+    :URLs:
+        * /item/<item_id>/history/<edit>
+        * /item/<item_id>
+
+    :Methods: GET
 
     Setting the accept:application/json header will return JSON.
 
-    Sample response:
+    :Sample response:
 
-    {
-        "added": "2016-05-24 05:05:40",
-        "body": "[Link text](https://scarfage.com/whatever) ",
-        "body_rendered": "<p><a href=\"https://scarfage.com/whatever\">Link text</a> </p>",
-        "description": 905,
-        "modified": "2016-05-25 01:45:21",
-        "name": "new item"
-    }
+    .. code-block:: javascript
 
-    added         - Date added, always UTC
-    modified      - Late modified, also always UTC
-    name          - Item's name
-    body          - raw unrendered description body
-    body_rendered - rendered content
-    description   - edit identifier
+        {
+            "added": "2016-05-24 05:05:40",
+            "body": "[Link text](https://scarfage.com/whatever) ",
+            "body_rendered": "<p><a href=\"https://scarfage.com/whatever\">Link text</a> </p>",
+            "description": 905,
+            "modified": "2016-05-25 01:45:21",
+            "name": "new item"
+        }
+
+    * added         - Date added, always UTC
+    * modified      - Late modified, also always UTC
+    * name          - Item's name
+    * body          - raw unrendered description body
+    * body_rendered - rendered content
+    * description   - edit identifier
     """
 
     if item_id is 'new':
@@ -106,7 +110,7 @@ def show_item(item_id, edit=None):
 
         showitem.description_content = showitem.body(edit)
     except NoItem:
-        return page_not_found(404)
+        return page_not_found()
 
     if request_wants_json():
         values = showitem.values()
@@ -131,7 +135,7 @@ def revert_item_edit(item_id, edit):
         item.old = True
         item.edit = edit
     except NoItem:
-        return page_not_found(404)
+        return page_not_found()
 
     pd.title="Reverting: " + item.name
     pd.item_name = item.name
@@ -199,7 +203,7 @@ def edititem(item_id=None):
         try:
             pd.item = SiteItem.create(item_id)
         except NoItem:
-            return page_not_found(404)
+            return page_not_found()
      
         pd.title="Editing: %s" % pd.item.name
     else:
@@ -226,14 +230,14 @@ def tagitem():
                 item.add_tag(request.form['tag'][:64])
                 return redirect('/item/' + str(item.uid))
             except NoItem:
-                return page_not_found(404)
+                return page_not_found()
 
 @app.route('/item/<item_id>/untag/<tag_ob>')
 def untag_item(item_id, tag_ob):
     try:
         item = SiteItem.create(item_id)
     except NoItem: 
-        return page_not_found(404)
+        return page_not_found()
 
     pd = PageData()
     item.remove_tag(pd.decode(tag_ob))

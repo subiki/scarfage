@@ -173,7 +173,7 @@ def serve_avatar(username):
         resp.content_type = "image/png"
         return resp
     except (IOError, NoUser):
-        return page_not_found(404)
+        return page_not_found()
 
 from core.memoize import memoize_with_expiry
 tzcache = dict()
@@ -195,6 +195,6 @@ def show_user_profile(username):
     try:
         pd.profileuser = SiteUser.create(username)
     except NoUser:
-        return page_not_found(404)
+        return page_not_found()
 
     return render_template('profile.html', pd=pd)

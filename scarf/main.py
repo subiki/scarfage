@@ -24,6 +24,10 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 def handle_exception(exc_type, exc_value, exc_traceback):
+    """
+    Log exceptions
+    """
+
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
@@ -33,6 +37,23 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 sys.excepthook = handle_exception
 
 class PageData(object):
+    """
+    Convenience object to make various objects and functions available to the template. 
+
+    Attributes:
+       * prefix          - URL prefix for static content
+       * accesslevels    - core.accesslevels
+       * authuser        - core.SiteUser.create(session['username'])
+       * encode()        - base64.b32encode()
+       * decode()        - base64.b32decode()
+       * escape_html     - core.escape_html()
+       * obfuscate       - core.obfuscate()
+       * deobfuscate     - core.deobfuscate()
+       * uid_by_user     - core.uid_by_user()
+       * user_by_uid     - core.user_by_uid()
+       * render_markdown - render_markdown()
+
+    """
     def __init__(self):
         try:
             self.prefix = config.PREFIX
@@ -59,6 +80,12 @@ class PageData(object):
                 del session['username']
 
     def localtime(self, timestamp):
+        """
+        Convert a timestamp into the user's local timezone
+
+        :param timestamp: Datetime object to convert
+        :return: Datetime object in local time
+        """
         utc = timezone('UTC')
         utc_dt = utc.localize(timestamp)
 
@@ -70,9 +97,20 @@ class PageData(object):
         return utc_dt.astimezone(user_tz)
 
 def render_markdown(string):
+    """
+    Escapes the HTML in a string, renders any markdown present, then linkifys all bare URLs.
+
+    :param string: string to process
+    :return: rendered string
+    """
     return bleach.linkify(markdown.markdown(core.escape_html(unicode(string)), md_extensions))
 
 def request_wants_json():
+    """
+    Check the request to see if the client wants JSON instead of rendered HTML
+
+    :return: True or False
+    """
     best = request.accept_mimetypes \
         .best_match(['application/json', 'text/html'])
     return best == 'application/json' and \
@@ -81,17 +119,31 @@ def request_wants_json():
 
 @app.errorhandler(404)
 def page_not_found(error):
+    """
+    Error handler for 404 errors
+
+    :param error: The error that occurred 
+    :return: A rendered 404 page
+    """
+
+    print error
     pd = PageData()
     logger.error('404! Referrer was: ' + str(request.referrer))
     pd.title = "File not found"
     pd.errorcode="404"
-    pd.errortext="File not found."
+    pd.errortext="Not the scarf you're looking for..."
     return render_template('error.html', pd=pd), 404
 
 @app.errorhandler(500)
 def own_goal(error):
+    """
+    Error handler for 500 errors
+
+    :param error: The error that occurred 
+    :return: A rendered 500 page
+    """
     pd = PageData()
-    logger.error('500! Referrer was: ' + str(request.referrer))
+    logger.error('500! Referrer was: {}, error is: {}'.format(str(request.referrer), error))
     pd.title = "Oh noes!"
     pd.errorcode="500"
     pd.errortext="(╯°□°）╯︵ ┻━┻"
@@ -99,11 +151,22 @@ def own_goal(error):
 
 @app.route('/upload_error')
 def upload_error():
+    """
+    :URL: /upload_error
+
+    On the main site any over-size uploads will be redirected here.
+    Flash a message to the user and attempt to redirect_back()
+    """
     flash('Your upload is too large, please resize it and try again.')
     return redirect_back('error')
 
 @app.route('/error')
 def error():
+    """
+    :URL: /error
+
+    Renders a generic non-500 error page
+    """
     pd = PageData()
     pd.title = "Error!"
     pd.errortext="Oh noes!!"
@@ -111,6 +174,12 @@ def error():
 
 @app.route('/accessdenied')
 def accessdenied():
+    """
+    :URL: /accessdenied
+
+    Renders a generic access denied page
+    """
+ 
     pd = PageData()
     pd.title = "Access Denied"
     pd.errortext = "Access Denied"
@@ -119,6 +188,11 @@ def accessdenied():
 @app.route('/')
 @nocache
 def index():
+    """
+    :URL: /
+
+    The main site index
+    """
     pd = PageData()
     pd.title = "Scarfage"
 
@@ -131,4 +205,10 @@ def index():
 @app.route('/ping')
 @nocache
 def ping():
+    """
+    :URL: /ping
+    
+    Basic health check for the main site
+    """
+
     return "OK!"

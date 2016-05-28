@@ -7,6 +7,13 @@ from main import PageData
 logger = logging.getLogger(__name__)
 
 def check_level(level):
+    """
+    Function to check the user's access level
+
+    :param level: Minimum level to allow access
+    :return: True or False
+    """
+
     pd = PageData()
     if 'username' not in session:
         logger.info('check_level failed: no session')
@@ -20,6 +27,10 @@ def check_level(level):
         return True
 
 def check_admin(func):
+    """
+    Decorator to check if the user is an admin and redirect to the access denied page if they aren't
+    """
+
     @wraps(func)
     def inner(*args, **kwargs): #1
         if not check_level(255):
@@ -30,6 +41,10 @@ def check_admin(func):
     return inner
 
 def check_mod(func):
+    """
+    Decorator to check if the user is a moderator and redirect to the access denied page if they aren't
+    """
+
     @wraps(func)
     def inner(*args, **kwargs): #1
         if not check_level(10):

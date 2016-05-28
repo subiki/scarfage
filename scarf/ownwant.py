@@ -1,6 +1,6 @@
 from scarf import app
 from core import SiteUser, NoUser, SiteItem, NoItem, redirect_back, OwnWant
-from main import page_not_found, own_goal, request_wants_json
+from main import page_not_found, request_wants_json
 
 import json
 from flask import redirect, url_for, request, render_template, session, flash
@@ -21,27 +21,30 @@ def ownwant(item_id, user_id, values):
 @app.route('/item/<item_id>/<action>', methods=['GET', 'POST'])
 def itemaction(item_id, action):
     """
-    URL: /item/<item_id>/<action>
-    Methods: GET, POST
+    :URL: /item/<item_id>/<action>
+    :Methods: GET, POST
 
     Update or query the logged in user's record for an item.
 
     If a POST request is received then the current record is returned instead of a redirect back to the previous page.
     Setting the accept:application/json header will always return JSON regardless of request type.
 
-    Allowed actions:
-    'status'    - Return the item's current status
-    'have'      - Mark an item as part of the user's collection
-    'donthave'  - Remove the item from the user's collection
-    'show'      - If the item is in the user's collection mark it as visible to others
-    'hide'      - If the item is in the user's collection hide it from others
-    'willtrade' - Mark the item as available for trade
-    'wonttrade' - Don't show this item as available for trade
-    'want'      - Add this item to the user's want list
-    'dontwant ' - Remove this item from the user's want list
+    :Allowed actions:
+     * 'status'    - Return the item's current status
+     * 'have'      - Mark an item as part of the user's collection
+     * 'donthave'  - Remove the item from the user's collection
+     * 'show'      - If the item is in the user's collection mark it as visible to others
+     * 'hide'      - If the item is in the user's collection hide it from others
+     * 'willtrade' - Mark the item as available for trade
+     * 'wonttrade' - Don't show this item as available for trade
+     * 'want'      - Add this item to the user's want list
+     * 'dontwant ' - Remove this item from the user's want list
 
-    Sample record:
-    {"hidden": 1, "want": 0, "have": 1, "willtrade": 0}
+    :Sample record:
+
+    .. code-block:: javascript
+
+        {"hidden": 1, "want": 0, "have": 1, "willtrade": 0}
     """
 
     try:
@@ -62,7 +65,7 @@ def itemaction(item_id, action):
         try: 
             ownwant(item_id, user.uid, actions[action])
         except (NoItem, KeyError):
-            return page_not_found(404)
+            return page_not_found()
 
         if request.method == 'POST' or request_wants_json():
             return get_record()

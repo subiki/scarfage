@@ -11,6 +11,11 @@ import jsonpickle
 @app.route('/admin')
 @check_admin
 def admin_users():
+    """
+    :URL: /admin
+
+    Render the admin.html template
+    """
     pd = PageData()
     pd.sf_conf = config
 
@@ -32,6 +37,15 @@ def admin_users():
 @app.route('/admin/strings/edit', methods=['POST'])
 @check_admin
 def editstring():
+    """
+    :URL: /admin/strings/edit
+    :Method: POST
+
+    Update a SiteString object.
+
+    .. todo:: Only supports the welcome banner right now... not very useful.
+
+    """
     if request.method == 'POST':
         if 'text' in request.form:
             if request.form['text'] == '':
@@ -46,6 +60,14 @@ def editstring():
 @app.route('/admin/users/<user>/accesslevel/<level>')
 @check_mod
 def admin_set_accesslevel(user, level):
+    """
+    :URL: /admin/users/<user>/accesslevel/<level>
+
+    Change a user's access level. The user requesting the access level change must be more privileged
+    than the level they are setting. 
+
+    Redirects back if there was an error, otherwise redirects to the user's profile.
+    """
     pd = PageData()
 
     if pd.authuser.accesslevel != 255 and pd.authuser.accesslevel <= int(level):
@@ -73,13 +95,19 @@ def admin_set_accesslevel(user, level):
 @app.route('/admin/users/<user>/resetpw')
 @check_admin
 def admin_reset_pw(user):
+    """
+    :URL: /admin/users/<user>/resetpw
+
+    Reset the password for a user. Must be an admin.
+    """
+
     pd = PageData()
 
     try:
         user = SiteUser.create(user)
         user.forgot_pw_reset(ip='0.0.0.0', admin=True)
     except NoUser:
-        return page_not_found(404)
+        return page_not_found()
 
     flash('A new password has been e-mailed to ' + user.username + '.')
 
