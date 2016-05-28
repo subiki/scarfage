@@ -122,11 +122,7 @@ def index():
     pd = PageData()
     pd.title = "Scarfage"
 
-    # TODO: remove except once string stuff is more complete
-    try:
-        pd.welcomebanner = core.SiteString('welcomebanner').string
-    except:
-        pd.welcomebanner = ''
+    pd.welcomebanner = core.SiteString('welcomebanner').string
 
     pd.items = core.latest_items(10)
 

@@ -16,7 +16,6 @@ def admin_users():
 
     pd.title = "Admin" 
 
-    new_string('welcomebanner', 'Placeholder...')
     pd.welcomebanner = SiteString('welcomebanner').string
 
     pd.users = get_users()
