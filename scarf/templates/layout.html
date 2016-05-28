@@ -26,7 +26,7 @@
 
 {% endif %}
 
-<body>
+<body id="bsor">
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -38,8 +38,8 @@
           <a class="navbar-brand" href="/">Scarfage</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="/item/edit">New item</a></li>
+          <ul class="nav navbar-nav main-nav">
+            <li class="button"><a href="/item/edit">New item</a></li>
             <li><a href="/stats">Site stats</a></li>
             {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
             <li><a href="/mod">Moderate</a></li>
@@ -48,19 +48,23 @@
             <li><a href="/admin">Admin</a></li>
             {% endif %}
           </ul>
-          <ul class="nav navbar-nav">
-            <li><form class="navbar-form navbar-right" role="form" action="/item/search" method="GET">
+          <ul class="nav navbar-nav secondary-nav">
+            <li class="item-search">
+              <form class="navbar-form navbar-right" role="form" action="/item/search" method="GET">
                 <div class="form-group">
                     <input type="text" placeholder="Item Search" class="form-control" name="query">
+                </div>
+                <div class="form-group">
                     <button type="submit" class="btn btn-success">Search</button>
                 </div>
-            </form></li>
-            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+              </form>
+            </li>
+
           {% if pd.authuser is defined %}
-            <li><a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a></li>
-            <li class="logout"><a href="/logout"><small>Logout</small></a></li>
+            <li class="profile"><a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a></li>
+            <li class="hidden-xs"><a href="/logout"><small>Logout</small></a></li>
           {% else %}
-            <li><form class="navbar-form navbar-right" role="form" action="/login" method="post">
+            <li class="login"><form class="navbar-form navbar-right" role="form" action="/login" method="post">
             <div class="form-group">
                 <input type="text" placeholder="Username" class="form-control" name="username">
             </div>
@@ -69,8 +73,8 @@
             </div>
             <button type="submit" class="btn btn-success">Sign in</button>
             </form></li>
-            <li><a href="/newuser"><small>Sign up</small></a></li>
-            <li><a href="/forgotpw"><small>Forgot Password</small></a></li>
+            <li class="forgotpw visible-inline"><a href="/forgotpw">Forgot Password</a></li>
+            <li class="signup visible-inline"><a href="/newuser">Sign up</a></li>
           {% endif %}
           </ul>
         </div><!--/.nav-collapse -->

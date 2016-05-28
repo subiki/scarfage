@@ -1,10 +1,13 @@
-body { padding-top: 100px; }
+/* This is somewhat thrown together - feel free to refactor */
+body {
+  padding-top: 100px; }
 
-.btn-file {
+body {
+  /* #bsor = BootStrap OverRide */ }
+  body#bsor .btn-file {
     position: relative;
-    overflow: hidden;
-}
-.btn-file input[type=file] {
+    overflow: hidden; }
+  body#bsor .btn-file input[type=file] {
     position: absolute;
     top: 0;
     right: 0;
@@ -17,18 +20,28 @@ body { padding-top: 100px; }
     outline: none;
     background: white;
     cursor: inherit;
-    display: block;
-}
-
-.well-ff {
-    background: rgb(255, 255, 255);
-}
+    display: block; }
+  body#bsor .well-ff {
+    background: white; }
 
 /* Mobile */
 @media (max-width: 768px) {
-  /* logout button */
-  li.logout {
-    display: none;
-  }
-
-}
+  body#bsor {
+    /* Main Nav */ }
+    body#bsor .navbar-collapse {
+      max-height: none;
+      overflow: scroll; }
+    body#bsor .main-nav li {
+      display: inline-block; }
+    body#bsor .secondary-nav li {
+      display: inline-block; }
+      body#bsor .secondary-nav li.item-search, body#bsor .secondary-nav li.login {
+        padding: 10px 20px;
+        display: block;
+        border-top: 1px solid #616161; }
+    body#bsor .navbar-form {
+      border: none;
+      box-shadow: none;
+      -webkit-box-shadow: none;
+      margin: 0;
+      padding: 0; } }
