@@ -23,13 +23,17 @@ logger = logging.getLogger(__name__)
 accesslevels = {-1: 'anonymous', 0:'banned', 1:'user', 10:'moderator', 255:'admin'}
 
 def get_users():
-    sql = 'select * from users'
+    sql = """select users.username 
+             from users
+             join userstat_lastseen on userstat_lastseen.uid=users.uid 
+             order by userstat_lastseen.date desc"""
+
     result = doquery(sql)
 
     users = []
 
     for user in result:
-        users.append(SiteUser.create(user[1]))
+        users.append(SiteUser.create(user[0]))
 
     return users
 
