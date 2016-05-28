@@ -8,8 +8,7 @@
 <div class="col-md-8">
 
 {% if pd.item %}
-<div class="page-header"> <h3>{{ pd.item.name }}</h3><br>
-
+<div class="page-header"> <h3>{{ pd.item.name }}</h3>
 <small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/edit"> Edit </a></small>
 <small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/history"> History </a></small>
 
@@ -55,23 +54,26 @@ You are viewing an older version of this item's description, click <a href="/ite
 <div class="col-md-3">
 
 <div class="page-header"><h3>Item actions</h3></div>
+
 {% if pd.authuser is defined %}
+<h2>
+<div class="itemiconsactionbox-nohide" data-itemid="{{ pd.item.uid }}">
+   <span title="Add to collection" style="color: green;" class="glyphicon glyphicon-plus item-icons-have" data-itemid="{{ pd.item.uid }}" id="item-icons-have{{ pd.item.uid }}" aria-hidden="true"></span>
+   <span title="Remove from collection" style="color: red;" class="glyphicon glyphicon-remove item-icons-donthave" data-itemid="{{ pd.item.uid }}" id="item-icons-donthave{{ pd.item.uid }}" aria-hidden="true"></span>
 
-<div class="itemactionbox" data-itemid="{{ pd.item.uid }}">
-    <input type="button" data-itemid="{{ pd.item.uid }}" data-status="undefined" class="btn btn-sm btn-default itemhavebutton"
-        id="itemhavebutton{{ pd.item.uid }}" value="Loading..." /></br>
-    <input type="button" data-itemid="{{ pd.item.uid }}" data-status="undefined" class="btn btn-sm btn-default itemhiddenbutton"
-        id="itemhiddenbutton{{ pd.item.uid }}" value="Loading..." /></br>
-    <input type="button" data-itemid="{{ pd.item.uid }}" data-status="undefined" class="btn btn-sm btn-default itemwilltradebutton"
-        id="itemwilltradebutton{{ pd.item.uid }}" value="Loading..." /></br>
-    <input type="button" data-itemid="{{ pd.item.uid }}" data-status="undefined" class="btn btn-sm btn-default itemwantbutton"
-        id="itemwantbutton{{ pd.item.uid }}" value="Loading..." /></br>
+   <span title="Show this item to others" style="color: green;" class="glyphicon glyphicon-eye-open item-icons-show" data-itemid="{{ pd.item.uid }}" id="item-icons-show{{ pd.item.uid }}" aria-hidden="true"></span>
+   <span title="Hide this item from others" style="color: red;" class="glyphicon glyphicon-eye-close item-icons-hide" data-itemid="{{ pd.item.uid }}" id="item-icons-hide{{ pd.item.uid }}" aria-hidden="true"></span>
+
+   <span title="Make this item available for trade" style="color: green;" class="glyphicon glyphicon-transfer item-icons-willtrade" data-itemid="{{ pd.item.uid }}" id="item-icons-willtrade{{ pd.item.uid }}" aria-hidden="true"></span>
+   <span title="Make this item unavailable for trade" style="color: red;" class="glyphicon glyphicon-heart item-icons-wonttrade" data-itemid="{{ pd.item.uid }}" id="item-icons-wonttrade{{ pd.item.uid }}" aria-hidden="true"></span>
+
+   <span title="Add this to my wanted items list" style="color: green;" class="glyphicon glyphicon-bullhorn item-icons-want" data-itemid="{{ pd.item.uid }}" id="item-icons-want{{ pd.item.uid }}" aria-hidden="true"></span>
+   <span title="Remove from my wanted items list" style="color: red;" class="glyphicon glyphicon-unchecked item-icons-dontwant" data-itemid="{{ pd.item.uid }}" id="item-icons-dontwant{{ pd.item.uid }}" aria-hidden="true"></span>
 </div>
-
+</h2>
 {% else %}
 
-<a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/have" rel="nofollow">Add to collection</a><br />
-<a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/want" rel="nofollow">Add to want list</a><br />
+You must be logged in to create a collection.
 
 {% endif %}
 

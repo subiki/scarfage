@@ -17,6 +17,13 @@ $(document).ready(function(){
         $("#item-icons-actionbox-hide" + itemid).hide();
     });
 
+    $('div.itemiconsactionbox-nohide').each(function() {
+        var itemid = $(this).attr('data-itemid');
+
+        hideall(itemid);
+        item_action(itemid, 'status', update_icons);
+    });
+
     $('span.item-icons-actionbox-show').click(function() {
         var itemid = $(this).attr('data-itemid');
 
