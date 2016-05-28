@@ -1,11 +1,10 @@
 /* This is somewhat thrown together - feel free to refactor */
 
-body { padding-top: 100px; }
-
 body {
+  padding-top: 50px;
+
   /* #bsor = BootStrap OverRide */
   &#bsor {
-
     .btn-file {
         position: relative;
         overflow: hidden;
@@ -29,22 +28,83 @@ body {
     .well-ff {
         background: rgb(255, 255, 255);
     }
+
+
+    /* GLOBAL BOOTSTRAP OVERRIDES - STAYS DOWN HERE... */
+    .wrapper {
+      width: 100%;
+      padding: 0 20px;
+    }
+
+    .container {
+      width: auto;
+      margin: 0;
+      padding: 0;
+    }
+
+    .row {
+      margin: 0;
+    }
+
+    form {
+      label {
+        font-weight: bold;
+        font-size: .8em;
+        display: block;
+        padding-top: 10px;
+        margin: 0;
+      }
+      input {
+        margin-bottom: 5px;
+      }
+
+      .button, button, input[type=submit] {
+        background-repeat: repeat-x;
+        background-color: #5cb85c;
+        border-color: #3e8f3e;
+        color: #fff;
+        border-radius: 4px;
+
+      }
+
+    }
+    /* END GLOBAL OVERRIDES */
+
+  }
+
+}
+
+/* DESKTOP */
+@media (min-width: 911px) and (max-width: 1190px) {
+  body {
+    &#bsor {
+      padding-top: 100px;
+    }
   }
 }
-/* Mobile */
+
+@media (min-width: 769px) and (max-width: 910px) {
+  body {
+    &#bsor {
+      padding-top: 150px;
+    }
+  }
+}
+
+/* MOBILE */
 @media (max-width: 768px) {
   body {
     &#bsor {
+      padding-top: 50px;
 
+      /* NAV */
       .navbar-collapse {
         li {
           &.button { background-color: rgba(60, 80, 60, 1); }
         }
       }
 
-      /* Main Nav */
       .main-nav {
-
         li {
           display: inline-block;
           margin-left: 15px;
@@ -80,7 +140,13 @@ body {
         padding: 0;
 
       }
+      /* END NAV */
+
+
 
     }
   }
+
+
 }
+/* END MOBILE */

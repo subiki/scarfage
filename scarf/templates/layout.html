@@ -96,14 +96,11 @@
     {% endwith %}
     </div>
 
-    <div class="container">
-      <!-- Example row of columns -->
-      <div class="row">
-        <p>
-          {% block body %}{% endblock %}
-        </p>
-      </div>
-    </div>
+<div class="row">
+  <div class="col-md-12">
+    {% block body %}{% endblock %}
+  </div>
+</div>
 
     <footer class="footer">
         {% block footer %}
