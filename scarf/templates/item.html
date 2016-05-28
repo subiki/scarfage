@@ -56,19 +56,18 @@ You are viewing an older version of this item's description, click <a href="/ite
 
 <div class="page-header"><h3>Item actions</h3></div>
 {% if pd.authuser is defined %}
-    <input type="hidden" id="itemid" value="{{ pd.item.uid }}" />
 
-    <input type="hidden" id="itemhavestatus" value="{% if pd.iteminfo is defined and pd.iteminfo.have == 1 %}1{%else%}0{%endif%}" />
-    <input type="button" class="btn btn-sm btn-default" id="itemhavebutton" value="Loading..." /></br>
+<div class="itemactionbox" data-itemid="{{ pd.item.uid }}">
+    <input type="button" data-itemid="{{ pd.item.uid }}" data-status="undefined" class="btn btn-sm btn-default itemhavebutton"
+        id="itemhavebutton{{ pd.item.uid }}" value="Loading..." /></br>
+    <input type="button" data-itemid="{{ pd.item.uid }}" data-status="undefined" class="btn btn-sm btn-default itemhiddenbutton"
+        id="itemhiddenbutton{{ pd.item.uid }}" value="Loading..." /></br>
+    <input type="button" data-itemid="{{ pd.item.uid }}" data-status="undefined" class="btn btn-sm btn-default itemwilltradebutton"
+        id="itemwilltradebutton{{ pd.item.uid }}" value="Loading..." /></br>
+    <input type="button" data-itemid="{{ pd.item.uid }}" data-status="undefined" class="btn btn-sm btn-default itemwantbutton"
+        id="itemwantbutton{{ pd.item.uid }}" value="Loading..." /></br>
+</div>
 
-    <input type="hidden" id="itemhiddenstatus" value="{% if pd.iteminfo is defined and pd.iteminfo.hidden == 1 %}1{%else%}0{%endif%}" />
-    <input type="button" class="btn btn-sm btn-default" id="itemhiddenbutton" value="Loading..." /></br>
-
-    <input type="hidden" id="itemwilltradestatus" value="{% if pd.iteminfo is defined and pd.iteminfo.willtrade == 1 %}1{%else%}0{%endif%}" />
-    <input type="button" class="btn btn-sm btn-default" id="itemwilltradebutton" value="Loading..." /></br>
-
-    <input type="hidden" id="itemwantstatus" value="{% if pd.iteminfo is defined and pd.iteminfo.want == 1 %}1{%else%}0{%endif%}" />
-    <input type="button" class="btn btn-sm btn-default" id="itemwantbutton" value="Loading..." /></br>
 {% else %}
 
 <a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/have" rel="nofollow">Add to collection</a><br />
@@ -121,9 +120,9 @@ You are viewing an older version of this item's description, click <a href="/ite
         {%for tag in parent_tags %}
         <a href="/tag/{{ pd.encode(tag) }}">{{ tag }}</a>
         {% if not parent_tags[tag] %}
-        <a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag) }}" rel="nofollow"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span></a>
+        <a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag) }}" rel="nofollow"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;" title="Remove Tag"></span></a>
         {% else %}
-        <small><span class="glyphicon glyphicon-lock" aria-hidden="true" style="color: grey;"></span></small>
+        <small><span class="glyphicon glyphicon-lock" aria-hidden="true" style="color: grey;" title="Locked"></span></small>
         {% endif %}
         <br>
         {% endfor %}

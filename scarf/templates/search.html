@@ -19,6 +19,28 @@ No results.
    {% for image in item.images()[:1] %}
        <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a>
    {% endfor %}
+
+   {% if pd.authuser is defined %}
+   <div class="itemiconsactionbox" data-itemid="{{ item.uid }}">
+       <h4>
+       <span title="Show item actions" style="color: blue;" class="glyphicon glyphicon-chevron-down item-icons-actionbox-show" data-itemid="{{ item.uid }}" id="item-icons-actionbox-show{{ item.uid }}" aria-hidden="true"></span>
+       <span title="Hide item actions" style="color: blue;" class="glyphicon glyphicon-chevron-up item-icons-actionbox-hide" data-itemid="{{ item.uid }}" id="item-icons-actionbox-hide{{ item.uid }}" aria-hidden="true"></span>
+
+       <span title="Add to collection" style="color: green;" class="glyphicon glyphicon-plus item-icons-have" data-itemid="{{ item.uid }}" id="item-icons-have{{ item.uid }}" aria-hidden="true"></span>
+       <span title="Remove from collection" style="color: red;" class="glyphicon glyphicon-remove item-icons-donthave" data-itemid="{{ item.uid }}" id="item-icons-donthave{{ item.uid }}" aria-hidden="true"></span>
+
+       <span title="Show this item to others" style="color: green;" class="glyphicon glyphicon-eye-open item-icons-show" data-itemid="{{ item.uid }}" id="item-icons-show{{ item.uid }}" aria-hidden="true"></span>
+       <span title="Hide this item from others" style="color: red;" class="glyphicon glyphicon-eye-close item-icons-hide" data-itemid="{{ item.uid }}" id="item-icons-hide{{ item.uid }}" aria-hidden="true"></span>
+
+       <span title="Make this item available for trade" style="color: green;" class="glyphicon glyphicon-transfer item-icons-willtrade" data-itemid="{{ item.uid }}" id="item-icons-willtrade{{ item.uid }}" aria-hidden="true"></span>
+       <span title="Make this item unavailable for trade" style="color: red;" class="glyphicon glyphicon-heart item-icons-wonttrade" data-itemid="{{ item.uid }}" id="item-icons-wonttrade{{ item.uid }}" aria-hidden="true"></span>
+
+       <span title="Add this to my wanted items list" style="color: green;" class="glyphicon glyphicon-bullhorn item-icons-want" data-itemid="{{ item.uid }}" id="item-icons-want{{ item.uid }}" aria-hidden="true"></span>
+       <span title="Remove from my wanted items list" style="color: red;" class="glyphicon glyphicon-unchecked item-icons-dontwant" data-itemid="{{ item.uid }}" id="item-icons-dontwant{{ item.uid }}" aria-hidden="true"></span>
+       </h4>
+   </div>
+
+    {% endif %}
    </td>
 </tr>
 {% endif %}

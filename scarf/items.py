@@ -115,13 +115,6 @@ def show_item(item_id, edit=None):
     else:
         pd = PageData()
 
-        if 'username' in session:
-            try:
-                user = SiteUser.create(session['username'])
-                pd.iteminfo = user.query_collection(showitem.uid)
-            except (NoUser, NoItem):
-                pass
-
         pd.title = showitem.name
         pd.item = showitem
 
