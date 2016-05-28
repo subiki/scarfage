@@ -41,42 +41,42 @@ $(document).ready(function(){
         $("#item-icons-actionbox-show" + itemid).show();
     });
 
-    $('span.item-icons-have').click( function() {
+    $('.item-icons-have').click( function() {
        var itemid = $(this).attr('data-itemid');
        item_action(itemid, 'have', update_icons); 
     });
 
-    $('span.item-icons-donthave').click( function() {
+    $('.item-icons-donthave').click( function() {
        var itemid = $(this).attr('data-itemid');
        item_action(itemid, 'donthave', update_icons); 
     });
 
-    $('span.item-icons-show').click( function() {
+    $('.item-icons-show').click( function() {
        var itemid = $(this).attr('data-itemid');
        item_action(itemid, 'show', update_icons); 
     });
 
-    $('span.item-icons-hide').click( function() {
+    $('.item-icons-hide').click( function() {
        var itemid = $(this).attr('data-itemid');
        item_action(itemid, 'hide', update_icons); 
     });
 
-    $('span.item-icons-willtrade').click( function() {
+    $('.item-icons-willtrade').click( function() {
        var itemid = $(this).attr('data-itemid');
        item_action(itemid, 'willtrade', update_icons); 
     });
 
-    $('span.item-icons-wonttrade').click( function() {
+    $('.item-icons-wonttrade').click( function() {
        var itemid = $(this).attr('data-itemid');
        item_action(itemid, 'wonttrade', update_icons); 
     });
 
-    $('span.item-icons-want').click( function() {
+    $('.item-icons-want').click( function() {
        var itemid = $(this).attr('data-itemid');
        item_action(itemid, 'want', update_icons); 
     });
 
-    $('span.item-icons-dontwant').click( function() {
+    $('.item-icons-dontwant').click( function() {
        var itemid = $(this).attr('data-itemid');
        item_action(itemid, 'dontwant', update_icons); 
     });
