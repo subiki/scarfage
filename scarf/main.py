@@ -2,6 +2,7 @@
 import base64
 import logging
 import datetime
+import bleach
 import os, sys
 from pytz import timezone
 
@@ -69,7 +70,7 @@ class PageData(object):
         return utc_dt.astimezone(user_tz)
 
 def render_markdown(string):
-    return markdown.markdown(core.escape_html(unicode(string)), md_extensions)
+    return bleach.linkify(markdown.markdown(core.escape_html(unicode(string)), md_extensions))
 
 def request_wants_json():
     best = request.accept_mimetypes \

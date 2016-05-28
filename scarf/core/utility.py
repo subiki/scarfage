@@ -26,9 +26,9 @@ def redirect_back(endpoint, **values):
 
 def escape_html(text):
     """
-    Strip the naughty bits out of a string and turn URLs into links while we're at it
+    Strip the naughty bits out of a string
     """
-    return bleach.linkify(bleach.clean(text))
+    return bleach.clean(text)
 
 def xor_strings(s,t):
     return "".join(chr(ord(a)^ord(b)) for a,b in zip(s,t))
