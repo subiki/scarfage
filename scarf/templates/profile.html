@@ -170,6 +170,7 @@
                 <input class="btn btn-danger" type=submit value="Change Password">
             </div>
           </div>
+        </form>
 
         <div class="page-header"><h4>New Email</h4></div>
         <form role="form" action="/emailupdate" method="post">
@@ -377,27 +378,31 @@
     </table>
 
     <div class="page-header"><h4>{{ pd.profileuser.username }}'s wanted list</h4></div>
+    <div class="col-md-12">
+    <table class="table">
     {% for item in pd.profileuser.collection() %}
      {% if item.want == 1 %}
-     <div class="col-md-4">
-       <div align="center">
-           <a href="/item/{{ item.uid }}">{{ item.name }}</a><br \>
-
+       <tr>
+           <td>
            {% for image in item.images()[:1] %}
-           <p>
            <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
-           </p>
            {% endfor %}
+           </td>
 
+           <td><a href="/item/{{ item.uid }}">{{ item.name }}</a></td>
+
+           <td>
            {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
              <small><a href="/item/{{ item.uid }}/dontwant"><span class="glyphicon glyphicon-trash"></span> Remove from list</a></small>
            {%else%}
              <a href="/user/{{ pd.profileuser.username }}/trade/{{ item.uid }}">Make trade request</a>
            {% endif %}
-           </div>
-       </div>
+           </td>
+       </td>
      {% endif %}
     {% endfor %}
+    </table>
+   </div>
 </div>
 
 {% endblock %}
