@@ -5,19 +5,18 @@
 <div id="content">
 
 {% if pd.results %}
-<div class="col-md-12">
+<div id="search" class="col-md-12">
 <div class="page-heading"><h3>Search Results for "{{pd.query}}"</h3></div>
 
-<table class="table">
 {% for item in pd.results %}
 {% if item == None %}
 No results.
 {%else%}
-<tr>
-   <td><a href="/item/{{ item.uid }}"><h4>{{item.name}}</h4></a></td>
-   <td>
+<div class="scarf-entry row bottom-buffer">
+   <div class="col-6"><a href="/item/{{ item.uid }}"><h4>{{item.name}}</h4></a></div>
+   <div class="col-6">
    {% for image in item.images()[:1] %}
-       <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a>
+       <a href="/item/{{ item.uid }}"><img class="img-rounded scarf" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a>
    {% endfor %}
 
    {% if pd.authuser is defined %}
@@ -41,11 +40,11 @@ No results.
    </div>
 
     {% endif %}
-   </td>
-</tr>
+  </div>
+</div>
 {% endif %}
 {% endfor %}
-</table>
+
 
 </div>
 {% endif %}

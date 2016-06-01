@@ -1,6 +1,10 @@
-/* This is somewhat thrown together - feel free to refactor */
+/* This is somewhat thrown together - feel free to refactor
+
+  main.scss contains all global styling
+
+*/
 body {
-  padding-top: 50px;
+  padding-top: 100px;
   /* #bsor = BootStrap OverRide */ }
   body#bsor {
     /* GLOBAL BOOTSTRAP OVERRIDES - STAYS DOWN HERE... */
@@ -47,8 +51,13 @@ body {
       border-color: #3e8f3e;
       color: #fff;
       border-radius: 4px; }
-  body #content {
-    margin: 0 auto; }
+    body#bsor .scarf-entry {
+      border-bottom: 1px solid #999;
+      padding-bottom: 20px; }
+    body#bsor .top-buffer {
+      margin-top: 20px; }
+    body#bsor .bottom-buffer {
+      margin-bottom: 20px; }
 
 /* DESKTOP */
 @media (min-width: 911px) and (max-width: 1190px) {
@@ -84,5 +93,9 @@ body {
       box-shadow: none;
       -webkit-box-shadow: none;
       margin: 0;
-      padding: 0; } }
+      padding: 0; }
+    body#bsor img.scarf {
+      max-width: 500px;
+      max-height: 200px;
+      width: 100%; } }
 /* END MOBILE */

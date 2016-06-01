@@ -20,17 +20,16 @@
     <div class="col-md-12">
         <div class="page-header"><h4>Recently aded items</h4></div>
 
-        <table class="table">
         {% for item in pd.items %}
-        <tr>
-           <td>{{ pd.localtime(item.added) }}</td>
-           <td><a href="/item/{{ item.uid }}">{{ item.name }}</a></td>
-           <td>
+        <div class="row bottom-buffer scarf-entry">
+           <div class="col-md-3">{{ pd.localtime(item.added) }}</div>
+           <div class="col-md-3"><a href="/item/{{ item.uid }}">{{ item.name }}</a></div>
+           <div class="col-md-6">
            {% for image in item.images()[:1] %}
-               <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+               <a href="/item/{{ item.uid }}"><img class="scarf" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
            {% endfor %}
-           </td>
-        </tr>
+         </div>
+       </div>
         {% endfor %}
     </div>
   </div>
