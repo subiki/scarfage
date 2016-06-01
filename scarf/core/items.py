@@ -96,6 +96,19 @@ class NoItem(Exception):
 
 siteitem_cache = dict()
 class SiteItem(object):
+    """
+    Site Item - object for an item
+
+    :Attributes:
+        * uid       - UID for the item
+        * name      - The item's name
+        * added     - When the item was added
+        * modified  - Last modified
+        * tree      - an instance of the Tags() object
+
+    :raises NoItem: If no item can be found or if an error occurs this will be raised during initialization.
+    """
+
     @classmethod
     @memoize_with_expiry(siteitem_cache, long_cache_persist)
     def create(cls, username):
@@ -127,6 +140,12 @@ class SiteItem(object):
         """
 
     def description(self):
+        """
+        Get the item's current description. Items can have several descriptions with only one set as active.
+
+        :return: ID of the item's description
+        """
+
         sql = 'select description from items where uid = %(uid)s;'
 
         try:
@@ -136,6 +155,10 @@ class SiteItem(object):
             raise NoItem(uid)
 
     def delete(self):
+        """
+        Delete an item. Might be dangerous.
+        """
+
         logger.info('deleted item id {}: {}'.format(self.uid, self.name))
         item_cache = dict()
 
@@ -158,12 +181,27 @@ class SiteItem(object):
         result = doquery(sql, {"uid": self.uid}) 
 
     def update(self):
+        """
+        Update the database with the object's current name as well as the modified timestamp.
+        """
+
         logger.info('item updated {}: {} '.format(self.uid, self.name))
         self.name = self.name.strip()[:64]
         sql = "update items set name = %(name)s, modified = %(modified)s where uid = %(uid)s;"
         return doquery(sql, {"uid": self.uid, "name": self.name, "modified": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S") })
 
     def history(self):
+        """
+        Get the edit history for an item. 
+
+        :return: A list of objects with the following attributes:
+            * uid       - The edit's uid, zero filled
+            * itemid    - The item id
+            * date      - Date of the edit
+            * userid    - Editing user
+            * ip        - IP address of the editor
+        """
+
         sql = """select itemedits.uid, itemedits.itemid, itemedits.date, itemedits.userid, ip.ip
                  from itemedits
                  join ip on itemedits.ip=ip.uid
@@ -187,6 +225,12 @@ class SiteItem(object):
         return ret
 
     def values(self, edit=None):
+        """
+        Return the attributes of the object as a dict. body will be set to the text of the specified or current edit.
+
+        :param edit: Optional parameter to specify a historical edit id. If omitted the current edit ID for the item is used. 
+        """
+
         if not edit:
             edit = self.description()
 
@@ -199,6 +243,12 @@ class SiteItem(object):
     imglist_cache = dict()
     @memoize_with_expiry(imglist_cache, cache_persist)
     def images(self):
+        """
+        Get the images for an item.
+
+        :return: list of SiteImage objects
+        """
+
         ret = list()
         sql = """select uid
                  from images
@@ -211,6 +261,12 @@ class SiteItem(object):
     body_cache = dict()
     @memoize_with_expiry(body_cache, cache_persist)
     def body(self, edit=None):
+        """
+        Get the text of the item's description.
+
+        :param edit: Optional parameter to specify a historical edit id. If omitted the current edit ID for the item is used. 
+        :return: The item's description
+        """
         if not edit:
             edit = self.description()
         sql = "select body from itemedits where uid = '%(uid)s';"
@@ -219,6 +275,12 @@ class SiteItem(object):
     have_cache = dict()
     @memoize_with_expiry(have_cache, cache_persist)
     def haveusers(self):
+        """
+        Get a list of users that have this item in their collections.
+
+        :return: list of SiteUser objects
+        """
+
         haveusers = list()
         have = 0
 
@@ -236,6 +298,12 @@ class SiteItem(object):
     willtrade_cache = dict()
     @memoize_with_expiry(willtrade_cache, cache_persist)
     def willtradeusers(self):
+        """
+        Get a list of users that have this item in their collection and available for trade.
+
+        :return: list of SiteUser objects
+        """
+
         willtradeusers = list()
         willtrade = 0
 
@@ -252,6 +320,12 @@ class SiteItem(object):
     want_cache = dict()
     @memoize_with_expiry(want_cache, cache_persist)
     def wantusers(self):
+        """
+        Get a list of users that want this item.
+
+        :return: list of SiteUser objects
+        """
+
         wantusers = list()
         want = 0
 
@@ -266,6 +340,12 @@ class SiteItem(object):
         return (want, wantusers)
 
     def tags(self):
+        """
+        Get a list of tags for this item.
+
+        :return: list of tags as strings
+        """
+
         sql = "select tag from itemtags where itemid = %(itemid)s;"
         tags = doquery(sql, { 'itemid': self.uid })
 

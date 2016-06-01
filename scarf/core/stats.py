@@ -5,6 +5,12 @@ import items
 stats_cache = dict()
 @memoize_with_expiry(stats_cache, long_cache_persist)
 def get_whores_table():
+    """
+    Top ten users with the most items in their collection
+
+    :return: list of (count, username)
+    """
+
     sql = """select count(*), users.username
              from users 
              join ownwant on ownwant.userid=users.uid 
@@ -18,6 +24,12 @@ def get_whores_table():
 willtrade_cache = dict()
 @memoize_with_expiry(willtrade_cache, long_cache_persist)
 def get_willtrade_table():
+    """
+    Top ten users with items available for trade
+
+    :return: list of (count, username)
+    """
+
     sql = """select count(*), users.username
              from users 
              join ownwant on ownwant.userid=users.uid 
@@ -31,6 +43,12 @@ def get_willtrade_table():
 needy_cache = dict()
 @memoize_with_expiry(needy_cache, long_cache_persist)
 def get_needy_table():
+    """
+    Top ten users looking for items
+
+    :return: list of (count, username)
+    """
+
     sql = """select count(*), users.username
              from users 
              join ownwant on ownwant.userid=users.uid 
@@ -44,6 +62,12 @@ def get_needy_table():
 contribs_cache = dict()
 @memoize_with_expiry(contribs_cache, long_cache_persist)
 def get_contribs_table():
+    """
+    Top ten users with the most item edits
+
+    :return: list of (count, username)
+    """
+
     sql = """select count(*), users.username
              from users 
              join itemedits on itemedits.userid=users.uid 

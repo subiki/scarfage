@@ -40,7 +40,7 @@ class PageData(object):
     """
     Convenience object to make various objects and functions available to the template. 
 
-    Attributes:
+    :Attributes:
        * prefix          - URL prefix for static content
        * accesslevels    - core.accesslevels
        * authuser        - core.SiteUser.create(session['username'])

@@ -9,6 +9,15 @@ from email.header import HeaderParseError
 logger = logging.getLogger(__name__)
 
 def send_mail(recipient, subject, message, sender=None):
+    """
+    Send an email.
+
+    :param recipient: The message recipient
+    :param subject: The message subject
+    :param message: HTML formatted message to send
+    :param sender: optional sender in standard format: 'Some One <someone@somewhere.com>'
+    """
+
     logger.info('send_mail f: {} r: {} sub: {}'.format(sender, recipient, subject))
     if sender is None:
         sender = 'Scarfage <do_not_reply@scarfage.com>'

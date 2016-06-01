@@ -180,6 +180,17 @@ collection_cache = dict()
 profile_cache = dict()
 message_cache = dict()
 class SiteUser(object):
+    """
+    SiteUser - user object
+
+    :Attributes:
+        * uid           - User ID
+        * email         - User's email address
+        * joined        - Datetime object of when they joined 
+        * lastseen      - Datetime object of when they were last seen online
+        * accesslevel   - Users accesslevel as an integer
+    """
+
     @classmethod
     @memoize_with_expiry(siteuser_cache, cache_persist)
     def create(cls, username):
@@ -208,6 +219,11 @@ class SiteUser(object):
 
     @memoize_with_expiry(collection_cache, cache_persist)
     def collection(self):
+        """
+        List a user's collection
+
+        :return: list of SiteItem objects
+        """
         ret = list()
         sql = """select ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden, items.uid
                  from ownwant
@@ -230,15 +246,32 @@ class SiteUser(object):
 
     @memoize_with_expiry(profile_cache, cache_persist)
     def profile(self):
+        """
+        Get the profile for a user
+
+        :return: SiteUserProfile object
+        """
         return SiteUserProfile(self.username)
 
     #@memoize_with_expiry(collection_cache, cache_persist)
     # ^^^ causes a bug with ownwant updates
-    def query_collection(self, item):
-        return OwnWant(item, self.uid)
+    def query_collection(self, itemid):
+        """
+        Get the collection status for an item id
+
+        :param itemid: The id of the item you want to query
+        :return: OwnWant object for the item
+        """
+        return OwnWant(itemid, self.uid)
 
     @memoize_with_expiry(message_cache, cache_persist)
     def messages(self):
+        """
+        Get all trades and private messages for a user
+
+        :return: list of PrivateMessage and TradeMessage objects
+        """
+
         ret = list()
         sql = """select uid,status from messages
                  where fromuserid = %(fromuid)s or touserid = %(touid)s
@@ -257,6 +290,10 @@ class SiteUser(object):
         return ret
 
     def seen(self):
+        """
+        Method to update the last seen time for a user
+        """
+
         now = datetime.datetime.utcnow().replace(microsecond=0)
 
         if now - self.lastseen > datetime.timedelta(minutes=10):
@@ -264,6 +301,14 @@ class SiteUser(object):
             result = doquery(sql, { 'uid': self.uid, 'lastseen': now.strftime("%Y-%m-%d %H:%M:%S") })
 
     def authenticate(self, password):
+        """
+        Verify a user's password
+
+        :param password: The plaintext password to verify.
+        :return: None
+        :raises AuthFail: This exception will be raised if the user cannot be logged in for any reason.
+        """
+
         sql = """select users.pwhash
                  from users
                  where users.uid = %(uid)s;"""
@@ -284,8 +329,15 @@ class SiteUser(object):
             raise AuthFail(self.username)
 
         logger.info('Successful authentication for user {}'.format(self.username))
+        return None
 
     def newaccesslevel(self, accesslevel):
+        """
+        Method to change a user's access level
+
+        :param accesslevel: The new accesslevel
+        """
+
         logger.info('Accesslevel change for user {}, was {} is now {}'.format(self.username, self.accesslevel, accesslevel))
         self.accesslevel = int(accesslevel)
 
@@ -293,6 +345,12 @@ class SiteUser(object):
         doquery(sql, {"uid": self.uid, "level": self.accesslevel})
 
     def newpassword(self, password):
+        """
+        Method to reset a user's password
+
+        :param password: The new plaintext password
+        """
+
         logger.info('Password reset for user {}'.format(self.username))
         pwhash = gen_pwhash(password)
         del password
@@ -301,6 +359,12 @@ class SiteUser(object):
         return doquery(sql, {"uid": self.uid, "pwhash": pwhash})
 
     def newemail(self, email):
+        """
+        Method to reset a user's email
+
+        :param email: The new plaintext email
+        """
+
         logger.info('Email reset for user {}'.format(self.username))
         self.email = email
 
@@ -308,6 +372,13 @@ class SiteUser(object):
         return doquery(sql, {"uid": self.uid, "email": email})
 
     def forgot_pw_reset(self, ip, admin=False):
+        """
+        Randomize a user's password and send it to the email we have for them.
+
+        :param ip: The IP address of the requester as a string
+        :param admin: Set to True if this was requested by an admin
+        """
+
         logger.info('Forgotten password reset for user {} by {}'.format(self.username, ip))
         newpw = ''.join([random.choice(ascii_letters + digits) for _ in range(12)])
         self.newpassword(newpw)
@@ -316,6 +387,9 @@ class SiteUser(object):
         send_mail(recipient=self.email, subject='Password Reset', message=message)
 
     def delete(self):
+        """
+        Delete a user account. Possibly dangerous.
+        """
         logger.info('Account deletion for user {}'.format(self.username))
 
         #TODO: clean up the other tables
@@ -330,12 +404,33 @@ class SiteUser(object):
 
 
 def hashize(string):
+    """
+    Hash and base 64 encode a string
+
+    :param string: String to encode
+    :return: base64.b64encode(hashlib.sha384(string).digest())
+    """
     return base64.b64encode(hashlib.sha384(string).digest())
 
 def gen_pwhash(password):
+    """
+    Generate a password hash for the given cleartext
+
+    :param password: Cleartext password to hash
+    :return: bcrypt.hashpw(hashize(password), bcrypt.gensalt(config.BCRYPT_ROUNDS))
+    """
+
     return bcrypt.hashpw(hashize(password), bcrypt.gensalt(config.BCRYPT_ROUNDS))
 
 def verify_pw(password, pwhash):
+    """
+    Verify a cleartext password
+
+    :param password: Cleartext password
+    :param pwhash: Password hash to verify against
+    :return: True or False
+    """
+
     if (bcrypt.hashpw(hashize(password), pwhash) == pwhash):
         return True
 
@@ -353,6 +448,13 @@ def verify_pw(password, pwhash):
 """
 
 def check_email(email):
+    """
+    Check if an email address belongs to a user
+
+    :param email: The email address to check
+    :return: SiteUser object or None
+    """
+
     sql = "select username from users where email = %(email)s;"
     result = doquery(sql, { 'email': email })
 
@@ -362,6 +464,18 @@ def check_email(email):
         return None
 
 def new_user(username, password, email, ip):
+    """
+    Register a new user
+
+    :param username: Username. Truncated to 200 characters
+    :param password: Cleartext password
+    :param email: email address. Truncated to 200 characters
+    :param ip: IP address of the requester
+
+    :raises NoUser: if an invalid email or username is given, or on general failure in creating the user
+    :return: UID of the new user or False if the username is taken
+    """
+
     username = unicode(username).strip()[:200]
     email = email.strip()[:200]
     pwhash = gen_pwhash(password)
