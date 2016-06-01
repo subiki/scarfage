@@ -2,3 +2,4 @@
 blns.base64.json
 tests.log
 venv/*
+scarf/static/scss/.sass-cache
