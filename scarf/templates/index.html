@@ -11,17 +11,17 @@
 -->
 
 <div class="container">
-  <div class="row">
+  <div class="row no-gutter">
     <div class="col-md-12">
     {{ pd.render_markdown(pd.welcomebanner)|safe }}
     </div>
   </div>
-  <div class="row">
+  <div class="row no-gutter">
     <div class="col-md-12">
         <div class="page-header"><h4>Recently aded items</h4></div>
 
         {% for item in pd.items %}
-        <div class="row bottom-buffer scarf-entry">
+        <div class="row bottom-buffer scarf-entry no-gutter">
            <div class="col-md-3">{{ pd.localtime(item.added) }}</div>
            <div class="col-md-3"><a href="/item/{{ item.uid }}">{{ item.name }}</a></div>
            <div class="col-md-6">

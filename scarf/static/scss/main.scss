@@ -48,6 +48,21 @@ body {
 
     .row {
       margin: 0;
+
+      &.no-gutter {
+        padding-right:0;
+        padding-left:0;
+        margin-right:0;
+        margin-left:0;
+      }
+
+      &.no-gutter > [class*='col-'] {
+        padding-right:0;
+        padding-left:0;
+        margin-right:0;
+        margin-left:0;
+      }
+
     }
 
     form {

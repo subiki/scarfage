@@ -37,6 +37,16 @@ body {
       padding: 0; }
     body#bsor .row {
       margin: 0; }
+      body#bsor .row.no-gutter {
+        padding-right: 0;
+        padding-left: 0;
+        margin-right: 0;
+        margin-left: 0; }
+      body#bsor .row.no-gutter > [class*='col-'] {
+        padding-right: 0;
+        padding-left: 0;
+        margin-right: 0;
+        margin-left: 0; }
     body#bsor form label {
       font-weight: bold;
       font-size: .8em;
