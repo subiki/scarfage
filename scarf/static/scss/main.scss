@@ -1,7 +1,11 @@
-/* This is somewhat thrown together - feel free to refactor */
+/* This is somewhat thrown together - feel free to refactor
+
+  main.scss contains all global styling
+
+*/
 
 body {
-  padding-top: 50px;
+  padding-top: 100px;
 
   /* #bsor = BootStrap OverRide */
   &#bsor {
@@ -44,6 +48,21 @@ body {
 
     .row {
       margin: 0;
+
+      &.no-gutter {
+        padding-right:0;
+        padding-left:0;
+        margin-right:0;
+        margin-left:0;
+      }
+
+      &.no-gutter > [class*='col-'] {
+        padding-right:0;
+        padding-left:0;
+        margin-right:0;
+        margin-left:0;
+      }
+
     }
 
     form {
@@ -69,6 +88,19 @@ body {
 
     }
     /* END GLOBAL OVERRIDES */
+
+    .scarf-entry {
+      border-bottom: 1px solid #999;
+      padding-bottom: 20px;
+    }
+
+    .top-buffer {
+      margin-top: 20px;
+    }
+
+    .bottom-buffer {
+      margin-bottom: 20px;
+    }
 
   }
 
@@ -143,6 +175,13 @@ body {
       /* END NAV */
 
 
+      img {
+        &.scarf {
+          max-width: 500px;
+          max-height: 200px;
+          width: 100%;
+        }
+      }
 
     }
   }
