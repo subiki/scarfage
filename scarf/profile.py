@@ -154,8 +154,7 @@ def newavatar(username):
 
             image = base64.b64encode(raw)
  
-            profile.profile['avatar'] = image
-            profile.update()
+            profile.new_avatar(image)
 
             flash("Your avatar has been updated.")
             logger.info('avatar updated for for {}, raw size is {}'.format(username, size))
@@ -167,7 +166,10 @@ def newavatar(username):
 def serve_avatar(username):
     try:
         user = SiteUser.create(username)
-        avatar = user.profile().profile['avatar']
+        avatar = user.profile().avatar()
+
+        if not avatar:
+            return page_not_found()
 
         resp = make_response(base64.b64decode(avatar))
         resp.content_type = "image/png"

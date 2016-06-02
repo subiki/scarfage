@@ -18,7 +18,8 @@
   <div id="userinfo" class="tab-pane fade in active">
 
     {% set profile = pd.profileuser.profile().profile %}
-    {% if 'avatar' in profile %}
+    {% set avatar = pd.profileuser.profile().avatar() %}
+    {% if avatar %}
         {% set avatarurl = "/user/" + pd.profileuser.username + "/avatar" %}
     {% else %}
         {% set avatarurl = pd.prefix + "/static/defaultavatar.png" %}

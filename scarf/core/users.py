@@ -156,24 +156,44 @@ class SiteUserProfile(object):
             if not uid:
                 raise NoUser(None)
 
-            sql = """select json 
+            sql = """select json
                      from user_profiles
                      where uid = %(uid)s; """
             result = doquery(sql, { 'uid': uid })
 
             self.uid = uid
             self.profile = json.loads(result[0][0])
+
+            # Delete this at some point once all data has been moved, shouldn't take long
+            if 'avatar' in self.profile:
+                logger.info('avatar fixup applied for user id {}'.format(uid))
+                self.new_avatar(self.profile['avatar'])
+                del self.profile['avatar']
+                self.update()
         except (Warning, IndexError):
+            # return defaults
             self.profile = dict()
             self.profile['timezone'] = "America/Los_Angeles"
 
-            sql = "insert into user_profiles (uid, json) values (%(uid)s, %(json)s);"
-            result = doquery(sql, { 'uid': uid, 'json': json.dumps(self.profile)})
+            #sql = "insert into user_profiles (uid, json) values (%(uid)s, %(json)s);"
+            #result = doquery(sql, { 'uid': uid, 'json': json.dumps(self.profile)})
  
     def update(self):
         profile_cache = dict()
         sql = "update user_profiles set json = %(json)s where uid = %(uid)s;"
         doquery(sql, {"uid": self.uid, "json": json.dumps(self.profile)})
+
+    def avatar(self):
+        sql = """select avatar
+                 from user_profiles
+                 where uid = %(uid)s; """
+        result = doquery(sql, { 'uid': self.uid })
+        return result[0][0]
+
+    def new_avatar(self, image):
+        profile_cache = dict()
+        sql = "update user_profiles set avatar = %(image)s where uid = %(uid)s;"
+        doquery(sql, {"uid": self.uid, "image": image})
 
 siteuser_cache = dict()
 collection_cache = dict()
