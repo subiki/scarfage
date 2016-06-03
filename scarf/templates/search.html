@@ -12,11 +12,12 @@
 {% if item == None %}
 No results.
 {%else%}
-<div class="scarf-entry row bottom-buffer">
-   <div class="col-6"><a href="/item/{{ item.uid }}"><h4>{{item.name}}</h4></a></div>
+<div class="row bottom-buffer scarf-entry no-gutter">
+
+  <h2><a href="/item/{{ item.uid }}">{{ item.name }}</a></h2>
    <div class="col-6">
    {% for image in item.images()[:1] %}
-       <a href="/item/{{ item.uid }}"><img class="img-rounded scarf" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a>
+       <a href="/item/{{ item.uid }}" class="scarf"><img class="img-rounded col-md-12 no-gutter" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a>
    {% endfor %}
 
    {% if pd.authuser is defined %}
