@@ -2,14 +2,12 @@
 
   .scarf {
    display: block;
-   width: 100%;
-
+   max-width: 640px;
+   overflow: hidden;
 
    img {
-     max-width: 500px;
      width: 100%;
      height: auto;
-     overflow: hidden;
    }
 
   }
