@@ -58,6 +58,7 @@ body {
     body#bsor form .button, body#bsor form button, body#bsor form input[type=submit] {
       background-repeat: repeat-x;
       background-color: #5cb85c;
+      background-image: none;
       border-color: #3e8f3e;
       color: #fff;
       border-radius: 4px; }
@@ -119,3 +120,55 @@ body {
   .scarf-entry .scarf img {
     width: 100%;
     height: auto; }
+.scarf-entry .trade-status {
+  width: 20px;
+  height: 20px;
+  background-image: url("images/tradeicons.png"); }
+  .scarf-entry .trade-status.notinlist {
+    background-position: 0 0; }
+  .scarf-entry .trade-status.notinlist:hover:after {
+    content: "Not In List";
+    width: 100px;
+    display: block;
+    position: relative;
+    bottom: 30px;
+    border: 1px solid #333;
+    padding: 5px;
+    background-color: #fff;
+    opacity: .7; }
+  .scarf-entry .trade-status.have {
+    background-position: 0 -20px; }
+  .scarf-entry .trade-status.have:hover:after {
+    content: "Owned";
+    width: 100px;
+    display: block;
+    position: relative;
+    bottom: 30px;
+    border: 1px solid #333;
+    padding: 5px;
+    background-color: #fff;
+    opacity: .7; }
+  .scarf-entry .trade-status.trade {
+    background-position: 0 -40px; }
+  .scarf-entry .trade-status.trade:hover:after {
+    content: "Will Trade";
+    width: 100px;
+    display: block;
+    position: relative;
+    bottom: 30px;
+    border: 1px solid #333;
+    padding: 5px;
+    background-color: #fff;
+    opacity: .7; }
+  .scarf-entry .trade-status.want {
+    background-position: 0 -60px; }
+  .scarf-entry .trade-status.want:hover:after {
+    content: "Want";
+    width: 100px;
+    display: block;
+    position: relative;
+    bottom: 30px;
+    border: 1px solid #333;
+    padding: 5px;
+    background-color: #fff;
+    opacity: .7; }

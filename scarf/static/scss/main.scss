@@ -63,7 +63,7 @@ body {
       margin-right:0;
       margin-left:0;
     }
-    
+
     form {
       label {
         font-weight: bold;
@@ -79,6 +79,7 @@ body {
       .button, button, input[type=submit] {
         background-repeat: repeat-x;
         background-color: #5cb85c;
+        background-image: none;
         border-color: #3e8f3e;
         color: #fff;
         border-radius: 4px;
