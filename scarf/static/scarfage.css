@@ -1,7 +1,7 @@
 /* This is somewhat thrown together - feel free to refactor
 
   main.scss contains all global styling
-
+  #bsor - BootStrap OverRide
 */
 body {
   padding-top: 100px;
@@ -74,34 +74,59 @@ body {
       margin-bottom: 20px; }
 
 /* DESKTOP */
-@media (min-width: 911px) and (max-width: 1190px) {
+@media (min-width: 768px) {
   body#bsor {
-    padding-top: 100px; } }
-@media (min-width: 769px) and (max-width: 910px) {
-  body#bsor {
-    padding-top: 150px; } }
+    padding-top: 100px; }
+    body#bsor #navbar {
+      position: relative;
+      z-index: 1000; }
+    body#bsor .secondary-nav {
+      vertical-align: middle; }
+      body#bsor .secondary-nav a, body#bsor .secondary-nav .login {
+        color: #00802b; }
+      body#bsor .secondary-nav .login-signup {
+        display: inline;
+        color: #993;
+        width: 240px;
+        padding: 15px 0; }
+    body#bsor .login-container {
+      display: none;
+      position: absolute;
+      top: 55px;
+      width: 240px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 1px solid #000; }
+      body#bsor .login-container .forgotpw {
+        padding: 8px 0; }
+      body#bsor .login-container .form-group {
+        width: 100%; }
+        body#bsor .login-container .form-group input {
+          width: 100%; } }
 /* MOBILE */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   body#bsor {
     padding-top: 50px;
     /* NAV */
     /* END NAV */ }
-    body#bsor .navbar-collapse li.button {
-      background-color: #3c503c; }
+    body#bsor .navbar-collapse {
+      padding: 20px; }
+      body#bsor .navbar-collapse li.button {
+        background-color: #3c503c; }
     body#bsor .main-nav li {
       display: inline-block;
       margin-left: 15px; }
     body#bsor .secondary-nav li {
-      display: inline-block;
-      margin-left: 15px; }
-      body#bsor .secondary-nav li.item-search, body#bsor .secondary-nav li.login {
+      display: inline-block; }
+      body#bsor .secondary-nav li.item-search {
         margin: 0;
-        padding: 10px 20px;
+        padding: 20px 0;
         display: block;
         border-top: 1px solid #616161; }
-        body#bsor .secondary-nav li.item-search .forgotpw, body#bsor .secondary-nav li.login .forgotpw {
-          color: #9d9d9d;
-          padding-left: 10px; }
+      body#bsor .secondary-nav li .login-container {
+        display: block; }
+      body#bsor .secondary-nav li .forgotpw {
+        color: #9d9d9d;
+        padding-left: 10px; }
     body#bsor .navbar-form {
       border: none;
       box-shadow: none;

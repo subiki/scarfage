@@ -1,7 +1,8 @@
+
 /* This is somewhat thrown together - feel free to refactor
 
   main.scss contains all global styling
-
+  #bsor - BootStrap OverRide
 */
 
 body {
@@ -113,30 +114,66 @@ body {
 }
 
 /* DESKTOP */
-@media (min-width: 911px) and (max-width: 1190px) {
+@media (min-width: 768px) {
   body {
     &#bsor {
       padding-top: 100px;
-    }
-  }
-}
 
-@media (min-width: 769px) and (max-width: 910px) {
-  body {
-    &#bsor {
-      padding-top: 150px;
+      #navbar {
+        position: relative;
+        z-index: 1000;
+      }
+
+      .secondary-nav {
+        vertical-align: middle;
+
+        a, .login {
+          color: #00802b;
+        }
+
+        .login-signup {
+          display: inline;
+          color: #993;
+          width: 240px;
+          padding: 15px 0;
+        }
+
+      }
+
+      .login-container {
+        display: none;
+        position: absolute;
+        top: 55px;
+        width: 240px;
+        background-color: rgba(255,255,255,.9);
+        border: 1px solid #000;
+
+        .forgotpw {
+          padding: 8px 0;
+        }
+
+        .form-group {
+          width: 100%;
+          input {
+            width: 100%;
+          }
+        }
+
+      }
     }
   }
 }
 
 /* MOBILE */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   body {
     &#bsor {
       padding-top: 50px;
 
       /* NAV */
       .navbar-collapse {
+        padding: 20px;
+
         li {
           &.button { background-color: rgba(60, 80, 60, 1); }
         }
@@ -152,19 +189,21 @@ body {
       .secondary-nav {
         li {
           display: inline-block;
-          margin-left: 15px;
 
-          &.item-search, &.login {
+          &.item-search {
             margin: 0;
-            padding: 10px 20px;
+            padding: 20px 0;
             display: block;
             border-top: 1px solid #616161;
+          }
 
-            .forgotpw {
-              color: #9d9d9d;
-              padding-left: 10px
-            }
+          .login-container {
+            display: block;
+          }
 
+          .forgotpw {
+            color: #9d9d9d;
+            padding-left: 10px
           }
 
         }
