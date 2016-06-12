@@ -30,7 +30,13 @@
                  <a href="/item/{{ item.uid }}" class="scarf"><img class="img-rounded col-md-12 no-gutter" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a>
              {% endfor %}
 
+             {% if pd.authuser is defined %}
+              <div class="trade-status notinlist"></div>
+             {% endif %}
+
          </div>
+
+
         {% endfor %}
 
     </div>

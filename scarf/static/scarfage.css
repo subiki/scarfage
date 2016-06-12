@@ -1,7 +1,7 @@
 /* This is somewhat thrown together - feel free to refactor
 
   main.scss contains all global styling
-
+  #bsor - BootStrap OverRide
 */
 body {
   padding-top: 100px;
@@ -58,6 +58,7 @@ body {
     body#bsor form .button, body#bsor form button, body#bsor form input[type=submit] {
       background-repeat: repeat-x;
       background-color: #5cb85c;
+      background-image: none;
       border-color: #3e8f3e;
       color: #fff;
       border-radius: 4px; }
@@ -73,34 +74,63 @@ body {
       margin-bottom: 20px; }
 
 /* DESKTOP */
-@media (min-width: 911px) and (max-width: 1190px) {
+@media (min-width: 768px) {
   body#bsor {
-    padding-top: 100px; } }
-@media (min-width: 769px) and (max-width: 910px) {
-  body#bsor {
-    padding-top: 150px; } }
+    padding-top: 100px; }
+    body#bsor #navbar {
+      position: relative;
+      z-index: 1000; }
+    body#bsor .secondary-nav {
+      vertical-align: middle; }
+      body#bsor .secondary-nav a, body#bsor .secondary-nav .login {
+        cursor: pointer;
+        color: #00802b; }
+      body#bsor .secondary-nav .login-signup {
+        display: block;
+        color: #993;
+        width: 240px;
+        padding: 15px 0; }
+    body#bsor .login-container {
+      display: none;
+      position: absolute;
+      top: 55px;
+      width: 240px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 1px solid #000; }
+      body#bsor .login-container .forgotpw {
+        font-size: 12px;
+        padding: 8px; }
+      body#bsor .login-container .close {
+        margin-top: 5px; }
+      body#bsor .login-container .form-group {
+        width: 100%; }
+        body#bsor .login-container .form-group input {
+          width: 100%; } }
 /* MOBILE */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   body#bsor {
     padding-top: 50px;
     /* NAV */
     /* END NAV */ }
-    body#bsor .navbar-collapse li.button {
-      background-color: #3c503c; }
+    body#bsor .navbar-collapse {
+      padding: 20px; }
+      body#bsor .navbar-collapse li.button {
+        background-color: #3c503c; }
     body#bsor .main-nav li {
       display: inline-block;
       margin-left: 15px; }
     body#bsor .secondary-nav li {
-      display: inline-block;
-      margin-left: 15px; }
-      body#bsor .secondary-nav li.item-search, body#bsor .secondary-nav li.login {
+      display: inline-block; }
+      body#bsor .secondary-nav li.item-search {
         margin: 0;
-        padding: 10px 20px;
+        padding: 20px 0;
         display: block;
         border-top: 1px solid #616161; }
-        body#bsor .secondary-nav li.item-search .forgotpw, body#bsor .secondary-nav li.login .forgotpw {
-          color: #9d9d9d;
-          padding-left: 10px; }
+      body#bsor .secondary-nav li .login-container {
+        display: block; }
+      body#bsor .secondary-nav li .forgotpw {
+        color: #9d9d9d;
+        padding-left: 10px; }
     body#bsor .navbar-form {
       border: none;
       box-shadow: none;
@@ -114,9 +144,60 @@ body {
 /* END MOBILE */
 .scarf-entry .scarf {
   display: block;
-  width: 100%; }
+  max-width: 640px;
+  overflow: hidden; }
   .scarf-entry .scarf img {
-    max-width: 500px;
     width: 100%;
-    height: auto;
-    overflow: hidden; }
+    height: auto; }
+.scarf-entry .trade-status {
+  width: 20px;
+  height: 20px;
+  background-image: url("images/tradeicons.png"); }
+  .scarf-entry .trade-status.notinlist {
+    background-position: 0 0; }
+  .scarf-entry .trade-status.notinlist:hover:after {
+    content: "Not In List";
+    width: 100px;
+    display: block;
+    position: relative;
+    bottom: 30px;
+    border: 1px solid #333;
+    padding: 5px;
+    background-color: #fff;
+    opacity: .7; }
+  .scarf-entry .trade-status.have {
+    background-position: 0 -20px; }
+  .scarf-entry .trade-status.have:hover:after {
+    content: "Owned";
+    width: 100px;
+    display: block;
+    position: relative;
+    bottom: 30px;
+    border: 1px solid #333;
+    padding: 5px;
+    background-color: #fff;
+    opacity: .7; }
+  .scarf-entry .trade-status.trade {
+    background-position: 0 -40px; }
+  .scarf-entry .trade-status.trade:hover:after {
+    content: "Will Trade";
+    width: 100px;
+    display: block;
+    position: relative;
+    bottom: 30px;
+    border: 1px solid #333;
+    padding: 5px;
+    background-color: #fff;
+    opacity: .7; }
+  .scarf-entry .trade-status.want {
+    background-position: 0 -60px; }
+  .scarf-entry .trade-status.want:hover:after {
+    content: "Want";
+    width: 100px;
+    display: block;
+    position: relative;
+    bottom: 30px;
+    border: 1px solid #333;
+    padding: 5px;
+    background-color: #fff;
+    opacity: .7; }
