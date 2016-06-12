@@ -77,6 +77,15 @@ body {
         margin-bottom: 5px;
       }
 
+      input[type="text"] {
+        -webkit-border-radius: 0px;
+        -moz-border-radius: 0px;
+        border-radius: 0px;
+        background-repeat: no-repeat;
+        border: 1px solid #000;
+        background-color: #fff;
+      }
+
       .button, button, input[type=submit] {
         background-repeat: repeat-x;
         background-color: #5cb85c;
@@ -85,6 +94,19 @@ body {
         color: #fff;
         border-radius: 4px;
 
+      }
+
+      .search-btn {
+        width: 34px;
+        height: 36px;
+        background: url('images/buttons/search.png');
+        vertical-align: middle;
+        position: relative;
+        right: 10px;
+        bottom: 1px;
+        background-repeat: no-repeat;
+        border: none;
+        display: inline-block;
       }
 
     }
@@ -127,9 +149,15 @@ body {
       .secondary-nav {
         vertical-align: middle;
 
+        .item-search {
+          input[type="text"] {
+            height: 36px;
+          }
+        }
+
         a, .login {
           cursor: pointer;
-          color: #00802b;
+          color: #5cb85c;
         }
 
         .login-signup {
@@ -201,10 +229,21 @@ body {
             padding: 20px 0;
             display: block;
             border-top: 1px solid #616161;
+
+            input[type="text"] {
+              width: 72%;
+              display: inline-block;
+            }
+
+            .search-btn {
+              vertical-align: middle;
+            }
+
           }
 
           .login-container {
             display: block;
+            width: 89%;
           }
 
           .forgotpw {

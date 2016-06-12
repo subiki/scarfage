@@ -53,16 +53,14 @@
               <form class="navbar-form" role="form" action="/item/search" method="GET">
                 <div class="form-group">
                     <input type="text" placeholder="Item Search" class="form-control" name="query">
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-success">Search</button>
+                    <button type="submit" class="search-btn" />
                 </div>
               </form>
             </li>
           </ul>
-          <ul class="nav navbar-nav secondary-nav">
+          <ul class="nav navbar-nav secondary-nav row">
 
-              <li class="row">
+              <li class="auth">
 
                 {% if pd.authuser is defined %}
                   <div class="profile"><a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a></div>
@@ -73,8 +71,8 @@
                     <span href="" onclick="closeLogin();" class="login">Login</span> &nbsp; | &nbsp; <a href="/newuser">Sign up</a>
                 </div>
 
-                <div class="login-container col-md-12">
-                  <form class="navbar-form no-gutter" role="form" action="/login" method="post">
+                <div class="login-container">
+                  <form class="navbar-form" role="form" action="/login" method="post">
                     <div class="form-group">
                         <input type="text" placeholder="Username" class="form-control" name="username">
                     </div>
