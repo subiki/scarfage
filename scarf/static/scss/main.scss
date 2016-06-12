@@ -128,11 +128,12 @@ body {
         vertical-align: middle;
 
         a, .login {
+          cursor: pointer;
           color: #00802b;
         }
 
         .login-signup {
-          display: inline;
+          display: block;
           color: #993;
           width: 240px;
           padding: 15px 0;
@@ -149,7 +150,12 @@ body {
         border: 1px solid #000;
 
         .forgotpw {
-          padding: 8px 0;
+          font-size: 12px;
+          padding: 8px;
+        }
+
+        .close {
+          margin-top: 5px;
         }
 
         .form-group {

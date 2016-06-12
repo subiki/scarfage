@@ -83,9 +83,10 @@ body {
     body#bsor .secondary-nav {
       vertical-align: middle; }
       body#bsor .secondary-nav a, body#bsor .secondary-nav .login {
+        cursor: pointer;
         color: #00802b; }
       body#bsor .secondary-nav .login-signup {
-        display: inline;
+        display: block;
         color: #993;
         width: 240px;
         padding: 15px 0; }
@@ -97,7 +98,10 @@ body {
       background-color: rgba(255, 255, 255, 0.9);
       border: 1px solid #000; }
       body#bsor .login-container .forgotpw {
-        padding: 8px 0; }
+        font-size: 12px;
+        padding: 8px; }
+      body#bsor .login-container .close {
+        margin-top: 5px; }
       body#bsor .login-container .form-group {
         width: 100%; }
         body#bsor .login-container .form-group input {
