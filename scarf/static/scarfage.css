@@ -131,6 +131,8 @@ body {
       body#bsor .secondary-nav li .forgotpw {
         color: #9d9d9d;
         padding-left: 10px; }
+      body#bsor .secondary-nav li .close {
+        display: none; }
     body#bsor .navbar-form {
       border: none;
       box-shadow: none;
