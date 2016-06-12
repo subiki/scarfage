@@ -4,4 +4,6 @@ tests.log
 venv/*
 scarf/static/scss/.sass-cache
 .sass-cache
-node_modules	
+.gulp-scss-cache
+node_modules
+
