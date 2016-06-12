@@ -149,6 +149,10 @@ body {
       .secondary-nav {
         vertical-align: middle;
 
+        li {
+          color: #993;
+        }
+
         .item-search {
           input[type="text"] {
             height: 36px;
@@ -160,12 +164,18 @@ body {
           color: #5cb85c;
         }
 
-        .login-signup {
+        .login-signup, .profile, .logout {
           display: block;
           color: #993;
           width: 240px;
           padding: 15px 0;
         }
+
+         .profile, .logout {
+
+           width: auto;
+           display: inline-block;
+         }
 
       }
 
@@ -223,9 +233,16 @@ body {
       .secondary-nav {
         li {
           display: inline-block;
+          color: #993;
 
           &.auth {
             display: block;
+
+            a, .login {
+              cursor: pointer;
+              color: #5cb85c;
+            }
+
           }
 
           &.item-search {

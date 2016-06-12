@@ -63,8 +63,9 @@
               <li class="auth">
 
                 {% if pd.authuser is defined %}
-                  <div class="profile"><a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a></div>
-                  <div class="hidden-xs"><a href="/logout">Logout</a></div>
+                  <span class="profile"><a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a></span>
+                   &nbsp; | &nbsp;
+                  <span class="logout"><a href="/logout">Logout</a></span>
                 {% else %}
 
                 <div class="login-signup hidden-xs">

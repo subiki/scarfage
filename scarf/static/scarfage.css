@@ -100,16 +100,21 @@ body {
       z-index: 1000; }
     body#bsor .secondary-nav {
       vertical-align: middle; }
+      body#bsor .secondary-nav li {
+        color: #993; }
       body#bsor .secondary-nav .item-search input[type="text"] {
         height: 36px; }
       body#bsor .secondary-nav a, body#bsor .secondary-nav .login {
         cursor: pointer;
         color: #5cb85c; }
-      body#bsor .secondary-nav .login-signup {
+      body#bsor .secondary-nav .login-signup, body#bsor .secondary-nav .profile, body#bsor .secondary-nav .logout {
         display: block;
         color: #993;
         width: 240px;
         padding: 15px 0; }
+      body#bsor .secondary-nav .profile, body#bsor .secondary-nav .logout {
+        width: auto;
+        display: inline-block; }
     body#bsor .login-container {
       display: none;
       position: absolute;
@@ -140,9 +145,13 @@ body {
       display: inline-block;
       margin-left: 15px; }
     body#bsor .secondary-nav li {
-      display: inline-block; }
+      display: inline-block;
+      color: #993; }
       body#bsor .secondary-nav li.auth {
         display: block; }
+        body#bsor .secondary-nav li.auth a, body#bsor .secondary-nav li.auth .login {
+          cursor: pointer;
+          color: #5cb85c; }
       body#bsor .secondary-nav li.item-search {
         margin: 0;
         padding: 20px 0;
