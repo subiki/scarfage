@@ -5,7 +5,7 @@
 
 // Load plugins
 var gulp = require('gulp'),
-    sass = require('gulp-ruby-sass'),
+    scss = require('gulp-scss'),
     watch = require('gulp-watch'),
     autoprefixer = require('gulp-autoprefixer'),
     cssnano = require('gulp-cssnano'),
@@ -21,8 +21,9 @@ var gulp = require('gulp'),
 
 // Styles
 gulp.task('styles', function() {
-  return sass('scarf/static/scss/main.scss', { style: 'expanded' })
+  return gulp.src('scarf/static/scss/*.scss')
     .pipe(watch('scarf/static/scss/*.scss'))
+    .pipe(scss())
     .pipe(autoprefixer('last 2 version'))
     .pipe(rename('scarfage.css'))
     .pipe(gulp.dest('scarf/static'))
