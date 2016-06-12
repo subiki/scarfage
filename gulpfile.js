@@ -22,9 +22,8 @@ var gulp = require('gulp'),
 // Styles
 gulp.task('styles', function() {
   return gulp.src('scarf/static/scss/*.scss')
-    .pipe(watch('scarf/static/scss/*.scss'))
+    .pipe(watch('scarf/static/**/*.scss'))
     .pipe(scss())
-    .pipe(autoprefixer('last 2 version'))
     .pipe(rename('scarfage.css'))
     .pipe(gulp.dest('scarf/static'))
     .pipe(rename({ suffix: '.min' }))
@@ -61,25 +60,17 @@ gulp.task('clean', function() {
 
 // Default task
 gulp.task('default', ['clean'], function() {
-  gulp.start('styles', 'scripts', 'images');
+  gulp.start('styles', 'scripts', 'images', 'watch');
 });
 
 // Watch
 gulp.task('watch', function() {
-
-  // Watch .scss files
-  gulp.watch('scarf/static/scss/*.scss', ['styles']);
+  watch('scarf/static/scss/*.scss', ['styles']);
 
   // Watch .js files
   gulp.watch('scarf/static/*.js', ['scripts']);
 
   // Watch image files
   gulp.watch('scarf/static/images/*', ['images']);
-
-  // Create LiveReload server
-  livereload.listen();
-
-  // Watch any files in dist/, reload on change
-  gulp.watch(['dist/**']).on('change', livereload.changed);
 
 });

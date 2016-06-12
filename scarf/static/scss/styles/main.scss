@@ -224,6 +224,10 @@ body {
         li {
           display: inline-block;
 
+          &.auth {
+            display: block;
+          }
+
           &.item-search {
             margin: 0;
             padding: 20px 0;
@@ -231,7 +235,7 @@ body {
             border-top: 1px solid #616161;
 
             input[type="text"] {
-              width: 75%;
+              width: 78%;
               display: inline-block;
             }
 
