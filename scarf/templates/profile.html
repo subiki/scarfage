@@ -222,7 +222,6 @@
         {% for pm in pd.profileuser.messages() %}
         {% if pm.from_user != pd.authuser.username %}
         <tr>
-
             <td>
             <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a>
             </td>
@@ -230,6 +229,7 @@
             <td>{{ pd.localtime(pm.sent) }}</td>
 
             <td>
+            {% if pm.status %} <span class="glyphicon glyphicon-transfer"></span> {% endif %} 
             <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">
             {% if pm.read_status(pd.authuser.username) == False %}
             <b>{{ pm.subject }}</b>
@@ -264,7 +264,9 @@
             <td>{{ pd.localtime(pm.sent) }}</td>
 
             <td>
+            {% if pm.status %} <span class="glyphicon glyphicon-transfer"></span> {% endif %} 
             <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">{{ pm.subject }}</a>
+            {% if pm.status %}  {% endif %} 
             </td>
 
             <td>
