@@ -1,6 +1,6 @@
 from scarf import app
 from flask import flash, render_template, session, request, redirect
-from core import NoItem, NoUser, SiteUser, SiteItem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, PrivateMessage, TradeMessage, messagestatus, TradeItem, tradeitemstatus, deobfuscate, obfuscate
+from core import NoItem, NoUser, SiteUser, SiteItem, redirect_back, item_by_uid, user_by_uid, send_pm, add_tradeitem, PrivateMessage, TradeMessage, tradestatus, TradeItem, tradeitemstatus, deobfuscate, obfuscate
 import core
 from main import page_not_found, PageData
 
@@ -53,7 +53,7 @@ def accepttradeitem(username, messageid, action, item=None):
 def trade(username, itemid=None, messageid=None):
     pd = PageData()
 
-    status = messagestatus['unread_trade']
+    status = tradestatus['active_trade']
 
     try:
         pd.tradeuser = SiteUser.create(username)
@@ -73,7 +73,7 @@ def trade(username, itemid=None, messageid=None):
                 if messageid:
                     parent = core.deobfuscate(messageid)
                     messageid = parent
-                    status = messagestatus['unread_pm']
+                    status = None
                     flashmsg = 'Message sent!'
                 else:
                     parent = None

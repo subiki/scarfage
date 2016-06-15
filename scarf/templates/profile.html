@@ -7,7 +7,6 @@
   <li><a data-toggle="pill" href="#collections">Collections</a></li>
   <li><a data-toggle="pill" href="#messages">Messages</a></li>
   {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
-  <li><a data-toggle="pill" href="#trades">Trades</a></li>
   <li><a data-toggle="pill" href="#prefs">Preferences</a></li>
   <li><a href="/logout">Logout</a></li>
   {% endif %}
@@ -197,58 +196,6 @@
           </div>
         </form>
   </div>
-
-  <div id="trades" class="tab-pane fade">
-        <div class="page-header"><h4>Trade Requests</h4></div>
-        <table class="table table-condensed">
-        <tr>
-        <th>Trade status</th>
-        <th>Subject</th>
-        <th>From</th>
-        <th>To</th>
-        <th>Date</th>
-        <th></th>
-        </tr>
-
-        {% for pm in pd.profileuser.messages() %}
-        {% if pm.status <= pm.messagestatus['cancelled_trade'] %}
-            <tr>
-
-            <td>
-            {% if pm.status == pm.messagestatus['unread_trade'] and pm.from_user != pd.authuser.username %}
-            <b>New</b>
-            {% elif pm.status == pm.messagestatus['settled_trade'] %}
-            Closed
-            {% elif pm.status == pm.messagestatus['rejected_trade'] %}
-            Rejected
-            {% elif pm.status == pm.messagestatus['cancelled_trade'] %}
-            Cancelled
-            {% else %}
-            Open
-            {% endif %}
-            </td>
-
-            <td>{{ pm.subject }}</td>
-
-            <td>
-            <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a>
-            </td>
-
-            <td>
-            <a href="/user/{{ pm.to_user }}">{{ pm.to_user }}</a><br />
-            </td>
-
-            <td>{{ pd.localtime(pm.sent) }}</td>
-
-            <td>
-            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">View</a></br>
-            </td>
-
-            </tr>
-        {% endif %}
-        {% endfor %}
-        </table>
-  </div>
   {% endif %}
 
   <div id="messages" class="tab-pane fade">
@@ -273,7 +220,7 @@
         </tr>
 
         {% for pm in pd.profileuser.messages() %}
-        {% if pm.from_user != pd.authuser.username and pm.status >= pm.messagestatus['unread_pm'] %}
+        {% if pm.from_user != pd.authuser.username %}
         <tr>
 
             <td>
@@ -284,7 +231,7 @@
 
             <td>
             <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">
-            {% if pm.status == pm.messagestatus['unread_pm'] %}
+            {% if pm.read_status(pd.authuser.username) == False %}
             <b>{{ pm.subject }}</b>
             {% else %}
             {{ pm.subject }}
@@ -307,7 +254,7 @@
         </tr>
 
         {% for pm in pd.profileuser.messages() %}
-        {% if pm.from_uid == pd.authuser.uid and pm.status >= pm.messagestatus['unread_pm'] %}
+        {% if pm.from_uid == pd.authuser.uid %}
             <tr>
 
             <td>

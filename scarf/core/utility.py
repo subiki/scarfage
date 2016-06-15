@@ -1,5 +1,6 @@
 import bleach
 import base64
+import hashlib
 from urlparse import urlparse, urljoin
 from flask import request, redirect, url_for
 from werkzeug.routing import BuildError
@@ -35,6 +36,24 @@ def escape_html(text):
     """
 
     return bleach.clean(text)
+
+def digest(string):
+    """
+    Hash a string
+
+    :param string: String to hash
+    :return: hashlib.sha384(string).hexdigest()
+    """
+    return hashlib.sha384(string).hexdigest()
+
+def hashize(string):
+    """
+    Hash and base 64 encode a string
+
+    :param string: String to encode
+    :return: base64.b64encode(hashlib.sha384(string).digest())
+    """
+    return base64.b64encode(hashlib.sha384(string).digest())
 
 def xor_strings(s,t):
     """

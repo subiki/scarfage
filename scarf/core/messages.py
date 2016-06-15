@@ -2,15 +2,13 @@ import datetime
 
 from flask import render_template
 
+from keyvalue import SiteKey, check_key_exists, new_key
 from sql import upsert, doupsert, doquery, Tree
 from mail import send_mail
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 from utility import obfuscate, deobfuscate
 import users
 import items
-
-tradeitemstatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
-messagestatus = {'unread_trade': 0, 'active_trade': 1, 'complete_trade': 2, 'settled_trade': 3, 'rejected_trade': 4, 'cancelled_trade': 5, 'unread_pm': 10, 'read_pm': 11}
 
 privatemessage_cache = dict()
 class PrivateMessage(object):
@@ -20,8 +18,6 @@ class PrivateMessage(object):
         return cls(messageid)
 
     def __init__(self, messageid):
-        self.messagestatus = messagestatus
-
         sql = 'select * from messages where uid = %(uid)s;'
         result = doquery(sql, {'uid': messageid})
 
@@ -32,7 +28,7 @@ class PrivateMessage(object):
             self.to_uid = result[0][2]
             self.subject = result[0][3]
             self.message = result[0][4]
-            self.status = result[0][5]
+            self.status = result[0][5] # trade status, None for PMs 
             self.parentid = result[0][6]
             self.parentid_obfuscated = obfuscate(result[0][6])
             self.sent = result[0][7]
@@ -54,22 +50,25 @@ class PrivateMessage(object):
         else:
             return None
 
-    def read(self):
-        status = None
-        if self.status == messagestatus['unread_pm']:
-            status = messagestatus['read_pm']
-        elif self.status == messagestatus['unread_trade']:
-            status = messagestatus['active_trade']
+    def read(self, userid):
+        new_key("messagereadstatus_{}_{}".format(self.uid, userid), '')    
 
-        if status:
-            return self.setstatus(status)
+    def unread(self, userid):
+        o = SiteKey("messagereadstatus_{}_{}".format(self.uid, userid))    
+        o.delete()
 
-    def unread(self):
-        if self.status == messagestatus['read_pm']:
-            return self.setstatus(messagestatus['unread_pm'])
-        elif self.status >= messagestatus['unread_trade']:
-            return self.setstatus(messagestatus['unread_trade'])
-        return
+    def read_status(self, userid):
+        return check_key_exists("messagereadstatus_{}_{}".format(self.uid, userid))
+
+    def delete(self, userid):
+        new_key("messagedeletestatus_{}_{}".format(self.uid, userid), '')    
+
+    def undelete(self, userid):
+        o = SiteKey("messagedeletestatus_{}_{}".format(self.uid, userid))    
+        o.delete()
+
+    def delete_status(self, userid):
+        return check_key_exists("messagedeletestatus_{}_{}".format(self.uid, userid))
 
     @memoize_with_expiry(privatemessage_cache, cache_persist)
     def replies(self):
@@ -98,10 +97,10 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
 
     message = render_template('email/pm_notify.html', to_user=email_user, email=email_user.email, from_user=from_user, message=message, status=status, parent=parent, messageid=obfuscate(messageid))
 
-    if status >= 10:
-        subject = '[Scarfage] (PM) ' + subject
-    else:
+    if status:
         subject = '[Scarfage] (Trade) ' + subject
+    else:
+        subject = '[Scarfage] (PM) ' + subject
 
     send_mail(recipient=email_user.email, subject=subject, message=message)
 
@@ -128,6 +127,8 @@ class TradeItem(object):
     def reject(self):
         return self.setstatus(tradeitemstatus['rejected'])
 
+tradeitemstatus = {'unmarked': 0, 'rejected': 1, 'accepted': 2}
+tradestatus = {'reserved': 0, 'active_trade': 1, 'complete_trade': 2, 'settled_trade': 3, 'rejected_trade': 4, 'cancelled_trade': 5}
 trademessage_cache = dict()
 class TradeMessage(PrivateMessage):
     @classmethod
@@ -138,6 +139,7 @@ class TradeMessage(PrivateMessage):
     def __init__(self, messageid):
         super(self.__class__, self).__init__(messageid)
         self.tradeitemstatus = tradeitemstatus
+        self.tradestatus = tradestatus
 
         self.items = []
 
@@ -159,17 +161,17 @@ class TradeMessage(PrivateMessage):
             if (ti.acceptstatus != tradeitemstatus['accepted']):
                 complete = False
 
-        if complete == True and self.status < messagestatus['settled_trade']:
-            self.status = messagestatus['complete_trade']
+        if complete == True and self.status < tradestatus['settled_trade']:
+            self.status = tradestatus['complete_trade']
 
     def settle(self):
-        return self.setstatus(messagestatus['settled_trade'])
+        return self.setstatus(tradestatus['settled_trade'])
 
     def reject(self):
-        return self.setstatus(messagestatus['rejected_trade'])
+        return self.setstatus(tradestatus['rejected_trade'])
 
     def cancel(self):
-        return self.setstatus(messagestatus['cancelled_trade'])
+        return self.setstatus(tradestatus['cancelled_trade'])
 
 def add_tradeitem(itemid, messageid, userid, acceptstatus):
     sql = "insert into tradelist (itemid, messageid, userid, acceptstatus) values (%(itemid)s, %(messageid)s, %(userid)s, %(acceptstatus)s);"

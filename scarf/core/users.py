@@ -1,7 +1,6 @@
 import datetime
 import base64
 import bcrypt
-import hashlib
 import logging
 #import hmac
 import json
@@ -17,6 +16,7 @@ from mail import send_mail
 from memoize import memoize_with_expiry, cache_persist, long_cache_persist
 import items
 import messages 
+import utility
 
 logger = logging.getLogger(__name__)
 
@@ -300,10 +300,10 @@ class SiteUser(object):
         result = doquery(sql, { 'fromuid': self.uid, 'touid': self.uid })
 
         for item in result:
-            if item[1] >= messages.messagestatus['unread_pm']:
-                message = messages.PrivateMessage.create(item[0])
-            else:
+            if item[1]:
                 message = messages.TradeMessage.create(item[0])
+            else:
+                message = messages.PrivateMessage.create(item[0])
 
             ret.append(message)
 
@@ -423,24 +423,15 @@ class SiteUser(object):
         doquery(sql, {"uid": self.uid})
 
 
-def hashize(string):
-    """
-    Hash and base 64 encode a string
-
-    :param string: String to encode
-    :return: base64.b64encode(hashlib.sha384(string).digest())
-    """
-    return base64.b64encode(hashlib.sha384(string).digest())
-
 def gen_pwhash(password):
     """
     Generate a password hash for the given cleartext
 
     :param password: Cleartext password to hash
-    :return: bcrypt.hashpw(hashize(password), bcrypt.gensalt(config.BCRYPT_ROUNDS))
+    :return: bcrypt.hashpw(utility.hashize(password), bcrypt.gensalt(config.BCRYPT_ROUNDS))
     """
 
-    return bcrypt.hashpw(hashize(password), bcrypt.gensalt(config.BCRYPT_ROUNDS))
+    return bcrypt.hashpw(utility.hashize(password), bcrypt.gensalt(config.BCRYPT_ROUNDS))
 
 def verify_pw(password, pwhash):
     """
@@ -451,7 +442,7 @@ def verify_pw(password, pwhash):
     :return: True or False
     """
 
-    if (bcrypt.hashpw(hashize(password), pwhash) == pwhash):
+    if (bcrypt.hashpw(utility.hashize(password), pwhash) == pwhash):
         return True
 
     return False
@@ -460,7 +451,7 @@ def verify_pw(password, pwhash):
 python 2.7.7+ only
 
 def verify_pw(password, pwhash):
-    if (hmac.compare_digest(bcrypt.hashpw(hashize(password), pwhash), pwhash)):
+    if (hmac.compare_digest(bcrypt.hashpw(utility.hashize(password), pwhash), pwhash)):
         return True
 
     return False

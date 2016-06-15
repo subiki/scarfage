@@ -8,3 +8,4 @@ from items import *
 from users import *
 from stats import *
 from strings import *
+from keyvalue import *

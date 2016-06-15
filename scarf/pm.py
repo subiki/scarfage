@@ -1,5 +1,5 @@
 from scarf import app
-from core import NoItem, NoUser, SiteUser, redirect_back, user_by_uid, send_pm, PrivateMessage, messagestatus, TradeMessage, deobfuscate, obfuscate
+from core import NoItem, NoUser, SiteUser, redirect_back, user_by_uid, send_pm, PrivateMessage, tradestatus, TradeMessage, deobfuscate, obfuscate
 from main import page_not_found, PageData
 
 from flask import flash, render_template, session, request, redirect
@@ -15,12 +15,9 @@ def viewpm(username, messageid):
     if 'username' in session:
         pm = TradeMessage.create(dmid)
 
-        if pm.messagestatus < messagestatus['unread_pm']:
-            pm = TradeMessage.create(messageid)
-
         if session['username'] is pm.to_user:
             pd.tradeuser = pm.from_user
-            pm.read()
+            pm.read(pm.to_user)
         else:
             pd.tradeuser = pm.to_user
 
@@ -49,7 +46,7 @@ def pm(username):
                 parent = None
 
             if message and subject:
-                messageid = send_pm(pd.authuser.uid, pd.recipient.uid, subject, message, messagestatus['unread_pm'], parent)
+                messageid = send_pm(pd.authuser.uid, pd.recipient.uid, subject, message, None, parent)
 
                 if messageid:
                     flash('Message sent!')
