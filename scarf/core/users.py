@@ -188,7 +188,10 @@ class SiteUserProfile(object):
                  from user_profiles
                  where uid = %(uid)s; """
         result = doquery(sql, { 'uid': self.uid })
-        return result[0][0]
+        try:
+            return result[0][0]
+        except IndexError:
+            return None
 
     def new_avatar(self, image):
         profile_cache = dict()

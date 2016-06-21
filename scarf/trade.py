@@ -38,8 +38,8 @@ def accepttradeitem(username, messageid, action, item=None):
             elif action == "reject":
                 t.reject()
             elif action == "reopen":
-                t.unread()
-                t.read()
+                # FIXME
+                pass
             elif action == "add":
                 flash('Coming soon...')
                 return redirect_back('/')

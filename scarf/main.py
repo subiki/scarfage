@@ -118,7 +118,7 @@ def request_wants_json():
         request.accept_mimetypes['text/html']
 
 @app.errorhandler(404)
-def page_not_found(error):
+def page_not_found(error=None):
     """
     Error handler for 404 errors
 
@@ -135,7 +135,7 @@ def page_not_found(error):
     return render_template('error.html', pd=pd), 404
 
 @app.errorhandler(500)
-def own_goal(error):
+def own_goal(error=None):
     """
     Error handler for 500 errors
 
