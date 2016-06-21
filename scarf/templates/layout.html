@@ -65,7 +65,13 @@
               <li class="row">
 
                 {% if pd.authuser is defined %}
-                  <div class="profile"><a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a></div>
+                  <div class="profile">
+                    <a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a>
+                    <a href="/user/{{ pd.authuser.username }}#messages">
+                    {% if pd.authuser.mwi()[0] %} | Unread messages: {{ pd.authuser.mwi()[0] }}{% endif %}
+                    {% if pd.authuser.mwi()[1] %} | Unread trades: {{ pd.authuser.mwi()[1] }}{% endif %}
+                    </a>
+                  </div>
                   <div class="hidden-xs"><a href="/logout">Logout</a></div>
                 {% else %}
 

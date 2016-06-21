@@ -287,6 +287,40 @@ class SiteUser(object):
         """
         return OwnWant(itemid, self.uid)
 
+    mwi_cache = dict()
+    @memoize_with_expiry(mwi_cache, long_cache_persist)
+    def mwi(self):
+        """
+        Get a count of unread messages and trades for a user
+
+        :return: (unread messages, unread trades)
+        """
+
+        num_messages = 0
+        num_trades = 0
+
+        sql = """select uid,status from messages
+                 where touserid = %(touid)s
+                 order by sent desc limit 100;"""
+
+        result = doquery(sql, { 'touid': self.uid })
+
+        for item in result:
+            message = messages.TradeMessage.create(item[0])
+
+            if message.delete_status(self.username):
+                continue
+
+            read = message.read_status(self.username)
+
+            if not read:
+                if item[1]:
+                    num_trades = num_trades + 1
+                else:
+                    num_messages = num_messages + 1
+
+        return (num_messages, num_trades)
+
     @memoize_with_expiry(message_cache, cache_persist)
     def messages(self, trash=False):
         """
@@ -296,6 +330,7 @@ class SiteUser(object):
         :return: list of PrivateMessage and TradeMessage objects
         """
 
+        mwi_cache = dict()
         ret = list()
         sql = """select uid,status from messages
                  where fromuserid = %(fromuid)s or touserid = %(touid)s
@@ -309,12 +344,11 @@ class SiteUser(object):
             else:
                 message = messages.PrivateMessage.create(item[0])
 
-            keep = True
-            if message.delete_status(self.username):
-                keep = False
+            deleted = message.delete_status(self.username)
+
             if trash:
-                keep = not keep
-            if keep:
+                deleted = not deleted
+            if not deleted:
                 ret.append(message)
 
         return ret
