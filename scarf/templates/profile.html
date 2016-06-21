@@ -214,6 +214,7 @@
 
         <table class="table table-condensed">
         <tr>
+            <th></th>
             <th>From</th>
             <th>Date</th>
             <th>Subject</th>
@@ -222,9 +223,9 @@
         {% for pm in pd.profileuser.messages() %}
         {% if pm.from_user != pd.authuser.username %}
         <tr>
-            <td>
-            <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a>
-            </td>
+            <td> <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}/delete"> <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> </a> </td> 
+
+            <td> <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a> </td>
 
             <td>{{ pd.localtime(pm.sent) }}</td>
 
@@ -248,6 +249,7 @@
 
         <table class="table table-condensed">
         <tr>
+            <th></th>
             <th>To</th>
             <th>Date</th>
             <th>Subject</th>
@@ -256,6 +258,8 @@
         {% for pm in pd.profileuser.messages() %}
         {% if pm.from_uid == pd.authuser.uid %}
             <tr>
+
+            <td> <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}/delete"> <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> </a> </td> 
 
             <td>
             <a href="/user/{{ pm.to_user }}">{{ pm.to_user }}</a><br />

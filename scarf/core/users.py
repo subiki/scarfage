@@ -288,10 +288,11 @@ class SiteUser(object):
         return OwnWant(itemid, self.uid)
 
     @memoize_with_expiry(message_cache, cache_persist)
-    def messages(self):
+    def messages(self, trash=False):
         """
         Get all trades and private messages for a user
 
+        :param trash: Only show deleted messages. Permanent deletion is not currently implemented.
         :return: list of PrivateMessage and TradeMessage objects
         """
 
@@ -308,7 +309,13 @@ class SiteUser(object):
             else:
                 message = messages.PrivateMessage.create(item[0])
 
-            ret.append(message)
+            keep = True
+            if message.delete_status(self.username):
+                keep = False
+            if trash:
+                keep = not keep
+            if keep:
+                ret.append(message)
 
         return ret
 
