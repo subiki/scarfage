@@ -77,13 +77,22 @@ def uid_by_item(item):
     except IndexError:
         return
 
-def item_search(query):
-    sql = 'select uid from items where name like %(query)s;'
-    result = doquery(sql, {'query': '%{}%'.format(query)})
+def item_search(query, limit=10, offset=0):
+    ret = dict()
+    ret['items'] = list()
 
-    ret = list()
+    sql = 'select count(*) from items where name like %(query)s;'
+    ret['maxresults'] = doquery(sql, {'query': '%{}%'.format(query)})[0][0]
+
+    if ret['maxresults'] == 0:
+        return ret
+
+    sql = 'select uid from items where name like %(query)s limit %(limit)s offset %(offset)s;'
+    result = doquery(sql, {'query': '%{}%'.format(query), 'limit': limit, 'offset': offset})
+
     for item in result:
-        ret.append(SiteItem.create(item[0]))
+        ret['items'].append(SiteItem.create(item[0]))
+
     return ret
 
 class ItemHist(object):

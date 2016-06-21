@@ -243,18 +243,41 @@ def untag_item(item_id, tag_ob):
     item.remove_tag(pd.decode(tag_ob))
     return redirect('/item/' + str(item.uid))
 
-@app.route('/item/search', methods=['GET', 'POST'])
+@app.route('/item/search')
 @nocache
 def searchitem():
-    pd = PageData()
-    if request.method == 'POST':
-        if 'query' in request.form:
-            pd.query = request.form['query']
-    else:
-        pd.query = request.args.get('query')
+    """
+    :URL: /item/search?page=<page>&limit=<max results>&query=<search query>
 
-    pd.results = core.item_search(pd.query)
-    if len(pd.results) == 0:
+    :Method: GET
+
+    Setting the accept:application/json header will return JSON. (currently unimplemented)
+    """
+
+    pd = PageData()
+    pd.query = request.args.get('query')
+    pd.limit = request.args.get('limit')
+    pd.page = request.args.get('page')
+
+    if not pd.limit:
+        pd.limit = 20
+    else:
+        pd.limit = int(pd.limit)
+
+    if not pd.page:
+        pd.page = 1
+    else:
+        pd.page = int(pd.page)
+
+    offset = (pd.page - 1) * pd.limit
+
+    results = core.item_search(pd.query, pd.limit, offset)
+
+    pd.results = results['items']
+    pd.num_results = results['maxresults']
+    pd.num_pages = pd.num_results / pd.limit
+
+    if pd.num_results == 0:
         pd.results = [None]
 
     return render_template('search.html', pd=pd)

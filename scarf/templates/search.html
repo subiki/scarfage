@@ -8,6 +8,24 @@
 <div id="search" class="col-md-12">
 <div class="page-heading"><h3>Search Results for "{{pd.query}}"</h3></div>
 
+{{ pd.num_results }} items found, {{ pd.limit }} results per page.<br>
+
+{% if pd.page > 1 %}
+<a href="/item/search?page={{pd.page - 1}}&limit={{pd.limit}}&query={{pd.query}}">Previous</a>
+{% endif %}
+
+{% for page in range(1, pd.num_pages + 1) %}
+    {% if page == pd.page %}
+        {{ page }}
+    {% else %}
+        <a href="/item/search?page={{page}}&limit={{pd.limit}}&query={{pd.query}}">{{ page }}</a>
+    {% endif %}
+{% endfor %}
+
+{% if pd.page < pd.num_pages %}
+<a href="/item/search?page={{pd.page + 1}}&limit={{pd.limit}}&query={{pd.query}}">Next</a>
+{% endif %}
+
 {% for item in pd.results %}
 {% if item == None %}
 No results.
