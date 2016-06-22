@@ -77,7 +77,7 @@ def uid_by_item(item):
     except IndexError:
         return
 
-def item_search(query, limit=10, offset=0):
+def item_search(query, limit=10, offset=0, sort='name'):
     ret = dict()
     ret['items'] = list()
 
@@ -87,7 +87,12 @@ def item_search(query, limit=10, offset=0):
     if ret['maxresults'] == 0:
         return ret
 
-    sql = 'select uid from items where name like %(query)s limit %(limit)s offset %(offset)s;'
+    sorts = {'name': 'name asc', 'added': 'added desc', 'modified': 'modified desc'}
+
+    if sort not in sorts.keys():
+        sort = 'name'
+
+    sql = 'select uid from items where name like %(query)s order by {} limit %(limit)s offset %(offset)s;'.format(sorts[sort])
     result = doquery(sql, {'query': '%{}%'.format(query), 'limit': limit, 'offset': offset})
 
     for item in result:
@@ -248,6 +253,7 @@ class SiteItem(object):
             images.append(image.uid)
 
         return dict(body=self.body(edit),
+                    uid=self.uid,
                     name=self.name,
                     description=self.description(),
                     images=images,
