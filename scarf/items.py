@@ -316,7 +316,7 @@ def searchitem():
 
     pd.results = results['items']
     pd.num_results = results['maxresults']
-    pd.num_pages = pd.num_results / pd.limit
+    pd.num_pages = -(-pd.num_results // pd.limit) # round up
 
     if pd.num_results == 0:
         pd.results = [None]
