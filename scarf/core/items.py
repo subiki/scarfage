@@ -243,9 +243,14 @@ class SiteItem(object):
         if not edit:
             edit = self.description()
 
+        images = list()
+        for image in self.images():
+            images.append(image.uid)
+
         return dict(body=self.body(edit),
                     name=self.name,
                     description=self.description(),
+                    images=images,
                     added=str(self.added),
                     modified=str(self.modified))
 

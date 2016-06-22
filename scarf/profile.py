@@ -3,6 +3,7 @@ import base64
 import logging
 import pytz 
 import datetime
+import json
 
 from scarf import app
 from core import redirect_back, SiteUser, NoUser, check_email, send_mail
@@ -187,6 +188,76 @@ def get_timezones():
         key = '{} {}'.format(offset, timezone)
         timezones[key] = timezone
     return timezones
+
+@app.route('/user/<username>/collection')
+def show_user_collection(username):
+    """
+    :URL: /user/<username>/collection
+
+    Query a user's collection and return JSON. Hidden items are not returned unless the user is requesting their own collection.. 
+
+    :Sample response:
+
+    .. code-block:: javascript
+    [
+        [
+            {
+                "added": "2016-05-21 04:05:01",
+                "body": "Original Cascadia",
+                "description": 472,
+                "images": [
+                    191
+                ],
+                "modified": "2016-05-25 00:06:31",
+                "name": "Cascadia GBW Fringe 2010"
+            },
+            {
+                "have": 1,
+                "hidden": 0,
+                "want": 0,
+                "willtrade": 0
+            }
+        ],
+        [
+            {
+                "added": "2016-05-22 17:02:15",
+                "body": "",
+                "description": 317,
+                "images": [
+                    364,
+                    365
+                ],
+                "modified": "2016-05-22 17:02:15",
+                "name": "Cascadia"
+            },
+            {
+                "have": 1,
+                "hidden": 0,
+                "want": 0,
+                "willtrade": 0
+            }
+        ]
+    ]
+    """
+ 
+    pd = PageData()
+
+    try:
+        user = SiteUser.create(username)
+    except NoUser:
+        return page_not_found()
+
+    collection = list()
+    for item in user.collection():
+        ownwant = user.query_collection(item.uid).values()
+
+        if ownwant['hidden'] == 1:
+            if not hasattr(pd, 'authuser') or pd.authuser.username != username:
+                continue
+
+        collection.append((item.values(), ownwant))
+
+    return json.dumps(collection)
 
 @app.route('/user/<username>')
 def show_user_profile(username):
