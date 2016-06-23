@@ -1,0 +1,1070 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scarf package &mdash; Scarfage 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Scarfage 0 documentation" href="index.html" />
+    <link rel="next" title="scarf.core package" href="scarf.core.html" />
+    <link rel="prev" title="Welcome to Scarfage’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="scarf-package">
+<h1>scarf package<a class="headerlink" href="#scarf-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="scarf.core.html">scarf.core package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="scarf.core.test.html">scarf.core.test package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="scarf.core.test.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scarf.core.test.html#module-scarf.core.test.test_blns">scarf.core.test.test_blns module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scarf.core.test.html#module-scarf.core.test.test_items">scarf.core.test.test_items module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scarf.core.test.html#module-scarf.core.test.test_users">scarf.core.test.test_users module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scarf.core.test.html#module-scarf.core.test">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#module-scarf.core.images">scarf.core.images module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#module-scarf.core.items">scarf.core.items module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#module-scarf.core.keyvalue">scarf.core.keyvalue module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#module-scarf.core.mail">scarf.core.mail module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#module-scarf.core.memoize">scarf.core.memoize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#module-scarf.core.messages">scarf.core.messages module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#module-scarf.core.sql">scarf.core.sql module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#module-scarf.core.stats">scarf.core.stats module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#module-scarf.core.strings">scarf.core.strings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#module-scarf.core.users">scarf.core.users module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#module-scarf.core.utility">scarf.core.utility module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.html#module-scarf.core">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-scarf.access">
+<span id="scarf-access-module"></span><h2>scarf.access module<a class="headerlink" href="#module-scarf.access" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.access.check_admin">
+<code class="descclassname">scarf.access.</code><code class="descname">check_admin</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.access.check_admin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to check if the user is an admin and redirect to the access denied page if they aren&#8217;t</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.access.check_level">
+<code class="descclassname">scarf.access.</code><code class="descname">check_level</code><span class="sig-paren">(</span><em>level</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.access.check_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to check the user&#8217;s access level</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>level</strong> &#8211; Minimum level to allow access</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True or False</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.access.check_mod">
+<code class="descclassname">scarf.access.</code><code class="descname">check_mod</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.access.check_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to check if the user is a moderator and redirect to the access denied page if they aren&#8217;t</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scarf.admin">
+<span id="scarf-admin-module"></span><h2>scarf.admin module<a class="headerlink" href="#module-scarf.admin" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.admin.admin_reset_pw">
+<code class="descclassname">scarf.admin.</code><code class="descname">admin_reset_pw</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.admin.admin_reset_pw" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/admin/users/&lt;user&gt;/resetpw</td>
+</tr>
+</tbody>
+</table>
+<p>Reset the password for a user. Must be an admin.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.admin.admin_set_accesslevel">
+<code class="descclassname">scarf.admin.</code><code class="descname">admin_set_accesslevel</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.admin.admin_set_accesslevel" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/admin/users/&lt;user&gt;/accesslevel/&lt;level&gt;</td>
+</tr>
+</tbody>
+</table>
+<p>Change a user&#8217;s access level. The user requesting the access level change must be more privileged
+than the level they are setting.</p>
+<p>Redirects back if there was an error, otherwise redirects to the user&#8217;s profile.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.admin.admin_users">
+<code class="descclassname">scarf.admin.</code><code class="descname">admin_users</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.admin.admin_users" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/admin</td>
+</tr>
+</tbody>
+</table>
+<p>Render the admin.html template</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.admin.editstring">
+<code class="descclassname">scarf.admin.</code><code class="descname">editstring</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.admin.editstring" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/admin/strings/edit</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Method:</th><td class="field-body">POST</td>
+</tr>
+</tbody>
+</table>
+<p>Update a SiteString object.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Only supports the welcome banner right now... not very useful.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scarf.config">
+<span id="scarf-config-module"></span><h2>scarf.config module<a class="headerlink" href="#module-scarf.config" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-scarf.image">
+<span id="scarf-image-module"></span><h2>scarf.image module<a class="headerlink" href="#module-scarf.image" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.image.delete_image">
+<code class="descclassname">scarf.image.</code><code class="descname">delete_image</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.image.delete_image" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/image/&lt;img_id&gt;/delete</td>
+</tr>
+</tbody>
+</table>
+<p>Redirect to a confirmation page to make sure you want to delete an image.</p>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">This should be re-done in javascript.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.image.flag_image">
+<code class="descclassname">scarf.image.</code><code class="descname">flag_image</code><span class="sig-paren">(</span><em>img_id</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.image.flag_image" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/image/&lt;img_id&gt;/flag</td>
+</tr>
+</tbody>
+</table>
+<p>Flag an image for review by a moderator.</p>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">Add support for a note and record who flagged it.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.image.newimg">
+<code class="descclassname">scarf.image.</code><code class="descname">newimg</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.image.newimg" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/newimg</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Method:</th><td class="field-body">POST</td>
+</tr>
+</tbody>
+</table>
+<p>Upload a new image.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.image.reallydelete_image">
+<code class="descclassname">scarf.image.</code><code class="descname">reallydelete_image</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.image.reallydelete_image" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/image/&lt;img_id&gt;/reallydelete</td>
+</tr>
+</tbody>
+</table>
+<p>Actually delete an image</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.image.serve_full">
+<code class="descclassname">scarf.image.</code><code class="descname">serve_full</code><span class="sig-paren">(</span><em>img_id</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.image.serve_full" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/image/&lt;img_id&gt;/full</td>
+</tr>
+</tbody>
+</table>
+<p>Retrieve the raw image and return it.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.image.show_image">
+<code class="descclassname">scarf.image.</code><code class="descname">show_image</code><span class="sig-paren">(</span><em>img_id</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.image.show_image" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/image/&lt;img_id&gt;</td>
+</tr>
+</tbody>
+</table>
+<p>Render a template for viewing an image.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scarf.items">
+<span id="scarf-items-module"></span><h2>scarf.items module<a class="headerlink" href="#module-scarf.items" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.items.delete_item">
+<code class="descclassname">scarf.items.</code><code class="descname">delete_item</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.items.delete_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.items.edititem">
+<code class="descclassname">scarf.items.</code><code class="descname">edititem</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.items.edititem" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.items.itemroot">
+<code class="descclassname">scarf.items.</code><code class="descname">itemroot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.items.itemroot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.items.reallydelete_item">
+<code class="descclassname">scarf.items.</code><code class="descname">reallydelete_item</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.items.reallydelete_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.items.revert_item_edit">
+<code class="descclassname">scarf.items.</code><code class="descname">revert_item_edit</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.items.revert_item_edit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.items.searchitem">
+<code class="descclassname">scarf.items.</code><code class="descname">searchitem</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.items.searchitem" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body"><p class="first">/item/search?page=&lt;page&gt;&amp;limit=&lt;max results&gt;&amp;query=&lt;search query&gt;&amp;sort=&lt;sort type&gt;</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Method:</th><td class="field-body"><p class="first">GET</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Sort Types:</th><td class="field-body"><ul class="first simple">
+<li>name - Alphabetical by name</li>
+<li>added - By added date, latest first</li>
+<li>modified - Last modified</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Sample Response:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">Setting the accept:application/json header will return JSON.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>{</dt>
+<dd><p class="first">&#8220;limit&#8221;: 2,
+&#8220;num_pages&#8221;: 4,
+&#8220;num_results&#8221;: 8,
+&#8220;query&#8221;: &#8220;Cascadia&#8221;,
+&#8220;results&#8221;: [</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>{</dt>
+<dd><p class="first">&#8220;added&#8221;: &#8220;2016-05-22 17:52:36&#8221;,
+&#8220;body&#8221;: &#8220;Blue/White (Cascadia Fringe, Gisele Currier Memorial Fundraiser)&#8221;,
+&#8220;description&#8221;: 460,
+&#8220;images&#8221;: [</p>
+<blockquote>
+<div>388,
+389</div></blockquote>
+<p class="last">],
+&#8220;modified&#8221;: &#8220;2016-05-24 22:45:33&#8221;,
+&#8220;name&#8221;: &#8220;No Pity MLS Blue White Fringe (Cascadia Fringe) 2012&#8221;,
+&#8220;uid&#8221;: 362</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>&#8220;added&#8221;: &#8220;2016-05-22 17:02:15&#8221;,
+&#8220;body&#8221;: &#8220;&#8221;,
+&#8220;description&#8221;: 317,
+&#8220;images&#8221;: [</p>
+<blockquote>
+<div>364,
+365</div></blockquote>
+<p>],
+&#8220;modified&#8221;: &#8220;2016-05-22 17:02:15&#8221;,
+&#8220;name&#8221;: &#8220;Cascadia&#8221;,
+&#8220;uid&#8221;: 350</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p class="last">]</p>
+</dd>
+</dl>
+<p>}</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.items.show_item">
+<code class="descclassname">scarf.items.</code><code class="descname">show_item</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.items.show_item" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URLs:</th><td class="field-body"><ul class="first simple">
+<li>/item/&lt;item_id&gt;/history/&lt;edit&gt;</li>
+<li>/item/&lt;item_id&gt;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Methods:</th><td class="field-body"><p class="first last">GET</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Setting the accept:application/json header will return JSON.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Sample response:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>{</dt>
+<dd><p class="first">&#8220;added&#8221;: &#8220;2016-05-23 20:52:12&#8221;,
+&#8220;body&#8221;: &#8220;&#8221;,
+&#8220;body_rendered&#8221;: &#8220;&#8221;,
+&#8220;description&#8221;: 384,
+&#8220;images&#8221;: [</p>
+<blockquote>
+<div>443,
+444</div></blockquote>
+<p>],
+&#8220;modified&#8221;: &#8220;2016-05-23 20:53:19&#8221;,
+&#8220;name&#8221;: &#8220;SSFC&#8221;,
+&#8220;tags&#8221;: {</p>
+<blockquote>
+<div>&#8220;FO&#8221;: false,
+&#8220;Front Office&#8221;: true,
+&#8220;MLS&#8221;: true,</div></blockquote>
+<p class="last">},
+&#8220;uid&#8221;: 388</p>
+</dd>
+</dl>
+<p>}</p>
+<ul class="simple">
+<li>added         - Date added, always UTC</li>
+<li>modified      - Late modified, also always UTC</li>
+<li>name          - Item&#8217;s name</li>
+<li>body          - raw unrendered description body</li>
+<li>body_rendered - rendered content</li>
+<li>description   - edit identifier</li>
+<li>images        - array of image ids associated with this item</li>
+<li>tags          - dict of tags, keys are the tag title. the value is a bool which will be set to true if the tag was directly applied and false if inherited.</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.items.show_item_history">
+<code class="descclassname">scarf.items.</code><code class="descname">show_item_history</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.items.show_item_history" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.items.tagitem">
+<code class="descclassname">scarf.items.</code><code class="descname">tagitem</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.items.tagitem" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.items.untag_item">
+<code class="descclassname">scarf.items.</code><code class="descname">untag_item</code><span class="sig-paren">(</span><em>item_id</em>, <em>tag_ob</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.items.untag_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.main">
+<span id="scarf-main-module"></span><h2>scarf.main module<a class="headerlink" href="#module-scarf.main" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="scarf.main.PageData">
+<em class="property">class </em><code class="descclassname">scarf.main.</code><code class="descname">PageData</code><a class="headerlink" href="#scarf.main.PageData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Convenience object to make various objects and functions available to the template.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><ul class="first last simple">
+<li>prefix          - URL prefix for static content</li>
+<li>accesslevels    - core.accesslevels</li>
+<li>authuser        - core.SiteUser.create(session[&#8216;username&#8217;])</li>
+<li>encode()        - base64.b32encode()</li>
+<li>decode()        - base64.b32decode()</li>
+<li>escape_html     - core.escape_html()</li>
+<li>obfuscate       - core.obfuscate()</li>
+<li>deobfuscate     - core.deobfuscate()</li>
+<li>uid_by_user     - core.uid_by_user()</li>
+<li>user_by_uid     - core.user_by_uid()</li>
+<li>render_markdown - render_markdown()</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="scarf.main.PageData.localtime">
+<code class="descname">localtime</code><span class="sig-paren">(</span><em>timestamp</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.main.PageData.localtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a timestamp into the user&#8217;s local timezone</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>timestamp</strong> &#8211; Datetime object to convert</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Datetime object in local time</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.main.accessdenied">
+<code class="descclassname">scarf.main.</code><code class="descname">accessdenied</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.main.accessdenied" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/accessdenied</td>
+</tr>
+</tbody>
+</table>
+<p>Renders a generic access denied page</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.main.error">
+<code class="descclassname">scarf.main.</code><code class="descname">error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.main.error" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/error</td>
+</tr>
+</tbody>
+</table>
+<p>Renders a generic non-500 error page</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.main.handle_exception">
+<code class="descclassname">scarf.main.</code><code class="descname">handle_exception</code><span class="sig-paren">(</span><em>exc_type</em>, <em>exc_value</em>, <em>exc_traceback</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.main.handle_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log exceptions</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.main.index">
+<code class="descclassname">scarf.main.</code><code class="descname">index</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.main.index" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/</td>
+</tr>
+</tbody>
+</table>
+<p>The main site index</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.main.own_goal">
+<code class="descclassname">scarf.main.</code><code class="descname">own_goal</code><span class="sig-paren">(</span><em>error=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.main.own_goal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error handler for 500 errors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>error</strong> &#8211; The error that occurred</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A rendered 500 page</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.main.page_not_found">
+<code class="descclassname">scarf.main.</code><code class="descname">page_not_found</code><span class="sig-paren">(</span><em>error=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.main.page_not_found" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error handler for 404 errors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>error</strong> &#8211; The error that occurred</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A rendered 404 page</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.main.ping">
+<code class="descclassname">scarf.main.</code><code class="descname">ping</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.main.ping" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/ping</td>
+</tr>
+</tbody>
+</table>
+<p>Basic health check for the main site</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.main.render_markdown">
+<code class="descclassname">scarf.main.</code><code class="descname">render_markdown</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.main.render_markdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Escapes the HTML in a string, renders any markdown present, then linkifys all bare URLs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>string</strong> &#8211; string to process</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">rendered string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.main.request_wants_json">
+<code class="descclassname">scarf.main.</code><code class="descname">request_wants_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.main.request_wants_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the request to see if the client wants JSON instead of rendered HTML</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True or False</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.main.upload_error">
+<code class="descclassname">scarf.main.</code><code class="descname">upload_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.main.upload_error" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/upload_error</td>
+</tr>
+</tbody>
+</table>
+<p>On the main site any over-size uploads will be redirected here.
+Flash a message to the user and attempt to redirect_back()</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scarf.moderation">
+<span id="scarf-moderation-module"></span><h2>scarf.moderation module<a class="headerlink" href="#module-scarf.moderation" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.moderation.mod_ban_user">
+<code class="descclassname">scarf.moderation.</code><code class="descname">mod_ban_user</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.moderation.mod_ban_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.moderation.mod_img">
+<code class="descclassname">scarf.moderation.</code><code class="descname">mod_img</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.moderation.mod_img" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.moderation.mod_img_approve">
+<code class="descclassname">scarf.moderation.</code><code class="descname">mod_img_approve</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.moderation.mod_img_approve" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.moderation.moderate">
+<code class="descclassname">scarf.moderation.</code><code class="descname">moderate</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.moderation.moderate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.nocache">
+<span id="scarf-nocache-module"></span><h2>scarf.nocache module<a class="headerlink" href="#module-scarf.nocache" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.nocache.nocache">
+<code class="descclassname">scarf.nocache.</code><code class="descname">nocache</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.nocache.nocache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.ownwant">
+<span id="scarf-ownwant-module"></span><h2>scarf.ownwant module<a class="headerlink" href="#module-scarf.ownwant" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.ownwant.itemaction">
+<code class="descclassname">scarf.ownwant.</code><code class="descname">itemaction</code><span class="sig-paren">(</span><em>item_id</em>, <em>action</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.ownwant.itemaction" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/item/&lt;item_id&gt;/&lt;action&gt;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Methods:</th><td class="field-body">GET, POST</td>
+</tr>
+</tbody>
+</table>
+<p>Update or query the logged in user&#8217;s record for an item.</p>
+<p>If a POST request is received then the current record is returned instead of a redirect back to the previous page.
+Setting the accept:application/json header will always return JSON regardless of request type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Allowed actions:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li>&#8216;status&#8217;    - Return the item&#8217;s current status</li>
+<li>&#8216;have&#8217;      - Mark an item as part of the user&#8217;s collection</li>
+<li>&#8216;donthave&#8217;  - Remove the item from the user&#8217;s collection</li>
+<li>&#8216;show&#8217;      - If the item is in the user&#8217;s collection mark it as visible to others</li>
+<li>&#8216;hide&#8217;      - If the item is in the user&#8217;s collection hide it from others</li>
+<li>&#8216;willtrade&#8217; - Mark the item as available for trade</li>
+<li>&#8216;wonttrade&#8217; - Don&#8217;t show this item as available for trade</li>
+<li>&#8216;want&#8217;      - Add this item to the user&#8217;s want list</li>
+<li>&#8216;dontwant &#8216; - Remove this item from the user&#8217;s want list</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Sample record:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;hidden&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;want&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;have&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;willtrade&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.ownwant.ownwant">
+<code class="descclassname">scarf.ownwant.</code><code class="descname">ownwant</code><span class="sig-paren">(</span><em>item_id</em>, <em>user_id</em>, <em>values</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.ownwant.ownwant" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.pm">
+<span id="scarf-pm-module"></span><h2>scarf.pm module<a class="headerlink" href="#module-scarf.pm" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.pm.pm">
+<code class="descclassname">scarf.pm.</code><code class="descname">pm</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.pm.pm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.pm.pm_action">
+<code class="descclassname">scarf.pm.</code><code class="descname">pm_action</code><span class="sig-paren">(</span><em>username</em>, <em>messageid</em>, <em>action</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.pm.pm_action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body"><p class="first">/user/&lt;username&gt;/pm/&lt;messageid&gt;/&lt;action&gt;</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Methods:</th><td class="field-body"><p class="first">GET</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Actions:</th><td class="field-body"><ul class="first last simple">
+<li>read</li>
+<li>unread</li>
+<li>delete</li>
+<li>undelete</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Setting the accept:application/json header will return JSON instead of a redirect.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.pm.viewpm">
+<code class="descclassname">scarf.pm.</code><code class="descname">viewpm</code><span class="sig-paren">(</span><em>username</em>, <em>messageid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.pm.viewpm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.profile">
+<span id="scarf-profile-module"></span><h2>scarf.profile module<a class="headerlink" href="#module-scarf.profile" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.profile.emailupdate">
+<code class="descclassname">scarf.profile.</code><code class="descname">emailupdate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.profile.emailupdate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.profile.newavatar">
+<code class="descclassname">scarf.profile.</code><code class="descname">newavatar</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.profile.newavatar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.profile.pwreset">
+<code class="descclassname">scarf.profile.</code><code class="descname">pwreset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.profile.pwreset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.profile.serve_avatar">
+<code class="descclassname">scarf.profile.</code><code class="descname">serve_avatar</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.profile.serve_avatar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.profile.show_user_collection">
+<code class="descclassname">scarf.profile.</code><code class="descname">show_user_collection</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.profile.show_user_collection" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body">/user/&lt;username&gt;/collection</td>
+</tr>
+</tbody>
+</table>
+<p>Query a user&#8217;s collection and return JSON. Hidden items are not returned unless the user is requesting their own collection..</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Sample response:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>[</dt>
+<dd><dl class="first docutils">
+<dt>[</dt>
+<dd><dl class="first docutils">
+<dt>{</dt>
+<dd><p class="first">&#8220;added&#8221;: &#8220;2016-05-21 04:05:01&#8221;,
+&#8220;body&#8221;: &#8220;Original Cascadia&#8221;,
+&#8220;description&#8221;: 472,
+&#8220;images&#8221;: [</p>
+<blockquote>
+<div>191</div></blockquote>
+<p class="last">],
+&#8220;modified&#8221;: &#8220;2016-05-25 00:06:31&#8221;,
+&#8220;name&#8221;: &#8220;Cascadia GBW Fringe 2010&#8221;</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div>&#8220;have&#8221;: 1,
+&#8220;hidden&#8221;: 0,
+&#8220;want&#8221;: 0,
+&#8220;willtrade&#8221;: 0</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>],
+[</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>{</dt>
+<dd><p class="first">&#8220;added&#8221;: &#8220;2016-05-22 17:02:15&#8221;,
+&#8220;body&#8221;: &#8220;&#8221;,
+&#8220;description&#8221;: 317,
+&#8220;images&#8221;: [</p>
+<blockquote>
+<div>364,
+365</div></blockquote>
+<p class="last">],
+&#8220;modified&#8221;: &#8220;2016-05-22 17:02:15&#8221;,
+&#8220;name&#8221;: &#8220;Cascadia&#8221;</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div>&#8220;have&#8221;: 1,
+&#8220;hidden&#8221;: 0,
+&#8220;want&#8221;: 0,
+&#8220;willtrade&#8221;: 0</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p class="last">]</p>
+</dd>
+</dl>
+<p>]</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.profile.show_user_profile">
+<code class="descclassname">scarf.profile.</code><code class="descname">show_user_profile</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.profile.show_user_profile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.profile.updateprefs">
+<code class="descclassname">scarf.profile.</code><code class="descname">updateprefs</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.profile.updateprefs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.profile.userupdate">
+<code class="descclassname">scarf.profile.</code><code class="descname">userupdate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.profile.userupdate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.resize">
+<span id="scarf-resize-module"></span><h2>scarf.resize module<a class="headerlink" href="#module-scarf.resize" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="scarf.resize.logger">
+<code class="descclassname">scarf.resize.</code><code class="descname">logger</code><em class="property"> = &lt;logging.Logger object&gt;</em><a class="headerlink" href="#scarf.resize.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>image resizing is implemented via nginx on hosted instances, this stuff is just for dev</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.resize.resize">
+<code class="descclassname">scarf.resize.</code><code class="descname">resize</code><span class="sig-paren">(</span><em>image_string</em>, <em>maxwidth</em>, <em>maxheight</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.resize.resize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.resize.resize_image">
+<code class="descclassname">scarf.resize.</code><code class="descname">resize_image</code><span class="sig-paren">(</span><em>size</em>, <em>img_id</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.resize.resize_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.resize.serve_pil_image">
+<code class="descclassname">scarf.resize.</code><code class="descname">serve_pil_image</code><span class="sig-paren">(</span><em>pil_img</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.resize.serve_pil_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.stats">
+<span id="scarf-stats-module"></span><h2>scarf.stats module<a class="headerlink" href="#module-scarf.stats" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.stats.stats">
+<code class="descclassname">scarf.stats.</code><code class="descname">stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.stats.stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.tags">
+<span id="scarf-tags-module"></span><h2>scarf.tags module<a class="headerlink" href="#module-scarf.tags" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.tags.bare_tag">
+<code class="descclassname">scarf.tags.</code><code class="descname">bare_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.tags.bare_tag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.tags.mod_tag">
+<code class="descclassname">scarf.tags.</code><code class="descname">mod_tag</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.tags.mod_tag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.tags.mod_tag_delete">
+<code class="descclassname">scarf.tags.</code><code class="descname">mod_tag_delete</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.tags.mod_tag_delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.tags.newtag">
+<code class="descclassname">scarf.tags.</code><code class="descname">newtag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.tags.newtag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.tags.tagreparent">
+<code class="descclassname">scarf.tags.</code><code class="descname">tagreparent</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.tags.tagreparent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.trade">
+<span id="scarf-trade-module"></span><h2>scarf.trade module<a class="headerlink" href="#module-scarf.trade" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.trade.accepttradeitem">
+<code class="descclassname">scarf.trade.</code><code class="descname">accepttradeitem</code><span class="sig-paren">(</span><em>username</em>, <em>messageid</em>, <em>action</em>, <em>item=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.trade.accepttradeitem" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.trade.trade">
+<code class="descclassname">scarf.trade.</code><code class="descname">trade</code><span class="sig-paren">(</span><em>username</em>, <em>itemid=None</em>, <em>messageid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.trade.trade" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.user">
+<span id="scarf-user-module"></span><h2>scarf.user module<a class="headerlink" href="#module-scarf.user" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.user.check_new_user">
+<code class="descclassname">scarf.user.</code><code class="descname">check_new_user</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.user.check_new_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.user.login">
+<code class="descclassname">scarf.user.</code><code class="descname">login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.user.login" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.user.logout">
+<code class="descclassname">scarf.user.</code><code class="descname">logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.user.logout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.user.newuser">
+<code class="descclassname">scarf.user.</code><code class="descname">newuser</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.user.newuser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-scarf" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">scarf package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-scarf.access">scarf.access module</a></li>
+<li><a class="reference internal" href="#module-scarf.admin">scarf.admin module</a></li>
+<li><a class="reference internal" href="#module-scarf.config">scarf.config module</a></li>
+<li><a class="reference internal" href="#module-scarf.image">scarf.image module</a></li>
+<li><a class="reference internal" href="#module-scarf.items">scarf.items module</a></li>
+<li><a class="reference internal" href="#module-scarf.main">scarf.main module</a></li>
+<li><a class="reference internal" href="#module-scarf.moderation">scarf.moderation module</a></li>
+<li><a class="reference internal" href="#module-scarf.nocache">scarf.nocache module</a></li>
+<li><a class="reference internal" href="#module-scarf.ownwant">scarf.ownwant module</a></li>
+<li><a class="reference internal" href="#module-scarf.pm">scarf.pm module</a></li>
+<li><a class="reference internal" href="#module-scarf.profile">scarf.profile module</a></li>
+<li><a class="reference internal" href="#module-scarf.resize">scarf.resize module</a></li>
+<li><a class="reference internal" href="#module-scarf.stats">scarf.stats module</a></li>
+<li><a class="reference internal" href="#module-scarf.tags">scarf.tags module</a></li>
+<li><a class="reference internal" href="#module-scarf.trade">scarf.trade module</a></li>
+<li><a class="reference internal" href="#module-scarf.user">scarf.user module</a></li>
+<li><a class="reference internal" href="#module-scarf">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Scarfage&#8217;s documentation!</a></li>
+      <li>Next: <a href="scarf.core.html" title="next chapter">scarf.core package</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/scarf.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, ..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/scarf.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,1331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scarf.core package &mdash; Scarfage 0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Scarfage 0 documentation" href="index.html" />
+    <link rel="up" title="scarf package" href="scarf.html" />
+    <link rel="next" title="scarf.core.test package" href="scarf.core.test.html" />
+    <link rel="prev" title="scarf package" href="scarf.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="scarf-core-package">
+<h1>scarf.core package<a class="headerlink" href="#scarf-core-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="scarf.core.test.html">scarf.core.test package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.test.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.test.html#module-scarf.core.test.test_blns">scarf.core.test.test_blns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.test.html#module-scarf.core.test.test_items">scarf.core.test.test_items module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.test.html#module-scarf.core.test.test_users">scarf.core.test.test_users module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scarf.core.test.html#module-scarf.core.test">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-scarf.core.images">
+<span id="scarf-core-images-module"></span><h2>scarf.core.images module<a class="headerlink" href="#module-scarf.core.images" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="scarf.core.images.NoImage">
+<em class="property">exception </em><code class="descclassname">scarf.core.images.</code><code class="descname">NoImage</code><span class="sig-paren">(</span><em>item</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.images.NoImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="scarf.core.images.SiteImage">
+<em class="property">class </em><code class="descclassname">scarf.core.images.</code><code class="descname">SiteImage</code><span class="sig-paren">(</span><em>uid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.images.SiteImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dl class="method">
+<dt id="scarf.core.images.SiteImage.approve">
+<code class="descname">approve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.images.SiteImage.approve" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.images.SiteImage.ascii">
+<code class="descname">ascii</code><span class="sig-paren">(</span><em>scale=1</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.images.SiteImage.ascii" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="scarf.core.images.SiteImage.create">
+<em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.images.SiteImage.create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.images.SiteImage.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.images.SiteImage.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.images.SiteImage.flag">
+<code class="descname">flag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.images.SiteImage.flag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.images.SiteImage.image">
+<code class="descname">image</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.images.SiteImage.image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="scarf.core.images.logger">
+<code class="descclassname">scarf.core.images.</code><code class="descname">logger</code><em class="property"> = &lt;logging.Logger object&gt;</em><a class="headerlink" href="#scarf.core.images.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Workaround for the issue identified here:
+<a class="reference external" href="https://bugs.python.org/issue16512">https://bugs.python.org/issue16512</a>
+Credit to:
+<a class="reference external" href="https://coderwall.com/p/btbwlq/fix-imghdr-what-being-unable-to-detect-jpegs-with-icc_profile">https://coderwall.com/p/btbwlq/fix-imghdr-what-being-unable-to-detect-jpegs-with-icc_profile</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.images.new_img">
+<code class="descclassname">scarf.core.images.</code><code class="descname">new_img</code><span class="sig-paren">(</span><em>f</em>, <em>title</em>, <em>parent</em>, <em>userid</em>, <em>ip</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.images.new_img" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.images.test_icc_profile_images">
+<code class="descclassname">scarf.core.images.</code><code class="descname">test_icc_profile_images</code><span class="sig-paren">(</span><em>h</em>, <em>f</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.images.test_icc_profile_images" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.core.items">
+<span id="scarf-core-items-module"></span><h2>scarf.core.items module<a class="headerlink" href="#module-scarf.core.items" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="scarf.core.items.ItemHist">
+<em class="property">class </em><code class="descclassname">scarf.core.items.</code><code class="descname">ItemHist</code><span class="sig-paren">(</span><em>uid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.ItemHist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="scarf.core.items.NoItem">
+<em class="property">exception </em><code class="descclassname">scarf.core.items.</code><code class="descname">NoItem</code><span class="sig-paren">(</span><em>item</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.NoItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="scarf.core.items.SiteItem">
+<em class="property">class </em><code class="descclassname">scarf.core.items.</code><code class="descname">SiteItem</code><span class="sig-paren">(</span><em>uid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Site Item - object for an item</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><ul class="first simple">
+<li>uid       - UID for the item</li>
+<li>name      - The item&#8217;s name</li>
+<li>added     - When the item was added</li>
+<li>modified  - Last modified</li>
+<li>tree      - an instance of the Tags() object</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>NoItem</strong> &#8211; If no item can be found or if an error occurs this will be raised during initialization.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.add_tag">
+<code class="descname">add_tag</code><span class="sig-paren">(</span><em>tag</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.add_tag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.body">
+<code class="descname">body</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.body" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="scarf.core.items.SiteItem.body_cache">
+<code class="descname">body_cache</code><em class="property"> = {}</em><a class="headerlink" href="#scarf.core.items.SiteItem.body_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="scarf.core.items.SiteItem.create">
+<em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete an item. Might be dangerous.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.description">
+<code class="descname">description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the item&#8217;s current description. Items can have several descriptions with only one set as active.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ID of the item&#8217;s description</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scarf.core.items.SiteItem.have_cache">
+<code class="descname">have_cache</code><em class="property"> = {}</em><a class="headerlink" href="#scarf.core.items.SiteItem.have_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.haveusers">
+<code class="descname">haveusers</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.haveusers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.history">
+<code class="descname">history</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the edit history for an item.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of objects with the following attributes:
+* uid       - The edit&#8217;s uid, zero filled
+* itemid    - The item id
+* date      - Date of the edit
+* userid    - Editing user
+* ip        - IP address of the editor</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.images">
+<code class="descname">images</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.images" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="scarf.core.items.SiteItem.imglist_cache">
+<code class="descname">imglist_cache</code><em class="property"> = {}</em><a class="headerlink" href="#scarf.core.items.SiteItem.imglist_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.remove_tag">
+<code class="descname">remove_tag</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.remove_tag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.tags">
+<code class="descname">tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of tags for this item.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of tags as strings</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.tags_with_parents">
+<code class="descname">tags_with_parents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.tags_with_parents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="scarf.core.items.SiteItem.tree">
+<code class="descname">tree</code><em class="property"> = None</em><a class="headerlink" href="#scarf.core.items.SiteItem.tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>sql = &#8216;select tag from itemtags where uid = %(uid)s;&#8217;
+result = doquery(sql, { &#8216;uid&#8217;: uid })</p>
+<dl class="docutils">
+<dt>try:</dt>
+<dd>self.tags = result[0]</dd>
+<dt>except IndexError:</dt>
+<dd>self.tags = None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the database with the object&#8217;s current name as well as the modified timestamp.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.values">
+<code class="descname">values</code><span class="sig-paren">(</span><em>edit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the attributes of the object as a dict. body will be set to the text of the specified or current edit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>edit</strong> &#8211; Optional parameter to specify a historical edit id. If omitted the current edit ID for the item is used.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scarf.core.items.SiteItem.want_cache">
+<code class="descname">want_cache</code><em class="property"> = {}</em><a class="headerlink" href="#scarf.core.items.SiteItem.want_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.wantusers">
+<code class="descname">wantusers</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.wantusers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="scarf.core.items.SiteItem.willtrade_cache">
+<code class="descname">willtrade_cache</code><em class="property"> = {}</em><a class="headerlink" href="#scarf.core.items.SiteItem.willtrade_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.SiteItem.willtradeusers">
+<code class="descname">willtradeusers</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.SiteItem.willtradeusers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="scarf.core.items.Tags">
+<em class="property">class </em><code class="descclassname">scarf.core.items.</code><code class="descname">Tags</code><a class="headerlink" href="#scarf.core.items.Tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#scarf.core.sql.Tree" title="scarf.core.sql.Tree"><code class="xref py py-class docutils literal"><span class="pre">scarf.core.sql.Tree</span></code></a></p>
+<dl class="method">
+<dt id="scarf.core.items.Tags.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>nodename</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.Tags.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.Tags.insert_children">
+<code class="descname">insert_children</code><span class="sig-paren">(</span><em>names</em>, <em>parentname</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.Tags.insert_children" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.Tags.items">
+<code class="descname">items</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.Tags.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.items.Tags.items_from_children">
+<code class="descname">items_from_children</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.Tags.items_from_children" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.items.item_search">
+<code class="descclassname">scarf.core.items.</code><code class="descname">item_search</code><span class="sig-paren">(</span><em>query</em>, <em>limit=10</em>, <em>offset=0</em>, <em>sort='name'</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.item_search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.items.new_edit">
+<code class="descclassname">scarf.core.items.</code><code class="descname">new_edit</code><span class="sig-paren">(</span><em>itemid</em>, <em>description</em>, <em>userid</em>, <em>ip</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.new_edit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.items.new_item">
+<code class="descclassname">scarf.core.items.</code><code class="descname">new_item</code><span class="sig-paren">(</span><em>name</em>, <em>description</em>, <em>userid</em>, <em>ip</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.items.new_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.core.keyvalue">
+<span id="scarf-core-keyvalue-module"></span><h2>scarf.core.keyvalue module<a class="headerlink" href="#module-scarf.core.keyvalue" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="scarf.core.keyvalue.NoKey">
+<em class="property">exception </em><code class="descclassname">scarf.core.keyvalue.</code><code class="descname">NoKey</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.keyvalue.NoKey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="scarf.core.keyvalue.SiteKey">
+<em class="property">class </em><code class="descclassname">scarf.core.keyvalue.</code><code class="descname">SiteKey</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.keyvalue.SiteKey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Object for key/value pairs</p>
+<dl class="classmethod">
+<dt id="scarf.core.keyvalue.SiteKey.create">
+<em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.keyvalue.SiteKey.create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.keyvalue.SiteKey.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.keyvalue.SiteKey.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the current object from the database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.keyvalue.SiteKey.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.keyvalue.SiteKey.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the current object state back to the database</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.keyvalue.check_key_exists">
+<code class="descclassname">scarf.core.keyvalue.</code><code class="descname">check_key_exists</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.keyvalue.check_key_exists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.keyvalue.new_key">
+<code class="descclassname">scarf.core.keyvalue.</code><code class="descname">new_key</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.keyvalue.new_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new key/value pair in the database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>key</strong> &#8211; Name of the key. Will be hashed</li>
+<li><strong>value</strong> &#8211; The value to be stored.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scarf.core.mail">
+<span id="scarf-core-mail-module"></span><h2>scarf.core.mail module<a class="headerlink" href="#module-scarf.core.mail" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.core.mail.send_mail">
+<code class="descclassname">scarf.core.mail.</code><code class="descname">send_mail</code><span class="sig-paren">(</span><em>recipient</em>, <em>subject</em>, <em>message</em>, <em>sender=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.mail.send_mail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an email.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>recipient</strong> &#8211; The message recipient</li>
+<li><strong>subject</strong> &#8211; The message subject</li>
+<li><strong>message</strong> &#8211; HTML formatted message to send</li>
+<li><strong>sender</strong> &#8211; optional sender in standard format: &#8216;Some One &lt;<a class="reference external" href="mailto:someone&#37;&#52;&#48;somewhere&#46;com">someone<span>&#64;</span>somewhere<span>&#46;</span>com</a>&gt;&#8217;</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scarf.core.memoize">
+<span id="scarf-core-memoize-module"></span><h2>scarf.core.memoize module<a class="headerlink" href="#module-scarf.core.memoize" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="scarf.core.memoize.memoize_with_expiry">
+<em class="property">class </em><code class="descclassname">scarf.core.memoize.</code><code class="descname">memoize_with_expiry</code><span class="sig-paren">(</span><em>cache</em>, <em>expiry_time=0</em>, <em>num_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.memoize.memoize_with_expiry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Modified from django.utils.functional.memoize to add cache expiry.</p>
+<p>Wrap a function so that results for any argument tuple are stored in
+&#8216;cache&#8217;. Note that the args to the function must be usable as dictionary
+keys. Only cache results younger than expiry_time (seconds) will be returned.</p>
+<p>Only the first num_args are considered when creating the key.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scarf.core.messages">
+<span id="scarf-core-messages-module"></span><h2>scarf.core.messages module<a class="headerlink" href="#module-scarf.core.messages" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="scarf.core.messages.PrivateMessage">
+<em class="property">class </em><code class="descclassname">scarf.core.messages.</code><code class="descname">PrivateMessage</code><span class="sig-paren">(</span><em>messageid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.PrivateMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dl class="classmethod">
+<dt id="scarf.core.messages.PrivateMessage.create">
+<em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.PrivateMessage.create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.PrivateMessage.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>userid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.PrivateMessage.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.PrivateMessage.delete_status">
+<code class="descname">delete_status</code><span class="sig-paren">(</span><em>userid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.PrivateMessage.delete_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.PrivateMessage.parent">
+<code class="descname">parent</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.PrivateMessage.parent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.PrivateMessage.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>userid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.PrivateMessage.read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.PrivateMessage.read_status">
+<code class="descname">read_status</code><span class="sig-paren">(</span><em>userid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.PrivateMessage.read_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.PrivateMessage.replies">
+<code class="descname">replies</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.PrivateMessage.replies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.PrivateMessage.setstatus">
+<code class="descname">setstatus</code><span class="sig-paren">(</span><em>status</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.PrivateMessage.setstatus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.PrivateMessage.undelete">
+<code class="descname">undelete</code><span class="sig-paren">(</span><em>userid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.PrivateMessage.undelete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.PrivateMessage.unread">
+<code class="descname">unread</code><span class="sig-paren">(</span><em>userid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.PrivateMessage.unread" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="scarf.core.messages.TradeItem">
+<em class="property">class </em><code class="descclassname">scarf.core.messages.</code><code class="descname">TradeItem</code><span class="sig-paren">(</span><em>itemid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.TradeItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dl class="method">
+<dt id="scarf.core.messages.TradeItem.accept">
+<code class="descname">accept</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.TradeItem.accept" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.TradeItem.reject">
+<code class="descname">reject</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.TradeItem.reject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.TradeItem.setstatus">
+<code class="descname">setstatus</code><span class="sig-paren">(</span><em>status</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.TradeItem.setstatus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="scarf.core.messages.TradeMessage">
+<em class="property">class </em><code class="descclassname">scarf.core.messages.</code><code class="descname">TradeMessage</code><span class="sig-paren">(</span><em>messageid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.TradeMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#scarf.core.messages.PrivateMessage" title="scarf.core.messages.PrivateMessage"><code class="xref py py-class docutils literal"><span class="pre">scarf.core.messages.PrivateMessage</span></code></a></p>
+<dl class="method">
+<dt id="scarf.core.messages.TradeMessage.cancel">
+<code class="descname">cancel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.TradeMessage.cancel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="scarf.core.messages.TradeMessage.create">
+<em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.TradeMessage.create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.TradeMessage.reject">
+<code class="descname">reject</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.TradeMessage.reject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.messages.TradeMessage.settle">
+<code class="descname">settle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.TradeMessage.settle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.messages.add_tradeitem">
+<code class="descclassname">scarf.core.messages.</code><code class="descname">add_tradeitem</code><span class="sig-paren">(</span><em>itemid</em>, <em>messageid</em>, <em>userid</em>, <em>acceptstatus</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.add_tradeitem" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.messages.send_pm">
+<code class="descclassname">scarf.core.messages.</code><code class="descname">send_pm</code><span class="sig-paren">(</span><em>fromuserid</em>, <em>touserid</em>, <em>subject</em>, <em>message</em>, <em>status</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.messages.send_pm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-scarf.core.sql">
+<span id="scarf-core-sql-module"></span><h2>scarf.core.sql module<a class="headerlink" href="#module-scarf.core.sql" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="scarf.core.sql.Tree">
+<em class="property">class </em><code class="descclassname">scarf.core.sql.</code><code class="descname">Tree</code><span class="sig-paren">(</span><em>root</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dl class="class">
+<dt id="scarf.core.sql.Tree.Anon">
+<em class="property">class </em><code class="descname">Anon</code><a class="headerlink" href="#scarf.core.sql.Tree.Anon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.all_children_of">
+<code class="descclassname">Tree.</code><code class="descname">all_children_of</code><span class="sig-paren">(</span><em>rootname</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.all_children_of" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.all_siblings_of">
+<code class="descclassname">Tree.</code><code class="descname">all_siblings_of</code><span class="sig-paren">(</span><em>siblingname</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.all_siblings_of" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.create_root">
+<code class="descclassname">Tree.</code><code class="descname">create_root</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.create_root" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.delete">
+<code class="descclassname">Tree.</code><code class="descname">delete</code><span class="sig-paren">(</span><em>nodename</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.draw_tree">
+<code class="descclassname">Tree.</code><code class="descname">draw_tree</code><span class="sig-paren">(</span><em>rootname</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.draw_tree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.exact_children_of">
+<code class="descclassname">Tree.</code><code class="descname">exact_children_of</code><span class="sig-paren">(</span><em>rootname</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.exact_children_of" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.insert_children">
+<code class="descclassname">Tree.</code><code class="descname">insert_children</code><span class="sig-paren">(</span><em>names</em>, <em>parentname</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.insert_children" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.insert_siblings">
+<code class="descclassname">Tree.</code><code class="descname">insert_siblings</code><span class="sig-paren">(</span><em>names</em>, <em>siblingname</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.insert_siblings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.leaves_below">
+<code class="descclassname">Tree.</code><code class="descname">leaves_below</code><span class="sig-paren">(</span><em>rootname</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.leaves_below" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.parent_of">
+<code class="descclassname">Tree.</code><code class="descname">parent_of</code><span class="sig-paren">(</span><em>childname</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.parent_of" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.path_to">
+<code class="descclassname">Tree.</code><code class="descname">path_to</code><span class="sig-paren">(</span><em>childname</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.path_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.rename">
+<code class="descclassname">Tree.</code><code class="descname">rename</code><span class="sig-paren">(</span><em>nodename</em>, <em>newname</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.rename" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.reparent">
+<code class="descclassname">Tree.</code><code class="descname">reparent</code><span class="sig-paren">(</span><em>node</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.reparent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.sql.Tree.retrieve">
+<code class="descclassname">Tree.</code><code class="descname">retrieve</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.Tree.retrieve" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.sql.delete">
+<code class="descclassname">scarf.core.sql.</code><code class="descname">delete</code><span class="sig-paren">(</span><em>table</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>deletes rows from table where <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs match</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.sql.doquery">
+<code class="descclassname">scarf.core.sql.</code><code class="descname">doquery</code><span class="sig-paren">(</span><em>query</em>, <em>data=None</em>, <em>select=True</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.doquery" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.sql.doupsert">
+<code class="descclassname">scarf.core.sql.</code><code class="descname">doupsert</code><span class="sig-paren">(</span><em>query</em>, <em>safe=False</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.doupsert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.sql.get_db">
+<code class="descclassname">scarf.core.sql.</code><code class="descname">get_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.get_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.sql.read">
+<code class="descclassname">scarf.core.sql.</code><code class="descname">read</code><span class="sig-paren">(</span><em>table</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates SQL for a SELECT statement matching the kwargs passed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.sql.upsert">
+<code class="descclassname">scarf.core.sql.</code><code class="descname">upsert</code><span class="sig-paren">(</span><em>table</em>, <em>safe=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.sql.upsert" title="Permalink to this definition">¶</a></dt>
+<dd><p>update/insert rows into objects table (update if the row already exists)
+given the key-value pairs in kwargs</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scarf.core.stats">
+<span id="scarf-core-stats-module"></span><h2>scarf.core.stats module<a class="headerlink" href="#module-scarf.core.stats" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-scarf.core.strings">
+<span id="scarf-core-strings-module"></span><h2>scarf.core.strings module<a class="headerlink" href="#module-scarf.core.strings" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="scarf.core.strings.NoString">
+<em class="property">exception </em><code class="descclassname">scarf.core.strings.</code><code class="descname">NoString</code><span class="sig-paren">(</span><em>name</em>, <em>lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.strings.NoString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="scarf.core.strings.SiteString">
+<em class="property">class </em><code class="descclassname">scarf.core.strings.</code><code class="descname">SiteString</code><span class="sig-paren">(</span><em>name</em>, <em>lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.strings.SiteString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>SiteString - used for storage and translation of arbitrary strings</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">scarf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">new_string</span><span class="p">(</span><span class="s1">&#39;welcomebanner&#39;</span><span class="p">,</span> <span class="s1">&#39;Welcome to the site&#39;</span><span class="p">)</span>
+<span class="go">1110L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scarf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SiteString</span><span class="p">(</span><span class="s1">&#39;welcomebanner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">string</span>
+<span class="go">&#39;Welcome to the site&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scarf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SiteString</span><span class="p">(</span><span class="s1">&#39;welcomebanner&#39;</span><span class="p">,</span> <span class="s1">&#39;fr&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">string</span>
+<span class="go">&#39;Welcome to the site&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scarf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">new_string</span><span class="p">(</span><span class="s1">&#39;welcomebanner&#39;</span><span class="p">,</span> <span class="s1">&#39;Bienvenue sur le site&#39;</span><span class="p">,</span> <span class="s1">&#39;fr&#39;</span><span class="p">)</span>
+<span class="go">1112L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scarf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SiteString</span><span class="p">(</span><span class="s1">&#39;welcomebanner&#39;</span><span class="p">,</span> <span class="s1">&#39;fr&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">string</span>
+<span class="go">&#39;Bienvenue sur le site&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scarf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SiteString</span><span class="p">(</span><span class="s1">&#39;welcomebanner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">string</span>
+<span class="go">&#39;Welcome to the site&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scarf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SiteString</span><span class="p">(</span><span class="s1">&#39;welcomebanner&#39;</span><span class="p">,</span> <span class="s1">&#39;es&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">string</span>
+<span class="go">&#39;Welcome to the site&#39;</span>
+</pre></div>
+</div>
+<p>If the string does not currently exist it will be created and the string will be set to the name, this allows you to use SiteString blindly and not worry if a string has actually been translated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">scarf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SiteString</span><span class="p">(</span><span class="s1">&#39;Add to collection&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">string</span>
+<span class="go">&#39;Add to collection&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scarf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SiteString</span><span class="p">(</span><span class="s1">&#39;Add to collection&#39;</span><span class="p">,</span> <span class="s1">&#39;fr&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">string</span>
+<span class="go">&#39;Add to collection&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scarf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">new_string</span><span class="p">(</span><span class="s1">&#39;Add to collection&#39;</span><span class="p">,</span> <span class="s1">&#39;Ajouter à la collection&#39;</span><span class="p">,</span> <span class="s1">&#39;fr&#39;</span><span class="p">)</span>
+<span class="go">1114L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scarf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SiteString</span><span class="p">(</span><span class="s1">&#39;Add to collection&#39;</span><span class="p">,</span> <span class="s1">&#39;fr&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">string</span>
+<span class="go">&#39;Ajouter à la collection&#39;</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="scarf.core.strings.SiteString.DEFAULTLANG">
+<code class="descname">DEFAULTLANG</code><em class="property"> = 'en'</em><a class="headerlink" href="#scarf.core.strings.SiteString.DEFAULTLANG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="scarf.core.strings.SiteString.create">
+<em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.strings.SiteString.create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.strings.SiteString.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>all_langs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.strings.SiteString.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the current object from the database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>all_langs</strong> &#8211; Set to True if all versions of the string should be removed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.strings.SiteString.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.strings.SiteString.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the current object state back to the database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">UID of the object that was updated</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.strings.new_string">
+<code class="descclassname">scarf.core.strings.</code><code class="descname">new_string</code><span class="sig-paren">(</span><em>name</em>, <em>string</em>, <em>lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.strings.new_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new string in the database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> &#8211; Name of the string. Strings configurable by the user should have all-lowercase descriptive names so as not to conflict with translations. When used for translation the name should be the DEFAULTLANG version of the string itself.</li>
+<li><strong>string</strong> &#8211; The string to be stored.</li>
+<li><strong>lang</strong> &#8211; Optional parameter, defaults to DEFAULTLANG</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">UID of the new string, or UID of the existing string if it already exists</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scarf.core.users">
+<span id="scarf-core-users-module"></span><h2>scarf.core.users module<a class="headerlink" href="#module-scarf.core.users" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="scarf.core.users.AuthFail">
+<em class="property">exception </em><code class="descclassname">scarf.core.users.</code><code class="descname">AuthFail</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.AuthFail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="scarf.core.users.NoUser">
+<em class="property">exception </em><code class="descclassname">scarf.core.users.</code><code class="descname">NoUser</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.NoUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="scarf.core.users.OwnWant">
+<em class="property">class </em><code class="descclassname">scarf.core.users.</code><code class="descname">OwnWant</code><span class="sig-paren">(</span><em>itemid</em>, <em>userid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.OwnWant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Object containing a user&#8217;s status for an item</p>
+<dl class="method">
+<dt id="scarf.core.users.OwnWant.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.OwnWant.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the current object and the database from a dict</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">OwnWant</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">own</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">willtrade</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">want</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>values</strong> &#8211; dict to update the object with. Any not being updated can be omitted</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.OwnWant.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.OwnWant.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the object as a dict</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict(have=self.have, want=self.want, willtrade=self.willtrade, hidden=self.hidden)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="scarf.core.users.SiteUser">
+<em class="property">class </em><code class="descclassname">scarf.core.users.</code><code class="descname">SiteUser</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>SiteUser - user object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><ul class="first last simple">
+<li>uid           - User ID</li>
+<li>email         - User&#8217;s email address</li>
+<li>joined        - Datetime object of when they joined</li>
+<li>lastseen      - Datetime object of when they were last seen online</li>
+<li>accesslevel   - Users accesslevel as an integer</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="scarf.core.users.SiteUser.authenticate">
+<code class="descname">authenticate</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.authenticate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify a user&#8217;s password</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>password</strong> &#8211; The plaintext password to verify.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>AuthFail</strong> &#8211; This exception will be raised if the user cannot be logged in for any reason.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUser.collection">
+<code class="descname">collection</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.collection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="scarf.core.users.SiteUser.create">
+<em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUser.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a user account. Possibly dangerous.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUser.forgot_pw_reset">
+<code class="descname">forgot_pw_reset</code><span class="sig-paren">(</span><em>ip</em>, <em>admin=False</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.forgot_pw_reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomize a user&#8217;s password and send it to the email we have for them.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ip</strong> &#8211; The IP address of the requester as a string</li>
+<li><strong>admin</strong> &#8211; Set to True if this was requested by an admin</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUser.messages">
+<code class="descname">messages</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.messages" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUser.mwi">
+<code class="descname">mwi</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.mwi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="scarf.core.users.SiteUser.mwi_cache">
+<code class="descname">mwi_cache</code><em class="property"> = {}</em><a class="headerlink" href="#scarf.core.users.SiteUser.mwi_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUser.newaccesslevel">
+<code class="descname">newaccesslevel</code><span class="sig-paren">(</span><em>accesslevel</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.newaccesslevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to change a user&#8217;s access level</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>accesslevel</strong> &#8211; The new accesslevel</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUser.newemail">
+<code class="descname">newemail</code><span class="sig-paren">(</span><em>email</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.newemail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to reset a user&#8217;s email</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>email</strong> &#8211; The new plaintext email</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUser.newpassword">
+<code class="descname">newpassword</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.newpassword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to reset a user&#8217;s password</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>password</strong> &#8211; The new plaintext password</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUser.profile">
+<code class="descname">profile</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.profile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUser.query_collection">
+<code class="descname">query_collection</code><span class="sig-paren">(</span><em>itemid</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.query_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the collection status for an item id</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>itemid</strong> &#8211; The id of the item you want to query</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">OwnWant object for the item</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUser.seen">
+<code class="descname">seen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUser.seen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to update the last seen time for a user</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="scarf.core.users.SiteUserProfile">
+<em class="property">class </em><code class="descclassname">scarf.core.users.</code><code class="descname">SiteUserProfile</code><span class="sig-paren">(</span><em>username=None</em>, <em>uid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUserProfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Object for a user&#8217;s profile. Not much here yet.</p>
+<p>The object can be initialized with either a username or UID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>NoUser</strong> &#8211; If no user is found NoUser will be raised</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="scarf.core.users.SiteUserProfile.avatar">
+<code class="descname">avatar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUserProfile.avatar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUserProfile.new_avatar">
+<code class="descname">new_avatar</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUserProfile.new_avatar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="scarf.core.users.SiteUserProfile.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.SiteUserProfile.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.users.check_email">
+<code class="descclassname">scarf.core.users.</code><code class="descname">check_email</code><span class="sig-paren">(</span><em>email</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.check_email" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if an email address belongs to a user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>email</strong> &#8211; The email address to check</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">SiteUser object or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.users.gen_pwhash">
+<code class="descclassname">scarf.core.users.</code><code class="descname">gen_pwhash</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.gen_pwhash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a password hash for the given cleartext</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>password</strong> &#8211; Cleartext password to hash</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bcrypt.hashpw(utility.hashize(password), bcrypt.gensalt(config.BCRYPT_ROUNDS))</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.users.get_users">
+<code class="descclassname">scarf.core.users.</code><code class="descname">get_users</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.get_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all users sorted by last seen.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Add range and sort parameters</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of SiteUsers</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.users.new_user">
+<code class="descclassname">scarf.core.users.</code><code class="descname">new_user</code><span class="sig-paren">(</span><em>username</em>, <em>password</em>, <em>email</em>, <em>ip</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.new_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a new user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>username</strong> &#8211; Username. Truncated to 200 characters</li>
+<li><strong>password</strong> &#8211; Cleartext password</li>
+<li><strong>email</strong> &#8211; email address. Truncated to 200 characters</li>
+<li><strong>ip</strong> &#8211; IP address of the requester</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>NoUser</strong> &#8211; if an invalid email or username is given, or on general failure in creating the user</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">UID of the new user or False if the username is taken</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.users.verify_pw">
+<code class="descclassname">scarf.core.users.</code><code class="descname">verify_pw</code><span class="sig-paren">(</span><em>password</em>, <em>pwhash</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.users.verify_pw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify a cleartext password</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>password</strong> &#8211; Cleartext password</li>
+<li><strong>pwhash</strong> &#8211; Password hash to verify against</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True or False</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scarf.core.utility">
+<span id="scarf-core-utility-module"></span><h2>scarf.core.utility module<a class="headerlink" href="#module-scarf.core.utility" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scarf.core.utility.deobfuscate">
+<code class="descclassname">scarf.core.utility.</code><code class="descname">deobfuscate</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.utility.deobfuscate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deobfuscate a string generated with our crappy obfuscate function</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.utility.digest">
+<code class="descclassname">scarf.core.utility.</code><code class="descname">digest</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.utility.digest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hash a string</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>string</strong> &#8211; String to hash</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">hashlib.sha384(string).hexdigest()</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.utility.escape_html">
+<code class="descclassname">scarf.core.utility.</code><code class="descname">escape_html</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.utility.escape_html" title="Permalink to this definition">¶</a></dt>
+<dd><p>Strip the naughty bits out of a string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.utility.hashize">
+<code class="descclassname">scarf.core.utility.</code><code class="descname">hashize</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.utility.hashize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hash and base 64 encode a string</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>string</strong> &#8211; String to encode</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">base64.b64encode(hashlib.sha384(string).digest())</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.utility.ip_uid">
+<code class="descclassname">scarf.core.utility.</code><code class="descname">ip_uid</code><span class="sig-paren">(</span><em>ip</em>, <em>readonly=False</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.utility.ip_uid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the UID of an IP from the ip table. Insert it if it doesn&#8217;t have an entry.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ip</strong> &#8211; </li>
+<li><strong>readonly</strong> &#8211; Set to True if the IP should only be checked (don&#8217;t modify the ip table)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">UID of the IP from the ip table</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.utility.obfuscate">
+<code class="descclassname">scarf.core.utility.</code><code class="descname">obfuscate</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.utility.obfuscate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obfuscate a string. Not secure. Modifying this value will change various generated URLs and break bookmarks.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.utility.redirect_back">
+<code class="descclassname">scarf.core.utility.</code><code class="descname">redirect_back</code><span class="sig-paren">(</span><em>endpoint</em>, <em>**values</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.utility.redirect_back" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to redirect back to the referrer. If redirect to the requester&#8217;s referrer isn&#8217;t possible 
+then attempt to redirect to the provided endpoint.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scarf.core.utility.xor_strings">
+<code class="descclassname">scarf.core.utility.</code><code class="descname">xor_strings</code><span class="sig-paren">(</span><em>s</em>, <em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#scarf.core.utility.xor_strings" title="Permalink to this definition">¶</a></dt>
+<dd><p>XOR two strings, used for obfuscation</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scarf.core">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-scarf.core" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">scarf.core package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-scarf.core.images">scarf.core.images module</a></li>
+<li><a class="reference internal" href="#module-scarf.core.items">scarf.core.items module</a></li>
+<li><a class="reference internal" href="#module-scarf.core.keyvalue">scarf.core.keyvalue module</a></li>
+<li><a class="reference internal" href="#module-scarf.core.mail">scarf.core.mail module</a></li>
+<li><a class="reference internal" href="#module-scarf.core.memoize">scarf.core.memoize module</a></li>
+<li><a class="reference internal" href="#module-scarf.core.messages">scarf.core.messages module</a></li>
+<li><a class="reference internal" href="#module-scarf.core.sql">scarf.core.sql module</a></li>
+<li><a class="reference internal" href="#module-scarf.core.stats">scarf.core.stats module</a></li>
+<li><a class="reference internal" href="#module-scarf.core.strings">scarf.core.strings module</a></li>
+<li><a class="reference internal" href="#module-scarf.core.users">scarf.core.users module</a></li>
+<li><a class="reference internal" href="#module-scarf.core.utility">scarf.core.utility module</a></li>
+<li><a class="reference internal" href="#module-scarf.core">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="scarf.html">scarf package</a><ul>
+      <li>Previous: <a href="scarf.html" title="previous chapter">scarf package</a></li>
+      <li>Next: <a href="scarf.core.test.html" title="next chapter">scarf.core.test package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/scarf.core.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, ..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/scarf.core.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

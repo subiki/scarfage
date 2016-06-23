@@ -1,0 +1,38 @@
+scarf.core.test package
+=======================
+
+Submodules
+----------
+
+scarf.core.test.test_blns module
+--------------------------------
+
+.. automodule:: scarf.core.test.test_blns
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.core.test.test_items module
+---------------------------------
+
+.. automodule:: scarf.core.test.test_items
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.core.test.test_users module
+---------------------------------
+
+.. automodule:: scarf.core.test.test_users
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: scarf.core.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

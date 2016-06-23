@@ -1,0 +1,109 @@
+scarf.core package
+==================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    scarf.core.test
+
+Submodules
+----------
+
+scarf.core.images module
+------------------------
+
+.. automodule:: scarf.core.images
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.core.items module
+-----------------------
+
+.. automodule:: scarf.core.items
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.core.keyvalue module
+--------------------------
+
+.. automodule:: scarf.core.keyvalue
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.core.mail module
+----------------------
+
+.. automodule:: scarf.core.mail
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.core.memoize module
+-------------------------
+
+.. automodule:: scarf.core.memoize
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.core.messages module
+--------------------------
+
+.. automodule:: scarf.core.messages
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.core.sql module
+---------------------
+
+.. automodule:: scarf.core.sql
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.core.stats module
+-----------------------
+
+.. automodule:: scarf.core.stats
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.core.strings module
+-------------------------
+
+.. automodule:: scarf.core.strings
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.core.users module
+-----------------------
+
+.. automodule:: scarf.core.users
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.core.utility module
+-------------------------
+
+.. automodule:: scarf.core.utility
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: scarf.core
+    :members:
+    :undoc-members:
+    :show-inheritance:

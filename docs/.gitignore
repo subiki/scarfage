@@ -1,9 +1,0 @@
-*.rst
-*.html
-*.js
-objects.inv
-_sources/*
-_static/*
-.*
-!.gitignore
-!source/*

@@ -1,0 +1,7 @@
+scarf
+=====
+
+.. toctree::
+   :maxdepth: 4
+
+   scarf

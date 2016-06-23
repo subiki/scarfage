@@ -1,0 +1,149 @@
+scarf package
+=============
+
+Subpackages
+-----------
+
+.. toctree::
+
+    scarf.core
+
+Submodules
+----------
+
+scarf.access module
+-------------------
+
+.. automodule:: scarf.access
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.admin module
+------------------
+
+.. automodule:: scarf.admin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.config module
+-------------------
+
+.. automodule:: scarf.config
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.image module
+------------------
+
+.. automodule:: scarf.image
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.items module
+------------------
+
+.. automodule:: scarf.items
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.main module
+-----------------
+
+.. automodule:: scarf.main
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.moderation module
+-----------------------
+
+.. automodule:: scarf.moderation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.nocache module
+--------------------
+
+.. automodule:: scarf.nocache
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.ownwant module
+--------------------
+
+.. automodule:: scarf.ownwant
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.pm module
+---------------
+
+.. automodule:: scarf.pm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.profile module
+--------------------
+
+.. automodule:: scarf.profile
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.resize module
+-------------------
+
+.. automodule:: scarf.resize
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.stats module
+------------------
+
+.. automodule:: scarf.stats
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.tags module
+-----------------
+
+.. automodule:: scarf.tags
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.trade module
+------------------
+
+.. automodule:: scarf.trade
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+scarf.user module
+-----------------
+
+.. automodule:: scarf.user
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: scarf
+    :members:
+    :undoc-members:
+    :show-inheritance:
