@@ -198,6 +198,7 @@ def index():
 
     pd.welcomebanner = core.SiteString('welcomebanner').string
 
+    # TODO: remove this once reimplemented with JS. #81
     pd.items = core.latest_items(10)
 
     return render_template('index.html', pd=pd)

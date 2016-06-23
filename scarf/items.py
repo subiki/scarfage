@@ -77,15 +77,24 @@ def show_item(item_id, edit=None):
     :Sample response:
 
     .. code-block:: javascript
-
-        {
-            "added": "2016-05-24 05:05:40",
-            "body": "[Link text](https://scarfage.com/whatever) ",
-            "body_rendered": "<p><a href=\"https://scarfage.com/whatever\">Link text</a> </p>",
-            "description": 905,
-            "modified": "2016-05-25 01:45:21",
-            "name": "new item"
-        }
+    {
+        "added": "2016-05-23 20:52:12",
+        "body": "",
+        "body_rendered": "",
+        "description": 384,
+        "images": [
+            443,
+            444
+        ],
+        "modified": "2016-05-23 20:53:19",
+        "name": "SSFC",
+        "tags": {
+            "FO": false,
+            "Front Office": true,
+            "MLS": true,
+        },
+        "uid": 388
+    }
 
     * added         - Date added, always UTC
     * modified      - Late modified, also always UTC
@@ -93,6 +102,8 @@ def show_item(item_id, edit=None):
     * body          - raw unrendered description body
     * body_rendered - rendered content
     * description   - edit identifier
+    * images        - array of image ids associated with this item
+    * tags          - dict of tags, keys are the tag title. the value is a bool which will be set to true if the tag was directly applied and false if inherited.
     """
 
     if item_id is 'new':

@@ -256,6 +256,7 @@ class SiteItem(object):
                     uid=self.uid,
                     name=self.name,
                     description=self.description(),
+                    tags=self.tags_with_parents(),
                     images=images,
                     added=str(self.added),
                     modified=str(self.modified))
@@ -469,6 +470,7 @@ def new_item(name, description, userid, ip):
 
     return itemid 
 
+# TODO: remove this once reimplemented with JS. #81
 @memoize_with_expiry(item_cache, long_cache_persist)
 def latest_items(limit=0):
     items = list()
