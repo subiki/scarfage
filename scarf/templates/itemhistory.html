@@ -9,7 +9,7 @@
 <div id="page-header">
 <h3>{{ pd.item.name }}</h3>
 
-<a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}">Cancel</a>
+<a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}" rel="nofollow">Cancel</a>
 
 {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
 <a class="btn btn-sm btn-danger" href="/item/{{ pd.item.uid }}/delete">Delete item</a><br>
@@ -34,8 +34,8 @@ Anonymous ({{ ent.ip }})
 <a href="/user/{{ ent.user }}">{{ ent.user }}</a>
 {% endif %}
 </td>
-<td><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/revert/{{ ent.uid }}">Revert to this</a></td>
-<td><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/history/{{ ent.uid }}">View</a></td>
+<td><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/revert/{{ ent.uid }}" rel="nofollow">Revert to this</a></td>
+<td><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/history/{{ ent.uid }}"rel="nofollow">View</a></td>
 </tr>
 {% endfor %}
 </table>

@@ -10,7 +10,7 @@ import core
 import config
 import markdown
 from scarf import app
-from flask import render_template, session, request, flash
+from flask import render_template, session, request, flash, send_from_directory
 from core import redirect_back
 from nocache import nocache
 
@@ -184,6 +184,11 @@ def accessdenied():
     pd.title = "Access Denied"
     pd.errortext = "Access Denied"
     return render_template('error.html', pd=pd), 403
+
+@app.route('/robots.txt')
+#@app.route('/sitemap.xml')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
 
 @app.route('/')
 @nocache

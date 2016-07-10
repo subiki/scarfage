@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /item/*/*
+Disallow: /image/*/*
+Disallow: /tag/*
+Disallow: /user/*/trade/*
+NoIndex: /item/*/*
+NoIndex: /image/*/*
+NoIndex: /tag/*
+NoIndex: /user/*/trade/*

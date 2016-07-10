@@ -99,7 +99,7 @@ You must be logged in to create a collection.
 {% endif %}
 
 {% for user in pd.item.willtradeusers()[1] %}
-<a href="/user/{{ user.username }}/trade/{{ pd.item.uid }}">{{ user.username }}</a><br />
+<a href="/user/{{ user.username }}/trade/{{ pd.item.uid }}" rel="nofollow">{{ user.username }}</a><br />
 {% endfor %}
 
 </div>
@@ -112,7 +112,7 @@ You must be logged in to create a collection.
 {% endif %}
 
 {% for user in pd.item.wantusers()[1] %}
-<a href="/user/{{ user.username }}/trade/{{ pd.item.uid }}">{{ user.username }}</a><br />
+<a href="/user/{{ user.username }}/trade/{{ pd.item.uid }}" rel="nofollow">{{ user.username }}</a><br />
 {% endfor %}
 </div>
 
@@ -120,7 +120,7 @@ You must be logged in to create a collection.
         <div class="page-header"><h4>Tags</h4></div>
         {% set parent_tags = pd.item.tags_with_parents() %}
         {%for tag in parent_tags %}
-        <a href="/tag/{{ pd.encode(tag) }}">{{ tag }}</a>
+        <a href="/tag/{{ pd.encode(tag) }}" rel="nofollow">{{ tag }}</a>
         {% if not parent_tags[tag] %}
         <a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag) }}" rel="nofollow"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;" title="Remove Tag"></span></a>
         {% else %}

@@ -349,7 +349,7 @@
            {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
              <small><a href="/item/{{ item.uid }}/dontwant"><span class="glyphicon glyphicon-trash"></span> Remove from list</a></small>
            {%else%}
-             <a href="/user/{{ pd.profileuser.username }}/trade/{{ item.uid }}">Make trade request</a>
+             <a href="/user/{{ pd.profileuser.username }}/trade/{{ item.uid }}" rel="nofollow">Make trade request</a>
            {% endif %}
            </td>
        </td>
