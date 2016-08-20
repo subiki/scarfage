@@ -1,29 +1,28 @@
+"""
+Insert fake test data into the database
+
+If a 'testimgs' directory exists in the project root then those images will
+be randomly added to items.
+"""
+
 import os, sys
 sys.path.insert(1, os.path.join(sys.path[0], '../../..'))
 
 import scarf
-#import unittest
 import flask
 import string
 import random
 import logging
-#import base64
-#import json
-
+from faker import Factory
 from scarf import app
 
 logging.basicConfig(filename='ersatz.log',level=logging.DEBUG)
-
-from faker import Factory
 fake = Factory.create()
 
-def generator(size=6, chars=string.ascii_lowercase + string.ascii_uppercase + string.digits):
-   return ''.join(random.choice(chars) for _ in range(size))
-
 def make_user():
-    username = fake.name()
-    email = fake.email()
-    password = generator(12)
+    username = fake.user_name()
+    email = fake.safe_email()
+    password = fake.password()
 
     uid = scarf.core.new_user(username, password, email, fake.ipv4(network=False))
     print "Created user {} / {} - {} - {}".format(uid, username, password, email)
