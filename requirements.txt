@@ -10,3 +10,4 @@ bcrypt
 pytz
 bleach
 sphinx
+fake-factory
