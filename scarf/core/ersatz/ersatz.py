@@ -19,6 +19,9 @@ from scarf import app
 logging.basicConfig(filename='ersatz.log',level=logging.DEBUG)
 fake = Factory.create()
 
+def fake_name():
+    return fake.sentence(nb_words=random.choice(range(2,4)), variable_nb_words=True).strip('.').title()
+
 def make_user():
     username = fake.user_name()
     email = fake.safe_email()
@@ -31,7 +34,7 @@ def make_user():
     return siteuser
 
 def make_item(siteuser):
-    name = fake.text(max_nb_chars=30)
+    name = fake_name()
     description = fake.text()
 
     itemid = scarf.core.new_item(name, description, siteuser.uid, fake.ipv4(network=False))
@@ -40,7 +43,7 @@ def make_item(siteuser):
     return item
 
 def add_image(item, userid, directory):
-    title = fake.text(max_nb_chars=30)
+    title = fake_name()
 
     try:
         filename = random.choice(os.listdir(directory))
@@ -53,9 +56,29 @@ def add_image(item, userid, directory):
         print "Added image {} to item {} by userid {}".format(title, item.name, userid)
 
 with app.test_request_context(''):
+    users = dict()
+    items = dict()
+
+    # create some items and users
     for _ in range(0,10):
         user = make_user()
+        users[user.uid] = user
         for _ in range(0,10):
             item = make_item(user)
-            for _ in range(0,2):
-                add_image(item, user.uid, 'testimgs')
+            items[item.uid] = item
+            add_image(item, user.uid, 'testimgs')
+
+    # give those users a collection
+    for user in users:
+        for _ in range(0,100):
+            item_id = random.choice(items.keys())
+            action = random.choice(['have', 'willtrade', 'want', 'show'])
+            values = scarf.ownwant.actions[action]
+            # kinda hacky
+            if action is 'show' or 'willtrade':
+                values['own'] = 1
+
+            ownwant = scarf.core.OwnWant(item_id, users[user].uid)
+            ownwant.update(values)
+
+            print "Setting {}'s item status for {} to {}".format(users[user].username, items[item_id].name, action)
