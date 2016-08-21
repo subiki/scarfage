@@ -51,6 +51,8 @@ class PageData(object):
        * deobfuscate     - core.deobfuscate()
        * uid_by_user     - core.uid_by_user()
        * user_by_uid     - core.user_by_uid()
+       * uid_by_item     - core.uid_by_item()
+       * item_by_uid     - core.item_by_uid()
        * render_markdown - render_markdown()
 
     """
@@ -70,6 +72,8 @@ class PageData(object):
         self.deobfuscate = core.deobfuscate
         self.uid_by_user = core.uid_by_user
         self.user_by_uid = core.user_by_uid
+        self.uid_by_item = core.uid_by_item
+        self.item_by_uid = core.item_by_uid
         self.render_markdown = render_markdown
 
         if 'username' in session:

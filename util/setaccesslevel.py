@@ -25,8 +25,6 @@ if level not in scarf.core.accesslevels:
     for accesslevel in scarf.core.accesslevels:
         print "  {}\t{}".format(accesslevel, scarf.core.accesslevels[accesslevel])
     sys.exit(2)
-else:
-    level = int(level)
 
 with app.test_request_context(''):
     try:

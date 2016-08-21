@@ -2,10 +2,9 @@
 
 {% block body %}
 
-
-
 <div id="content">
-<h1> {{ pd.img.tag }}</h1>
+<h1> {{ pd.img.tag }}</h1><br />
+<a href="/item/{{ pd.img.parent }}">Back to "{{ pd.item_by_uid(pd.img.parent) }}"</a><br />
 {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
 <p><a class="btn btn-danger" href="/image/{{ pd.img.uid }}/delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></p>
 {% endif %} <br/>
