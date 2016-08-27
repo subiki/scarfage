@@ -4,3 +4,5 @@ blns.base64.json
 venv/*
 scarf/static/scss/.sass-cache
 testimgs
+*.csv
+.DS_Store
