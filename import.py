@@ -10,7 +10,7 @@ import sys
 #
 # Usage: ./import.py >> scarfDB.csv
 #
-
+NUM = '999'
 
 # format image url
 # given a scarfage image id from json, returns a url to the image
@@ -24,7 +24,7 @@ def save_image_locally(image_id, con):
         handler.write(img_data)
 
 # get the scarfage json
-scarfjson_url = "/item/search?page=&limit=999&query=&sort=name"
+scarfjson_url = "/item/search?page=&limit="+NUM+"&query=&sort=name"
 headers = {"Accept": "application/json"}
 
 conn = httplib.HTTPSConnection("www.scarfage.com")
@@ -36,13 +36,14 @@ data = json.loads(response.read())['results']
 output = csv.writer(sys.stdout)
 
 for scarf in data:
+    scarf['image1'] = ""
+    scarf['image0'] = ""
     for i in range(len(scarf['images'])):
         save_image_locally(scarf['images'][i], conn)
-        scarf['images'][i] = image_url(scarf['images'][i])
+        scarf['image'+str(i)] = image_url(scarf['images'][i])
 
 conn.close()
 
 output.writerow(data[0].keys()) # header row
-
 for row in data:
     output.writerow(row.values())
