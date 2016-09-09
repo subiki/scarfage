@@ -4,3 +4,6 @@ blns.base64.json
 venv/*
 scarf/static/scss/.sass-cache
 testimgs
+.gulp-scss-cache
+.sass-cache
+_scss
