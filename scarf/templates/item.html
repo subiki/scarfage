@@ -9,11 +9,18 @@
 
 {% if pd.item %}
 <div class="page-header"> <h3>{{ pd.item.name }}</h3>
+
+{% if pd.item.edit and not pd.item.edit == pd.item.description() %}
+<div class="alert alert-warning" role="alert">
+You are viewing an old version of this item's description, click <a href="/item/{{ pd.item.uid }}" class="alert-link">here</a> for the latest version. 
+</div>
+{% endif %}
+
 <small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/edit"> Edit </a></small>
 <small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/history"> History </a></small>
 
-{% if pd.item.old %}
-<small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/revert/{{ pd.item.description() }}"> Revert </a></small>
+{% if pd.item.edit and not pd.item.edit == pd.item.description() %}
+<small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/revert/{{ pd.item.description() }}"> Revert to this </a></small>
 {% endif %}
 
 {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
@@ -22,14 +29,8 @@
 {% endif %}
 </div>
 
-{% if pd.item.old %}
-<div id="warning">
-You are viewing an older version of this item's description, click <a href="/item/{{ pd.item.uid }}">here</a> for the latest version. 
-</div>
-{% endif %}
-
 <div id="description">
-{{ pd.render_markdown(pd.item.description_content)|safe }}
+{{ pd.render_markdown(pd.item.body(pd.item.edit))|safe }}
 </div>
 
 {% for image in pd.item.images() %}

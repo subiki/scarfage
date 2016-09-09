@@ -247,6 +247,8 @@ class SiteItem(object):
 
         if not edit:
             edit = self.description()
+        else:
+            edit = int(edit)
 
         images = list()
         for image in self.images():
@@ -255,7 +257,7 @@ class SiteItem(object):
         return dict(body=self.body(edit),
                     uid=self.uid,
                     name=self.name,
-                    description=self.description(),
+                    description=edit,
                     tags=self.tags_with_parents(),
                     images=images,
                     added=str(self.added),
