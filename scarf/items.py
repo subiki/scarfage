@@ -99,8 +99,8 @@ def show_item(item_id, edit=None):
     * added         - Date added, always UTC
     * modified      - Late modified, also always UTC
     * name          - Item's name
-    * body          - raw unrendered description body
-    * body_rendered - rendered content
+    * body          - raw unrendered description body for the active edit
+    * body_rendered - rendered content for the active edit
     * description   - edit identifier
     * images        - array of image ids associated with this item
     * tags          - dict of tags, keys are the tag title. the value is a bool which will be set to true if the tag was directly applied and false if inherited.
@@ -113,19 +113,19 @@ def show_item(item_id, edit=None):
         showitem = SiteItem.create(item_id)
 
         if edit:
-            showitem.old = True
-            showitem.edit = edit
-        else:
-            showitem.old = False
-            showitem.edit = None
+            edit = int(edit)
 
-        showitem.description_content = showitem.body(edit)
-    except NoItem:
+        showitem.edit = edit
+
+        if edit and edit not in [int(i.uid) for i in showitem.history()]:
+            return page_not_found()
+    except (NoItem, ValueError):
         return page_not_found()
 
     if request_wants_json():
-        values = showitem.values()
+        values = showitem.values(edit)
         values['body_rendered'] = render_markdown(values['body'])
+
         return json.dumps(values)
     else:
         pd = PageData()
@@ -190,14 +190,23 @@ def edititem(item_id=None):
 
                 item_id = uid_by_item(request.form['name'])
                 if not item_id or item_id == int(request.form['uid']):
-                    item.name = request.form['name']
-                    item.update()
-
-                    # todo: check for null edits
-                    new_edit(request.form['uid'], request.form['desc'], userid, request.remote_addr)
-
                     uid = request.form['uid']
-                    flash('Edited item!')
+                    ip = request.remote_addr
+
+                    if item.name != request.form['name']:
+                        item.name = request.form['name']
+                        item.update()
+
+                    old = core.digest(item.body())
+                    new = core.digest(request.form['desc'])
+
+                    # silently discard null edits
+                    if old != new:
+                        new_edit(uid, request.form['desc'], userid, ip)
+                        logger.info('item {} edited by user {} ({})'.format(uid, userid, ip))
+                    else:
+                        logger.info('null edit discarded for item {} by user {} ({})'.format(uid, userid, ip))
+
                     return redirect('/item/' + str(uid))
                 else:
                     flash(item.name + " already exists!")

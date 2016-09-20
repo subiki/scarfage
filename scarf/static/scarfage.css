@@ -55,6 +55,13 @@ body {
       margin: 0; }
     body#bsor form input {
       margin-bottom: 5px; }
+    body#bsor form input[type="text"] {
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      border-radius: 0px;
+      background-repeat: no-repeat;
+      border: 1px solid #000;
+      background-color: #fff; }
     body#bsor form .button, body#bsor form button, body#bsor form input[type=submit] {
       background-repeat: repeat-x;
       background-color: #5cb85c;
@@ -62,6 +69,17 @@ body {
       border-color: #3e8f3e;
       color: #fff;
       border-radius: 4px; }
+    body#bsor form .search-btn {
+      width: 34px;
+      height: 36px;
+      background: url("images/buttons/search.png");
+      vertical-align: middle;
+      position: relative;
+      right: 10px;
+      bottom: 1px;
+      background-repeat: no-repeat;
+      border: none;
+      display: inline-block; }
     body#bsor h2 {
       font-size: 1.5em;
       font-weight: bold; }
@@ -77,19 +95,31 @@ body {
 @media (min-width: 768px) {
   body#bsor {
     padding-top: 100px; }
+    body#bsor .navbar-brand {
+      position: relative;
+      display: block;
+      z-index: 10000;
+      cursor: pointer; }
     body#bsor #navbar {
       position: relative;
       z-index: 1000; }
     body#bsor .secondary-nav {
       vertical-align: middle; }
+      body#bsor .secondary-nav li {
+        color: #993; }
+      body#bsor .secondary-nav .item-search input[type="text"] {
+        height: 36px; }
       body#bsor .secondary-nav a, body#bsor .secondary-nav .login {
         cursor: pointer;
-        color: #00802b; }
-      body#bsor .secondary-nav .login-signup {
+        color: #5cb85c; }
+      body#bsor .secondary-nav .login-signup, body#bsor .secondary-nav .profile, body#bsor .secondary-nav .logout {
         display: block;
         color: #993;
         width: 240px;
         padding: 15px 0; }
+      body#bsor .secondary-nav .profile, body#bsor .secondary-nav .logout {
+        width: auto;
+        display: inline-block; }
     body#bsor .login-container {
       display: none;
       position: absolute;
@@ -105,7 +135,13 @@ body {
       body#bsor .login-container .form-group {
         width: 100%; }
         body#bsor .login-container .form-group input {
-          width: 100%; } }
+          width: 100%; }
+    body#bsor a.scarf {
+      display: block;
+      overflow: hidden;
+      max-width: 640px;
+      max-height: 200px;
+      width: 100%; } }
 /* MOBILE */
 @media (max-width: 767px) {
   body#bsor {
@@ -120,84 +156,41 @@ body {
       display: inline-block;
       margin-left: 15px; }
     body#bsor .secondary-nav li {
-      display: inline-block; }
+      display: inline-block;
+      color: #993; }
+      body#bsor .secondary-nav li.auth {
+        display: block; }
+        body#bsor .secondary-nav li.auth a, body#bsor .secondary-nav li.auth .login {
+          cursor: pointer;
+          color: #5cb85c; }
       body#bsor .secondary-nav li.item-search {
         margin: 0;
         padding: 20px 0;
         display: block;
         border-top: 1px solid #616161; }
+        body#bsor .secondary-nav li.item-search input[type="text"] {
+          width: 78%;
+          display: inline-block; }
+        body#bsor .secondary-nav li.item-search .search-btn {
+          vertical-align: middle; }
       body#bsor .secondary-nav li .login-container {
-        display: block; }
+        display: block;
+        width: 89%; }
       body#bsor .secondary-nav li .forgotpw {
         color: #9d9d9d;
         padding-left: 10px; }
+      body#bsor .secondary-nav li .close {
+        display: none; }
     body#bsor .navbar-form {
       border: none;
       box-shadow: none;
       -webkit-box-shadow: none;
       margin: 0;
       padding: 0; }
-    body#bsor img.scarf {
-      max-width: 500px;
+    body#bsor a.scarf {
+      display: block;
+      overflow: hidden;
+      max-width: 640px;
       max-height: 200px;
       width: 100%; } }
 /* END MOBILE */
-.scarf-entry .scarf {
-  display: block;
-  max-width: 640px;
-  overflow: hidden; }
-  .scarf-entry .scarf img {
-    width: 100%;
-    height: auto; }
-.scarf-entry .trade-status {
-  width: 20px;
-  height: 20px;
-  background-image: url("images/tradeicons.png"); }
-  .scarf-entry .trade-status.notinlist {
-    background-position: 0 0; }
-  .scarf-entry .trade-status.notinlist:hover:after {
-    content: "Not In List";
-    width: 100px;
-    display: block;
-    position: relative;
-    bottom: 30px;
-    border: 1px solid #333;
-    padding: 5px;
-    background-color: #fff;
-    opacity: .7; }
-  .scarf-entry .trade-status.have {
-    background-position: 0 -20px; }
-  .scarf-entry .trade-status.have:hover:after {
-    content: "Owned";
-    width: 100px;
-    display: block;
-    position: relative;
-    bottom: 30px;
-    border: 1px solid #333;
-    padding: 5px;
-    background-color: #fff;
-    opacity: .7; }
-  .scarf-entry .trade-status.trade {
-    background-position: 0 -40px; }
-  .scarf-entry .trade-status.trade:hover:after {
-    content: "Will Trade";
-    width: 100px;
-    display: block;
-    position: relative;
-    bottom: 30px;
-    border: 1px solid #333;
-    padding: 5px;
-    background-color: #fff;
-    opacity: .7; }
-  .scarf-entry .trade-status.want {
-    background-position: 0 -60px; }
-  .scarf-entry .trade-status.want:hover:after {
-    content: "Want";
-    width: 100px;
-    display: block;
-    position: relative;
-    bottom: 30px;
-    border: 1px solid #333;
-    padding: 5px;
-    background-color: #fff;
-    opacity: .7; }
