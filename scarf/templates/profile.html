@@ -23,6 +23,7 @@
     {% else %}
         {% set avatarurl = pd.prefix + "/static/defaultavatar.png" %}
     {% endif %}
+
     {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
         <div class="page-header"><h4>{{ pd.profileuser.username }}'s Profile</h4>
             {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 and pd.profileuser.accesslevel == 0 %}
@@ -30,14 +31,6 @@
             {% endif %}
         </div>
 
-        <div class="col-md-8">
-        <ul>
-            <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
-            <li>Last seen: {{ pd.localtime(pd.profileuser.lastseen) }}</li>
-        </ul>
-
-        {{ pd.render_markdown(profile['summary'])|safe }}
-        </div>
         <div class="col-md-4">
             <div align="center">
             {% if pd.accesslevels[pd.profileuser.accesslevel] == 'moderator' %}
@@ -49,6 +42,15 @@
             {% endif %}
             <img style="max-height:150px; max-width:150px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
             </div>
+        </div>
+
+        <div class="col-md-8">
+        <ul>
+            <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
+            <li>Last seen: {{ pd.localtime(pd.profileuser.lastseen) }}</li>
+        </ul>
+
+        {{ pd.render_markdown(profile['summary'])|safe }}
         </div>
     {% else %}
         <div class="page-header"><h4></h4></div>
@@ -116,7 +118,6 @@
             <label class="control-label col-sm-2" for="email">Email Notifications *</label>
             <div class="col-sm-10">
                <input type="checkbox" name="" value=""> New Private Message<br>
-               <input type="checkbox" name="" value=""> New Trade<br>
             </div>
           </div>
 
@@ -286,73 +287,72 @@
   </div>
   <div id="collections" class="tab-pane fade">
 
-    <div class="page-header"><h4>{{ pd.profileuser.username }}'s collection</h4></div>
+    <div class="page-header"><h4>{{ pd.profileuser.username }}'s Collection</h4></div>
 
     <table class="table">
     {% for item in pd.profileuser.collection() %}
-    <tr>
+    <tr class="have-collection-item{{ item.uid }}">
       {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
         {% if item.have == 1 %}
             <td>
-               {% for image in item.images()[:1] %}
-                   <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
-               {% endfor %}
+                <h4>
+                <a href="/item/{{ item.uid }}">{{ item.name }}</a> 
+                {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
+                {% include 'itemstatusbox.html' %}
+                {% endif %}
+                </h4>
             </td>
 
-            <td><a href="/item/{{ item.uid }}">{{ item.name }}</a></td>
-            {% if item.hidden == 0 %}
-                <td><a href="/item/{{ item.uid }}/hide">Don't show to others</a></td>
-            {% else %}
-                <td><a href="/item/{{ item.uid }}/show">Show to others</a></td>
-            {% endif %}
-
-            {% if item.willtrade == 1 %}
-               <td><a href="/item/{{ item.uid }}/wonttrade">Mark as unavailable for trade</a></td>
-            {% else %}
-               <td><a href="/item/{{ item.uid }}/willtrade">Mark as available for trade</a></td>
-            {% endif %}
-           <td><a href="/item/{{ item.uid }}/donthave">Remove from collection</a></td>
+            <td>
+            {% for image in item.images()[:1] %}
+                <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+            {% endfor %}
+            </td>
         {% endif %}
       {% else %}
         {% if item.hidden == 0 and item.have == 1 %}
+           <td>
+               <h4>
+               <a href="/item/{{ item.uid }}">{{ item.name }}</a> 
+               {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
+                {% include 'itemstatusbox.html' %}
+               {% endif %}
+               </h4>
+           </td>
+
            <td>
                {% for image in item.images()[:1] %}
                    <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
                {% endfor %}
            </td>
-
-            <td> <a href="/item/{{ item.uid }}">{{ item.name }}</a> </td>
-            {% if item.willtrade == 1 %}
-                <td>available for trade / <a href="/user/{{ pd.profileuser.username }}/trade/{{ item.uid }}">Make trade request</a></td>
-            {% endif %}
         {% endif %}
       {% endif %}
     </tr>
+    </div>
     {% endfor %}
     </table>
 
-    <div class="page-header"><h4>{{ pd.profileuser.username }}'s wanted list</h4></div>
+    <div class="page-header"><h4>{{ pd.profileuser.username }}'s Wanted List</h4></div>
     <div class="col-md-12">
     <table class="table">
     {% for item in pd.profileuser.collection() %}
      {% if item.want == 1 %}
        <tr>
            <td>
+               <h4>
+               <a href="/item/{{ item.uid }}">{{ item.name }}</a> 
+               {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
+               {% include 'itemstatusbox.html' %}
+               {% endif %}
+               </h4>
+           </td>
+
+           <td>
            {% for image in item.images()[:1] %}
            <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
            {% endfor %}
            </td>
-
-           <td><a href="/item/{{ item.uid }}">{{ item.name }}</a></td>
-
-           <td>
-           {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
-             <small><a href="/item/{{ item.uid }}/dontwant"><span class="glyphicon glyphicon-trash"></span> Remove from list</a></small>
-           {%else%}
-             <a href="/user/{{ pd.profileuser.username }}/trade/{{ item.uid }}" rel="nofollow">Make trade request</a>
-           {% endif %}
-           </td>
-       </td>
+       </tr>
      {% endif %}
     {% endfor %}
     </table>

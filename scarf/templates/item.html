@@ -8,7 +8,26 @@
 <div class="col-md-8">
 
 {% if pd.item %}
-<div class="page-header"> <h3>{{ pd.item.name }}</h3>
+<div class="page-header"> <h3>{{ pd.item.name }}
+
+{% if pd.authuser is defined %}
+{% set item = pd.item %}
+{% include 'itemstatusbox.html' %}
+{% endif %}
+
+<a href="/item/{{ pd.item.uid }}/edit"> <span title="Edit" style="color: blue;" class="glyphicon glyphicon-pencil"></span></a>
+<a href="/item/{{ pd.item.uid }}/history"> <span title="View History" style="color: blue;" class="glyphicon glyphicon-time"></span></a>
+
+{% if pd.item.edit and not pd.item.edit == pd.item.description() %}
+<a href="/item/{{ pd.item.uid }}/revert/{{ pd.item.description() }}"> <span title="Revert to this" style="color: blue;" class="glyphicon glyphicon-repeat"></span></a>
+{% endif %}
+
+{% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
+<a href="/item/{{ pd.item.uid }}/delete"> <span title="Delete" style="color: orange;" class="glyphicon glyphicon-trash"></span></a>
+{% endif %}
+
+
+</h3>
 
 {% if pd.item.edit and not pd.item.edit == pd.item.description() %}
 <div class="alert alert-warning" role="alert">
@@ -16,16 +35,6 @@ You are viewing an old version of this item's description, click <a href="/item/
 </div>
 {% endif %}
 
-<small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/edit"> Edit </a></small>
-<small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/history"> History </a></small>
-
-{% if pd.item.edit and not pd.item.edit == pd.item.description() %}
-<small><a class="btn btn-sm btn-default" href="/item/{{ pd.item.uid }}/revert/{{ pd.item.description() }}"> Revert to this </a></small>
-{% endif %}
-
-{% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
-<small><a class="btn btn-sm btn-danger" href="/item/{{ pd.item.uid }}/delete"> Delete </a></small>
-{% endif %}
 {% endif %}
 </div>
 
@@ -54,62 +63,24 @@ You are viewing an old version of this item's description, click <a href="/item/
 
 <div class="col-md-3">
 
-<div class="page-header"><h3>Item actions</h3></div>
-
-{% if pd.authuser is defined %}
-<h2>
-<div class="itemiconsactionbox-nohide" data-itemid="{{ pd.item.uid }}">
-   <span title="Add to collection" style="color: green;" class="glyphicon glyphicon-plus item-icons-have" data-itemid="{{ pd.item.uid }}" id="item-icons-have{{ pd.item.uid }}" aria-hidden="true"></span>
-   <span title="Remove from collection" style="color: red;" class="glyphicon glyphicon-remove item-icons-donthave" data-itemid="{{ pd.item.uid }}" id="item-icons-donthave{{ pd.item.uid }}" aria-hidden="true"></span>
-
-   <span title="Show this item to others" style="color: green;" class="glyphicon glyphicon-eye-open item-icons-show" data-itemid="{{ pd.item.uid }}" id="item-icons-show{{ pd.item.uid }}" aria-hidden="true"></span>
-   <span title="Hide this item from others" style="color: red;" class="glyphicon glyphicon-eye-close item-icons-hide" data-itemid="{{ pd.item.uid }}" id="item-icons-hide{{ pd.item.uid }}" aria-hidden="true"></span>
-
-   <span title="Make this item available for trade" style="color: green;" class="glyphicon glyphicon-transfer item-icons-willtrade" data-itemid="{{ pd.item.uid }}" id="item-icons-willtrade{{ pd.item.uid }}" aria-hidden="true"></span>
-   <span title="Make this item unavailable for trade" style="color: red;" class="glyphicon glyphicon-heart item-icons-wonttrade" data-itemid="{{ pd.item.uid }}" id="item-icons-wonttrade{{ pd.item.uid }}" aria-hidden="true"></span>
-
-   <span title="Add this to my wanted items list" style="color: green;" class="glyphicon glyphicon-bullhorn item-icons-want" data-itemid="{{ pd.item.uid }}" id="item-icons-want{{ pd.item.uid }}" aria-hidden="true"></span>
-   <span title="Remove from my wanted items list" style="color: red;" class="glyphicon glyphicon-unchecked item-icons-dontwant" data-itemid="{{ pd.item.uid }}" id="item-icons-dontwant{{ pd.item.uid }}" aria-hidden="true"></span>
-</div>
-</h2>
-{% else %}
-
-You must be logged in to create a collection.
-
-{% endif %}
-
-<div class="page-header"><h3>Item stats</h3></div>
-
+<div class="page-header"><h4>Users with this item:</h4></div>
 <div class="havecount">
-{% if pd.item.haveusers()[0] == 1 %}
-1 person has this<br />
-{% else %}
-{{ pd.item.haveusers()[0] }} people have this<br />
+{% if pd.item.haveusers()[1] | length == 0 %}
+Nobody has this scarf in their public collection yet.
 {% endif %}
 
 {% for user in pd.item.haveusers()[1] %}
-<a href="/user/{{ user.username }}">{{ user.username }}</a><br />
+<a href="/user/{{ user.username }}">{{ user.username }}</a>
+{% if user in pd.item.willtradeusers()[1] %}
+<span title="This user is willing to trade this item" class="glyphicon glyphicon-transfer"></span>
+{% endif %}</br>
 {% endfor %}
 </div>
 
-<div class="willtradecount">
-{% if pd.item.willtradeusers()[0] == 1 %}
-1 person is willing to trade this <br />
-{% else %}
-{{ pd.item.willtradeusers()[0] }} people are willing to trade this <br />
-{% endif %}
-
-{% for user in pd.item.willtradeusers()[1] %}
-<a href="/user/{{ user.username }}/trade/{{ pd.item.uid }}" rel="nofollow">{{ user.username }}</a><br />
-{% endfor %}
-
-</div>
-
+<div class="page-header"><h4>Users that want this item:</h4></div>
 <div class="wantscount">
-{% if pd.item.wantusers()[0] == 1 %}
-1 person wants to trade for this <br />
-{% else %}
-{{ pd.item.wantusers()[0] }} people want to trade for this <br />
+{% if pd.item.wantusers()[0] == 0 %}
+Nobody wants this item yet.
 {% endif %}
 
 {% for user in pd.item.wantusers()[1] %}

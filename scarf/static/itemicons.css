@@ -1,0 +1,5 @@
+/* merge into main css */
+
+.item-status-icon:hover {
+    cursor: pointer; cursor: hand;
+}

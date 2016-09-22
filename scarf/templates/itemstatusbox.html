@@ -1,0 +1,20 @@
+{% set dataid = item.uid + range(1, 4294967296) | random %}
+
+<div style="display:inline;" class="itemiconsactionbox" data-id="{{dataid}}" data-itemid="{{ item.uid }}">
+<!--
+TODO: add loading spinner or something
+-->
+
+<span title="Add to collection" style="color: green;" class="glyphicon glyphicon-plus item-status-icon item-icons-have" data-id="{{ dataid }}" data-itemid="{{ item.uid }}" id="item-icons-have{{ dataid }}" aria-hidden="true"></span>
+<span title="Remove from collection" style="color: red;" class="glyphicon glyphicon-remove item-status-icon item-icons-donthave" data-id="{{ dataid }}" data-itemid="{{ item.uid }}" id="item-icons-donthave{{ dataid }}" aria-hidden="true"></span>
+
+<span title="Show this item to others" style="color: green;" class="glyphicon glyphicon-eye-open item-status-icon item-icons-show" data-id="{{ dataid }}" data-itemid="{{ item.uid }}" id="item-icons-show{{ dataid }}" aria-hidden="true"></span>
+<span title="Hide this item from others" style="color: red;" class="glyphicon glyphicon-eye-close item-status-icon item-icons-hide" data-id="{{ dataid }}" data-itemid="{{ item.uid }}" id="item-icons-hide{{ dataid }}" aria-hidden="true"></span>
+
+<span title="Make this item available for trade" style="color: green;" class="glyphicon glyphicon-transfer item-status-icon item-icons-willtrade" data-id="{{ dataid }}" data-itemid="{{ item.uid }}" id="item-icons-willtrade{{ dataid }}" aria-hidden="true"></span>
+<span title="Make this item unavailable for trade" style="color: red;" class="glyphicon glyphicon-heart item-status-icon item-icons-wonttrade" data-id="{{ dataid }}" data-itemid="{{ item.uid }}" id="item-icons-wonttrade{{ dataid }}" aria-hidden="true"></span>
+
+<span title="Add this to my wanted items list" style="color: green;" class="glyphicon glyphicon-bullhorn item-status-icon item-icons-want" data-id="{{ dataid }}" data-itemid="{{ item.uid }}" id="item-icons-want{{ dataid }}" aria-hidden="true"></span>
+<span title="Remove from my wanted items list" style="color: red;" class="glyphicon glyphicon-unchecked item-status-icon item-icons-dontwant" data-id="{{ dataid }}" data-itemid="{{ item.uid }}" id="item-icons-dontwant{{ dataid }}" aria-hidden="true"></span>
+
+</div>
