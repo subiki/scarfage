@@ -42,28 +42,18 @@
             {% endif %}
             <img style="max-height:150px; max-width:150px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
             </div>
-        </div>
 
-        <div class="col-md-8">
         <ul>
             <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
             <li>Last seen: {{ pd.localtime(pd.profileuser.lastseen) }}</li>
         </ul>
+        </div>
 
+        <div class="col-md-8">
         {{ pd.render_markdown(profile['summary'])|safe }}
         </div>
     {% else %}
         <div class="page-header"><h4></h4></div>
-        <div class="col-md-8">
-        <ul>
-            <li>Email: {{ pd.profileuser.email }}</li>
-            <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
-            <li>Items added: {{ pd.profileuser.numadds }}</li>
-        </ul>
-
-        {{ pd.render_markdown(profile['summary'])|safe }}
-        </div>
-
         <div class="col-md-4">
             <div align="center">
             {% if pd.accesslevels[pd.profileuser.accesslevel] == 'moderator' %}
@@ -73,9 +63,12 @@
             {% elif pd.accesslevels[pd.profileuser.accesslevel] == 'admin' %}
             <b>Admin</b><br>
             {% endif %}
+              <img style="max-height:150px; max-width:150px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
+
               <a data-toggle="collapse" href="#collapseNewAvatar" aria-expanded="false" aria-controls="collapseNewAvatar">
-                <img style="max-height:150px; max-width:150px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
+              <small>set avatar</small>
               </a>
+
               <div class="collapse" id="collapseNewAvatar">
                 <div class="card card-block">
                     <form action="/user/{{pd.authuser.username}}/profile/newavatar" method="post" enctype="multipart/form-data">
@@ -85,6 +78,15 @@
                 </div>
               </div>
             </div>
+
+            <ul>
+                <li>Email: {{ pd.profileuser.email }}</li>
+                <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
+                <li>Items added: {{ pd.profileuser.numadds }}</li>
+            </ul>
+        </div>
+        <div class="col-md-8">
+        {{ pd.render_markdown(profile['summary'])|safe }}
         </div>
     {% endif %}
   </div>

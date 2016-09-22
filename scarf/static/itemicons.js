@@ -116,7 +116,7 @@ $(document).ready(function(){
                   update(dataid, obj);
               },
               error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                  alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+                  //alert("Status: " + textStatus); alert("Error: " + errorThrown); 
               }    
            });
        }
