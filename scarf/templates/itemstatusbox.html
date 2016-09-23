@@ -1,10 +1,7 @@
 {% set dataid = item.uid + range(1, 4294967296) | random %}
 
 <div style="display:inline;" class="itemiconsactionbox" data-id="{{dataid}}" data-itemid="{{ item.uid }}">
-<!--
-TODO: add loading spinner or something
--->
-
+<img class="item-loading-spinner" data-id="{{ dataid }}" data-itemid="{{ item.uid }}" id="item-loading-spinner{{ dataid }}" src="{{ pd.prefix }}/static/images/loading-spinner.gif" %}">
 <span title="Add to collection" style="color: green;" class="glyphicon glyphicon-plus item-status-icon item-icons-have" data-id="{{ dataid }}" data-itemid="{{ item.uid }}" id="item-icons-have{{ dataid }}" aria-hidden="true"></span>
 <span title="Remove from collection" style="color: red;" class="glyphicon glyphicon-remove item-status-icon item-icons-donthave" data-id="{{ dataid }}" data-itemid="{{ item.uid }}" id="item-icons-donthave{{ dataid }}" aria-hidden="true"></span>
 
