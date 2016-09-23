@@ -24,7 +24,7 @@ for file in $(find "${dir}/scarf/static/" -not -type d); do
     echo "Mutating $file to $newname"
     mv "$file" "$filedir/$newname"
 
-    find -L "${dir}/scarf/templates/" -not -type d -exec sed -i "s#/static/$basename#/static/$newname#g" {} \;
+    find -L "${dir}/scarf/templates/" -not -type d -exec sed -i "s#/static\(/.*\)*/$basename#/static\1/$newname#g" {} \;
 done
 
 echo "$0 Finished!"
