@@ -9,21 +9,22 @@
     <div class="col-md-8">
         <form action="/item/edit" method="post" enctype="multipart/form-data">
         <div class="page-header">
-        <h3>{% if pd.item %}Editing "{{ pd.item.name }}"{% else %}New Item{% endif %}</h3>
+        <h3>{% if pd.item %}Editing "{{ pd.item.name }}"{% else %}New Item{% endif %} <small><a href="/about#markuphelp"><span data-toggle="tooltip" title="Help" style="color: gray;" class="glyphicon glyphicon-question-sign"></span></a></small></h3>
+        </div>
 
-        <button class="btn btn-sm btn-primary" type=submit>Save</button>
+        <div class="page-header"><h4>Name</h4></div>
+        <input type=text name=name value="{% if pd.item %}{{ pd.item.name }}{%endif%}" size="60"><br />
+        <div class="page-header"><h4>Description</h4></div>
+        <textarea name=desc cols="80" rows="8" placeholder="Stuff about your item here. You can upload images on the next page.">{% if pd.item %}{{ pd.item.body(pd.item.edit) }}{% endif %}</textarea><br />
+
+        <input type=hidden name=uid value={% if pd.item %}{{ pd.item.uid }}{%else%}0{%endif%}><br>
+
+        <button class="btn btn-sm btn-primary" type=submit>Save</button>&nbsp;&nbsp;&nbsp;
 
         {% if pd.item %}
         <a class="btn btn-sm btn-danger" href="/item/{{ pd.item.uid }}">Cancel</a>
         {% endif %}
-        </div>
 
-            <div class="page-header"><h4>Name</h4></div>
-            <input type=text name=name value="{% if pd.item %}{{ pd.item.name }}{%endif%}"><br />
-            <div class="page-header"><h4>Description</h4></div>
-            <textarea name=desc cols="50" rows="2" placeholder="Stuff about your item here. You can upload images on the next page.">{% if pd.item %}{{ pd.item.body(pd.item.edit) }}{% endif %}</textarea><br />
-
-            <input type=hidden name=uid value={% if pd.item %}{{ pd.item.uid }}{%else%}0{%endif%}>
         </form>
     </div>
 

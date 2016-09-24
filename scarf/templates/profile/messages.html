@@ -21,19 +21,15 @@
         <table class="table table-condensed">
         <tr>
             <th></th>
+            <th>Subject</th>
             <th>From</th>
             <th>Date</th>
-            <th>Subject</th>
         </tr>
 
         {% for pm in pd.profileuser.messages() %}
         {% if pm.from_user != pd.authuser.username %}
         <tr>
             <td> <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}/delete"> <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> </a> </td> 
-
-            <td> <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a> </td>
-
-            <td>{{ pd.localtime(pm.sent) }}</td>
 
             <td>
             <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">
@@ -44,6 +40,11 @@
             {% endif %}
             </a>
             </td>
+
+            <td> <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a> </td>
+
+            <td>{{ pd.localtime(pm.sent) }}</td>
+
         </tr>
         {% endif %}
         {% endfor %}
@@ -55,9 +56,9 @@
         <table class="table table-condensed">
         <tr>
             <th></th>
+            <th>Subject</th>
             <th>To</th>
             <th>Date</th>
-            <th>Subject</th>
         </tr>
 
         {% for pm in pd.profileuser.messages() %}
@@ -67,14 +68,14 @@
             <td> <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}/delete"> <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> </a> </td> 
 
             <td>
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">{{ pm.subject }}</a>
+            </td>
+
+            <td>
             <a href="/user/{{ pm.to_user }}">{{ pm.to_user }}</a><br />
             </td>
 
             <td>{{ pd.localtime(pm.sent) }}</td>
-
-            <td>
-            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">{{ pm.subject }}</a>
-            </td>
 
             <td>
             </td>
