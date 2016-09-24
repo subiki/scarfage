@@ -3,3 +3,7 @@
 .item-status-icon:hover {
     cursor: pointer; cursor: hand;
 }
+
+.copy-url:hover {
+    cursor: pointer; cursor: hand;
+}

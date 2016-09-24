@@ -36,3 +36,11 @@ $(document).ready(function(){
         });
     }
 });
+
+var url = document.location.href;
+
+new Clipboard('.copy-url', {
+  text: function() {
+    return url;
+  }
+});

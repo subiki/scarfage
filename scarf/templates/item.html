@@ -64,7 +64,6 @@ You are viewing an old version of this item's description, click <a href="/item/
 <div class="col-md-3">
 
 <div class="page-header"><h4>Users with this item:</h4></div>
-<div class="havecount">
 {% if pd.item.haveusers()[1] | length == 0 %}
 Nobody has this scarf in their public collection yet.
 {% endif %}
@@ -75,10 +74,8 @@ Nobody has this scarf in their public collection yet.
 <span title="This user is willing to trade this item" class="glyphicon glyphicon-transfer"></span>
 {% endif %}</br>
 {% endfor %}
-</div>
 
 <div class="page-header"><h4>Users that want this item:</h4></div>
-<div class="wantscount">
 {% if pd.item.wantusers()[0] == 0 %}
 Nobody wants this item yet.
 {% endif %}
@@ -86,25 +83,24 @@ Nobody wants this item yet.
 {% for user in pd.item.wantusers()[1] %}
 <a href="/user/{{ user.username }}/trade/{{ pd.item.uid }}" rel="nofollow">{{ user.username }}</a><br />
 {% endfor %}
-</div>
 
-<div>
-        <div class="page-header"><h4>Tags</h4></div>
-        {% set parent_tags = pd.item.tags_with_parents() %}
-        {%for tag in parent_tags %}
-        <a href="/tag/{{ pd.encode(tag) }}" rel="nofollow">{{ tag }}</a>
-        {% if not parent_tags[tag] %}
-        <a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag) }}" rel="nofollow"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;" title="Remove Tag"></span></a>
-        {% else %}
-        <small><span class="glyphicon glyphicon-lock" aria-hidden="true" style="color: grey;" title="Locked"></span></small>
-        {% endif %}
-        <br>
-        {% endfor %}
-        <form action="/item/tag" method="post" enctype="multipart/form-data">
-            <input type=text name=tag placeholder="Add a tag"><br />
-            <input type=hidden name=uid value={% if pd.item %}{{ pd.item.uid }}{%else%}0{%endif%}> <button class="btn btn-sm btn-default" type=submit>Save</button>
-        </form>
-</div>
+<div class="page-header"><h4>Tags</h4></div>
+{% set parent_tags = pd.item.tags_with_parents() %}
+{%for tag in parent_tags %}
+<a href="/tag/{{ pd.encode(tag) }}" rel="nofollow">{{ tag }}</a>
+{% if not parent_tags[tag] %}
+<a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag) }}" rel="nofollow"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;" title="Remove Tag"></span></a>
+{% else %}
+<small><span class="glyphicon glyphicon-lock" aria-hidden="true" style="color: grey;" title="Locked"></span></small>
+{% endif %}
+<br>
+{% endfor %}
+<form action="/item/tag" method="post" enctype="multipart/form-data">
+    <input type=text name=tag placeholder="Add a tag">
+    <input type=hidden name=uid value={% if pd.item %}{{ pd.item.uid }}{%else%}0{%endif%}> <button class="btn btn-sm btn-default" type=submit>Save</button>
+</form><br><br>
+
+<a class="copy-url"><span class="glyphicon glyphicon-link"></span> Copy to clipboard</a> 
 
 
 </div>
