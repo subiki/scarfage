@@ -91,7 +91,7 @@ Nobody wants this item yet.
 {% if not parent_tags[tag] %}
 <a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag) }}" rel="nofollow"><span data-toggle="tooltip" class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;" title="Remove Tag"></span></a>
 {% else %}
-<small><span data-toggle="tooltip" class="glyphicon glyphicon-lock" aria-hidden="true" style="color: grey;" title="Locked"></span></small>
+<small><span data-toggle="tooltip" class="glyphicon glyphicon-lock" aria-hidden="true" style="color: grey;" title="Locked (inherited from {% set count = 0 %}{% set lastcount = 0 %}{% for child in pd.item.tree.exact_children_of(tag) %}{% if child in parent_tags %}{% if count > lastcount %}, {% endif %}{% set lastcount = count %}'{{ child }}'{% set count = count + 1 %}{% endif %}{% endfor %})"></span></small>
 {% endif %}
 <br>
 {% endfor %}

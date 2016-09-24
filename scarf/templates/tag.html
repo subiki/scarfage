@@ -3,7 +3,10 @@
 {% block body %}
 
 <div id="content">
-<div class="page-heading"><h3>Tag</h3></div>
+
+
+{% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
+<div class="page-heading"><h3>Tag Moderation</h3></div>
 <table class="table">
 <tr><td><b>Name</b></td><td>{{ pd.tag }}</tr>
 
@@ -60,7 +63,7 @@
 {% endfor %}
 </table>
 
-<div class="page-heading"><h3>Tagged Items</h3></div>
+<div class="page-heading"><h3>Directly Tagged Items</h3></div>
 
 <table class="table">
 {% for item in pd.tree.items(pd.tag) %}
@@ -75,6 +78,34 @@
 <tr><td><a href="/item/{{ item.uid }}">{{ item.name }}</a></td></tr>
 {% endfor %}
 </table>
+
+<hr>
+{% endif %}
+
+<div class="page-heading"><h3>Items tagged with "{{pd.tag}}"</h3></div>
+
+{% for item in pd.tree.items(pd.tag)|list + pd.tree.items_from_children(pd.tag)|list %}
+{% if item == None %}
+No items have been tagged.
+{%else%}
+<div class="row bottom-buffer scarf-entry no-gutter">
+   <h4><a href="/item/{{ item.uid }}">{{ item.name }}</a> 
+   {% if pd.authuser is defined %}
+    {% include 'itemstatusbox.html' %} 
+   {% endif %}
+   </h4>
+
+   <div class="col-6">
+   {% for image in item.images()[:1] %}
+       <a href="/item/{{ item.uid }}" class="scarf"><img class="img-rounded col-md-12 no-gutter" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a>
+   {% endfor %}
+
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+
+
 
 </div>
 
