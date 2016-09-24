@@ -41,19 +41,20 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav main-nav">
-            <li><a href="/item/edit">New item</a></li>
-            <li><a href="/stats">Site stats</a></li>
+            <li><a href="/item/edit">New Item</a></li>
+            <li><a href="/stats">Site Stats</a></li>
+            {% if pd.authuser is defined %}
+            <li><a href="/user/{{ pd.authuser.username }}/collections">Your Stuff</a></li>
+            <li><a href="/user/{{ pd.authuser.username }}/pm">Messages</a></li>
+            <li><a href="/user/{{ pd.authuser.username }}">Profile</a></li>
+            {% endif %}
             {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
             <li><a href="/mod">Moderate</a></li>
             {% endif %}
             {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
             <li><a href="/admin">Admin</a></li>
             {% endif %}
-            {% if pd.authuser is defined %}
-            <li><a href="/user/{{ pd.authuser.username }}">Profile</a></li>
-            {% endif %}
           </ul>
-
 
           <ul class="nav navbar-nav secondary-nav row">
             <li class="item-search">

@@ -69,11 +69,17 @@ def pm(username):
     pd = PageData()
 
     try:
-        pd.recipient = SiteUser.create(username)
+        pmuser = SiteUser.create(username)
     except (NoItem, NoUser):
         return page_not_found()
 
     if 'username' in session:
+        if session['username'] == username:
+            pd.profileuser = pmuser
+            return render_template('profile/messages.html', pd=pd)
+        else:
+            pd.recipient = pmuser
+
         if request.method == 'POST':
             message = request.form['body']
             subject = request.form['subject']

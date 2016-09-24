@@ -32,10 +32,6 @@ def facebook_image(img_id):
  
         aspect = img.size[0] / img.size[1]
         newvsize = int((aspect - 1.91) * img.size[1])
-        print aspect
-        print vsize
-        print hsize
-        print newvsize
 
         img_size = img.size
         fbimg_size = (img.size[0], newvsize)

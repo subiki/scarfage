@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+
+{% set profile = pd.profileuser.profile().profile %}
+
+
+{% block body %}
+
+    {% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
+        <div class="page-header"><h4>Send a message to {{ pd.profileuser.username }}</h4></div>
+        <div class="container">
+            <form action="/user/{{ pd.profileuser.username }}/pm" method="post" enctype="multipart/form-data">
+                Subject: <input type=text name=subject default="Subject" required></br>
+                Message: </br>
+                <textarea name=body rows="4" cols="50"></textarea><br />
+                <input type=submit value=Submit>
+            </form>
+        </div>
+    {% else %}
+        <div class="page-header"><h4>Received</h4></div>
+
+        <table class="table table-condensed">
+        <tr>
+            <th></th>
+            <th>From</th>
+            <th>Date</th>
+            <th>Subject</th>
+        </tr>
+
+        {% for pm in pd.profileuser.messages() %}
+        {% if pm.from_user != pd.authuser.username %}
+        <tr>
+            <td> <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}/delete"> <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> </a> </td> 
+
+            <td> <a href="/user/{{ pm.from_user }}">{{ pm.from_user }}</a> </td>
+
+            <td>{{ pd.localtime(pm.sent) }}</td>
+
+            <td>
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">
+            {% if pm.read_status(pd.authuser.username) == False %}
+            <b>{{ pm.subject }}</b>
+            {% else %}
+            {{ pm.subject }}
+            {% endif %}
+            </a>
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+
+        </table>
+
+        <div class="page-header"><h4>Sent</h4></div>
+
+        <table class="table table-condensed">
+        <tr>
+            <th></th>
+            <th>To</th>
+            <th>Date</th>
+            <th>Subject</th>
+        </tr>
+
+        {% for pm in pd.profileuser.messages() %}
+        {% if pm.from_uid == pd.authuser.uid %}
+            <tr>
+
+            <td> <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}/delete"> <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> </a> </td> 
+
+            <td>
+            <a href="/user/{{ pm.to_user }}">{{ pm.to_user }}</a><br />
+            </td>
+
+            <td>{{ pd.localtime(pm.sent) }}</td>
+
+            <td>
+            <a href="/user/{{ pd.authuser.username }}/pm/{{ pm.uid_obfuscated }}">{{ pm.subject }}</a>
+            </td>
+
+            <td>
+            </td>
+
+            </tr>
+        {% endif %}
+        {% endfor %}
+
+        </table>
+
+    {% endif %}
+
+{% endblock %}
