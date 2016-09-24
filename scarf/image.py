@@ -41,6 +41,34 @@ def newimg():
 
         return redirect_back(url_for('index'))
 
+@app.route('/image/<img_id>/reparent', methods=['POST'])
+@check_mod
+def reparent(img_id):
+    """
+    :URL: /reparent
+    :Method: POST
+
+    Reparent an image. 
+    """
+    pd = PageData()
+    if request.method == 'POST':
+        newid = request.form['parent']
+
+        try:
+            img = core.SiteImage.create(img_id)
+            item = core.SiteItem.create(newid)
+        except (core.NoItem, core.NoImage):
+            return page_not_found()
+            
+
+        if img:
+            img.reparent(newid)
+            return redirect_back('/image/' + str(img))
+        else:
+            flash('Unable to reparent {}'.format(img_id))
+
+        return redirect_back(url_for('index'))
+
 @app.route('/image/<img_id>/reallydelete')
 @check_mod
 def reallydelete_image(img_id):

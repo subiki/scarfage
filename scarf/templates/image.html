@@ -6,7 +6,13 @@
 <h1> {{ pd.img.tag }}</h1><br />
 <a href="/item/{{ pd.img.parent }}">Back to "{{ pd.item_by_uid(pd.img.parent) }}"</a><br />
 {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
-<p><a class="btn btn-danger" href="/image/{{ pd.img.uid }}/delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></p>
+<div class="page-header"> <h4>Moderator Tools</h4> </div>
+
+<form action="/image/{{ pd.img.uid }}/reparent" method="post" enctype="multipart/form-data">
+<input type=text name="parent" placeholder="New Parent ID" size="10"> <button class="btn btn-sm btn-primary" type=submit>Reparent</button>&nbsp;&nbsp;&nbsp;
+<a class="btn btn-danger" href="/image/{{ pd.img.uid }}/delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+</form>
+
 {% endif %} <br/>
 
 <a href="/image/{{ pd.img.uid }}/full"><img style="max-width:100%;" src="{{pd.prefix}}/resize/800x800/{{ pd.img.uid }}" alt="{{ pd.img.tag }}"></a><br />

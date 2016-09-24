@@ -8,7 +8,7 @@
 <div class="col-md-8">
 
 {% if pd.item %}
-<div class="page-header"> <h3>{{ pd.item.name }}
+<div class="page-header"> <h3>{{ pd.item.name }} {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}({{ pd.item.uid }}){% endif %}
 
 {% if pd.authuser is defined %}
 {% set item = pd.item %}

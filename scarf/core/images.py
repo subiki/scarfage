@@ -94,6 +94,13 @@ class SiteImage(object):
         except IndexError:
             raise NoImage(uid)
 
+    def reparent(self, new_parent):
+        self.parent = new_parent
+        sql = "update images set parent = %(parent)s where uid = %(uid)s;"
+        siteimage_cache = dict()
+        siteitem_cache = dict()
+        return doquery(sql, { 'parent': new_parent,'uid': self.uid })
+
     def delete(self):
         logger.info('deleted image id {}: {}'.format(self.uid, self.tag))
         siteimage_cache = dict()
