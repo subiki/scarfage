@@ -174,7 +174,7 @@ class SiteItem(object):
         """
 
         logger.info('deleted item id {}: {}'.format(self.uid, self.name))
-        item_cache = dict()
+        siteitem_cache = dict()
 
         for image in self.images():
             image.delete()
