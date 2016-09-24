@@ -320,15 +320,18 @@ def searchitem():
     pd.page = request.args.get('page')
     pd.sort = request.args.get('sort')
 
-    if not pd.limit:
-        pd.limit = 20
-    else:
-        pd.limit = int(pd.limit)
+    try:
+        if not pd.limit:
+            pd.limit = 20
+        else:
+            pd.limit = int(pd.limit)
 
-    if not pd.page:
-        pd.page = 1
-    else:
-        pd.page = int(pd.page)
+        if not pd.page:
+            pd.page = 1
+        else:
+            pd.page = int(pd.page)
+    except ValueError:
+        return page_not_found()
 
     offset = (pd.page - 1) * pd.limit
 
