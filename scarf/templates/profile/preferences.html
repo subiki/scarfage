@@ -33,7 +33,7 @@
             <label class="control-label col-sm-2" for="whitewhale">My White Whale:</label>
             <div class="col-sm-10">
                 <select name="whitewhale" id="whitewhale">
-                  {% if 'gameday' in profile and profile['gameday'] %}<option value="">None</option>{% endif %}
+                  {% if 'whitewhale' in profile and profile['whitewhale'] %}<option value="">None</option>{% endif %}
                   <option value="{{ profile['whitewhale'] }}" selected>{{ pd.item_by_uid(profile['whitewhale']) }}</option>
                   <option value="">---------</option>
                   {% for item in pd.profileuser.collection() %}
