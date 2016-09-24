@@ -35,6 +35,8 @@ $(document).ready(function(){
                 $(this).removeClass('active');
         });
     }
+
+    $('[data-toggle="tooltip"]').tooltip();
 });
 
 var url = document.location.href;
