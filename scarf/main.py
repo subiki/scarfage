@@ -54,6 +54,7 @@ class PageData(object):
        * uid_by_item     - core.uid_by_item()
        * item_by_uid     - core.item_by_uid()
        * render_markdown - render_markdown()
+       * render_markdown_safe - render_markdown_safe()
 
     """
     def __init__(self):
@@ -75,6 +76,7 @@ class PageData(object):
         self.uid_by_item = core.uid_by_item
         self.item_by_uid = core.item_by_uid
         self.render_markdown = render_markdown
+        self.render_markdown_safe = render_markdown_safe
 
         if 'username' in session:
             try:
@@ -108,6 +110,15 @@ def render_markdown(string):
     :return: rendered string
     """
     return bleach.linkify(markdown.markdown(core.escape_html(unicode(string)), md_extensions))
+
+def render_markdown_safe(string):
+    """
+    Renders any markdown present, then linkifys all bare URLs.
+
+    :param string: string to process
+    :return: rendered string
+    """
+    return bleach.linkify(markdown.markdown(unicode(string), md_extensions))
 
 def request_wants_json():
     """
