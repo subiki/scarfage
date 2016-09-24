@@ -36,7 +36,7 @@
                 {% include 'itemstatusbox.html' %}
                {% else %}
                 {% if item.willtrade == 1 %}
-                  <a href="/user/{{ pd.profileuser.username }}/pm"><span style="color: black;" title="This user is willing to trade this item" class="glyphicon glyphicon-transfer"></span></a>
+                  <a href="/user/{{ pd.profileuser.username }}/pm"><span data-toggle="tooltip" style="color: black;" title="This user is willing to trade this item" class="glyphicon glyphicon-transfer"></span></a>
                 {% endif %}
                {% endif %}
                </h4>
