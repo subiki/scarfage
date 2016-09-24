@@ -194,6 +194,18 @@ def accessdenied():
 def static_from_root():
     return send_from_directory(app.static_folder, request.path[1:])
 
+@app.route('/about')
+def about():
+    """
+    :URL: /about
+
+    About page
+    """
+    pd = PageData()
+    pd.title = "Scarfage"
+
+    return render_template('about.html', pd=pd)
+
 @app.route('/')
 @nocache
 def index():

@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row no-gutter">
+    <div class="col-md-12">
+        <div class="page-header"><h4>About Scarfage</h4></div>
+        Stuff goes here.
+    </div>
+  </div>
+  <div class="row no-gutter">
+    <div class="col-md-12">
+        <a name="itemactions"></a>
+        <div class="page-header"><h4>Item Actions</h4></div>
+
+        <table class="table">
+        <tr>
+        <th>Button</th>
+        <th>Description</th>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: green;" class="glyphicon glyphicon-plus" aria-hidden="true"></span></h4></td>
+        <td>Add item to your collection.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: red;" class="glyphicon glyphicon-remove" aria-hidden="true"></span></h4></td>
+        <td>Remove from your collection.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: green;" class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></h4></td>
+        <td>By default items in your collection are hidden from others. Click this to make them visible.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: red;" class="glyphicon glyphicon-eye-close" aria-hidden="true"></span></h4></td>
+        <td>Hide this item in your collection from others.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: green;" class="glyphicon glyphicon-transfer" aria-hidden="true"></span></h4></td>
+        <td>Make this item visible and mark it as available for trade.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: red;" class="glyphicon glyphicon-heart" aria-hidden="true"></span></h4></td>
+        <td>Mark this item as unavailable for trade.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: green;" class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span></h4></td>
+        <td>Add this item to my wanted items list</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: red;" class="glyphicon glyphicon-unchecked" aria-hidden="true"></span></h4></td>
+        <td>Remove from your wanted items list</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span title="Edit" style="color: blue;" class="glyphicon glyphicon-pencil"></span></h4></td>
+        <td>Edit the item title or description (item pages only)</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span title="View History" style="color: blue;" class="glyphicon glyphicon-time"></span></h4></td>
+        <td>View item history (item pages only)</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span title="Revert to this" style="color: blue;" class="glyphicon glyphicon-repeat"></span></h4></td>
+        <td>Shown while viewing old edits to an item, will open that edit in the item editor. (item pages only)</tr>
+        </tr>
+        </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

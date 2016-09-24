@@ -17,14 +17,25 @@
 
     <meta property="og:site_name" content="Scarfage"/> 
     {% if pd.item is defined %}
-    {% for image in pd.item.images()[:1] %}
+    {% set image = pd.item.images()[:1][0] %}
+    {% set mtitle = pd.item.name %}
+    {% elif pd.img is defined %}
+    {% set image = pd.img %}
+    {% set mtitle = pd.item_by_uid(pd.img.parent) %}
+    {% endif %}
+
+    {% if image is defined %}
     <meta property="og:image" content="{{pd.prefix}}/fbimage/{{ image.uid }}" />
     <meta property="og:image:width" content="1000" />
     <meta property="og:image:height" content="400" />
-    {% endfor %}
-    <!-- <meta property="og:description" content="dd" /> -->
-    <meta property="og:title" content="{{ pd.item.name }}" />
     {% endif %}
+
+    <!-- <meta property="og:description" content="" /> -->
+
+    {% if mtitle is defined %}
+    <meta property="og:title" content="{{ mtitle }}" />
+    {% endif %}
+
     {% endblock %}
 </head>
 
