@@ -292,6 +292,8 @@ def updateprefs(username):
                 profile.profile['timezone'] = request.form['timezone']
 
             profile.profile['summary'] = request.form['summary']
+            profile.profile['gameday'] = request.form['gameday']
+            profile.profile['whitewhale'] = request.form['whitewhale']
 
             profile.update()
 

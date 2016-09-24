@@ -10,7 +10,7 @@
     {% set avatarurl = pd.prefix + "/static/defaultavatar.png" %}
 {% endif %}
 
-<div class="page-header"><h4>{{ pd.profileuser.username }}'s Profile</h4>
+<div class="page-header"><h3>{{ pd.profileuser.username }}'s Profile</h3>
     {% if pd.authuser is defined and pd.authuser.uid != pd.profileuser.uid and pd.authuser.accesslevel >= 10 and pd.profileuser.accesslevel == 0 %}
     <a class="btn btn-danger" href="/admin/users/{{ pd.profileuser.username }}/accesslevel/1">Unban</a>
     {% endif %}
@@ -33,6 +33,26 @@
         <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
         <li>Last seen: {{ pd.localtime(pd.profileuser.lastseen) }}</li>
     </ul>
+
+    <div class="page-header"><h4>Game Day Scarf</h4></div>
+    {% if profile['gameday'] %}
+    {% set item = pd.SiteItem(profile['gameday']) %}
+    {% for image in item.images()[:1] %}
+        <a href="/item/{{ item.uid }}"> <h4>{{ item.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+    {% endfor %}
+    {% else %}
+    This user has not set a game day scarf.
+    {% endif %}
+
+    <div class="page-header"><h4>White Whale</h4></div>
+    {% if profile['whitewhale'] %}
+    {% set item = pd.SiteItem(profile['whitewhale']) %}
+    {% for image in item.images()[:1] %}
+        <a href="/item/{{ item.uid }}"> <h4>{{ item.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+    {% endfor %}
+    {% else %}
+    This user has not set a white whale.
+    {% endif %}
 
     <div class="page-header"><h4></h4></div>
     <h4><a href="/user/{{ pd.profileuser.username }}/collections">View {{ pd.profileuser.username }}'s Collections</a></h4>
@@ -75,6 +95,26 @@
             <li><a href="/user/{{ pd.profileuser.username }}/prefs">Edit your profile</a></li>
             <li><a href="/logout">Logout</a></li>
         </ul>
+
+    <div class="page-header"><h4>Game Day Scarf</h4></div>
+    {% if profile['gameday'] %}
+    {% set item = pd.SiteItem(profile['gameday']) %}
+    {% for image in item.images()[:1] %}
+        <a href="/item/{{ item.uid }}"> <h4>{{ item.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+    {% endfor %}
+    {% else %}
+        Edit your profile to set a game day scarf.
+    {% endif %}
+
+    <div class="page-header"><h4>White Whale</h4></div>
+    {% if profile['whitewhale'] %}
+    {% set item = pd.SiteItem(profile['whitewhale']) %}
+    {% for image in item.images()[:1] %}
+        <a href="/item/{{ item.uid }}"> <h4>{{ item.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+    {% endfor %}
+    {% else %}
+        Edit your profile to set a white whale.
+    {% endif %}
 
         <div class="page-header"><h4>Change Password</h4></div>
         <form class="form-horizontal" role="form" action="/pwreset" method="post">

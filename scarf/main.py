@@ -77,6 +77,7 @@ class PageData(object):
         self.item_by_uid = core.item_by_uid
         self.render_markdown = render_markdown
         self.render_markdown_safe = render_markdown_safe
+        self.SiteItem = core.SiteItem
 
         if 'username' in session:
             try:
