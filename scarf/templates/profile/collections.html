@@ -34,6 +34,10 @@
                <a href="/item/{{ item.uid }}">{{ item.name }}</a> 
                {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
                 {% include 'itemstatusbox.html' %}
+               {% else %}
+                {% if item.willtrade == 1 %}
+                  <a href="/user/{{ pd.profileuser.username }}/pm"><span style="color: black;" title="This user is willing to trade this item" class="glyphicon glyphicon-transfer"></span></a>
+                {% endif %}
                {% endif %}
                </h4>
            </td>

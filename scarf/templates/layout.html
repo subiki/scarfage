@@ -74,7 +74,7 @@
 
                 {% if pd.authuser is defined %}
                   <div class="profile">
-                    <a href="/user/{{ pd.authuser.username }}#messages">
+                    <a href="/user/{{ pd.authuser.username }}/pm">
                     {% if pd.authuser.mwi()[0] %} Unread messages: {{ pd.authuser.mwi()[0] }}{% endif %}
                     </a>
                   </div>
