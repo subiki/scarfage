@@ -1,0 +1,180 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% set profile = pd.profileuser.profile().profile %}
+{% set avatar = pd.profileuser.profile().avatar() %}
+{% if avatar %}
+    {% set avatarurl = "/user/" + pd.profileuser.username + "/avatar" %}
+{% else %}
+    {% set avatarurl = pd.prefix + "/static/defaultavatar.png" %}
+{% endif %}
+
+<div class="page-header"><h3>{{ pd.profileuser.username }}'s Profile</h3>
+    {% if pd.authuser is defined and pd.authuser.uid != pd.profileuser.uid and pd.authuser.accesslevel >= 10 and pd.profileuser.accesslevel == 0 %}
+    <a class="btn btn-danger" href="/admin/users/{{ pd.profileuser.username }}/accesslevel/1">Unban</a>
+    {% endif %}
+</div>
+
+{% if pd.authuser is undefined or pd.authuser.uid != pd.profileuser.uid %}
+    <div class="col-md-4">
+        <div align="center">
+        {% if pd.accesslevels[pd.profileuser.accesslevel] == 'moderator' %}
+        <b>Moderator</b><br>
+        {% elif pd.accesslevels[pd.profileuser.accesslevel] == 'banned' %}
+        <b>Banned</b><br>
+        {% elif pd.accesslevels[pd.profileuser.accesslevel] == 'admin' %}
+        <b>Admin</b><br>
+        {% endif %}
+        <img style="max-height:150px; max-width:150px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
+        </div>
+
+    <ul>
+        <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
+        <li>Last seen: {{ pd.localtime(pd.profileuser.lastseen) }}</li>
+    </ul>
+
+    <div class="page-header"><h4>Game Day Scarf</h4></div>
+    {% if profile['gameday'] %}
+    {% set item = pd.SiteItem(profile['gameday']) %}
+    {% for image in item.images()[:1] %}
+        <a href="/item/{{ item.uid }}"> <h4>{{ item.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+    {% endfor %}
+    {% else %}
+    This user has not set a game day scarf.
+    {% endif %}
+
+    <div class="page-header"><h4>White Whale</h4></div>
+    {% if profile['whitewhale'] %}
+    {% set item = pd.SiteItem(profile['whitewhale']) %}
+    {% for image in item.images()[:1] %}
+        <a href="/item/{{ item.uid }}"> <h4>{{ item.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+    {% endfor %}
+    {% else %}
+    This user has not set a white whale.
+    {% endif %}
+
+    <div class="page-header"><h4></h4></div>
+    <h4><a href="/user/{{ pd.profileuser.username }}/collections">View {{ pd.profileuser.username }}'s Collections</a></h4>
+    <h4><a href="/user/{{ pd.profileuser.username }}/pm">Send a Private Message</a></h4>
+
+    </div>
+
+    <div class="col-md-8">
+    {{ pd.render_markdown(profile['summary'])|safe }}
+    </div>
+{% else %}
+    <div class="col-md-4">
+        <div align="center">
+        {% if pd.accesslevels[pd.profileuser.accesslevel] == 'moderator' %}
+        <b>Moderator</b><br>
+        {% elif pd.accesslevels[pd.profileuser.accesslevel] == 'banned' %}
+        <b>Banned</b><br>
+        {% elif pd.accesslevels[pd.profileuser.accesslevel] == 'admin' %}
+        <b>Admin</b><br>
+        {% endif %}
+          <img style="max-height:150px; max-width:150px;" class="img-thumbnail" src="{{avatarurl}}" alt="[ avatar ]"><br />
+
+          <a data-toggle="collapse" href="#collapseNewAvatar" aria-expanded="false" aria-controls="collapseNewAvatar">
+          <small>set avatar</small>
+          </a>
+
+          <div class="collapse" id="collapseNewAvatar">
+            <div class="card card-block">
+                <form action="/user/{{pd.authuser.username}}/profile/newavatar" method="post" enctype="multipart/form-data">
+                    <input class="btn btn-sm btn-file" type="file" name="img" accept="image/*">
+                    <button type=submit class="btn btn-sm btn-default"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload</button>
+                </form>
+            </div>
+          </div>
+        </div>
+
+        <ul>
+            <li>Email: {{ pd.profileuser.email }}</li>
+            <li>Member since: {{ pd.localtime(pd.profileuser.joined) }}</li>
+            <li><a href="/user/{{ pd.profileuser.username }}/prefs">Edit your profile</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+
+    <div class="page-header"><h4>Game Day Scarf</h4></div>
+    {% if profile['gameday'] %}
+    {% set item = pd.SiteItem(profile['gameday']) %}
+    {% for image in item.images()[:1] %}
+        <a href="/item/{{ item.uid }}"> <h4>{{ item.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+    {% endfor %}
+    {% else %}
+        Edit your profile to set a game day scarf.
+    {% endif %}
+
+    <div class="page-header"><h4>White Whale</h4></div>
+    {% if profile['whitewhale'] %}
+    {% set item = pd.SiteItem(profile['whitewhale']) %}
+    {% for image in item.images()[:1] %}
+        <a href="/item/{{ item.uid }}"> <h4>{{ item.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+    {% endfor %}
+    {% else %}
+        Edit your profile to set a white whale.
+    {% endif %}
+
+        <div class="page-header"><h4>Change Password</h4></div>
+        <form class="form-horizontal" role="form" action="/pwreset" method="post">
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="">Current Password</label>
+            <div class="col-sm-10">
+                <input type=password name=password required><br />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="">New Password</label>
+            <div class="col-sm-10">
+                <input type=password name=newpassword required><br />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="">Confirm Password</label>
+            <div class="col-sm-10">
+                <input type=password name=newpassword2 required><br />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2" for=""></label>
+            <div class="col-sm-10">
+                <input class="btn btn-danger" type=submit value="Change Password">
+            </div>
+          </div>
+        </form>
+
+        <div class="page-header"><h4>Update e-mail</h4></div>
+        <form role="form" action="/emailupdate" method="post">
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="">Password</label>
+            <div class="col-sm-10">
+                <input type=password name=password required><br />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="">New e-mail address</label>
+            <div class="col-sm-10">
+                <input type=text name=email required><br />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2" for=""></label>
+            <div class="col-sm-10">
+                <input class="btn btn-danger" type=submit value="Update email">
+            </div>
+          </div>
+        </form>
+
+        </div>
+    <div class="col-md-8">
+    {{ pd.render_markdown(profile['summary'])|safe }}
+    </div>
+{% endif %}
+
+{% endblock %}

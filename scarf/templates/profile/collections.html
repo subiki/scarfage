@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+
+{% set profile = pd.profileuser.profile().profile %}
+
+{% block body %}
+
+    <div class="page-header"><h4><a href="/user/{{ pd.profileuser.username }}">{{ pd.profileuser.username }}</a>'s Collection</h4></div>
+
+    <table class="table">
+    {% for item in pd.profileuser.collection() %}
+    <tr class="have-collection-item{{ item.uid }}">
+      {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
+        {% if item.have == 1 %}
+            <td>
+                <h4>
+                <a href="/item/{{ item.uid }}">{{ item.name }}</a> 
+                {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
+                {% include 'itemstatusbox.html' %}
+                {% endif %}
+                </h4>
+            </td>
+
+            <td>
+            {% for image in item.images()[:1] %}
+                <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+            {% endfor %}
+            </td>
+        {% endif %}
+      {% else %}
+        {% if item.hidden == 0 and item.have == 1 %}
+           <td>
+               <h4>
+               <a href="/item/{{ item.uid }}">{{ item.name }}</a> 
+               {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
+                {% include 'itemstatusbox.html' %}
+               {% else %}
+                {% if item.willtrade == 1 %}
+                  <a href="/user/{{ pd.profileuser.username }}/pm"><span data-toggle="tooltip" style="color: black;" title="This user is willing to trade this item" class="glyphicon glyphicon-transfer"></span></a>
+                {% endif %}
+               {% endif %}
+               </h4>
+           </td>
+
+           <td>
+               {% for image in item.images()[:1] %}
+                   <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+               {% endfor %}
+           </td>
+        {% endif %}
+      {% endif %}
+    </tr>
+    </div>
+    {% endfor %}
+    </table>
+
+    <div class="page-header"><h4><a href="/user/{{ pd.profileuser.username }}">{{ pd.profileuser.username }}</a>'s Wanted List</h4></div>
+    <div class="col-md-12">
+    <table class="table">
+    {% for item in pd.profileuser.collection() %}
+     {% if item.want == 1 %}
+       <tr>
+           <td>
+               <h4>
+               <a href="/item/{{ item.uid }}">{{ item.name }}</a> 
+               {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
+               {% include 'itemstatusbox.html' %}
+               {% else %}
+                {% if item.uid == profile['whitewhale']|int %}
+<img class="img-rounded" width="30" height="30" src="{{pd.prefix}}/static/images/white-whale.png" alt="White Whale" title="This user would give just about anything for this item" data-toggle="tooltip">
+                {% endif %}
+               {% endif %}
+               </h4>
+           </td>
+
+           <td>
+           {% for image in item.images()[:1] %}
+           <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+           {% endfor %}
+           </td>
+       </tr>
+     {% endif %}
+    {% endfor %}
+    </table>
+   </div>
+
+{% endblock %}

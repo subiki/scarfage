@@ -1,4 +1,5 @@
 import re
+import string
 from scarf import app
 from flask import redirect, url_for, render_template, session, request, flash
 from core import redirect_back, SiteUser, NoUser, new_user, AuthFail, check_email
@@ -21,9 +22,9 @@ def check_new_user(request):
             flash("You may not create multiple users with the same email address.")
             return False
 
-        invalid = '[]{}\'"<>;/\\'
-        for c in invalid:
-            if c in request.form['username']:
+        valid = string.ascii_letters + string.digits
+        for c in request.form['username']:
+            if c not in valid:
                 flash("Invalid character in username: " + c)
                 ret = False
 

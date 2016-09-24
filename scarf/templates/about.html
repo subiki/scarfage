@@ -1,0 +1,157 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row no-gutter">
+    <div class="col-md-12">
+        <div class="page-header"><h3>About Scarfage</h3></div>
+        This site was built as a resource and freely given to the community to use. Add information to descriptions, update and add new photos as you see fit. You can use the Markdown information to make this as fancy as you want.
+    </div>
+  </div>
+
+  <div class="row no-gutter">
+    <div class="col-md-8">
+        <a name="markuphelp"></a>
+        <div class="page-header"><h3>Markup Help</h3></div>
+        Descriptions and profile summaries support basic markup via a subset of <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown</a>.
+
+        <div class="page-header"><h4>Headings</h4></div>
+
+        <h1>H1</h1><br>
+        <pre># H1</pre>
+        <h2>H2</h2><br>
+        <pre>## H2</pre>
+        <h3>H3</h3><br>
+        <pre>### H3</pre>
+        <h4>H4</h4><br>
+        <pre>#### H4</pre>
+        <h5>H5</h5><br>
+        <pre>##### H5</pre>
+        <h6>H6</h6><br>
+        <pre>###### H6</pre>
+
+        <div class="page-header"><h4>Emphasis</h4></div>
+        <pre>
+Italics, with *asterisks* or _underscores_.
+Bold, with **asterisks** or __underscores__.
+Combined emphasis with **asterisks and _underscores_**.</pre>
+
+        <p>Italics, with <em>asterisks</em> or <em>underscores</em>.</p>
+        <p>Bold, with <strong>asterisks</strong> or <strong>underscores</strong>.</p>
+        <p>Combined emphasis with <strong>asterisks and <em>underscores</em></strong>.</p>
+
+        <div class="page-header"><h4>Links</h4></div>
+
+        <p><a href="https://www.scarfage.com">I'm an external link</a></p>
+        <pre>[I'm an external link](https://www.scarfage.com)</pre>
+
+        <p><a href="/stats">Local links are cool too</a></p>
+        <pre>[Local links are cool too](/stats)</pre>
+
+        <p>URLs and domains will automatically get turned into links:</p>
+
+        <pre>http://www.example.com
+example.com </pre>
+
+        <p><a href="http://www.example.com">http://www.example.com</a><br>
+        <a href="http://example.com">example.com</a></p>
+
+        <div class="page-header"><h4>Lists</h4></div>
+        <pre>
+1. First ordered list item as an example.
+2. Another item
+1. The 1 here doesn't matter, it will become a 3 anyways.
+4. And another item.
+
+* Unordered list can use asterisks
+- Or minuses
++ Or pluses</pre>
+
+        <ol>
+        <li>First ordered list item</li>
+        <li>Another item</li>
+        <li>Actual numbers don't matter, just that it's a number</li>
+        <li>And another item.</li>
+        </ol>
+        <ul>
+        <li>Unordered list can use asterisks</li>
+        <li>Or minuses</li>
+        <li>Or pluses</li>
+        </ul>
+
+    </div>
+    <div class="col-md-4"> </div>
+  </div>
+
+  <div class="row no-gutter">
+    <div class="col-md-12">
+        <a name="itemactions"></a>
+        <div class="page-header"><h3>Item Actions Help</h3></div>
+
+        <table class="table">
+        <tr>
+        <th>Button</th>
+        <th>Description</th>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: green;" class="glyphicon glyphicon-plus" aria-hidden="true"></span></h4></td>
+        <td>Add item to your collection. Indicates that this is not in your collection.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: red;" class="glyphicon glyphicon-remove" aria-hidden="true"></span></h4></td>
+        <td>Remove from your collection. Indicates this item is in your collection.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: green;" class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></h4></td>
+        <td>By default items in your collection are hidden from others. Click this to make them visible. Indicates that the item is hidden from others.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: red;" class="glyphicon glyphicon-eye-close" aria-hidden="true"></span></h4></td>
+        <td>Hide this item in your collection from others. Indicates that this item is visible to others.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: green;" class="glyphicon glyphicon-transfer" aria-hidden="true"></span></h4></td>
+        <td>Make this item visible and mark it as available for trade. Indicates the item is not available for trade.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: red;" class="glyphicon glyphicon-heart" aria-hidden="true"></span></h4></td>
+        <td>Mark this item as unavailable for trade. Indicates the item is currently available for trade.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: green;" class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span></h4></td>
+        <td>Add this item to my wanted items list. Indicates this item is not on the wanted list, does not change with collection status.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span style="color: red;" class="glyphicon glyphicon-unchecked" aria-hidden="true"></span></h4></td>
+        <td>Remove from your wanted items list. Indicates this item is currently on your wanted list.</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span title="Edit" style="color: blue;" class="glyphicon glyphicon-pencil"></span></h4></td>
+        <td>Edit the item title or description (item pages only)</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span title="View History" style="color: blue;" class="glyphicon glyphicon-time"></span></h4></td>
+        <td>View item history (item pages only)</tr>
+        </tr>
+
+        <tr>
+        <td><h4><span title="Revert to this" style="color: blue;" class="glyphicon glyphicon-repeat"></span></h4></td>
+        <td>Shown while viewing old edits to an item, will open that edit in the item editor. (item pages only)</tr>
+        </tr>
+        </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

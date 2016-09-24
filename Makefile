@@ -1,10 +1,12 @@
 usage:
-	# run       -   run the app in debug mode
-	# tests     -   run tests, app must be configured for db access
-	# docs      -   generate docs
-	# clean     -   clean up docs, venv, test log
-	# dumpdb    -   dump the database schema (config.py must already exist)
-	# importdb  -   import the database (config.py must already exist)
+	# run                           -   run the app in debug mode
+	# tests                         -   run tests, app must be configured for db access
+	# ersatz                        -   populate the database with fake data
+	# adminuser user=<username>     -   make a user an administrator
+	# docs                          -   generate docs
+	# clean                         -   clean up docs, venv, test log
+	# dumpdb                        -   dump the database schema (config.py must already exist)
+	# importdb                      -   import the database (config.py must already exist)
 
 venv:
 	virtualenv venv --no-site-packages
@@ -12,6 +14,12 @@ venv:
 
 tests: venv blns.base64.json
 	. venv/bin/activate && python -m unittest scarf.core.test
+
+ersatz: venv
+	. venv/bin/activate && python scarf/core/ersatz/ersatz.py
+
+adminuser: venv
+	. venv/bin/activate && python util/setaccesslevel.py "$(user)" 255
 
 run: venv
 	. venv/bin/activate && python run.py

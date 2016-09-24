@@ -13,17 +13,21 @@
 <div class="container">
   <div class="row no-gutter">
     <div class="col-md-12">
-    {{ pd.render_markdown(pd.welcomebanner)|safe }}
+    {{ pd.render_markdown_safe(pd.welcomebanner)|safe }}
     </div>
   </div>
   <div class="row no-gutter">
     <div class="col-md-12">
 
-        <h4>Recently Aded Items</h4>
+        <h4>Latest Items</h4>
 
         {% for item in pd.items %}
           <div class="row bottom-buffer scarf-entry no-gutter">
-             <h2><a href="/item/{{ item.uid }}">{{ item.name }}</a></h2>
+             <h2><a href="/item/{{ item.uid }}">{{ item.name }}</a>
+                {% if pd.authuser is defined %}
+                {% include 'itemstatusbox.html' %}
+                {% endif %}
+             </h2>
              <label>{{ pd.localtime(item.added).strftime('%b %d, %Y @ %I:%M %p') }}</label>
 
              {% for image in item.images()[:1] %}

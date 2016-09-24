@@ -15,3 +15,4 @@ import scarf.trade
 import scarf.pm
 import scarf.tags
 import scarf.stats
+import scarf.fbimage

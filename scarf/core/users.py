@@ -251,7 +251,8 @@ class SiteUser(object):
         sql = """select ownwant.own, ownwant.willtrade, ownwant.want, ownwant.hidden, items.uid
                  from ownwant
                  join items on items.uid=ownwant.itemid
-                 where ownwant.userid = %(uid)s"""
+                 where ownwant.userid = %(uid)s
+                 order by ownwant.willtrade desc"""
 
         result = doquery(sql, { 'uid': self.uid })
 

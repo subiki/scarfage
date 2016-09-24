@@ -15,7 +15,7 @@ actions = dict(donthave = dict(willtrade=0, own=0, hidden=0),
                dontwant = dict(want=0))
 
 def ownwant(item_id, user_id, values):
-    moditem = SiteItem.create(item_id)
+    moditem = SiteItem.create(item_id) # why is this here?
     OwnWant(item_id, user_id).update(values)
 
 @app.route('/item/<item_id>/<action>', methods=['GET', 'POST'])

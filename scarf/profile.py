@@ -102,32 +102,6 @@ def pwreset():
 
     return redirect(url_for('index'))
 
-@app.route('/user/<username>/prefs', methods=['POST'])
-def updateprefs(username):
-    pd = PageData()
-    if 'username' in session:
-        ret = False
-        if request.method == 'POST':
-            try:
-                user = SiteUser.create(session['username'])
-                profile = user.profile()
-            except NoUser:
-                return render_template('error.html', pd=pd)
-
-            if request.form['timezone'] in pytz.common_timezones:
-                logger.info('timezone updated for for {}'.format(username))
-                profile.profile['timezone'] = request.form['timezone']
-
-            profile.profile['summary'] = request.form['summary']
-
-            profile.update()
-
-            flash("Your profile has been updated.")
-            logger.info('profile updated for for {}'.format(username))
-            return redirect('/user/' + user.username)
-
-    return redirect(url_for('index'))
-
 @app.route('/user/<username>/profile/newavatar', methods=['POST'])
 def newavatar(username):
     pd = PageData()
@@ -263,6 +237,19 @@ def show_user_collection(username):
 def show_user_profile(username):
     pd = PageData()
     pd.title = "Profile for " + username
+
+    try:
+        pd.profileuser = SiteUser.create(username)
+    except NoUser:
+        return page_not_found()
+
+    return render_template('profile/main.html', pd=pd)
+
+#TODO: fix json endpoint
+@app.route('/user/<username>/collections')
+def show_user_profile_collections(username):
+    pd = PageData()
+    pd.title = "Collections for " + username
     pd.timezones = get_timezones()
 
     try:
@@ -270,4 +257,48 @@ def show_user_profile(username):
     except NoUser:
         return page_not_found()
 
-    return render_template('profile.html', pd=pd)
+    return render_template('profile/collections.html', pd=pd)
+
+@app.route('/user/<username>/prefs')
+def show_user_profile_prefs(username):
+    pd = PageData()
+    pd.title = "Preferences for " + username
+    pd.timezones = get_timezones()
+
+    if not hasattr(pd, 'authuser') or pd.authuser.username != username:
+        return page_not_found()
+
+    try:
+        pd.profileuser = SiteUser.create(username)
+    except NoUser:
+        return page_not_found()
+
+    return render_template('profile/preferences.html', pd=pd)
+
+@app.route('/user/<username>/prefs', methods=['POST'])
+def updateprefs(username):
+    pd = PageData()
+    if 'username' in session:
+        ret = False
+        if request.method == 'POST':
+            try:
+                user = SiteUser.create(session['username'])
+                profile = user.profile()
+            except NoUser:
+                return render_template('error.html', pd=pd)
+
+            if request.form['timezone'] in pytz.common_timezones:
+                logger.info('timezone updated for for {}'.format(username))
+                profile.profile['timezone'] = request.form['timezone']
+
+            profile.profile['summary'] = request.form['summary']
+            profile.profile['gameday'] = request.form['gameday']
+            profile.profile['whitewhale'] = request.form['whitewhale']
+
+            profile.update()
+
+            flash("Your profile has been updated.")
+            logger.info('profile updated for for {}'.format(username))
+            return redirect('/user/' + user.username)
+
+    return redirect(url_for('index'))

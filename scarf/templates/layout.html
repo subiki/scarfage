@@ -12,19 +12,32 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="{{pd.prefix}}/static/itemicons.css">
     <link rel="stylesheet" href="{{pd.prefix}}/static/scarfage.css">
+
+    <meta property="og:site_name" content="Scarfage"/> 
+    {% if pd.item is defined %}
+    {% set image = pd.item.images()[:1][0] %}
+    {% set mtitle = pd.item.name %}
+    {% elif pd.img is defined %}
+    {% set image = pd.img %}
+    {% set mtitle = pd.item_by_uid(pd.img.parent) %}
+    {% endif %}
+
+    {% if image is defined %}
+    <meta property="og:image" content="{{pd.prefix}}/fbimage/{{ image.uid }}" />
+    <meta property="og:image:width" content="1000" />
+    <meta property="og:image:height" content="400" />
+    {% endif %}
+
+    <!-- <meta property="og:description" content="" /> -->
+
+    {% if mtitle is defined %}
+    <meta property="og:title" content="{{ mtitle }}" />
+    {% endif %}
+
     {% endblock %}
 </head>
-
-{% if pd.debug %}
-
-<div id="debug">
-<pre>
-{{pd.debug}}
-</pre>
-</div>
-
-{% endif %}
 
 <body id="bsor">
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -39,8 +52,14 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav main-nav">
-            <li class="button"><a href="/item/edit">New item</a></li>
-            <li class="button"><a href="/stats">Site stats</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/item/edit">New Item</a></li>
+            <li><a href="/stats">Site Stats</a></li>
+            {% if pd.authuser is defined %}
+            <li><a href="/user/{{ pd.authuser.username }}/collections">Your Stuff</a></li>
+            <li><a href="/user/{{ pd.authuser.username }}/pm">Messages</a></li>
+            <li><a href="/user/{{ pd.authuser.username }}">Profile</a></li>
+            {% endif %}
             {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
             <li><a href="/mod">Moderate</a></li>
             {% endif %}
@@ -48,6 +67,7 @@
             <li><a href="/admin">Admin</a></li>
             {% endif %}
           </ul>
+
           <ul class="nav navbar-nav secondary-nav row">
             <li class="item-search">
               <form class="navbar-form" role="form" action="/item/search" method="GET">
@@ -66,13 +86,10 @@
 
                 {% if pd.authuser is defined %}
                   <div class="profile">
-                    <a href="/user/{{ pd.authuser.username }}">{{ pd.authuser.username }}</a>
-                    <a href="/user/{{ pd.authuser.username }}#messages">
-                    {% if pd.authuser.mwi()[0] %} | Unread messages: {{ pd.authuser.mwi()[0] }}{% endif %}
-                    {% if pd.authuser.mwi()[1] %} | Unread trades: {{ pd.authuser.mwi()[1] }}{% endif %}
+                    <a href="/user/{{ pd.authuser.username }}/pm">
+                    {% if pd.authuser.mwi()[0] %} Unread messages: {{ pd.authuser.mwi()[0] }}{% endif %}
                     </a>
                   </div>
-                  <div class="hidden-xs"><a href="/logout">Logout</a></div>
                 {% else %}
 
                 <div class="login-signup hidden-xs">
@@ -127,6 +144,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"></script>
 
     <script src="{{pd.prefix}}/static/nav.js"></script>
     <script src="{{pd.prefix}}/static/main.js"></script>

@@ -2,14 +2,12 @@
 
 {% block body %}
 
-
-
 <div id="content">
 
 <div class="page-heading"><h3>Tags</h3></div>
 <table class="table">
 {% for tag in pd.tags.exact_children_of('tags') %}
-<tr><td>{{ tag }}</td><td><a href="/tag/{{ pd.encode(tag) }}">Edit</a> </tr>
+<tr><td><a href="/tag/{{ pd.encode(tag) }}">{{ tag }}</a> </tr>
 {% endfor %}
 </table>
 
@@ -17,16 +15,15 @@
 
 <table class="table">
 <tr>
-    <th>Uploaded by</th>
     <th>Title</th>
-    <th>Flagged by user</th>
+    <th>Flagged</th>
+    <th>Uploaded By</th>
 </tr>
 {% for mod in pd.mods %}
 <tr>
-    <td><a href="/user/{{ mod.user }}">{{ mod.user }}</a></td>
-    <td>{{ mod.tag }}</td>
+    <td><a href="/mod/image/{{ mod.uid }}">{{ mod.tag }}</a></td>
     <td>{% if mod.flag == 1 %}<b>yes</b>{% else %}no{% endif %}</a></td>
-    <td><a href="/mod/image/{{ mod.uid }}">View</a></td>
+    <td><a href="/user/{{ mod.user }}">{{ mod.user }}</a></td>
 </tr>
 {% endfor %}
 </table>

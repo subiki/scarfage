@@ -35,4 +35,16 @@ $(document).ready(function(){
                 $(this).removeClass('active');
         });
     }
+
+    $('[data-toggle="tooltip"]').tooltip().click(function(e) {
+        $(this).tooltip('hide');
+    });
+});
+
+var url = document.location.href;
+
+new Clipboard('.copy-url', {
+  text: function() {
+    return url;
+  }
 });
