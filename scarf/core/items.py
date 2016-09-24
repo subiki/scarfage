@@ -166,7 +166,7 @@ class SiteItem(object):
             result = doquery(sql, { 'uid': self.uid })
             return result[0][0]
         except (Warning, IndexError):
-            raise NoItem(uid)
+            raise NoItem(self.uid)
 
     def delete(self):
         """
