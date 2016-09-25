@@ -140,3 +140,25 @@ class SiteImage(object):
             ascii=ascii+"\n"
 
         return ascii
+
+    def size(self):
+        image_string = cStringIO.StringIO(base64.b64decode(self.image()))
+        im = Image.open(image_string)
+        return im.size
+
+    def crop(self, userid, ip, x1, y1, x2, y2):
+        image_string = cStringIO.StringIO(base64.b64decode(self.image()))
+        im = Image.open(image_string)
+        cropped = im.crop((x1, y1, x2, y2))
+
+        output = cStringIO.StringIO()
+        cropped.save(output, format="JPEG")
+        img_str = output.getvalue()
+        output.close()
+
+        sql_image = base64.b64encode(img_str)
+        sql = "insert into images (tag, parent, userid, image, ip) values (%(tag)s, %(parent)s, %(userid)s, %(image)s, %(ip)s);"
+        doquery(sql, { 'tag': self.tag, 'userid': userid, 'ip': utility.ip_uid(ip), 'parent': self.parent, 'image': sql_image})
+
+        sql = "select last_insert_id();"
+        return doquery(sql)[0][0]

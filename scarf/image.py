@@ -10,6 +10,7 @@ import base64
 
 logger = logging.getLogger(__name__)
 
+#TODO: rename to /image/new
 @app.route('/newimg', methods=['POST'])
 def newimg():
     """
@@ -82,13 +83,17 @@ def delete_image(img_id):
 
     try:
         delimg = SiteImage.create(img_id)
+        parent = delimg.parent
         delimg.delete()
     except NoImage:
         return page_not_found()
 
     flash(delimg.tag + " has been deleted")
 
-    return redirect(url_for('moderate')) 
+    if 'mod' in request.referrer:
+        return redirect(url_for('moderate'))
+    else:
+        return redirect('/item/' + str(parent))
 
 @app.route('/image/<img_id>/flag')
 def flag_image(img_id):
@@ -146,3 +151,68 @@ def show_image(img_id):
         return page_not_found()
 
     return render_template('image.html', pd=pd)
+
+@app.route('/image/<img_id>/edit')
+@check_mod
+def edit_image(img_id):
+    """
+    :URL: /image/<img_id>/edit
+
+    Render a template for editing an image.
+    """
+
+    pd = PageData()
+
+    try:
+        pd.img = SiteImage.create(img_id)
+        pd.title=pd.img.tag
+    except NoImage:
+        return page_not_found()
+
+    return render_template('imageedit.html', pd=pd)
+
+@app.route('/image/<img_id>/crop/<x1>/<y1>/<x2>/<y2>')
+@check_mod
+def crop_image(img_id, x1, y1, x2, y2):
+    """
+    :URL: /image/<img_id>/crop/<x1>/<y1>/<x2>/<y2>
+    :Method: GET, POST
+
+    Crop an image.
+    """
+    pd = PageData()
+    min_size = 200
+
+    try:
+        img = SiteImage.create(img_id)
+        size = img.size()
+    except NoImage:
+        return page_not_found()
+
+    try:
+        x1 = int(x1)
+        y1 = int(y1)
+        x2 = int(x2)
+        y2 = int(y2)
+    except:
+        return page_not_found()
+
+    new_width = x2 - x1
+    new_height = y2 - y1
+
+    if new_width < min_size:
+        flash("The selection is too narrow, please make another selection. If your image is below {} pixels in width you will not be able to crop it.".format(min_size))
+        return redirect_back(url_for('index'))
+    if new_height < min_size:
+        flash("The selection is too short, please make another selection. If your image is below {} pixels in width you will not be able to crop it.".format(min_size))
+        return redirect_back(url_for('index'))
+
+    if 'username' in session:
+        userid = pd.authuser.uid
+    else:
+        userid = None
+
+    logger.info('Cropping image id {}: ({}, {}) -> ({}, {})'.format(img_id, size[0], size[1], new_width, new_height))
+    new_id = img.crop(userid, request.remote_addr, x1, y1, x2, y2)
+
+    return redirect('/image/{}/edit'.format(new_id))

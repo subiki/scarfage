@@ -3,11 +3,20 @@
 {% block body %}
 
 {% set profile = pd.profileuser.profile().profile %}
+
 {% set avatar = pd.profileuser.profile().avatar() %}
 {% if avatar %}
     {% set avatarurl = "/user/" + pd.profileuser.username + "/avatar" %}
 {% else %}
     {% set avatarurl = pd.prefix + "/static/defaultavatar.png" %}
+{% endif %}
+
+{% if 'gameday' in profile and pd.item_by_uid(profile['gameday']) %}
+    {% set gameday = pd.SiteItem(profile['gameday']) %}
+{% endif %}
+
+{% if 'whitewhale' in profile and pd.item_by_uid(profile['whitewhale']) %}
+    {% set whitewhale = pd.SiteItem(profile['whitewhale']) %}
 {% endif %}
 
 <div class="page-header"><h3>{{ pd.profileuser.username }}'s Profile</h3>
@@ -35,20 +44,18 @@
     </ul>
 
     <div class="page-header"><h4>Game Day Scarf</h4></div>
-    {% if profile['gameday'] %}
-    {% set item = pd.SiteItem(profile['gameday']) %}
-    {% for image in item.images()[:1] %}
-        <a href="/item/{{ item.uid }}"> <h4>{{ item.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+    {% if gameday %}
+    {% for image in gameday.images()[:1] %}
+        <a href="/gameday/{{ gameday.uid }}"> <h4>{{ gameday.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
     {% endfor %}
     {% else %}
     This user has not set a game day scarf.
     {% endif %}
 
     <div class="page-header"><h4>White Whale</h4></div>
-    {% if profile['whitewhale'] %}
-    {% set item = pd.SiteItem(profile['whitewhale']) %}
-    {% for image in item.images()[:1] %}
-        <a href="/item/{{ item.uid }}"> <h4>{{ item.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+    {% if whitewhale %}
+    {% for image in whitewhale.images()[:1] %}
+        <a href="/whitewhale/{{ whitewhale.uid }}"> <h4>{{ whitewhale.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
     {% endfor %}
     {% else %}
     This user has not set a white whale.
@@ -97,20 +104,18 @@
         </ul>
 
     <div class="page-header"><h4>Game Day Scarf</h4></div>
-    {% if profile['gameday'] %}
-    {% set item = pd.SiteItem(profile['gameday']) %}
-    {% for image in item.images()[:1] %}
-        <a href="/item/{{ item.uid }}"> <h4>{{ item.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+    {% if gameday %}
+    {% for image in gameday.images()[:1] %}
+        <a href="/gameday/{{ gameday.uid }}"> <h4>{{ gameday.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
     {% endfor %}
     {% else %}
         Edit your profile to set a game day scarf.
     {% endif %}
 
     <div class="page-header"><h4>White Whale</h4></div>
-    {% if profile['whitewhale'] %}
-    {% set item = pd.SiteItem(profile['whitewhale']) %}
-    {% for image in item.images()[:1] %}
-        <a href="/item/{{ item.uid }}"> <h4>{{ item.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+    {% if whitewhale %}
+    {% for image in whitewhale.images()[:1] %}
+        <a href="/whitewhale/{{ whitewhale.uid }}"> <h4>{{ whitewhale.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
     {% endfor %}
     {% else %}
         Edit your profile to set a white whale.

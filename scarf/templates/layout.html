@@ -37,6 +37,9 @@
     {% endif %}
 
     {% endblock %}
+
+    {% block css %}
+    {% endblock %}
 </head>
 
 <body id="bsor">
@@ -157,6 +160,9 @@
     <script src="{{pd.prefix}}/static/nav.js"></script>
     <script src="{{pd.prefix}}/static/main.js"></script>
     <script src="{{pd.prefix}}/static/itemicons.js"></script>
+
+    {% block script %}
+    {% endblock %}
 </body>
 </html>
 

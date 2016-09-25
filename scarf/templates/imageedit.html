@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{pd.prefix}}/static/tapmodo-Jcrop-1902fbc/css/jquery.Jcrop.min.css">
+{% endblock %}
+
+{% block body %}
+
+<div id="content">
+<h1> {{ pd.img.tag }}</h1><br />
+<a href="/item/{{ pd.img.parent }}">Back to "{{ pd.item_by_uid(pd.img.parent) }}"</a><br />
+
+{% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}
+<div class="page-header"> <h4>Crop Tool</h4> </div>
+
+<p>Cropping an image makes a copy, you'll still need to go back and delete the old images.</p><br><br>
+
+<img class="photo" id="photo" src="{{pd.prefix}}/image/{{ pd.img.uid }}/full" alt="{{ pd.img.tag }}"><br>
+
+<a id="cropButton" class="btn btn-sm btn-default" href=""><span class="glyphicon glyphicon-scissors" aria-hidden="true"></span> Crop & Copy</a>
+&nbsp;&nbsp;&nbsp;<a class="btn btn-sm btn-danger" href="/item/{{ pd.img.parent }}">Cancel</a>
+
+</div>
+
+{% endif %}
+
+{% endblock %}
+
+{% block script %}
+  <script type="text/javascript" src="{{ pd.prefix }}/static/tapmodo-Jcrop-1902fbc/js/jquery.Jcrop.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+            $('.photo').Jcrop({
+                    onChange: updateButton,
+                    onSelect: updateButton,
+                    boxWidth: $(window).width() * 0.95,
+                    boxHeight: $(window).height() * 0.95,
+                    {% set size = pd.img.size() %}
+                    trueSize: [{{ size[0] }}, {{ size[1] }}]
+            });
+    });
+
+    function updateButton(c)
+    {
+            $('#cropButton').attr('href', '/image/{{ pd.img.uid }}/crop/' + parseInt(c.x) + '/' + parseInt(c.y) + '/' + parseInt(c.x2) + '/' + parseInt(c.y2));
+            $("#cropButton").removeAttr("disabled");
+    };
+
+    $('#cropButton').attr("disabled", "disabled");
+</script>
+{% endblock %}
