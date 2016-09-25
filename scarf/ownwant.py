@@ -64,7 +64,7 @@ def itemaction(item_id, action):
     if user:
         try: 
             ownwant(item_id, user.uid, actions[action])
-        except (NoItem, KeyError):
+        except (NoItem, KeyError, ValueError):
             return page_not_found()
 
         if request.method == 'POST' or request_wants_json():

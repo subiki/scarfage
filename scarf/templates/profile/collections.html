@@ -65,7 +65,7 @@
                {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
                {% include 'itemstatusbox.html' %}
                {% else %}
-                {% if item.uid == profile['whitewhale']|int %}
+                {% if 'whitewhale' in profile and item.uid == profile['whitewhale']|int %}
 <img class="img-rounded" width="30" height="30" src="{{pd.prefix}}/static/images/white-whale.png" alt="White Whale" title="This user would give just about anything for this item" data-toggle="tooltip">
                 {% endif %}
                {% endif %}

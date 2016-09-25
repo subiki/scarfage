@@ -142,7 +142,6 @@ def page_not_found(error=None):
     :return: A rendered 404 page
     """
 
-    print error
     pd = PageData()
     logger.error('404! Referrer was: ' + str(request.referrer))
     pd.title = "File not found"

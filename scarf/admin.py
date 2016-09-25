@@ -90,7 +90,7 @@ def admin_set_accesslevel(user, level):
     moduser.newaccesslevel(level)
     flash('User ' + user + '\'s accesslevel has been set to ' + level)
 
-    return redirect('/user/' + moduser.username)
+    return redirect_back('index')
 
 @app.route('/admin/users/<user>/resetpw')
 @check_admin

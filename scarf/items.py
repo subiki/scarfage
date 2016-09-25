@@ -33,14 +33,7 @@ def reallydelete_item(item_id):
     if request_wants_json():
         return '{}'
     else:
-        pd = PageData()
-        pd.title=delitem.name + " has been deleted"
-        pd.accessreq = 255
-        pd.conftext = delitem.name + " has been deleted. I hope you meant to do that."
-        pd.conftarget = ""
-        pd.conflinktext = ""
-
-        return render_template('confirm.html', pd=pd)
+        return redirect(url_for('index'))
 
 @app.route('/item/<item_id>/delete')
 @check_admin
@@ -55,9 +48,9 @@ def delete_item(item_id):
     pd.title=delitem.name
 
     pd.accessreq = 255
-    pd.conftext = "Deleting item " + delitem.name + ". This will also delete all trades but not the associated PMs. If this item has open trades you are going to confuse people. Are you really sure you want to do this?"
+    pd.conftext =  "Items may take some time to disappear from the indexes."
     pd.conftarget = "/item/" + str(delitem.uid) + "/reallydelete"
-    pd.conflinktext = "Yup, I'm sure"
+    pd.conflinktext = "I want to delete '{}' and accept the consequences of this action.".format(delitem.name)
 
     return render_template('confirm.html', pd=pd)
 
@@ -111,6 +104,9 @@ def show_item(item_id, edit=None):
 
     try:
         showitem = SiteItem.create(item_id)
+
+        if showitem.deleted:
+            return page_not_found()
 
         if edit:
             edit = int(edit)
@@ -262,95 +258,3 @@ def untag_item(item_id, tag_ob):
     pd = PageData()
     item.remove_tag(pd.decode(tag_ob))
     return redirect('/item/' + str(item.uid))
-
-@app.route('/item/search')
-@nocache
-def searchitem():
-    """
-    :URL: /item/search?page=<page>&limit=<max results>&query=<search query>&sort=<sort type>
-
-    :Method: GET
-
-    :Sort Types:
-        * name - Alphabetical by name
-        * added - By added date, latest first
-        * modified - Last modified
-
-    :Sample Response: Setting the accept:application/json header will return JSON. 
-
-    .. code-block:: javascript
-
-    {
-        "limit": 2,
-        "num_pages": 4,
-        "num_results": 8,
-        "query": "Cascadia",
-        "results": [
-            {
-                "added": "2016-05-22 17:52:36",
-                "body": "Blue/White (Cascadia Fringe, Gisele Currier Memorial Fundraiser)",
-                "description": 460,
-                "images": [
-                    388,
-                    389
-                ],
-                "modified": "2016-05-24 22:45:33",
-                "name": "No Pity MLS Blue White Fringe (Cascadia Fringe) 2012",
-                "uid": 362
-            },
-            {
-                "added": "2016-05-22 17:02:15",
-                "body": "",
-                "description": 317,
-                "images": [
-                    364,
-                    365
-                ],
-                "modified": "2016-05-22 17:02:15",
-                "name": "Cascadia",
-                "uid": 350
-            }
-        ]
-    }
-    """
-
-    pd = PageData()
-    pd.query = request.args.get('query')
-    pd.limit = request.args.get('limit')
-    pd.page = request.args.get('page')
-    pd.sort = request.args.get('sort')
-
-    if not pd.limit:
-        pd.limit = 20
-    else:
-        pd.limit = int(pd.limit)
-
-    if not pd.page:
-        pd.page = 1
-    else:
-        pd.page = int(pd.page)
-
-    offset = (pd.page - 1) * pd.limit
-
-    results = core.item_search(pd.query, pd.limit, offset, pd.sort)
-
-    pd.results = results['items']
-    pd.num_results = results['maxresults']
-    pd.num_pages = -(-pd.num_results // pd.limit) # round up
-
-    if pd.num_results == 0:
-        pd.results = [None]
-
-    if request_wants_json():
-        resp = dict()
-        resp['results'] = list()
-        for item in pd.results:
-            resp['results'].append(item.values())
-
-        resp['query'] = pd.query
-        resp['num_results'] = pd.num_results
-        resp['num_pages'] = pd.num_pages
-        resp['limit'] = pd.limit
-        return json.dumps(resp)
-
-    return render_template('search.html', pd=pd)

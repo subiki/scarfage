@@ -59,16 +59,7 @@ def moderate():
 @app.route('/mod/ban/<user>')
 @check_mod
 def mod_ban_user(user):
-    pd = PageData()
-
-    pd.title="Banning user " + user
-
-    pd.accessreq = 10 
-    pd.conftext = "Banning user " + user
-    pd.conftarget = "/admin/users/" + user + "/accesslevel/0"
-    pd.conflinktext = "Yup, I'm sure."
-
-    return render_template('confirm.html', pd=pd)
+    return redirect("/admin/users/" + user + "/accesslevel/0")
 
 @app.route('/mod/image/<image>/<scale>')
 @app.route('/mod/image/<image>')

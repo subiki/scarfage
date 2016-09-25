@@ -8,22 +8,22 @@
 <div class="col-md-8">
 
 {% if pd.item %}
-<div class="page-header"> <h3>{{ pd.item.name }}
+<div class="page-header"> <h3>{{ pd.item.name }} {% if pd.authuser is defined and pd.authuser.accesslevel >= 10 %}({{ pd.item.uid }}){% endif %}
 
 {% if pd.authuser is defined %}
 {% set item = pd.item %}
 {% include 'itemstatusbox.html' %}
 {% endif %}
 
-<a href="/item/{{ pd.item.uid }}/edit"> <span data-toggle="tooltip" title="Edit" style="color: blue;" class="glyphicon glyphicon-pencil"></span></a>
-<a href="/item/{{ pd.item.uid }}/history"> <span data-toggle="tooltip" title="View History" style="color: blue;" class="glyphicon glyphicon-time"></span></a>
+<a href="/item/{{ pd.item.uid }}/edit" rel="nofollow"> <span data-toggle="tooltip" title="Edit" style="color: blue;" class="glyphicon glyphicon-pencil"></span></a>
+<a href="/item/{{ pd.item.uid }}/history" rel="nofollow"> <span data-toggle="tooltip" title="View History" style="color: blue;" class="glyphicon glyphicon-time"></span></a>
 
 {% if pd.item.edit and not pd.item.edit == pd.item.description() %}
-<a href="/item/{{ pd.item.uid }}/revert/{{ pd.item.description() }}"> <span data-toggle="tooltip" title="Revert to this" style="color: blue;" class="glyphicon glyphicon-repeat"></span></a>
+<a href="/item/{{ pd.item.uid }}/revert/{{ pd.item.description() }}" rel="nofollow"> <span data-toggle="tooltip" title="Revert to this" style="color: blue;" class="glyphicon glyphicon-repeat"></span></a>
 {% endif %}
 
 {% if pd.authuser is defined and pd.authuser.accesslevel == 255 %}
-<a href="/item/{{ pd.item.uid }}/delete"> <span data-toggle="tooltip" title="Delete" style="color: orange;" class="glyphicon glyphicon-trash"></span></a>
+<a href="/item/{{ pd.item.uid }}/delete" rel="nofollow"> <span data-toggle="tooltip" title="Delete" style="color: orange;" class="glyphicon glyphicon-trash"></span></a>
 {% endif %}
 
 
@@ -45,6 +45,7 @@ You are viewing an old version of this item's description, click <a href="/item/
 {% for image in pd.item.images() %}
 <p>
 <a href="/image/{{ image.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+<a class=small href="/image/{{ image.uid }}/flag" rel="nofollow"><span data-toggle="tooltip" title="Flag for moderator review" class="glyphicon glyphicon-flag" aria-hidden="true" style="color: red;"></span></a><br />
 </p>
 {% endfor %}
 
@@ -87,7 +88,7 @@ Nobody wants this item yet.
 <div class="page-header"><h4>Tags</h4></div>
 {% set parent_tags = pd.item.tags_with_parents() %}
 {%for tag in parent_tags %}
-<a href="/tag/{{ pd.encode(tag) }}" rel="nofollow">{{ tag }}</a>
+<a href="/tag/{{ pd.encode(tag) }}">{{ tag }}</a>
 {% if not parent_tags[tag] %}
 <a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag) }}" rel="nofollow"><span data-toggle="tooltip" class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;" title="Remove Tag"></span></a>
 {% else %}
@@ -101,7 +102,6 @@ Nobody wants this item yet.
 </form><br><br>
 
 <a class="copy-url"><span class="glyphicon glyphicon-link"></span> Copy to clipboard</a> 
-
 
 </div>
 </div>

@@ -2,21 +2,26 @@
 
 {% block body %}
 
-
-
 <div id="content">
 
+<center>
 {% if pd.authuser is defined and pd.authuser.accesslevel >= pd.accessreq %}
 
+<h1 style="color: red;">YOU ARE ABOUT TO DO SOMETHING DANGEROUS</h1><br>
+
+<h3><p>If you do not know exactly what you are doing please do not proceed!</p>
+
 <div id=conftext>
-{{ pd.conftext }}
+<p>{{ pd.conftext }}</p>
 </div>
 
-<a href="{{ pd.conftarget }}">{{ pd.conflinktext }}</a>
-
+<p><a href="{{ pd.conftarget }}">{{ pd.conflinktext }}</a></p>
+</h3>
 {% else %}
 No way dude.
 {% endif %}
+
+</center>
 </div>
 
 </div>

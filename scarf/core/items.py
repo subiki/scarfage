@@ -92,11 +92,32 @@ def item_search(query, limit=10, offset=0, sort='name'):
     if sort not in sorts.keys():
         sort = 'name'
 
-    sql = 'select uid from items where name like %(query)s order by {} limit %(limit)s offset %(offset)s;'.format(sorts[sort])
+    sql = 'select uid from items where upper(name) like upper(%(query)s) order by {} limit %(limit)s offset %(offset)s;'.format(sorts[sort])
     result = doquery(sql, {'query': '%{}%'.format(query), 'limit': limit, 'offset': offset})
 
     for item in result:
         ret['items'].append(SiteItem.create(item[0]))
+
+    return ret
+
+def tag_search(query, limit=10, offset=0, sort='name'):
+    ret = dict()
+    ret['tags'] = list()
+
+    sql = 'select count(*) from tree where name like %(query)s;'
+    ret['maxresults'] = doquery(sql, {'query': '%{}%'.format(query)})[0][0]
+
+    if ret['maxresults'] == 0:
+        return ret
+
+    sorts = {'name': 'name asc'}
+
+    if sort not in sorts.keys():
+        sort = 'name'
+
+    sql = 'select name from tree where upper(name) like upper(%(query)s) order by {} limit %(limit)s offset %(offset)s;'.format(sorts[sort])
+    for tag in doquery(sql, {'query': '%{}%'.format(query), 'limit': limit, 'offset': offset}):
+        ret['tags'].append(tag[0])
 
     return ret
 
@@ -138,6 +159,7 @@ class SiteItem(object):
             self.name = result[0][1]
             self.added = result[0][2]
             self.modified = result[0][3]
+            self.deleted = False
         except (Warning, IndexError):
             raise NoItem(uid)
 
@@ -166,15 +188,14 @@ class SiteItem(object):
             result = doquery(sql, { 'uid': self.uid })
             return result[0][0]
         except (Warning, IndexError):
-            raise NoItem(uid)
+            return ""
 
     def delete(self):
         """
         Delete an item. Might be dangerous.
         """
 
-        logger.info('deleted item id {}: {}'.format(self.uid, self.name))
-        item_cache = dict()
+        self.deleted = True
 
         for image in self.images():
             image.delete()
@@ -193,6 +214,13 @@ class SiteItem(object):
 
         sql = 'delete from items where uid = %(uid)s;'
         result = doquery(sql, {"uid": self.uid}) 
+
+        logger.info('deleted item id {}: {}'.format(self.uid, self.name))
+
+        self.uid = None 
+        self.name = None
+        self.added = None
+        self.modified = None
 
     def update(self):
         """
@@ -293,7 +321,10 @@ class SiteItem(object):
         if not edit:
             edit = self.description()
         sql = "select body from itemedits where uid = '%(uid)s';"
-        return doquery(sql, {'uid': int(edit) })[0][0]
+        try:
+            return doquery(sql, {'uid': int(edit) })[0][0]
+        except ValueError:
+            return ""
 
     have_cache = dict()
     @memoize_with_expiry(have_cache, cache_persist)

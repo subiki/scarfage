@@ -72,8 +72,16 @@
             <li class="item-search">
               <form class="navbar-form" role="form" action="/item/search" method="GET">
                 <div class="form-group">
-                    <input type="text" placeholder="Item Search" class="form-control" name="query">
+                    <input type="text" placeholder="..." class="form-control" name="query">
                 </div>
+                <div class="form-group">
+                <select name="type" id="type">
+                  <option value="items" {% if pd.search_type is not defined or pd.search_type == 'items' %} selected{% endif%}>Items</option>
+                  <option value="users" {% if pd.search_type is defined and pd.search_type == 'users' %} selected{% endif%}>Users</option>
+                  <option value="tags" {% if pd.search_type is defined and pd.search_type == 'tags' %} selected{% endif%}>Tags</option>
+                </select>
+                </div>
+
                 <div class="form-group">
                     <button type="submit" class="btn btn-success">Search</button>
                 </div>

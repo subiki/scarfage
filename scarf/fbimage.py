@@ -22,7 +22,6 @@ def serve_pil_image(pil_img):
 @app.route('/fbimage/<img_id>')
 def facebook_image(img_id):
     try:
-        logger.info('fbimage URL called for imgid {}'.format(img_id))
         simg = SiteImage.create(img_id)
         image_string = cStringIO.StringIO(base64.b64decode(simg.image()))
         img = Image.open(image_string)
@@ -31,10 +30,12 @@ def facebook_image(img_id):
         vsize = img.size[1]
  
         aspect = img.size[0] / img.size[1]
-        newvsize = int((aspect - 1.91) * img.size[1])
+        newvsize = abs(int((aspect - 1.91) * img.size[1]))
 
         img_size = img.size
         fbimg_size = (img.size[0], newvsize)
+
+        logger.info('fbimage URL called for imgid {} ({}, {}, {}, {}, {}, {})'.format(img_id, hsize, vsize, aspect, newvsize, img_size, fbimg_size))
 
         fbimg = Image.new("RGBA", fbimg_size, (255, 255, 255, 255))
         fbimg.paste(img, (0, (fbimg_size[1]-img.size[1])/2))
