@@ -16,6 +16,7 @@ No results.
    <div class="col-6">
    {% for image in item.images()[:1] %}
        <a href="/item/{{ item.uid }}" class="scarf"><img class="img-rounded col-md-12 no-gutter" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a>
+       <a class=small href="/image/{{ image.uid }}/flag" rel="nofollow"><span data-toggle="tooltip" title="Flag for moderator review" class="glyphicon glyphicon-flag" aria-hidden="true" style="color: red;"></span></a><br />
    {% endfor %}
 
   </div>
