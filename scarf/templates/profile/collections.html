@@ -4,6 +4,7 @@
 
 {% block body %}
 
+    <a name="have" />
     <div class="page-header"><h4><a href="/user/{{ pd.profileuser.username }}">{{ pd.profileuser.username }}</a>'s Collection</h4></div>
 
     <table class="table">
@@ -53,6 +54,7 @@
     {% endfor %}
     </table>
 
+    <a name="wanted" />
     <div class="page-header"><h4><a href="/user/{{ pd.profileuser.username }}">{{ pd.profileuser.username }}</a>'s Wanted List</h4></div>
     <div class="col-md-12">
     <table class="table">
