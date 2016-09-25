@@ -98,7 +98,6 @@ class SiteImage(object):
         self.parent = new_parent
         sql = "update images set parent = %(parent)s where uid = %(uid)s;"
         siteimage_cache = dict()
-        siteitem_cache = dict()
         return doquery(sql, { 'parent': new_parent,'uid': self.uid })
 
     def delete(self):

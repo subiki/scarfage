@@ -577,3 +577,28 @@ def new_user(username, password, email, ip):
 
     logger.info('Added new user {} ({})'.format(username, uid))
     return uid
+
+def user_search(query, limit=10, offset=0, sort='name'):
+    ret = dict()
+    ret['users'] = list()
+
+    sql = 'select count(*) from users where username like %(query)s;'
+    ret['maxresults'] = doquery(sql, {'query': '%{}%'.format(query)})[0][0]
+
+    if ret['maxresults'] == 0:
+        return ret
+
+    sorts = {'username': 'username asc', 'joined': 'date joined'}
+
+    if sort not in sorts.keys():
+        sort = 'username'
+
+    sql = 'select username from users where upper(username) like upper(%(query)s) order by {} limit %(limit)s offset %(offset)s;'.format(sorts[sort])
+    result = doquery(sql, {'query': '%{}%'.format(query), 'limit': limit, 'offset': offset})
+
+    for item in result:
+        ret['users'].append(SiteUser.create(item[0]))
+
+    return ret
+
+

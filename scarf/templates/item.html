@@ -87,7 +87,7 @@ Nobody wants this item yet.
 <div class="page-header"><h4>Tags</h4></div>
 {% set parent_tags = pd.item.tags_with_parents() %}
 {%for tag in parent_tags %}
-<a href="/tag/{{ pd.encode(tag) }}" rel="nofollow">{{ tag }}</a>
+<a href="/tag/{{ pd.encode(tag) }}">{{ tag }}</a>
 {% if not parent_tags[tag] %}
 <a href="/item/{{ pd.item.uid }}/untag/{{ pd.encode(tag) }}" rel="nofollow"><span data-toggle="tooltip" class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;" title="Remove Tag"></span></a>
 {% else %}
@@ -101,7 +101,6 @@ Nobody wants this item yet.
 </form><br><br>
 
 <a class="copy-url"><span class="glyphicon glyphicon-link"></span> Copy to clipboard</a> 
-
 
 </div>
 </div>

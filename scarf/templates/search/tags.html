@@ -1,0 +1,18 @@
+{% extends "search/results.html" %}
+
+{% block results %}
+
+
+{% for tag in pd.results %}
+{% if tag == None %}
+No results.
+{%else%}
+<div class="row bottom-buffer scarf-entry no-gutter">
+   <div class="col-6">
+    <a href="/tag/{{ pd.encode(tag) }}">{{ tag }}</a>
+   </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% endblock %}

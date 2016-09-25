@@ -1,0 +1,26 @@
+{% extends "search/results.html" %}
+
+{% block results %}
+
+{% for item in pd.results %}
+{% if item == None %}
+No results.
+{%else%}
+<div class="row bottom-buffer scarf-entry no-gutter">
+   <h4><a href="/item/{{ item.uid }}">{{ item.name }}</a> 
+   {% if pd.authuser is defined %}
+    {% include 'itemstatusbox.html' %} 
+   {% endif %}
+   </h4>
+
+   <div class="col-6">
+   {% for image in item.images()[:1] %}
+       <a href="/item/{{ item.uid }}" class="scarf"><img class="img-rounded col-md-12 no-gutter" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"></a>
+   {% endfor %}
+
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% endblock %}
