@@ -97,11 +97,7 @@ def send_pm(fromuserid, touserid, subject, message, status, parent):
 
     message = render_template('email/pm_notify.html', to_user=email_user, email=email_user.email, from_user=from_user, message=message, status=status, parent=parent, messageid=obfuscate(messageid))
 
-    if status:
-        subject = '[Scarfage] (Trade) ' + subject
-    else:
-        subject = '[Scarfage] (PM) ' + subject
-
+    subject = '[Scarfage] (PM) ' + subject
     send_mail(recipient=email_user.email, subject=subject, message=message)
 
     return messageid 

@@ -12,7 +12,7 @@
     <tr class="have-collection-item{{ item.uid }}">
       {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
         {% if item.have == 1 %}
-            <td>
+            <td style="min-width: 30%">
                 <h4>
                 <a href="/item/{{ item.uid }}">{{ item.name }}</a> 
                 {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
@@ -23,13 +23,13 @@
 
             <td>
             {% for image in item.images()[:1] %}
-                <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+                <a href="/item/{{ item.uid }}"><img style="max-width: 90%;" class="img-rounded" src="{{pd.prefix}}/resize/1900x400/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
             {% endfor %}
             </td>
         {% endif %}
       {% else %}
         {% if item.hidden == 0 and item.have == 1 %}
-           <td>
+           <td style="min-width: 30%">
                <h4>
                <a href="/item/{{ item.uid }}">{{ item.name }}</a> 
                {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
@@ -44,7 +44,7 @@
 
            <td>
                {% for image in item.images()[:1] %}
-                   <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+                   <a href="/item/{{ item.uid }}"><img style="max-width: 90%;" class="img-rounded" src="{{pd.prefix}}/resize/1900x400/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
                {% endfor %}
            </td>
         {% endif %}
@@ -61,7 +61,7 @@
     {% for item in pd.profileuser.collection() %}
      {% if item.want == 1 %}
        <tr>
-           <td>
+           <td style="min-width: 30%">
                <h4>
                <a href="/item/{{ item.uid }}">{{ item.name }}</a> 
                {% if pd.authuser is defined and pd.authuser.uid == pd.profileuser.uid %}
@@ -76,7 +76,7 @@
 
            <td>
            {% for image in item.images()[:1] %}
-           <a href="/item/{{ item.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+           <a href="/item/{{ item.uid }}"><img style="max-width: 90%;" class="img-rounded" src="{{pd.prefix}}/resize/1900x400/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
            {% endfor %}
            </td>
        </tr>
