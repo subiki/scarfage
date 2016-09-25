@@ -4,7 +4,7 @@ from main import page_not_found, PageData
 from access import check_mod
 import core
 
-from flask import make_response, url_for, request, render_template, session, flash
+from flask import make_response, url_for, request, render_template, session, flash, redirect
 import logging
 import base64
 
@@ -69,13 +69,13 @@ def reparent(img_id):
 
         return redirect_back(url_for('index'))
 
-@app.route('/image/<img_id>/reallydelete')
+@app.route('/image/<img_id>/delete')
 @check_mod
-def reallydelete_image(img_id):
+def delete_image(img_id):
     """
-    :URL: /image/<img_id>/reallydelete
+    :URL: /image/<img_id>/delete
 
-    Actually delete an image
+    Delete an image
     """
 
     pd = PageData()
@@ -86,39 +86,9 @@ def reallydelete_image(img_id):
     except NoImage:
         return page_not_found()
 
-    pd.title = delimg.tag + " has been deleted"
-    pd.accessreq = 10
-    pd.conftext = delimg.tag + " has been deleted. I hope you meant to do that."
-    pd.conftarget = ""
-    pd.conflinktext = ""
-    return render_template('confirm.html', pd=pd)
+    flash(delimg.tag + " has been deleted")
 
-@app.route('/image/<img_id>/delete')
-@check_mod
-def delete_image(img_id):
-    """
-    :URL: /image/<img_id>/delete
-
-    Redirect to a confirmation page to make sure you want to delete an image.
-
-    .. todo:: This should be re-done in javascript.
-    """
-
-    pd = PageData()
-
-    try:
-        delimg = SiteImage.create(img_id)
-    except NoImage:
-        return page_not_found()
-
-    pd.title=delimg.tag
-
-    pd.accessreq = 10
-    pd.conftext = "Deleting image " + delimg.tag
-    pd.conftarget = "/image/" + img_id + "/reallydelete"
-    pd.conflinktext = "Yup, I'm sure"
-
-    return render_template('confirm.html', pd=pd)
+    return redirect(url_for('moderate')) 
 
 @app.route('/image/<img_id>/flag')
 def flag_image(img_id):

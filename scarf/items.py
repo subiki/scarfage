@@ -33,14 +33,7 @@ def reallydelete_item(item_id):
     if request_wants_json():
         return '{}'
     else:
-        pd = PageData()
-        pd.title=delitem.name + " has been deleted"
-        pd.accessreq = 255
-        pd.conftext = delitem.name + " has been deleted. I hope you meant to do that."
-        pd.conftarget = ""
-        pd.conflinktext = ""
-
-        return render_template('confirm.html', pd=pd)
+        return redirect(url_for('index'))
 
 @app.route('/item/<item_id>/delete')
 @check_admin
@@ -55,9 +48,9 @@ def delete_item(item_id):
     pd.title=delitem.name
 
     pd.accessreq = 255
-    pd.conftext = "Deleting item " + delitem.name + ". This will also delete all trades but not the associated PMs. If this item has open trades you are going to confuse people. Are you really sure you want to do this?"
+    pd.conftext =  "Items may take some time to disappear from the indexes."
     pd.conftarget = "/item/" + str(delitem.uid) + "/reallydelete"
-    pd.conflinktext = "Yup, I'm sure"
+    pd.conflinktext = "I want to delete '{}' and accept the consequences of this action.".format(delitem.name)
 
     return render_template('confirm.html', pd=pd)
 
@@ -111,6 +104,9 @@ def show_item(item_id, edit=None):
 
     try:
         showitem = SiteItem.create(item_id)
+
+        if showitem.deleted:
+            return page_not_found()
 
         if edit:
             edit = int(edit)

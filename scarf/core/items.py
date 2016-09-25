@@ -119,7 +119,6 @@ def tag_search(query, limit=10, offset=0, sort='name'):
     for tag in doquery(sql, {'query': '%{}%'.format(query), 'limit': limit, 'offset': offset}):
         ret['tags'].append(tag[0])
 
-    print ret
     return ret
 
 class ItemHist(object):
@@ -160,6 +159,7 @@ class SiteItem(object):
             self.name = result[0][1]
             self.added = result[0][2]
             self.modified = result[0][3]
+            self.deleted = False
         except (Warning, IndexError):
             raise NoItem(uid)
 
@@ -188,15 +188,14 @@ class SiteItem(object):
             result = doquery(sql, { 'uid': self.uid })
             return result[0][0]
         except (Warning, IndexError):
-            raise NoItem(self.uid)
+            return ""
 
     def delete(self):
         """
         Delete an item. Might be dangerous.
         """
 
-        logger.info('deleted item id {}: {}'.format(self.uid, self.name))
-        siteitem_cache = dict()
+        self.deleted = True
 
         for image in self.images():
             image.delete()
@@ -215,6 +214,13 @@ class SiteItem(object):
 
         sql = 'delete from items where uid = %(uid)s;'
         result = doquery(sql, {"uid": self.uid}) 
+
+        logger.info('deleted item id {}: {}'.format(self.uid, self.name))
+
+        self.uid = None 
+        self.name = None
+        self.added = None
+        self.modified = None
 
     def update(self):
         """
@@ -315,7 +321,10 @@ class SiteItem(object):
         if not edit:
             edit = self.description()
         sql = "select body from itemedits where uid = '%(uid)s';"
-        return doquery(sql, {'uid': int(edit) })[0][0]
+        try:
+            return doquery(sql, {'uid': int(edit) })[0][0]
+        except ValueError:
+            return ""
 
     have_cache = dict()
     @memoize_with_expiry(have_cache, cache_persist)

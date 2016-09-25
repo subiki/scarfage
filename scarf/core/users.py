@@ -126,9 +126,12 @@ class OwnWant(object):
         update = dict(uid=self.uid, userid=self.userid, itemid=self.itemid)
         update.update(values)
  
-        sql = upsert("ownwant", safe=True, **update)
-        data = doupsert(sql, safe=True)
-        sql = "delete from ownwant where own = '0' and want = '0' and willtrade = '0';"
+        try:
+            sql = upsert("ownwant", safe=True, **update)
+            data = doupsert(sql, safe=True)
+            sql = "delete from ownwant where own = '0' and want = '0' and willtrade = '0';"
+        except:
+            raise ValueError(self.uid)
         result = doquery(sql)
 
     def values(self):
