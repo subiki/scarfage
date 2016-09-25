@@ -3,7 +3,15 @@ Disallow: /item/*/*
 Disallow: /image/*/*
 Disallow: /tag/*
 Disallow: /user/*/trade/*
+Disallow: /*/edit
+Disallow: /*/history
+Disallow: /*/revert/*
+Disallow: /*/delete
 NoIndex: /item/*/*
 NoIndex: /image/*/*
 NoIndex: /tag/*
 NoIndex: /user/*/trade/*
+NoIndex: /*/edit
+NoIndex: /*/history
+NoIndex: /*/revert/*
+NoIndex: /*/delete
