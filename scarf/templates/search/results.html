@@ -1,6 +1,21 @@
 {% extends "layout.html" %}
 
 {% block body %}
+{% if pd.num_pages <= 10 %}
+    {% set range1 = 1 %}
+    {% set range2 = pd.num_pages %}
+{% else %}
+    {% set range1 = pd.page - 5 %}
+    {% set range2 = pd.page + 5 %}
+
+    {% if range1 <= 0 %}
+        {% set range2 = range2 + range1|abs %}
+        {% set range1 = 1 %}
+    {% elif range2 >= pd.num_pages %}
+        {% set range2 = pd.num_pages %}
+        {% set range1 = pd.num_pages - 10 %}
+    {% endif %}
+{% endif %}
 
 <div id="content">
 
@@ -14,36 +29,23 @@
 <nav aria-label="Page navigation">
   <ul class="pagination">
     <li{% if pd.page == 1 %} class="disabled"{% endif %}>
-      <a href="{% if pd.page != 1 %}/item/search?type={{ pd.search_type }}&page=1&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="First">First</a>
+      <a href="{% if pd.page != 1 %}/item/search?type={{ pd.search_type }}&page=1&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="First"><span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span></a>
     </li>
 
     <li{% if pd.page == 1 %} class="disabled"{% endif %}>
-      <a href="{% if pd.page != 1 %}/item/search?type={{ pd.search_type }}&page={{pd.page - 1}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Previous">&laquo;</a>
+      <a href="{% if pd.page != 1 %}/item/search?type={{ pd.search_type }}&page={{pd.page - 1}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Previous"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>
     </li>
-
-    {% if pd.num_pages <= 10 %}
-        {% set range1 = 1 %}
-        {% set range2 = pd.num_pages %}
-    {% else %}
-        {% set range1 = pd.page - 5 %}
-        {% set range2 = pd.page + 5 %}
-
-        {% if range1 <= 0 %}
-            {% set range2 = range2 + range1|abs %}
-            {% set range1 = 1 %}
-        {% endif %}
-    {% endif %}
 
     {% for page in range(range1, range2 + 1) %}
         <li{% if page == pd.page %} class="active"{% endif %}><a href="/item/search?type={{ pd.search_type }}&page={{page}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}">{{ page }}</a></li>
     {% endfor %}
 
     <li{% if not pd.page < pd.num_pages %} class="disabled"{% endif %}>
-      <a href="{% if pd.page < pd.num_pages %}/item/search?type={{ pd.search_type }}&page={{pd.page + 1}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Next">&raquo;</a>
+      <a href="{% if pd.page < pd.num_pages %}/item/search?type={{ pd.search_type }}&page={{pd.page + 1}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Next"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>
     </li>
 
     <li{% if not pd.page < pd.num_pages %} class="disabled"{% endif %}>
-      <a href="{% if pd.page < pd.num_pages %}/item/search?type={{ pd.search_type }}&page={{pd.num_pages}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Last">Last</a>
+      <a href="{% if pd.page < pd.num_pages %}/item/search?type={{ pd.search_type }}&page={{pd.num_pages}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Last"><span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span></a>
     </li>
   </ul>
 </nav>
@@ -53,19 +55,26 @@
 <nav aria-label="Page navigation">
   <ul class="pagination">
     <li{% if pd.page == 1 %} class="disabled"{% endif %}>
-      <a href="{% if pd.page != 1 %}/item/search?type={{ pd.search_type }}&page={{pd.page - 1}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Previous">&laquo;</a>
+      <a href="{% if pd.page != 1 %}/item/search?type={{ pd.search_type }}&page=1&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="First"><span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span></a>
     </li>
 
-    {% for page in range(1, pd.num_pages + 1) %}
+    <li{% if pd.page == 1 %} class="disabled"{% endif %}>
+      <a href="{% if pd.page != 1 %}/item/search?type={{ pd.search_type }}&page={{pd.page - 1}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Previous"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>
+    </li>
+
+    {% for page in range(range1, range2 + 1) %}
         <li{% if page == pd.page %} class="active"{% endif %}><a href="/item/search?type={{ pd.search_type }}&page={{page}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}">{{ page }}</a></li>
     {% endfor %}
 
     <li{% if not pd.page < pd.num_pages %} class="disabled"{% endif %}>
-      <a href="{% if pd.page < pd.num_pages %}/item/search?type={{ pd.search_type }}&page={{pd.page + 1}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Next">&raquo;</a>
+      <a href="{% if pd.page < pd.num_pages %}/item/search?type={{ pd.search_type }}&page={{pd.page + 1}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Next"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>
+    </li>
+
+    <li{% if not pd.page < pd.num_pages %} class="disabled"{% endif %}>
+      <a href="{% if pd.page < pd.num_pages %}/item/search?type={{ pd.search_type }}&page={{pd.num_pages}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Last"><span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span></a>
     </li>
   </ul>
 </nav>
-
 
 </div>
 {% endif %}
