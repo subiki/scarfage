@@ -11,7 +11,7 @@
 <form action="/image/{{ pd.img.uid }}/reparent" method="post" enctype="multipart/form-data">
 <input type=text name="parent" placeholder="New Parent ID" size="10"> <button class="btn btn-sm btn-primary" type=submit>Reparent</button>
 &nbsp;&nbsp;&nbsp; <a class="btn btn-sm btn-danger" href="/image/{{ pd.img.uid }}/edit"><span class="glyphicon glyphicon-scissors" aria-hidden="true"></span> Crop Tool</a>
-&nbsp;&nbsp;&nbsp; <a class="btn btn-sm btn-danger" href="/image/{{ pd.img.uid }}/delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+&nbsp;&nbsp;&nbsp; <a onclick="return confirm('You are permanently deleting this image, are you sure you want to do this?')" class="btn btn-sm btn-danger" href="/image/{{ pd.img.uid }}/delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
 </form>
 
 {% endif %} <br/>
