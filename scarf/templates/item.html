@@ -44,7 +44,7 @@ You are viewing an old version of this item's description, click <a href="/item/
 
 {% for image in pd.item.images() %}
 <p>
-<a href="/image/{{ image.uid }}"><img style="max-height:100px; max-width:500px;" class="img-rounded" src="{{pd.prefix}}/resize/500x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+<a href="/image/{{ image.uid }}"><img style="max-width: 100%;" class="img-rounded" src="{{pd.prefix}}/resize/1900x400/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
 <a class=small href="/image/{{ image.uid }}/flag" rel="nofollow"><span data-toggle="tooltip" title="Flag for moderator review" class="glyphicon glyphicon-flag" aria-hidden="true" style="color: red;"></span></a><br />
 </p>
 {% endfor %}
@@ -52,9 +52,8 @@ You are viewing an old version of this item's description, click <a href="/item/
 <div class="col-md-3">
     <div class="page-header"><h4>Image upload</h4></div>
     <form action="/newimg" method="post" enctype="multipart/form-data">
-        <input type=text name=title placeholder="Image title" size="50"><br /> 
-        <input type=text name=desc placeholder="Image description" size="50"></input><br />
         <input class="btn btn-sm btn-file" type="file" name="img" accept="image/*">
+        <input style="max-width: 100%;" type=text name=title placeholder="Image Title" size="50"><br /> 
         <input type="hidden" name="parent" value="{{ pd.item.uid }}">
         <button type=submit class="btn btn-sm btn-default"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload</button>
     </form>
@@ -82,7 +81,7 @@ Nobody wants this item yet.
 {% endif %}
 
 {% for user in pd.item.wantusers()[1] %}
-<a href="/user/{{ user.username }}/trade/{{ pd.item.uid }}" rel="nofollow">{{ user.username }}</a><br />
+<a href="/user/{{ user.username }}">{{ user.username }}</a><br />
 {% endfor %}
 
 <div class="page-header"><h4>Tags</h4></div>

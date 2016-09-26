@@ -15,7 +15,7 @@
     <p> <a class="btn btn-danger" href="/mod/ban/{{ pd.moduser }}"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Ban user</a></p>
     {% endif %}
 
-    <p><a class="btn btn-danger" href="/image/{{ pd.image.uid }}/delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></p>
+    <p><a onclick="return confirm('You are permanently deleting this image, are you sure you want to do this?')" class="btn btn-danger" href="/image/{{ pd.image.uid }}/delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></p>
 
     <p><a class="btn btn-success" href="/mod/image/{{ pd.image.uid }}/approve"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Approve</a></p>
 </div>

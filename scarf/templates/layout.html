@@ -37,6 +37,9 @@
     {% endif %}
 
     {% endblock %}
+
+    {% block css %}
+    {% endblock %}
 </head>
 
 <body id="bsor">
@@ -124,26 +127,26 @@
           </ul>
         </div><!--/.nav-collapse -->
 
-
     </nav>
 
-    <div class="container">
     {% with messages = get_flashed_messages() %}
     {% if messages %}
-      <div class="row">
-        {% for message in messages %}
-          <div class="alert alert-info page-header">{{ message }}</div>
-        {% endfor %}
+      <div class="row" style="margin: auto; display: block; max-width: 50%;">
+          <div class="alert alert-info" style="text-align: center;">
+           <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for message in messages %}
+               {{ message }}<br />
+            {% endfor %}
+          </div>
       </div>
     {% endif %}
     {% endwith %}
-    </div>
 
-<div class="row">
-  <div class="col-md-12">
-    {% block body %}{% endblock %}
-  </div>
-</div>
+    <div class="row">
+      <div class="col-md-12">
+        {% block body %}{% endblock %}
+      </div>
+    </div>
 
     <footer class="footer">
         {% block footer %}
@@ -157,6 +160,9 @@
     <script src="{{pd.prefix}}/static/nav.js"></script>
     <script src="{{pd.prefix}}/static/main.js"></script>
     <script src="{{pd.prefix}}/static/itemicons.js"></script>
+
+    {% block script %}
+    {% endblock %}
 </body>
 </html>
 

@@ -45,7 +45,7 @@
 </table>
 
 <p>
-<a class="btn btn-danger" href="/tag/{{ pd.encode(pd.tag) }}/delete">Delete this tag and all child tags</a>
+<a onclick="return confirm('You are permanently deleting this tag and all child tags, are you sure you want to do this?')" class="btn btn-danger" href="/tag/{{ pd.encode(pd.tag) }}/delete">Delete this tag and all child tags</a>
 </p>
 
 <div class="page-heading"><h3>Children</h3></div>

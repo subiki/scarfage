@@ -9,13 +9,14 @@
 <div class="page-header"> <h4>Moderator Tools</h4> </div>
 
 <form action="/image/{{ pd.img.uid }}/reparent" method="post" enctype="multipart/form-data">
-<input type=text name="parent" placeholder="New Parent ID" size="10"> <button class="btn btn-sm btn-primary" type=submit>Reparent</button>&nbsp;&nbsp;&nbsp;
-<a class="btn btn-danger" href="/image/{{ pd.img.uid }}/delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+<input type=text name="parent" placeholder="New Parent ID" size="10"> <button class="btn btn-sm btn-primary" type=submit>Reparent</button>
+&nbsp;&nbsp;&nbsp; <a class="btn btn-sm btn-danger" href="/image/{{ pd.img.uid }}/edit"><span class="glyphicon glyphicon-scissors" aria-hidden="true"></span> Crop Tool</a>
+&nbsp;&nbsp;&nbsp; <a onclick="return confirm('You are permanently deleting this image, are you sure you want to do this?')" class="btn btn-sm btn-danger" href="/image/{{ pd.img.uid }}/delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
 </form>
 
 {% endif %} <br/>
 
-<a href="/image/{{ pd.img.uid }}/full"><img style="max-width:100%;" src="{{pd.prefix}}/resize/800x800/{{ pd.img.uid }}" alt="{{ pd.img.tag }}"></a><br />
+<a href="/image/{{ pd.img.uid }}/full"><img class="img-rounded" style="max-width:100%;" src="{{pd.prefix}}/resize/1900x800/{{ pd.img.uid }}" alt="{{ pd.img.tag }}"></a><br />
 <a class=small href="/image/{{ pd.img.uid }}/flag" rel="nofollow"><span data-toggle="tooltip" title="Flag for moderator review" class="glyphicon glyphicon-flag" aria-hidden="true" style="color: red;"></span></a><br />
 
 </div>

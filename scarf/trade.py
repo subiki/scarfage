@@ -7,6 +7,8 @@ from main import page_not_found, PageData
 @app.route('/user/<username>/trade/<messageid>/<action>/<item>')
 @app.route('/user/<username>/trade/<messageid>/<action>')
 def accepttradeitem(username, messageid, action, item=None):
+    return page_not_found()
+
     pd = PageData()
 
     if not pd.authuser.username == username:
@@ -51,6 +53,8 @@ def accepttradeitem(username, messageid, action, item=None):
 @app.route('/user/<username>/modifytrade/<messageid>', methods=['GET', 'POST'])
 @app.route('/user/<username>/trade/<itemid>', methods=['GET', 'POST'])
 def trade(username, itemid=None, messageid=None):
+    return page_not_found()
+
     pd = PageData()
 
     status = tradestatus['active_trade']
