@@ -46,7 +46,7 @@
     <div class="page-header"><h4>Game Day Scarf</h4></div>
     {% if gameday %}
     {% for image in gameday.images()[:1] %}
-        <a href="/gameday/{{ gameday.uid }}"> <h4>{{ gameday.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+        <a href="/item/{{ gameday.uid }}"> <h4>{{ gameday.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
     {% endfor %}
     {% else %}
     This user has not set a game day scarf.
@@ -55,7 +55,7 @@
     <div class="page-header"><h4>White Whale</h4></div>
     {% if whitewhale %}
     {% for image in whitewhale.images()[:1] %}
-        <a href="/whitewhale/{{ whitewhale.uid }}"> <h4>{{ whitewhale.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+        <a href="/item/{{ whitewhale.uid }}"> <h4>{{ whitewhale.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
     {% endfor %}
     {% else %}
     This user has not set a white whale.
@@ -106,7 +106,7 @@
     <div class="page-header"><h4>Game Day Scarf</h4></div>
     {% if gameday %}
     {% for image in gameday.images()[:1] %}
-        <a href="/gameday/{{ gameday.uid }}"> <h4>{{ gameday.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+        <a href="/item/{{ gameday.uid }}"> <h4>{{ gameday.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
     {% endfor %}
     {% else %}
         Edit your profile to set a game day scarf.
@@ -115,7 +115,7 @@
     <div class="page-header"><h4>White Whale</h4></div>
     {% if whitewhale %}
     {% for image in whitewhale.images()[:1] %}
-        <a href="/whitewhale/{{ whitewhale.uid }}"> <h4>{{ whitewhale.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
+        <a href="/item/{{ whitewhale.uid }}"> <h4>{{ whitewhale.name }}</h4> <img style="max-height:100px; max-width:400px;" class="img-rounded" src="{{pd.prefix}}/resize/400x200/{{ image.uid }}" alt="{{ image.tag }}"><br /> </a>
     {% endfor %}
     {% else %}
         Edit your profile to set a white whale.
