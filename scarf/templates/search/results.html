@@ -8,20 +8,42 @@
 <div id="search" class="col-md-12">
 <div class="page-heading"><h3>{{ pd.search_type|title }} Search Results for "{{pd.query}}"</h3></div>
 
-{{ pd.num_results }} items found, showing {{ pd.limit }} results per page.<br>
+{{ pd.num_results }} items found{% if pd.num_pages > 1 %}, showing {{ pd.limit }} results per page on {{ pd.num_pages }} pages.<br>
+{% endif %}
 
 <nav aria-label="Page navigation">
   <ul class="pagination">
     <li{% if pd.page == 1 %} class="disabled"{% endif %}>
+      <a href="{% if pd.page != 1 %}/item/search?type={{ pd.search_type }}&page=1&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="First">First</a>
+    </li>
+
+    <li{% if pd.page == 1 %} class="disabled"{% endif %}>
       <a href="{% if pd.page != 1 %}/item/search?type={{ pd.search_type }}&page={{pd.page - 1}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Previous">&laquo;</a>
     </li>
 
-    {% for page in range(1, pd.num_pages + 1) %}
+    {% if pd.num_pages <= 10 %}
+        {% set range1 = 1 %}
+        {% set range2 = pd.num_pages %}
+    {% else %}
+        {% set range1 = pd.page - 5 %}
+        {% set range2 = pd.page + 5 %}
+
+        {% if range1 <= 0 %}
+            {% set range2 = range2 + range1|abs %}
+            {% set range1 = 1 %}
+        {% endif %}
+    {% endif %}
+
+    {% for page in range(range1, range2 + 1) %}
         <li{% if page == pd.page %} class="active"{% endif %}><a href="/item/search?type={{ pd.search_type }}&page={{page}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}">{{ page }}</a></li>
     {% endfor %}
 
     <li{% if not pd.page < pd.num_pages %} class="disabled"{% endif %}>
       <a href="{% if pd.page < pd.num_pages %}/item/search?type={{ pd.search_type }}&page={{pd.page + 1}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Next">&raquo;</a>
+    </li>
+
+    <li{% if not pd.page < pd.num_pages %} class="disabled"{% endif %}>
+      <a href="{% if pd.page < pd.num_pages %}/item/search?type={{ pd.search_type }}&page={{pd.num_pages}}&limit={{pd.limit}}&query={{pd.query}}&sort={{pd.sort}}{% endif %}" aria-label="Last">Last</a>
     </li>
   </ul>
 </nav>

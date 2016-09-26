@@ -81,7 +81,7 @@ Nobody wants this item yet.
 {% endif %}
 
 {% for user in pd.item.wantusers()[1] %}
-<a href="/user/{{ user.username }}/trade/{{ pd.item.uid }}" rel="nofollow">{{ user.username }}</a><br />
+<a href="/user/{{ user.username }}">{{ user.username }}</a><br />
 {% endfor %}
 
 <div class="page-header"><h4>Tags</h4></div>
